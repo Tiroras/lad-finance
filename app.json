@@ -1,25 +1,35 @@
 {
   "expo": {
-    "name": "Diplom",
-    "slug": "Diplom",
+    "name": "Лад",
+    "slug": "lad-finance",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "app.lad.finance",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#234B3C",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "app.lad.finance"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "name": "Лад — личные финансы",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": ["expo-font", "expo-sharing"],
+    "scheme": "lad",
+    "description": "Личные финансы в вашем ритме: расходы, цели и понятный план."
   }
 }

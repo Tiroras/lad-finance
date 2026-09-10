@@ -1,5 +1,31 @@
-export type CategoryId = 'groceries' | 'cafe' | 'transport' | 'shopping' | 'fun' | 'health' | 'home' | 'other';
-export type IconName = 'leaf-outline' | 'cafe-outline' | 'car-outline' | 'bag-handle-outline' | 'sparkles-outline' | 'heart-outline' | 'home-outline' | 'grid-outline' | 'airplane-outline' | 'shield-checkmark-outline' | 'wallet-outline' | 'card-outline' | 'cash-outline' | 'musical-notes-outline' | 'cloud-outline' | 'barbell-outline' | 'paper-plane-outline' | 'wifi-outline';
+export type CategoryId =
+  | "groceries"
+  | "cafe"
+  | "transport"
+  | "shopping"
+  | "fun"
+  | "health"
+  | "home"
+  | "other";
+export type IconName =
+  | "leaf-outline"
+  | "cafe-outline"
+  | "car-outline"
+  | "bag-handle-outline"
+  | "sparkles-outline"
+  | "heart-outline"
+  | "home-outline"
+  | "grid-outline"
+  | "airplane-outline"
+  | "shield-checkmark-outline"
+  | "wallet-outline"
+  | "card-outline"
+  | "cash-outline"
+  | "musical-notes-outline"
+  | "cloud-outline"
+  | "barbell-outline"
+  | "paper-plane-outline"
+  | "wifi-outline";
 
 export interface Category {
   id: CategoryId;
@@ -14,7 +40,7 @@ export interface Category {
 export interface Account {
   id: string;
   name: string;
-  kind: 'spending' | 'savings';
+  kind: "spending" | "savings";
   openingBalance: number;
   icon: IconName;
   color: string;
@@ -22,7 +48,7 @@ export interface Account {
 
 export interface Transaction {
   id: string;
-  type: 'expense' | 'income' | 'transfer';
+  type: "expense" | "income" | "transfer";
   title: string;
   amount: number;
   date: string;
@@ -50,7 +76,7 @@ export interface Recurring {
   name: string;
   amount: number;
   day: number;
-  kind: 'bill' | 'subscription';
+  kind: "bill" | "subscription";
   active: boolean;
   icon: IconName;
   color: string;
@@ -69,4 +95,8 @@ export interface FinanceState {
   settings: { name: string; payday: number; buffer: number };
 }
 
-export interface Occurrence { payment: Recurring; date: string; paid: boolean }
+export interface Occurrence {
+  payment: Recurring;
+  date: string;
+  paid: boolean;
+}
