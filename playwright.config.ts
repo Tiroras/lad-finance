@@ -5,8 +5,9 @@ export default defineConfig({
   timeout: 45000,
   expect: { timeout: 10000 },
   fullyParallel: false,
+  forbidOnly: !!process.env.CI,
   workers: 1,
-  reporter: "list",
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: "http://localhost:8087",
     viewport: { width: 390, height: 844 },

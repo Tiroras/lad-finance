@@ -8,6 +8,8 @@
 
 Требуется Node.js 22.13 или новее. Проект использует Expo SDK 57, React Native 0.86 и TypeScript. Зависимости зафиксированы в `package-lock.json`.
 
+В CI используется Node.js из `.nvmrc` (22.21.1). При установленном nvm ту же версию можно выбрать командой `nvm install && nvm use`.
+
 ```sh
 npm ci
 npm start
@@ -114,6 +116,20 @@ npm run test:e2e
 ```
 
 Если уже установлен Google Chrome: `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. Playwright запускает локальный Expo на порту 8087. Снимки интерфейса: `PLAYWRIGHT_CHANNEL=chrome node scripts/capture.mjs` при запущенном сервере на этом порту.
+
+## Автоматические проверки GitHub
+
+[Workflow CI](https://github.com/Tiroras/lad-finance/actions/workflows/ci.yml) запускается при каждом push, при создании и обновлении pull request, а также вручную через **Actions → CI → Run workflow**.
+
+1. **Types and unit tests** — TypeScript, модульные тесты и проверка зависимостей по локальной таблице Expo SDK.
+2. **Export iOS, Android and Web** — экспорт JavaScript и ресурсов всех трёх платформ после успешного первого задания.
+3. **Browser scenarios** — установка Chromium и запуск Playwright с собственным сервером Expo; выполняется параллельно с экспортом.
+
+Задания используют Ubuntu 24.04, Node.js из `.nvmrc`, `npm ci` и кэш загрузок npm. Новый запуск отменяет предыдущий незавершённый запуск для той же ветки или PR. В CI запрещены случайно оставленные `test.only`.
+
+В карточке запуска доступны артефакты на 7 дней: `expo-export-<commit>` с содержимым `dist/` и `playwright-report-<commit>` с HTML-отчётом, снимками и трассировками упавших тестов. Для просмотра скачанного отчёта: `npx playwright show-report <папка-отчёта>`.
+
+Workflow экспортирует код и ресурсы; установочные APK/IPA и публикация требуют отдельной нативной сборки. Для этих проверок не нужны Expo-аккаунт, ключи подписи или секреты репозитория. Конфигурация: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Структура
 
