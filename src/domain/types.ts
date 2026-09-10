@@ -59,6 +59,7 @@ export interface Transaction {
   recurringId?: string;
   occurrenceDate?: string;
   note?: string;
+  importKey?: string;
 }
 
 export interface Goal {
@@ -82,6 +83,15 @@ export interface Recurring {
   color: string;
   category: CategoryId;
   accountId: string;
+  startsOn?: string;
+  skippedMonths?: string[];
+  history?: { untilMonth: string; amount: number; day: number }[];
+}
+
+export interface ReminderPreferences {
+  enabled: boolean;
+  daysBefore: 0 | 1 | 3;
+  hour: number;
 }
 
 export interface FinanceState {
@@ -92,11 +102,17 @@ export interface FinanceState {
   categories: Category[];
   goals: Goal[];
   recurring: Recurring[];
-  settings: { name: string; payday: number; buffer: number };
+  settings: {
+    name: string;
+    payday: number;
+    buffer: number;
+    reminders?: ReminderPreferences;
+  };
 }
 
 export interface Occurrence {
   payment: Recurring;
   date: string;
   paid: boolean;
+  skipped?: boolean;
 }

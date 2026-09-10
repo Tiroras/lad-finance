@@ -7,24 +7,25 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, Platform } from "react-native";
 import * as Haptics from "expo-haptics";
 import type { FinanceState } from "./domain/types";
 import { createInitialState } from "./domain/seed";
-import { decodeBackup, encodeBackup } from "./domain/backup";
+import { ledgerStorage } from "./services/ledgerStorage";
+import { LEGACY_STORAGE_KEY } from "./security/vault";
 import { localDate } from "./domain/finance";
 
-export const STORAGE_KEY = "lad-finance-v1";
+export const STORAGE_KEY = LEGACY_STORAGE_KEY;
 interface ContextValue {
   state: FinanceState;
-  update: (fn: (state: FinanceState) => FinanceState) => void;
+  update: (fn: (state: FinanceState) => FinanceState) => FinanceState;
   replace: (state: FinanceState) => void;
   ready: boolean;
   loadError: string;
   saveError: boolean;
   reload: () => void;
   retrySave: () => void;
+  recover: (state: FinanceState) => Promise<void>;
   today: string;
   toast: string;
   notify: (message: string) => void;
@@ -36,6 +37,19 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     createInitialState(false),
   );
   const [ready, setReady] = useState(false);
+  const stateRef = useRef(state);
+  const replace = useCallback((value: FinanceState) => {
+    stateRef.current = value;
+    setState(value);
+  }, []);
+  const update = useCallback(
+    (fn: (value: FinanceState) => FinanceState) => {
+      const next = fn(stateRef.current);
+      replace(next);
+      return next;
+    },
+    [replace],
+  );
   const [loadError, setLoadError] = useState("");
   const [saveError, setSaveError] = useState(false);
   const [toast, setToast] = useState("");
@@ -44,8 +58,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const load = useCallback(async () => {
     setLoadError("");
     try {
-      const raw = await AsyncStorage.getItem(STORAGE_KEY);
-      setState(raw ? decodeBackup(raw) : createInitialState());
+      const saved = await ledgerStorage.load();
+      replace(saved ?? createInitialState());
       setReady(true);
     } catch {
       setLoadError(
@@ -59,13 +73,24 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const persist = useCallback((value: FinanceState) => {
     queue.current = queue.current.then(async () => {
       try {
-        await AsyncStorage.setItem(STORAGE_KEY, encodeBackup(value));
+        await ledgerStorage.save(value);
         setSaveError(false);
       } catch {
         setSaveError(true);
       }
     });
   }, []);
+  const recover = useCallback(
+    async (value: FinanceState) => {
+      await queue.current;
+      await ledgerStorage.recover(value);
+      replace(value);
+      setLoadError("");
+      setSaveError(false);
+      setReady(true);
+    },
+    [replace],
+  );
   useEffect(() => {
     if (ready) persist(state);
   }, [state, ready, persist]);
@@ -103,8 +128,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         notify,
         reload: load,
         retrySave: () => persist(state),
-        update: setState,
-        replace: setState,
+        recover,
+        update,
+        replace,
       }}
     >
       {children}

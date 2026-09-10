@@ -42,7 +42,18 @@ const icon = z.enum([
 const schema = z.object({
   version: z.literal(1),
   demo: z.boolean(),
-  settings: z.object({ name: z.string().max(40), payday: day, buffer: amount }),
+  settings: z.object({
+    name: z.string().max(40),
+    payday: day,
+    buffer: amount,
+    reminders: z
+      .object({
+        enabled: z.boolean(),
+        daysBefore: z.union([z.literal(0), z.literal(1), z.literal(3)]),
+        hour: z.number().int().min(0).max(23),
+      })
+      .optional(),
+  }),
   accounts: z
     .array(
       z.object({
@@ -94,6 +105,23 @@ const schema = z.object({
         color,
         category,
         accountId: id,
+        startsOn: date
+          .refine((d) => d >= "2000-01-01" && d <= "2100-12-31")
+          .optional(),
+        skippedMonths: z
+          .array(z.string().regex(/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/))
+          .max(1212)
+          .optional(),
+        history: z
+          .array(
+            z.object({
+              untilMonth: z.string().regex(/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/),
+              amount: positiveAmount,
+              day,
+            }),
+          )
+          .max(1212)
+          .optional(),
       }),
     )
     .max(200),
@@ -112,6 +140,7 @@ const schema = z.object({
         recurringId: id.optional(),
         occurrenceDate: date.optional(),
         note: z.string().max(500).optional(),
+        importKey: z.string().max(500).optional(),
       }),
     )
     .max(20000),
@@ -154,6 +183,15 @@ export function decodeBackup(raw: string): FinanceState {
   )
     throw new Error("Платёж ссылается на недоступный счёт.");
   const occurrences = new Set<string>();
+  if (
+    state.recurring.some(
+      (p) =>
+        p.history &&
+        new Set(p.history.map((rule) => rule.untilMonth)).size !==
+          p.history.length,
+    )
+  )
+    throw new Error("В истории платежа повторяется месяц изменения условий.");
   for (const t of state.transactions) {
     if (!account(t.accountId))
       throw new Error("Операция ссылается на неизвестный счёт.");
@@ -191,7 +229,15 @@ export function decodeBackup(raw: string): FinanceState {
     throw new Error(
       "Начальные накопления по целям превышают баланс накопительных счетов.",
     );
-  return state;
+  // Older backups have no start boundary. Begin tracking from the month of
+  // migration, then persist that date, without inventing earlier arrears.
+  return {
+    ...state,
+    recurring: state.recurring.map((payment) => ({
+      ...payment,
+      startsOn: payment.startsOn ?? `${localDate().slice(0, 7)}-01`,
+    })),
+  };
 }
 
 export const encodeBackup = (state: FinanceState) =>

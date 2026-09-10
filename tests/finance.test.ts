@@ -275,8 +275,13 @@ test("backup round-trip preserves demo and personal finances", () => {
     createInitialState(true, TODAY),
     createInitialState(false),
     fixture(),
-  ])
+  ]) {
+    state.recurring = state.recurring.map((p) => ({
+      ...p,
+      startsOn: p.startsOn ?? "2026-09-01",
+    }));
     assert.deepEqual(decodeBackup(encodeBackup(state)), state);
+  }
 });
 test("backup validation rejects damaged records and unknown references", () => {
   assert.throws(() => decodeBackup("{broken json"));

@@ -1,0 +1,60 @@
+import { View } from "react-native";
+import { useFinance } from "../../store";
+import {
+  C,
+  font,
+  Txt,
+  Row,
+  Card,
+  IconTile,
+  IconButton,
+  Progress,
+  Button,
+} from "../../ui";
+import { goalSaved, money } from "../../domain/finance";
+import type { Goal } from "../../domain/types";
+import type { OpenSheet } from "../../navigation/types";
+
+export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
+  const { state } = useFinance();
+  const saved = goalSaved(state, goal),
+    remaining = Math.max(0, goal.target - saved);
+  const months = goal.monthly ? Math.ceil(remaining / goal.monthly) : null;
+  return (
+    <Card style={{ gap: 19 }}>
+      <Row>
+        <IconTile name={goal.icon} background={goal.color} size={50} />
+        <View style={{ flex: 1, gap: 6 }}>
+          <Txt style={{ fontFamily: font.bold, fontSize: 16 }}>{goal.name}</Txt>
+          <Txt style={{ color: C.muted, fontSize: 11 }}>
+            {remaining === 0
+              ? "Цель достигнута. Это ваш момент!"
+              : months
+                ? `Ещё ${months} мес. при ${money(goal.monthly)} в месяц`
+                : "Накопления в свободном темпе"}
+          </Txt>
+        </View>
+        <IconButton
+          name="ellipsis-horizontal"
+          label={`Изменить цель ${goal.name}`}
+          onPress={() => open({ type: "goal", id: goal.id })}
+        />
+      </Row>
+      <Row style={{ justifyContent: "space-between" }}>
+        <Txt style={{ fontFamily: font.bold, fontSize: 23 }}>
+          {money(saved)}
+        </Txt>
+        <Txt style={{ color: C.muted, fontSize: 12 }}>
+          из {money(goal.target)}
+        </Txt>
+      </Row>
+      <Progress value={saved / goal.target} color="#78986A" height={8} />
+      <Button
+        label={remaining === 0 ? "Посмотреть накопления" : "Пополнить цель"}
+        variant="secondary"
+        icon="add"
+        onPress={() => open({ type: "fund", id: goal.id })}
+      />
+    </Card>
+  );
+}

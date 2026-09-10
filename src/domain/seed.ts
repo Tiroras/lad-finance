@@ -1,5 +1,5 @@
 import type { Category, FinanceState, Transaction } from "./types";
-import { localDate, shiftDate, uid } from "./finance";
+import { localDate, monthKey, shiftDate, uid } from "./finance";
 
 export const CATEGORIES: Category[] = [
   {
@@ -251,5 +251,9 @@ export function createInitialState(
       .reduce((n, t) => n + (t.type === "income" ? t.amount : -t.amount), 0);
     account.openingBalance = desired[account.id] - net;
   });
+  state.recurring = state.recurring.map((payment) => ({
+    ...payment,
+    startsOn: `${monthKey(today)}-01`,
+  }));
   return state;
 }

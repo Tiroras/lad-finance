@@ -3,6 +3,7 @@ import type {
   FinanceState,
   Goal,
   Occurrence,
+  Recurring,
   Transaction,
 } from "./types";
 
@@ -150,7 +151,27 @@ export function upcoming(
   start = localDate(),
   end = shiftDate(start, 31),
 ): Occurrence[] {
+  return paymentOccurrences(state, start, end, start);
+}
+
+function paymentOccurrences(
+  state: FinanceState,
+  start: string,
+  end: string,
+  today: string,
+): Occurrence[] {
   const result: Occurrence[] = [];
+  const paidMonths = new Set(
+    state.transactions
+      .filter(
+        (t) =>
+          t.type === "expense" &&
+          t.recurringId &&
+          t.occurrenceDate &&
+          t.date <= today,
+      )
+      .map((t) => `${t.recurringId}:${monthKey(t.occurrenceDate!)}`),
+  );
   for (
     let month = `${monthKey(start)}-01`;
     month <= end;
@@ -158,20 +179,55 @@ export function upcoming(
   ) {
     state.recurring
       .filter((p) => p.active)
-      .forEach((payment) => {
+      .forEach((template) => {
+        const payment = paymentForMonth(template, month);
         const date = dateInMonth(month, payment.day);
-        if (date < start || date >= end) return;
-        const paid = state.transactions.some(
-          (t) =>
-            t.type === "expense" &&
-            t.recurringId === payment.id &&
-            t.occurrenceDate?.slice(0, 7) === monthKey(date) &&
-            t.date <= start,
-        );
-        result.push({ payment, date, paid });
+        if (date < start || date >= end || date < (payment.startsOn ?? start))
+          return;
+        const paid = paidMonths.has(`${payment.id}:${monthKey(date)}`);
+        const skipped =
+          payment.skippedMonths?.includes(monthKey(date)) ?? false;
+        result.push({ payment, date, paid, skipped });
       });
   }
   return result.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function paymentForMonth(payment: Recurring, date: string): Recurring {
+  const rule = payment.history
+    ?.slice()
+    .sort((a, b) => a.untilMonth.localeCompare(b.untilMonth))
+    .find((item) => monthKey(date) <= item.untilMonth);
+  return rule ? { ...payment, day: rule.day, amount: rule.amount } : payment;
+}
+
+export function changedPaymentHistory(
+  original: Recurring | undefined,
+  amount: number,
+  day: number,
+  today = localDate(),
+) {
+  if (!original || (original.amount === amount && original.day === day))
+    return original?.history;
+  const untilMonth = monthKey(shiftMonth(today, -1));
+  const history = original.history ?? [];
+  if (history.some((rule) => rule.untilMonth >= untilMonth)) return history;
+  return [
+    ...history,
+    { untilMonth, day: original.day, amount: original.amount },
+  ];
+}
+
+export function overduePayments(state: FinanceState, today = localDate()) {
+  const start = state.recurring
+    .filter((p) => p.active)
+    .reduce(
+      (first, p) => (p.startsOn && p.startsOn < first ? p.startsOn : first),
+      today,
+    );
+  return paymentOccurrences(state, start, today, today).filter(
+    (o) => !o.paid && !o.skipped,
+  );
 }
 
 export function spendable(state: FinanceState, today = localDate()) {
@@ -180,14 +236,21 @@ export function spendable(state: FinanceState, today = localDate()) {
   const liquid = state.accounts
     .filter((a) => a.kind === "spending")
     .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
-  const payments = upcoming(state, today, payday)
-    .filter((o) => !o.paid)
-    .reduce((sum, o) => sum + o.payment.amount, 0);
+  const overdue = overduePayments(state, today).reduce(
+    (sum, o) => sum + o.payment.amount,
+    0,
+  );
+  const payments =
+    overdue +
+    upcoming(state, today, payday)
+      .filter((o) => !o.paid && !o.skipped)
+      .reduce((sum, o) => sum + o.payment.amount, 0);
   const goals = goalReserve(state, today);
   const raw = liquid - payments - goals - state.settings.buffer;
   return {
     liquid,
     payments,
+    overdue,
     goals,
     buffer: state.settings.buffer,
     raw,
@@ -226,6 +289,8 @@ const KEYWORDS: [CategoryId, RegExp][] = [
   ["fun", /кино|музык|подписк|концерт|театр/iu],
   ["shopping", /одежд|обув|кроссовк|покуп|озон|ozon|wildberries/iu],
 ];
+export const suggestCategory = (title: string): CategoryId =>
+  KEYWORDS.find(([, pattern]) => pattern.test(title))?.[0] ?? "other";
 export function parseQuickEntry(input: string): {
   amount: number;
   title: string;
@@ -248,8 +313,7 @@ export function parseQuickEntry(input: string): {
   return {
     amount,
     title: title[0].toLocaleUpperCase("ru-RU") + title.slice(1),
-    category:
-      KEYWORDS.find(([, pattern]) => pattern.test(title))?.[0] ?? "other",
+    category: suggestCategory(title),
     type: /зарплат|доход|аванс|премия/iu.test(title) ? "income" : "expense",
   };
 }

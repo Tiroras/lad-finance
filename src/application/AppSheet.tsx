@@ -1,0 +1,56 @@
+import { View } from "react-native";
+import { useFinance } from "../store";
+import { C, Txt, Sheet } from "../ui";
+import { useSecurity } from "../security/SecurityProvider";
+import { LockScreen } from "../security/LockScreen";
+import type { SheetState, OpenSheet } from "../navigation/types";
+import { SheetContent } from "./SheetContent";
+
+export function AppSheet({
+  sheet,
+  close,
+  open,
+}: {
+  sheet: SheetState | null;
+  close: () => void;
+  open: OpenSheet;
+}) {
+  const security = useSecurity();
+  const { toast } = useFinance();
+  const titles: Record<SheetState["type"], string> = {
+    transaction: sheet?.id ? "Детали операции" : "Новая операция",
+    formula: "Всё прозрачно",
+    simulate: "А если купить сейчас?",
+    accounts: "Мои счета",
+    account: sheet?.id ? "Настроить счёт" : "Новый счёт",
+    settings: "Ваш Лад",
+    goal: sheet?.id ? "Настроить цель" : "Новая мечта",
+    fund: "Ближе к цели",
+    recurring: sheet?.id ? "Настроить платёж" : "Новый платёж",
+    budget: "Бюджет категории",
+    payment: "Запланированный платёж",
+    csv: "Импорт банковской выписки",
+  };
+
+  return (
+    <Sheet
+      visible={!!sheet}
+      blockingContent={security.locked ? <LockScreen compact /> : undefined}
+      title={sheet ? titles[sheet.type] : ""}
+      onClose={close}
+    >
+      {/* Keep drafts mounted while the lock screen covers the form. */}
+      <View key={`${sheet?.type}-${sheet?.id ?? "new"}`} style={{ gap: 20 }}>
+        <SheetContent sheet={sheet} close={close} open={open} />
+        {!!toast && (
+          <Txt
+            accessibilityRole="alert"
+            style={{ color: C.green, fontSize: 12 }}
+          >
+            {toast}
+          </Txt>
+        )}
+      </View>
+    </Sheet>
+  );
+}
