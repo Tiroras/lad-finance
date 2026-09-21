@@ -1,7 +1,10 @@
+import { ErrorText } from "./ErrorText";
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { View } from "react-native";
 import { C, font, Txt, IconTile, Button, Notice } from "../ui";
 import { useFinance } from "../store";
-import { dateLabel, money, paymentForMonth, uid } from "../domain/finance";
+import { dateLabel, money, paymentForMonth } from "../domain/finance";
 import type { OpenSheet, SheetState } from "../navigation/types";
 
 export function PaymentContent({
@@ -13,7 +16,9 @@ export function PaymentContent({
   close: () => void;
   open: OpenSheet;
 }) {
-  const { state, update, notify, today } = useFinance();
+  const { state, notify, today } = useFinance();
+  const actions = useFinanceActions();
+  const { error, run } = useActionError();
   const date = sheet.date ?? today;
   const payment = paymentForMonth(
     state.recurring.find((p) => p.id === sheet.id)!,
@@ -50,6 +55,7 @@ export function PaymentContent({
           По плану — {dateLabel(date)}
         </Txt>
       </View>
+      <ErrorText error={error} />
       <Notice>
         {skipped && !recorded
           ? "Этот месяц пропущен: сумма не резервируется. Вы можете вернуть платёж в план."
@@ -66,37 +72,13 @@ export function PaymentContent({
         <Button
           label="Я оплатил — записать расход"
           icon="checkmark"
-          onPress={() => {
-            update((s) => {
-              if (
-                s.transactions.some(
-                  (t) =>
-                    t.recurringId === payment.id &&
-                    t.occurrenceDate?.slice(0, 7) === date.slice(0, 7),
-                )
-              )
-                return s;
-              return {
-                ...s,
-                transactions: [
-                  {
-                    id: uid(),
-                    type: "expense",
-                    title: payment.name,
-                    amount: payment.amount,
-                    date: today,
-                    category: payment.category,
-                    accountId: payment.accountId,
-                    recurringId: payment.id,
-                    occurrenceDate: date,
-                  },
-                  ...s.transactions,
-                ],
-              };
-            });
-            notify("Оплата записана");
-            close();
-          }}
+          onPress={() =>
+            run(() => {
+              actions.payRecurring(payment.id, date);
+              notify("Оплата записана");
+              close();
+            })
+          }
         />
       ) : null}
       {!recorded && (
@@ -105,29 +87,14 @@ export function PaymentContent({
             skipped ? "Вернуть этот месяц в план" : "Пропустить этот месяц"
           }
           variant="secondary"
-          onPress={() => {
-            update((s) => ({
-              ...s,
-              recurring: s.recurring.map((p) =>
-                p.id === payment.id
-                  ? {
-                      ...p,
-                      skippedMonths: skipped
-                        ? (p.skippedMonths ?? []).filter(
-                            (m) => m !== date.slice(0, 7),
-                          )
-                        : [
-                            ...new Set([
-                              ...(p.skippedMonths ?? []),
-                              date.slice(0, 7),
-                            ]),
-                          ],
-                    }
-                  : p,
-              ),
-            }));
-            notify(skipped ? "Платёж возвращён в план" : "Этот месяц пропущен");
-          }}
+          onPress={() =>
+            run(() => {
+              actions.setPaymentSkipped(payment.id, date, !skipped);
+              notify(
+                skipped ? "Платёж возвращён в план" : "Этот месяц пропущен",
+              );
+            })
+          }
         />
       )}
       {!recorded && !skipped && candidates.length > 0 && (
@@ -141,32 +108,13 @@ export function PaymentContent({
               key={transaction.id}
               label={`Связать: ${transaction.title} · ${dateLabel(transaction.date)}`}
               variant="secondary"
-              onPress={() => {
-                update((current) => {
-                  if (
-                    current.transactions.some(
-                      (t) =>
-                        t.recurringId === payment.id &&
-                        t.occurrenceDate?.slice(0, 7) === date.slice(0, 7),
-                    )
-                  )
-                    return current;
-                  return {
-                    ...current,
-                    transactions: current.transactions.map((t) =>
-                      t.id === transaction.id && !t.recurringId
-                        ? {
-                            ...t,
-                            recurringId: payment.id,
-                            occurrenceDate: date,
-                          }
-                        : t,
-                    ),
-                  };
-                });
-                notify("Существующий расход связан с платежом");
-                close();
-              }}
+              onPress={() =>
+                run(() => {
+                  actions.payRecurring(payment.id, date, transaction.id);
+                  notify("Существующий расход связан с платежом");
+                  close();
+                })
+              }
             />
           ))}
         </>

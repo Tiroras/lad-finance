@@ -1,14 +1,9 @@
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { Button, Segments, Field, Notice } from "../ui";
 import { useFinance } from "../store";
-import {
-  changedPaymentHistory,
-  localDate,
-  moneyInput,
-  parseMoney,
-  uid,
-  validDate,
-} from "../domain/finance";
+import { localDate, moneyInput, parseMoney } from "../domain/finance";
 import type { CategoryId } from "../domain/types";
 import { ErrorText } from "./ErrorText";
 import { AccountPicker } from "./AccountPicker";
@@ -22,7 +17,8 @@ export function RecurringForm({
   id?: string;
   close: () => void;
 }) {
-  const { state, update, notify } = useFinance();
+  const { state, notify } = useFinance();
+  const actions = useFinanceActions();
   const original = state.recurring.find((p) => p.id === id);
   const [name, setName] = useState(original?.name ?? "");
   const [amount, setAmount] = useState(
@@ -43,53 +39,25 @@ export function RecurringForm({
   const [skippedMonths, setSkippedMonths] = useState(
     original?.skippedMonths ?? [],
   );
-  const [error, setError] = useState("");
-  const save = () => {
-    const parsed = parseMoney(amount),
-      dayNumber = Number(day);
-    if (
-      !name.trim() ||
-      !parsed ||
-      !/^\d{1,2}$/.test(day) ||
-      dayNumber < 1 ||
-      dayNumber > 31
-    )
-      return setError("Укажите название, сумму больше нуля и день от 1 до 31.");
-    if (
-      !validDate(startsOn) ||
-      startsOn < "2000-01-01" ||
-      startsOn > "2100-12-31"
-    )
-      return setError(
-        "Укажите дату начала учёта от 2000 до 2100 года: ГГГГ-ММ-ДД.",
-      );
-    const payment = {
-      id: original?.id ?? uid(),
-      name: name.trim(),
-      amount: parsed,
-      day: dayNumber,
-      kind,
-      category,
-      accountId,
-      startsOn,
-      skippedMonths,
-      history: changedPaymentHistory(original, parsed, dayNumber),
-      active: original?.active ?? true,
-      icon:
-        original?.icon ??
-        ((kind === "bill" ? "home-outline" : "musical-notes-outline") as
-          "home-outline" | "musical-notes-outline"),
-      color: original?.color ?? "#EEEBF5",
-    };
-    update((s) => ({
-      ...s,
-      recurring: original
-        ? s.recurring.map((p) => (p.id === id ? payment : p))
-        : [...s.recurring, payment],
-    }));
-    notify("Платёж сохранён");
-    close();
-  };
+  const { error, setError, run } = useActionError();
+  const save = () =>
+    run(() => {
+      const parsed = parseMoney(amount);
+      if (parsed === null) return setError("Введите корректную сумму платежа.");
+      actions.saveRecurring({
+        id,
+        name,
+        amount: parsed,
+        day: Number(day),
+        kind,
+        category,
+        accountId,
+        startsOn,
+        skippedMonths,
+      });
+      notify("Платёж сохранён");
+      close();
+    });
   return (
     <>
       <Segments
@@ -163,19 +131,13 @@ export function RecurringForm({
         <DeleteButton
           label="Удалить из плана"
           explanation="Платёж исчезнет из прогноза. Записанные расходы останутся в истории. Подписка в самом сервисе продолжит действовать."
-          onDelete={() => {
-            update((s) => ({
-              ...s,
-              recurring: s.recurring.filter((p) => p.id !== id),
-              transactions: s.transactions.map((t) =>
-                t.recurringId === id
-                  ? { ...t, recurringId: undefined, occurrenceDate: undefined }
-                  : t,
-              ),
-            }));
-            notify("Платёж удалён из плана");
-            close();
-          }}
+          onDelete={() =>
+            run(() => {
+              actions.deleteRecurring(original.id);
+              notify("Платёж удалён из плана");
+              close();
+            })
+          }
         />
       )}
     </>

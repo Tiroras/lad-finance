@@ -8,6 +8,7 @@ import {
   validateTransaction,
 } from "./finance";
 import type { CategoryId, FinanceState, Transaction } from "./types";
+import { appendTransaction } from "./actions/transactions";
 
 export const CSV_MAX_BYTES = 2_000_000;
 export const CSV_MAX_ROWS = 5000;
@@ -352,15 +353,6 @@ export function previewCsv(
     };
     const error = validateTransaction(state, transaction, today);
     if (error) return fail(error);
-    // Imported withdrawals must not spend funds already allocated to goals.
-    if (
-      state.accounts.find((a) => a.id === transaction.accountId)?.kind ===
-      "savings"
-    ) {
-      return fail(
-        "Перевод из накоплений запишите вручную с учётом сумм, закреплённых за целями.",
-      );
-    }
     const key = fingerprint(transaction),
       ordinal = (seen.get(key) ?? 0) + 1;
     seen.set(key, ordinal);
@@ -425,13 +417,17 @@ export function applyCsvImport(
     throw new Error("Нет новых выбранных операций для импорта.");
   if (state.transactions.length + transactions.length > 20000)
     throw new Error("В учёте допустимо не более 20 000 операций.");
-  const next = { ...state, transactions: [...state.transactions] };
+  let next = state;
   for (const transaction of transactions
     .slice()
     .sort((a, b) => a.date.localeCompare(b.date))) {
-    const error = validateTransaction(next, transaction, today);
-    if (error) throw new Error(`«${transaction.title}»: ${error}`);
-    next.transactions.push(transaction);
+    try {
+      next = appendTransaction(next, transaction, today);
+    } catch (error) {
+      throw new Error(
+        `«${transaction.title}»: ${error instanceof Error ? error.message : "Не удалось добавить операцию."}`,
+      );
+    }
   }
   return { ...state, transactions: [...transactions, ...state.transactions] };
 }

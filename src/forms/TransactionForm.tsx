@@ -1,3 +1,5 @@
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { Pressable } from "react-native";
 import {
@@ -13,15 +15,7 @@ import {
   Notice,
 } from "../ui";
 import { useFinance } from "../store";
-import {
-  accountBalance,
-  goalSaved,
-  moneyInput,
-  parseMoney,
-  parseQuickEntry,
-  uid,
-  validateTransaction,
-} from "../domain/finance";
+import { moneyInput, parseMoney, parseQuickEntry } from "../domain/finance";
 import type { CategoryId, Transaction } from "../domain/types";
 import type { SheetState } from "../navigation/types";
 import { ErrorText } from "./ErrorText";
@@ -36,7 +30,8 @@ export function TransactionForm({
   sheet: SheetState;
   close: () => void;
 }) {
-  const { state, update, notify, today } = useFinance();
+  const { state, notify, today } = useFinance();
+  const actions = useFinanceActions();
   const original = state.transactions.find((t) => t.id === sheet.id);
   const [type, setType] = useState<Transaction["type"]>(
     original?.type ?? sheet.transactionType ?? "expense",
@@ -59,7 +54,7 @@ export function TransactionForm({
   const [date, setDate] = useState(original?.date ?? today);
   const [note, setNote] = useState(original?.note ?? "");
   const [quick, setQuick] = useState("");
-  const [error, setError] = useState("");
+  const { error, setError, run } = useActionError();
   const applyQuick = (input = quick) => {
     const parsed = parseQuickEntry(input);
     if (!parsed)
@@ -73,84 +68,31 @@ export function TransactionForm({
     setError("");
     notify("Распознано. Проверьте категорию и счёт перед сохранением.");
   };
-  const save = () => {
-    const parsed = parseMoney(amount);
-    const transaction: Transaction = {
-      id: original?.id ?? uid(),
-      type,
-      title:
-        title.trim() || (type === "transfer" ? "Перевод между счетами" : ""),
-      amount: parsed ?? 0,
-      date,
-      category,
-      accountId,
-      note: note.trim(),
-      importKey: original?.importKey,
-    };
-    if (type === "transfer") {
-      transaction.toAccountId = toAccountId;
-      if (original?.goalId) transaction.goalId = original.goalId;
-    }
-    if (type === "expense" && original?.recurringId) {
-      transaction.recurringId = original.recurringId;
-      transaction.occurrenceDate = original.occurrenceDate;
-    }
-    const withoutOriginal = {
-      ...state,
-      transactions: state.transactions.filter((t) => t.id !== original?.id),
-    };
-    const validation = validateTransaction(withoutOriginal, transaction, today);
-    if (validation) return setError(validation);
-    if (
-      original?.goalId &&
-      (state.accounts.find((a) => a.id === accountId)?.kind !== "spending" ||
-        state.accounts.find((a) => a.id === toAccountId)?.kind !== "savings")
-    )
-      return setError(
-        "Пополнять цель можно только с обычного счёта на накопительный.",
+  const save = () =>
+    run(() => {
+      const parsed = parseMoney(amount);
+      if (parsed === null)
+        return setError("Введите корректную сумму в рублях.");
+      actions.saveTransaction({
+        id: sheet.id,
+        type,
+        title,
+        amount: parsed,
+        date,
+        category,
+        accountId,
+        toAccountId,
+        note,
+      });
+      notify(
+        original
+          ? "Операция обновлена"
+          : type === "transfer"
+            ? "Перевод записан"
+            : "Операция добавлена",
       );
-    if (
-      type === "transfer" &&
-      state.accounts.find((a) => a.id === accountId)?.kind === "savings"
-    ) {
-      const allocated = state.goals.reduce(
-        (n, g) => n + goalSaved(withoutOriginal, g),
-        0,
-      );
-      const allSavings = state.accounts
-        .filter((a) => a.kind === "savings")
-        .reduce((n, a) => n + accountBalance(withoutOriginal, a.id), 0);
-      if (
-        state.accounts.find((a) => a.id === toAccountId)?.kind !== "savings" &&
-        transaction.amount > allSavings - allocated
-      )
-        return setError(
-          "Эти накопления распределены по целям. Сначала освободите средства, удалив соответствующую цель.",
-        );
-    }
-    if (
-      type === "expense" &&
-      state.accounts.find((a) => a.id === accountId)?.kind === "savings"
-    )
-      return setError(
-        "Для расхода сначала переведите свободные накопления на обычный счёт.",
-      );
-    update((s) => ({
-      ...s,
-      transactions: [
-        transaction,
-        ...s.transactions.filter((t) => t.id !== original?.id),
-      ],
-    }));
-    notify(
-      original
-        ? "Операция обновлена"
-        : type === "transfer"
-          ? "Перевод записан"
-          : "Операция добавлена",
-    );
-    close();
-  };
+      close();
+    });
   return (
     <>
       {!original && type !== "transfer" && (
@@ -288,14 +230,13 @@ export function TransactionForm({
       {original && (
         <DeleteButton
           label="Удалить операцию"
-          onDelete={() => {
-            update((s) => ({
-              ...s,
-              transactions: s.transactions.filter((t) => t.id !== original.id),
-            }));
-            notify("Операция удалена, баланс пересчитан");
-            close();
-          }}
+          onDelete={() =>
+            run(() => {
+              actions.deleteTransaction(original.id);
+              notify("Операция удалена, баланс пересчитан");
+              close();
+            })
+          }
         />
       )}
     </>

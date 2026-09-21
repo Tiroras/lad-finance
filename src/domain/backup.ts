@@ -53,6 +53,7 @@ const schema = z.object({
         hour: z.number().int().min(0).max(23),
       })
       .optional(),
+    forecast: z.object({ dailySpending: amount, goalDay: day }).optional(),
   }),
   accounts: z
     .array(
@@ -125,6 +126,19 @@ const schema = z.object({
       }),
     )
     .max(200),
+  plannedIncomes: z
+    .array(
+      z.object({
+        id,
+        name,
+        amount: positiveAmount,
+        date: date.refine((d) => d >= "2000-01-01" && d <= "2100-12-31"),
+        repeat: z.enum(["once", "monthly"]),
+        accountId: id,
+      }),
+    )
+    .max(200)
+    .optional(),
   transactions: z
     .array(
       z.object({
@@ -141,6 +155,8 @@ const schema = z.object({
         occurrenceDate: date.optional(),
         note: z.string().max(500).optional(),
         importKey: z.string().max(500).optional(),
+        plannedIncomeId: id.optional(),
+        incomeOccurrenceDate: date.optional(),
       }),
     )
     .max(20000),
@@ -166,6 +182,7 @@ export function decodeBackup(raw: string): FinanceState {
       state.goals,
       state.recurring,
       state.transactions,
+      state.plannedIncomes ?? [],
     ].every(unique)
   )
     throw new Error("В файле есть повторяющиеся записи. Импорт отменён.");
@@ -183,6 +200,11 @@ export function decodeBackup(raw: string): FinanceState {
   )
     throw new Error("Платёж ссылается на недоступный счёт.");
   const occurrences = new Set<string>();
+  const incomeOccurrences = new Set<string>();
+  if (
+    state.plannedIncomes?.some((p) => account(p.accountId)?.kind !== "spending")
+  )
+    throw new Error("Планируемый доход ссылается на недоступный счёт.");
   if (
     state.recurring.some(
       (p) =>
@@ -193,6 +215,17 @@ export function decodeBackup(raw: string): FinanceState {
   )
     throw new Error("В истории платежа повторяется месяц изменения условий.");
   for (const t of state.transactions) {
+    if (t.plannedIncomeId) {
+      const plan = state.plannedIncomes?.find(
+        (p) => p.id === t.plannedIncomeId,
+      );
+      if (!plan || t.type !== "income" || !t.incomeOccurrenceDate)
+        throw new Error("Неверная связь планируемого дохода.");
+      const key = `${plan.id}:${plan.repeat === "once" ? "once" : t.incomeOccurrenceDate.slice(0, 7)}`;
+      if (incomeOccurrences.has(key))
+        throw new Error("В файле одно поступление отмечено дважды.");
+      incomeOccurrences.add(key);
+    }
     if (!account(t.accountId))
       throw new Error("Операция ссылается на неизвестный счёт.");
     if (

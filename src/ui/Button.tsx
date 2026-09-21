@@ -49,7 +49,15 @@ export function Button({
       ]}
     >
       {icon && <Icon name={icon} size={19} color={textColor} />}
-      <Txt style={{ fontFamily: font.bold, color: textColor, fontSize: 14 }}>
+      <Txt
+        style={{
+          fontFamily: font.bold,
+          color: textColor,
+          fontSize: 14,
+          flexShrink: 1,
+          textAlign: "center",
+        }}
+      >
         {label}
       </Txt>
     </Pressable>
@@ -61,6 +69,7 @@ const s = StyleSheet.create({
     minHeight: 52,
     borderRadius: 15,
     paddingHorizontal: 19,
+    paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

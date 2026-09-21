@@ -13,7 +13,10 @@ export type SheetName =
   | "recurring"
   | "budget"
   | "payment"
-  | "csv";
+  | "csv"
+  | "forecast"
+  | "forecastSettings"
+  | "income";
 export interface SheetState {
   type: SheetName;
   id?: string;

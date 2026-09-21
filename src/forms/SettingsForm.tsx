@@ -1,3 +1,4 @@
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { View } from "react-native";
 import {
@@ -13,7 +14,6 @@ import {
 } from "../ui";
 import { useFinance } from "../store";
 import { moneyInput, parseMoney } from "../domain/finance";
-import { createInitialState } from "../domain/seed";
 import { exportBackup, importBackup } from "../backup";
 import type { FinanceState } from "../domain/types";
 import { ErrorText } from "./ErrorText";
@@ -30,7 +30,8 @@ export function SettingsForm({
   close: () => void;
   open: OpenSheet;
 }) {
-  const { state, update, replace, notify } = useFinance();
+  const { state, notify } = useFinance();
+  const actions = useFinanceActions();
   const [name, setName] = useState(state.settings.name);
   const [payday, setPayday] = useState(String(state.settings.payday));
   const [buffer, setBuffer] = useState(moneyInput(state.settings.buffer));
@@ -53,25 +54,16 @@ export function SettingsForm({
       setBusy(false);
     }
   };
-  const save = () => {
-    const parsed = parseMoney(buffer),
-      day = Number(payday);
-    if (parsed === null || !/^\d{1,2}$/.test(payday) || day < 1 || day > 31)
-      return setError(
-        "Укажите день дохода от 1 до 31 и резерв от 0 до 1 млрд ₽.",
-      );
-    update((s) => ({
-      ...s,
-      settings: {
-        ...s.settings,
-        name: name.trim(),
-        payday: day,
-        buffer: parsed,
-      },
-    }));
-    notify("Настройки сохранены");
-    close();
-  };
+  const save = () =>
+    void run(async () => {
+      const parsed = parseMoney(buffer),
+        day = Number(payday);
+      if (parsed === null)
+        return setError("Введите резерв в рублях, от нуля до 1 млрд ₽.");
+      actions.saveSettings({ name, payday: day, buffer: parsed });
+      notify("Настройки сохранены");
+      close();
+    });
   return (
     <>
       <Card style={{ backgroundColor: C.soft, gap: 12 }}>
@@ -177,11 +169,13 @@ export function SettingsForm({
           </Txt>
           <Button
             label="Заменить данные этой копией"
-            onPress={() => {
-              replace(pending);
-              notify("Данные восстановлены");
-              close();
-            }}
+            onPress={() =>
+              void run(async () => {
+                actions.restore(pending);
+                notify("Данные восстановлены");
+                close();
+              })
+            }
           />
           <Button
             label="Отмена восстановления"
@@ -240,17 +234,17 @@ export function SettingsForm({
                 ? "Да, заменить демоданными"
                 : "Да, начать с пустых счетов"
             }
-            onPress={() => {
-              const value = createInitialState(reset === "demo");
-              value.settings.name = state.settings.name;
-              replace(value);
-              notify(
-                reset === "demo"
-                  ? "Демонстрационные данные загружены"
-                  : "Всё готово для вашего первого шага",
-              );
-              close();
-            }}
+            onPress={() =>
+              void run(async () => {
+                actions.reset(reset === "demo");
+                notify(
+                  reset === "demo"
+                    ? "Демонстрационные данные загружены"
+                    : "Всё готово для вашего первого шага",
+                );
+                close();
+              })
+            }
           />
           <Button
             label="Отмена"

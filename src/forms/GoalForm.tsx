@@ -1,14 +1,17 @@
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { Pressable } from "react-native";
 import { C, Row, IconTile, Button, Field, Notice } from "../ui";
 import { useFinance } from "../store";
-import { goalSaved, moneyInput, parseMoney, uid } from "../domain/finance";
+import { moneyInput, parseMoney } from "../domain/finance";
 import type { Goal } from "../domain/types";
 import { ErrorText } from "./ErrorText";
 import { DeleteButton } from "./DeleteButton";
 
 export function GoalForm({ id, close }: { id?: string; close: () => void }) {
-  const { state, update, notify } = useFinance();
+  const { state, notify } = useFinance();
+  const actions = useFinanceActions();
   const original = state.goals.find((g) => g.id === id);
   const [name, setName] = useState(original?.name ?? "");
   const [target, setTarget] = useState(
@@ -20,34 +23,23 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
   const [icon, setIcon] = useState<Goal["icon"]>(
     original?.icon ?? "airplane-outline",
   );
-  const [error, setError] = useState("");
-  const save = () => {
-    const targetAmount = parseMoney(target),
-      monthlyAmount = parseMoney(monthly);
-    if (!name.trim() || !targetAmount || monthlyAmount === null)
-      return setError(
-        "Укажите название, положительную сумму цели и ежемесячный взнос от 0 ₽.",
-      );
-    if (original && targetAmount < goalSaved(state, original))
-      return setError("Сумма цели не может быть меньше уже накопленного.");
-    const goal: Goal = {
-      id: original?.id ?? uid(),
-      name: name.trim(),
-      target: targetAmount,
-      monthly: monthlyAmount,
-      initialSaved: original?.initialSaved ?? 0,
-      icon,
-      color: icon === "shield-checkmark-outline" ? C.lavender : "#EAF0E8",
-    };
-    update((s) => ({
-      ...s,
-      goals: original
-        ? s.goals.map((g) => (g.id === id ? goal : g))
-        : [...s.goals, goal],
-    }));
-    notify(original ? "Цель обновлена" : "Первый шаг к мечте сделан");
-    close();
-  };
+  const { error, setError, run } = useActionError();
+  const save = () =>
+    run(() => {
+      const targetAmount = parseMoney(target),
+        monthlyAmount = parseMoney(monthly);
+      if (targetAmount === null || monthlyAmount === null)
+        return setError("Укажите сумму цели и ежемесячный взнос в рублях.");
+      actions.saveGoal({
+        id,
+        name,
+        target: targetAmount,
+        monthly: monthlyAmount,
+        icon,
+      });
+      notify(original ? "Цель обновлена" : "Первый шаг к мечте сделан");
+      close();
+    });
   return (
     <>
       <Row style={{ justifyContent: "center", gap: 14 }}>
@@ -112,17 +104,13 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
         <DeleteButton
           label="Удалить цель"
           explanation="Цель исчезнет из плана. Все накопленные деньги останутся на счетах, а переводы — в истории."
-          onDelete={() => {
-            update((s) => ({
-              ...s,
-              goals: s.goals.filter((g) => g.id !== id),
-              transactions: s.transactions.map((t) =>
-                t.goalId === id ? { ...t, goalId: undefined } : t,
-              ),
-            }));
-            notify("Цель удалена, деньги остались на счетах");
-            close();
-          }}
+          onDelete={() =>
+            run(() => {
+              actions.deleteGoal(original.id);
+              notify("Цель удалена, деньги остались на счетах");
+              close();
+            })
+          }
         />
       )}
     </>

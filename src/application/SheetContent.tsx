@@ -1,4 +1,7 @@
 import { CsvImportSheet } from "../features/import/CsvImportSheet";
+import { ForecastPanel } from "../features/forecast/ForecastPanel";
+import { ForecastSettingsForm } from "../features/forecast/ForecastSettingsForm";
+import { IncomePlanForm } from "../features/forecast/IncomePlanForm";
 import type { SheetState, OpenSheet } from "../navigation/types";
 import {
   TransactionForm,
@@ -39,6 +42,18 @@ export function SheetContent({
       return <SettingsForm close={close} open={open} />;
     case "csv":
       return <CsvImportSheet close={close} />;
+    case "forecast":
+      return <ForecastPanel open={open} />;
+    case "forecastSettings":
+      return <ForecastSettingsForm close={() => open({ type: "forecast" })} />;
+    case "income":
+      return (
+        <IncomePlanForm
+          sheet={sheet}
+          close={() => open({ type: "forecast" })}
+          open={open}
+        />
+      );
     case "goal":
       return <GoalForm id={sheet.id} close={close} />;
     case "fund":

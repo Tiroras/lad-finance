@@ -60,6 +60,8 @@ export interface Transaction {
   occurrenceDate?: string;
   note?: string;
   importKey?: string;
+  plannedIncomeId?: string;
+  incomeOccurrenceDate?: string;
 }
 
 export interface Goal {
@@ -94,6 +96,20 @@ export interface ReminderPreferences {
   hour: number;
 }
 
+export interface PlannedIncome {
+  id: string;
+  name: string;
+  amount: number;
+  date: string;
+  repeat: "once" | "monthly";
+  accountId: string;
+}
+
+export interface ForecastPreferences {
+  dailySpending: number;
+  goalDay: number;
+}
+
 export interface FinanceState {
   version: 1;
   demo: boolean;
@@ -102,11 +118,13 @@ export interface FinanceState {
   categories: Category[];
   goals: Goal[];
   recurring: Recurring[];
+  plannedIncomes?: PlannedIncome[];
   settings: {
     name: string;
     payday: number;
     buffer: number;
     reminders?: ReminderPreferences;
+    forecast?: ForecastPreferences;
   };
 }
 

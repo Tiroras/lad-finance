@@ -1,16 +1,10 @@
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { View } from "react-native";
 import { C, font, Txt, IconTile, Button, Field, Notice, Progress } from "../ui";
 import { useFinance } from "../store";
-import {
-  goalSaved,
-  money,
-  moneyInput,
-  parseMoney,
-  uid,
-  validateTransaction,
-} from "../domain/finance";
-import type { Transaction } from "../domain/types";
+import { goalSaved, money, moneyInput, parseMoney } from "../domain/finance";
 import type { OpenSheet } from "../navigation/types";
 import { ErrorText } from "./ErrorText";
 import { AccountPicker } from "./AccountPicker";
@@ -24,9 +18,10 @@ export function FundGoalForm({
   close: () => void;
   open: OpenSheet;
 }) {
-  const { state, update, notify, today } = useFinance();
+  const { state, notify, today } = useFinance();
+  const actions = useFinanceActions();
   const goal = state.goals.find((g) => g.id === id)!;
-  const saved = goalSaved(state, goal),
+  const saved = goalSaved(state, goal, today),
     remaining = Math.max(0, goal.target - saved);
   const [amount, setAmount] = useState(
     moneyInput(Math.min(goal.monthly || remaining, remaining)),
@@ -34,28 +29,16 @@ export function FundGoalForm({
   const [accountId, setAccountId] = useState(
     state.accounts.find((a) => a.kind === "spending")!.id,
   );
-  const [error, setError] = useState("");
-  const save = () => {
-    const parsed = parseMoney(amount);
-    if (!parsed || parsed > remaining)
-      return setError(`Введите сумму от 0,01 ₽ до ${money(remaining, true)}.`);
-    const transaction: Transaction = {
-      id: uid(),
-      type: "transfer",
-      title: goal.name,
-      amount: parsed,
-      date: today,
-      category: "other",
-      accountId,
-      toAccountId: state.accounts.find((a) => a.kind === "savings")!.id,
-      goalId: goal.id,
-    };
-    const validation = validateTransaction(state, transaction);
-    if (validation) return setError(validation);
-    update((s) => ({ ...s, transactions: [transaction, ...s.transactions] }));
-    notify("Вы стали ближе к цели");
-    close();
-  };
+  const { error, setError, run } = useActionError();
+  const save = () =>
+    run(() => {
+      const parsed = parseMoney(amount);
+      if (parsed === null)
+        return setError("Введите корректную сумму пополнения.");
+      actions.fundGoal({ goalId: goal.id, amount: parsed, accountId });
+      notify("Вы стали ближе к цели");
+      close();
+    });
   return (
     <>
       <View style={{ alignItems: "center", gap: 14 }}>
