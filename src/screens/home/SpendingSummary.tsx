@@ -1,9 +1,17 @@
 import { View } from "react-native";
 import { categorySpending, dateLabel, totals } from "../../domain/finance";
-import { useMoney } from "../../hooks/useMoney";
-import type { Navigate } from "../../navigation/types";
-import { useFinance } from "../../store";
-import { C, Card, Donut, Empty, font, Row, Section, Txt } from "../../ui";
+import { useMoney, useFinance } from "../../state/finance";
+import type { Navigate } from "../../application/navigation/types";
+import {
+  C,
+  Card,
+  Donut,
+  Empty,
+  font,
+  Row,
+  Section,
+  Txt,
+} from "../../shared/ui";
 
 export function SpendingSummary({
   navigate,

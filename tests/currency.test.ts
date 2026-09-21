@@ -46,8 +46,8 @@ import { createInitialState } from "../src/domain/seed";
 import {
   parseScenarioDraft,
   scenarioDraft,
-} from "../src/features/scenarios/scenarioDraft";
-import { decodeExchangeRates } from "../src/services/exchangeRates";
+} from "../src/features/scenarios/model/scenarioDraft";
+import { decodeExchangeRates } from "../src/infrastructure/exchange-rates/exchangeRates";
 
 const TODAY = "2026-09-10";
 function fixture() {

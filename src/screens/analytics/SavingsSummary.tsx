@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import { useMoney } from "../../hooks/useMoney";
-import { Card, font, IconTile, Row, Txt } from "../../ui";
+import { useMoney } from "../../state/finance";
+import { Card, font, IconTile, Row, Txt } from "../../shared/ui";
 
 export function SavingsSummary({
   income,

@@ -11,7 +11,7 @@ import {
   LEGACY_STORAGE_KEY,
   VAULT_STORAGE_KEY,
   type VaultDependencies,
-} from "../src/security/vault";
+} from "../src/infrastructure/storage/vault";
 import { createInitialState } from "../src/domain/seed";
 import { encodeBackup } from "../src/domain/backup";
 

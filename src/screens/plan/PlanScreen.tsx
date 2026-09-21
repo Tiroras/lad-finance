@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { Segments } from "../../ui";
-import type { OpenSheet } from "../../navigation/types";
-import { ScreenHeading } from "../shared/ScreenHeading";
-import { BudgetsPanel } from "./BudgetsPanel";
-import { GoalsPanel } from "./GoalsPanel";
-import { PaymentsPanel } from "./PaymentsPanel";
-import { ForecastPanel } from "../../features/forecast/ForecastPanel";
+import { Segments, ScreenHeading } from "../../shared/ui";
+import type { OpenSheet } from "../../application/navigation/types";
+import { BudgetsPanel } from "../../features/budgets";
+import { GoalsPanel } from "../../features/goals";
+import { PaymentsPanel } from "../../features/payments";
+import { ForecastPanel } from "../../features/forecast";
 
 export function PlanScreen({ open }: { open: OpenSheet }) {
   const [tab, setTab] = useState("budgets");

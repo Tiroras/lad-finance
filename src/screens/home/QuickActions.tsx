@@ -1,6 +1,6 @@
 import { View, Pressable, StyleSheet } from "react-native";
-import { font, Txt, Row, Icon, interactionStyles } from "../../ui";
-import type { OpenSheet } from "../../navigation/types";
+import { font, Txt, Row, Icon, interactionStyles } from "../../shared/ui";
+import type { OpenSheet } from "../../application/navigation/types";
 
 export function QuickActions({ open }: { open: OpenSheet }) {
   return (

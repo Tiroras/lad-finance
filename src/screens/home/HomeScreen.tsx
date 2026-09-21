@@ -1,15 +1,14 @@
 import { View, useWindowDimensions } from "react-native";
-import { Txt, Row, Icon, Button } from "../../ui";
-import type { OpenSheet, Navigate } from "../../navigation/types";
-import { RecentTransactions } from "./RecentTransactions";
+import { Txt, Row, Icon, Button } from "../../shared/ui";
+import type { OpenSheet, Navigate } from "../../application/navigation/types";
+import { RecentTransactions } from "../../features/transactions";
 import { HomeHeader } from "./HomeHeader";
-import { SpendableCard } from "./SpendableCard";
+import { SpendableCard, PurchaseInsight } from "../../features/forecast";
 import { QuickActions } from "./QuickActions";
-import { AccountsSummary } from "./AccountsSummary";
-import { PurchaseInsight } from "./PurchaseInsight";
+import { AccountsSummary } from "../../features/accounts";
 import { SpendingSummary } from "./SpendingSummary";
-import { GoalsSummary } from "./GoalsSummary";
-import { NextPaymentCard } from "./NextPaymentCard";
+import { GoalsSummary } from "../../features/goals";
+import { NextPaymentCard } from "../../features/payments";
 
 export function HomeScreen({
   open,

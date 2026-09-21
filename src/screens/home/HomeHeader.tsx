@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row } from "../../ui";
+import { useFinance } from "../../state/finance";
+import { C, font, Txt, Row } from "../../shared/ui";
 import { dateLabel } from "../../domain/finance";
 
 export function HomeHeader() {

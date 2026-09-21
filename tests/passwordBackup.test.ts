@@ -8,15 +8,15 @@ import {
 } from "node:crypto";
 import { createInitialState } from "../src/domain/seed";
 import { decodeBackup, encodeBackup } from "../src/domain/backup";
-import { backupCrypto } from "../src/services/backupCrypto";
-import { derivePasswordKey } from "../src/security/passwordKdf";
+import { backupCrypto } from "../src/infrastructure/crypto/backupCrypto";
+import { derivePasswordKey } from "../src/infrastructure/crypto/passwordKdf";
 import {
   BACKUP_ITERATIONS,
   decryptBackup,
   encryptBackup,
   parsePasswordEnvelope,
   type BackupCrypto,
-} from "../src/security/passwordBackup";
+} from "../src/infrastructure/crypto/passwordBackup";
 
 const password = "Секретная фраза 🔑 2026";
 const nodeCrypto: BackupCrypto = {

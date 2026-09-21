@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-import { useMoney } from "../../hooks/useMoney";
-import { C, Card, font, IconTile, Row, Txt } from "../../ui";
+import { useMoney } from "../../state/finance";
+import { C, Card, font, IconTile, Row, Txt } from "../../shared/ui";
 
 export function MonthlyTotals({
   income,

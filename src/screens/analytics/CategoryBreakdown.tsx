@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { categorySpending } from "../../domain/finance";
-import { useMoney } from "../../hooks/useMoney";
+import { useMoney } from "../../state/finance";
 import {
   C,
   Card,
@@ -12,7 +12,7 @@ import {
   Row,
   Section,
   Txt,
-} from "../../ui";
+} from "../../shared/ui";
 
 export function CategoryBreakdown({
   spending,

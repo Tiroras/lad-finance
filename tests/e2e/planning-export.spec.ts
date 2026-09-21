@@ -4,8 +4,8 @@ import { createInitialState } from "../../src/domain/seed";
 import { money } from "../../src/domain/finance";
 import { parseCsv } from "../../src/domain/csv";
 import type { FinanceState } from "../../src/domain/types";
-import { encryptBackup } from "../../src/security/passwordBackup";
-import { backupCrypto } from "../../src/services/backupCrypto";
+import { encryptBackup } from "../../src/infrastructure/crypto/passwordBackup";
+import { backupCrypto } from "../../src/infrastructure/crypto/backupCrypto";
 
 const TODAY = "2026-09-10",
   KEY = "lad-finance-v1";
