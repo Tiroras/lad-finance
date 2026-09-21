@@ -1,3 +1,4 @@
+import { useFinanceActions } from "../../hooks/useFinanceActions";
 import { useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { useFinance } from "../../store";
@@ -5,7 +6,6 @@ import { AccountPicker } from "../../forms/AccountPicker";
 import { ErrorText } from "../../forms/ErrorText";
 import { accountBalance, money } from "../../domain/finance";
 import {
-  applyCsvImport,
   CSV_MAX_BYTES,
   guessCsvMapping,
   importedBalance,
@@ -45,7 +45,8 @@ const columnLabels: Record<CsvColumn, string> = {
 };
 
 export function CsvImportSheet({ close }: { close: () => void }) {
-  const { state, update, notify, today } = useFinance();
+  const { state, notify, today } = useFinance();
+  const actions = useFinanceActions();
   const [file, setFile] = useState<{ name: string; bytes: Uint8Array } | null>(
     null,
   );
@@ -161,15 +162,11 @@ export function CsvImportSheet({ close }: { close: () => void }) {
     try {
       // Validate again against the latest in-memory state before the atomic update.
       submitted.current = true;
-      const next = update((current) =>
-        applyCsvImport(
-          current,
-          parsed.table!,
-          options,
-          excluded,
-          overrides,
-          today,
-        ),
+      const next = actions.importCsv(
+        parsed.table,
+        options,
+        excluded,
+        overrides,
       );
       notify(
         `Импортировано операций: ${next.transactions.length - state.transactions.length}`,

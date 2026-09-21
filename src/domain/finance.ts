@@ -323,6 +323,8 @@ export function validateTransaction(
   transaction: Transaction,
   today = localDate(),
 ): string | null {
+  if (!["expense", "income", "transfer"].includes(transaction.type))
+    return "Неизвестный тип операции.";
   if (!transaction.title.trim() || transaction.title.length > 120)
     return "Укажите название до 120 символов.";
   if (
@@ -337,6 +339,11 @@ export function validateTransaction(
     return "Выберите счёт.";
   if (!state.categories.some((c) => c.id === transaction.category))
     return "Выберите категорию.";
+  if ((transaction.note?.length ?? 0) > 500)
+    return "Примечание должно быть не длиннее 500 символов.";
+  const source = state.accounts.find((a) => a.id === transaction.accountId)!;
+  if (transaction.type === "expense" && source.kind === "savings")
+    return "Для расхода сначала переведите свободные накопления на обычный счёт.";
   if (transaction.type === "transfer") {
     if (
       transaction.toAccountId === transaction.accountId ||
@@ -353,6 +360,77 @@ export function validateTransaction(
       accountBalance(state, transaction.accountId, transaction.date)
     )
       return "На выбранном счёте недостаточно средств.";
+    if (
+      source.kind === "savings" &&
+      state.accounts.find((a) => a.id === transaction.toAccountId)?.kind !==
+        "savings"
+    ) {
+      const savings = state.accounts
+        .filter((a) => a.kind === "savings")
+        .reduce(
+          (sum, a) => sum + accountBalance(state, a.id, transaction.date),
+          0,
+        );
+      const allocated = state.goals.reduce(
+        (sum, g) => sum + goalSaved(state, g, transaction.date),
+        0,
+      );
+      if (transaction.amount > savings - allocated)
+        return "Эти накопления распределены по целям. Сначала освободите средства в целях.";
+    }
+  }
+  if (transaction.goalId) {
+    const goal = state.goals.find((g) => g.id === transaction.goalId);
+    if (
+      !goal ||
+      transaction.type !== "transfer" ||
+      source.kind !== "spending" ||
+      state.accounts.find((a) => a.id === transaction.toAccountId)?.kind !==
+        "savings"
+    )
+      return "Пополнять цель можно только с обычного счёта на накопительный.";
+    if (goalSaved(state, goal, today) + transaction.amount > goal.target)
+      return "Пополнение превышает оставшуюся сумму цели.";
+  }
+  if (transaction.recurringId) {
+    if (
+      transaction.type !== "expense" ||
+      !transaction.occurrenceDate ||
+      !validDate(transaction.occurrenceDate) ||
+      !state.recurring.some((p) => p.id === transaction.recurringId)
+    )
+      return "Неверная связь регулярного платежа.";
+    if (
+      state.transactions.some(
+        (t) =>
+          t.recurringId === transaction.recurringId &&
+          t.occurrenceDate?.slice(0, 7) ===
+            transaction.occurrenceDate?.slice(0, 7),
+      )
+    )
+      return "Этот месяц уже оплачен.";
+  }
+  if (transaction.plannedIncomeId) {
+    const plan = state.plannedIncomes?.find(
+      (p) => p.id === transaction.plannedIncomeId,
+    );
+    if (
+      !plan ||
+      transaction.type !== "income" ||
+      !transaction.incomeOccurrenceDate ||
+      !validDate(transaction.incomeOccurrenceDate)
+    )
+      return "Неверная связь планируемого дохода.";
+    if (
+      state.transactions.some(
+        (t) =>
+          t.plannedIncomeId === plan.id &&
+          (plan.repeat === "once" ||
+            t.incomeOccurrenceDate?.slice(0, 7) ===
+              transaction.incomeOccurrenceDate?.slice(0, 7)),
+      )
+    )
+      return "Это поступление уже записано.";
   }
   return null;
 }

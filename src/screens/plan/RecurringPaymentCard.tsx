@@ -1,7 +1,10 @@
+import { ErrorText } from "../../forms/ErrorText";
+import { useActionError } from "../../hooks/useActionError";
+import { useFinanceActions } from "../../hooks/useFinanceActions";
 import { View, Pressable, Switch } from "react-native";
 import { useFinance } from "../../store";
 import { C, font, Txt, Row, Card, IconTile } from "../../ui";
-import { localDate, money } from "../../domain/finance";
+import { money } from "../../domain/finance";
 import type { OpenSheet } from "../../navigation/types";
 import type { Recurring } from "../../domain/types";
 
@@ -12,7 +15,9 @@ export function RecurringPaymentCard({
   payment: Recurring;
   open: OpenSheet;
 }) {
-  const { update, notify } = useFinance();
+  const { notify } = useFinance();
+  const actions = useFinanceActions();
+  const { error, run } = useActionError();
   return (
     <Card style={{ padding: 16, opacity: p.active ? 1 : 0.65 }}>
       <Row>
@@ -44,30 +49,22 @@ export function RecurringPaymentCard({
           <Switch
             accessibilityLabel={`Учитывать ${p.name} в плане`}
             value={p.active}
-            onValueChange={(active) => {
-              update((s) => ({
-                ...s,
-                recurring: s.recurring.map((item) =>
-                  item.id === p.id
-                    ? {
-                        ...item,
-                        active,
-                        startsOn: active ? localDate() : item.startsOn,
-                      }
-                    : item,
-                ),
-              }));
-              notify(
-                active
-                  ? "Платёж снова учтён в плане"
-                  : "Платёж исключён из прогноза",
-              );
-            }}
+            onValueChange={(active) =>
+              run(() => {
+                actions.setRecurringActive(p.id, active);
+                notify(
+                  active
+                    ? "Платёж снова учтён в плане"
+                    : "Платёж исключён из прогноза",
+                );
+              })
+            }
             trackColor={{ false: "#DADDDA", true: "#73986C" }}
             thumbColor="#fff"
           />
         </View>
       </Row>
+      <ErrorText error={error} />
     </Card>
   );
 }

@@ -20,7 +20,7 @@ export function AppSheet({
   const titles: Record<SheetState["type"], string> = {
     transaction: sheet?.id ? "Детали операции" : "Новая операция",
     formula: "Всё прозрачно",
-    simulate: "А если купить сейчас?",
+    simulate: "Примерка покупки",
     accounts: "Мои счета",
     account: sheet?.id ? "Настроить счёт" : "Новый счёт",
     settings: "Ваш Лад",
@@ -30,6 +30,9 @@ export function AppSheet({
     budget: "Бюджет категории",
     payment: "Запланированный платёж",
     csv: "Импорт банковской выписки",
+    forecast: "Прогноз по дням",
+    forecastSettings: "Параметры прогноза",
+    income: sheet?.id ? "План дохода" : "Запланировать доход",
   };
 
   return (

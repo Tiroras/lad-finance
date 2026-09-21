@@ -6,6 +6,7 @@ import { ScreenHeading } from "../shared/ScreenHeading";
 import { BudgetsPanel } from "./BudgetsPanel";
 import { GoalsPanel } from "./GoalsPanel";
 import { PaymentsPanel } from "./PaymentsPanel";
+import { ForecastPanel } from "../../features/forecast/ForecastPanel";
 
 export function PlanScreen({ open }: { open: OpenSheet }) {
   const [tab, setTab] = useState("budgets");
@@ -23,11 +24,13 @@ export function PlanScreen({ open }: { open: OpenSheet }) {
           { value: "budgets", label: "Бюджеты" },
           { value: "goals", label: "Цели" },
           { value: "payments", label: "Платежи" },
+          { value: "forecast", label: "Прогноз" },
         ]}
       />
       {tab === "budgets" && <BudgetsPanel open={open} />}
       {tab === "goals" && <GoalsPanel open={open} />}
       {tab === "payments" && <PaymentsPanel open={open} />}
+      {tab === "forecast" && <ForecastPanel open={open} />}
     </View>
   );
 }

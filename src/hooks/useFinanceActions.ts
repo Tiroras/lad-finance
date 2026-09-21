@@ -1,0 +1,70 @@
+import { useFinance } from "../store";
+import * as actions from "../domain/actions";
+import {
+  applyCsvImport,
+  type CsvOptions,
+  type CsvOverride,
+  type CsvTable,
+} from "../domain/csv";
+import type {
+  FinanceState,
+  ForecastPreferences,
+  ReminderPreferences,
+} from "../domain/types";
+
+export function useFinanceActions() {
+  const { update, today } = useFinance();
+  return {
+    saveTransaction: (input: actions.TransactionInput) =>
+      update((s) => actions.saveTransaction(s, input, today)),
+    deleteTransaction: (id: string) =>
+      update((s) => actions.deleteTransaction(s, id, today)),
+    saveAccount: (input: actions.AccountInput) =>
+      update((s) => actions.saveAccount(s, input, today)),
+    saveGoal: (input: actions.GoalInput) =>
+      update((s) => actions.saveGoal(s, input, today)),
+    deleteGoal: (id: string) => update((s) => actions.deleteGoal(s, id)),
+    fundGoal: (input: { goalId: string; amount: number; accountId: string }) =>
+      update((s) => actions.fundGoal(s, input, today)),
+    saveRecurring: (input: actions.RecurringInput) =>
+      update((s) => actions.saveRecurring(s, input, today)),
+    deleteRecurring: (id: string) =>
+      update((s) => actions.deleteRecurring(s, id)),
+    setRecurringActive: (id: string, active: boolean) =>
+      update((s) => actions.setRecurringActive(s, id, active, today)),
+    setPaymentSkipped: (id: string, date: string, skipped: boolean) =>
+      update((s) => actions.setPaymentSkipped(s, id, date, skipped, today)),
+    payRecurring: (id: string, date: string, transactionId?: string) =>
+      update((s) => actions.payRecurring(s, id, date, today, transactionId)),
+    saveBudget: (id: string, amount: number) =>
+      update((s) => actions.saveBudget(s, id, amount)),
+    saveSettings: (
+      input: Pick<FinanceState["settings"], "name" | "payday" | "buffer">,
+    ) => update((s) => actions.saveSettings(s, input)),
+    saveReminderPreferences: (patch: Partial<ReminderPreferences>) =>
+      update((s) => actions.saveReminderPreferences(s, patch)),
+    saveForecastPreferences: (preferences: ForecastPreferences) =>
+      update((s) => actions.saveForecastPreferences(s, preferences)),
+    savePlannedIncome: (input: actions.IncomeInput) =>
+      update((s) => actions.savePlannedIncome(s, input)),
+    deletePlannedIncome: (id: string) =>
+      update((s) => actions.deletePlannedIncome(s, id)),
+    receivePlannedIncome: (id: string, date: string, transactionId?: string) =>
+      update((s) =>
+        actions.receivePlannedIncome(s, id, date, today, transactionId),
+      ),
+    importCsv: (
+      table: CsvTable,
+      options: CsvOptions,
+      excluded: ReadonlySet<number>,
+      overrides: Record<number, CsvOverride>,
+    ) =>
+      update((s) =>
+        applyCsvImport(s, table, options, excluded, overrides, today),
+      ),
+    restore: (backup: FinanceState) =>
+      update((s) => actions.restoreFinance(s, backup)),
+    reset: (demo: boolean) =>
+      update((s) => actions.resetFinance(s, demo, today)),
+  };
+}

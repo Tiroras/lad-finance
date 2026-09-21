@@ -1,5 +1,5 @@
 import { View, useWindowDimensions } from "react-native";
-import { Txt, Row, Icon } from "../../ui";
+import { Txt, Row, Icon, Button } from "../../ui";
 import type { OpenSheet, Navigate } from "../../navigation/types";
 import { RecentTransactions } from "./RecentTransactions";
 import { HomeHeader } from "./HomeHeader";
@@ -34,6 +34,12 @@ export function HomeScreen({
         </View>
         <View style={{ flex: 1, gap: 24 }}>
           <PurchaseInsight open={open} wide={wide} />
+          <Button
+            label="Прогноз по дням"
+            icon="calendar-outline"
+            variant="secondary"
+            onPress={() => open({ type: "forecast" })}
+          />
           <SpendingSummary navigate={navigate} hidden={hidden} />
           <GoalsSummary open={open} navigate={navigate} />
         </View>

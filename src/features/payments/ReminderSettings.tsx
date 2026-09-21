@@ -1,3 +1,4 @@
+import { useFinanceActions } from "../../hooks/useFinanceActions";
 import { useState } from "react";
 import { Linking, Platform, View } from "react-native";
 import { useFinance } from "../../store";
@@ -16,20 +17,15 @@ import {
 } from "../../ui";
 
 export function ReminderSettings() {
-  const { state, update } = useFinance();
+  const { state } = useFinance();
+  const actions = useFinanceActions();
   const preferences = state.settings.reminders ?? DEFAULT_REMINDERS;
   const { result, error, retry } = useReminders();
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState("");
   const [hour, setHour] = useState(String(preferences.hour));
   const change = (patch: Partial<typeof preferences>) =>
-    update((s) => ({
-      ...s,
-      settings: {
-        ...s.settings,
-        reminders: { ...(s.settings.reminders ?? DEFAULT_REMINDERS), ...patch },
-      },
-    }));
+    actions.saveReminderPreferences(patch);
   if (Platform.OS === "web")
     return (
       <Notice>
