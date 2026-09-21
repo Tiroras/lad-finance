@@ -1,8 +1,10 @@
-import { View, Pressable } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Card, Icon, IconTile } from "../../ui";
-import { accountBalance, money } from "../../domain/finance";
+import { Pressable, View } from "react-native";
+import { accountToBase } from "../../domain/currency";
+import { accountBalance } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { C, Card, font, Icon, IconTile, Row, Txt } from "../../ui";
 
 export function AccountsSummary({
   open,
@@ -11,9 +13,11 @@ export function AccountsSummary({
   open: OpenSheet;
   hidden: boolean;
 }) {
+  const { money, symbol: baseSymbol } = useMoney();
   const { state } = useFinance();
   const balance = state.accounts.reduce(
-    (sum, account) => sum + accountBalance(state, account.id),
+    (sum, account) =>
+      sum + accountToBase(state, accountBalance(state, account.id), account.id),
     0,
   );
   return (
@@ -28,7 +32,7 @@ export function AccountsSummary({
           <View style={{ flex: 1, gap: 5 }}>
             <Txt style={{ color: C.muted, fontSize: 10 }}>На всех счетах</Txt>
             <Txt style={{ fontSize: 20, fontFamily: font.bold }}>
-              {hidden ? "••• ••• ₽" : money(balance)}
+              {hidden ? `••• ••• ${baseSymbol}` : money(balance)}
             </Txt>
           </View>
           <Txt style={{ color: C.muted, fontSize: 10 }}>

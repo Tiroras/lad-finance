@@ -73,7 +73,7 @@ export function createInitialState(
   today = localDate(),
 ): FinanceState {
   const state: FinanceState = {
-    version: 1,
+    version: 3,
     demo,
     settings: { name: "", payday: 25, buffer: demo ? 1000000 : 0 },
     accounts: [
@@ -106,6 +106,7 @@ export function createInitialState(
     categories: CATEGORIES.map((c) => ({ ...c })),
     goals: [],
     recurring: [],
+    scenarios: [],
   };
   if (!demo) return state;
   state.goals = [

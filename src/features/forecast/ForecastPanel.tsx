@@ -5,15 +5,17 @@ import {
   forecast,
   type ForecastHorizon,
 } from "../../domain/forecast";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
 import { useFinance } from "../../store";
 import { Button, C, Notice, Txt } from "../../ui";
+import { CurrencyNotice } from "../currencies/CurrencyNotice";
 import { ForecastRange } from "./ForecastRange";
 import { ForecastResultView } from "./ForecastResultView";
 import { IncomePlans } from "./IncomePlans";
 
 export function ForecastPanel({ open }: { open: OpenSheet }) {
+  const { money } = useMoney();
   const { state, today } = useFinance();
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
   const result = useMemo(
@@ -23,6 +25,7 @@ export function ForecastPanel({ open }: { open: OpenSheet }) {
   const preferences = state.settings.forecast ?? DEFAULT_FORECAST;
   return (
     <View style={{ gap: 20 }}>
+      <CurrencyNotice />
       <ForecastRange value={horizon} onChange={setHorizon} />
       <Button
         label="Настроить прогноз"
@@ -31,6 +34,12 @@ export function ForecastPanel({ open }: { open: OpenSheet }) {
         onPress={() => open({ type: "forecastSettings" })}
       />
       <ForecastResultView result={result} open={open} />
+      <Button
+        label="Мои сценарии"
+        icon="git-compare-outline"
+        variant="secondary"
+        onPress={() => open({ type: "scenarios" })}
+      />
       <IncomePlans open={open} />
       <Notice>
         Повседневные расходы: {money(preferences.dailySpending)} в день с

@@ -1,3 +1,5 @@
+import { validateScenarioCurrencies } from "./scenarios";
+import { accountToBase, receivedAmount, toBase } from "./currency";
 import {
   accountBalance,
   dateInMonth,
@@ -12,7 +14,7 @@ import {
   validDate,
 } from "./finance";
 import { incomeOccurrences } from "./incomes";
-import type { FinanceState, ForecastPreferences } from "./types";
+import type { FinanceState, ForecastPreferences, SavedScenario } from "./types";
 
 export type ForecastHorizon = 30 | 60 | 90;
 export const DEFAULT_FORECAST: ForecastPreferences = {
@@ -25,9 +27,9 @@ export interface PurchaseScenario {
 }
 export interface ForecastEvent {
   id: string;
-  type: "income" | "payment" | "goal" | "daily" | "purchase";
+  type: "income" | "payment" | "goal" | "daily" | "purchase" | "expense";
   name: string;
-  // Signed change in the balance of spending accounts, in kopecks.
+  // Signed change in the balance of spending accounts, in base-currency minor units.
   amount: number;
   sourceId?: string;
   occurrenceDate: string;
@@ -57,11 +59,13 @@ export function forecast(
   horizon: ForecastHorizon,
   today = localDate(),
   purchase?: PurchaseScenario,
+  scenario?: SavedScenario,
 ): ForecastResult {
   if (![30, 60, 90].includes(horizon) || !validDate(today))
     throw new Error(
       "Укажите период прогноза 30, 60 или 90 дней и корректную дату.",
     );
+  if (scenario) validateScenarioCurrencies(state, scenario);
   const end = shiftDate(today, horizon);
   if (
     purchase &&
@@ -77,31 +81,49 @@ export function forecast(
     );
 
   const preferences = state.settings.forecast ?? DEFAULT_FORECAST;
+  const change = (source: "income" | "payment" | "goal", id: string) =>
+    scenario?.changes.find((c) => c.source === source && c.sourceId === id);
+  const dailySpending = scenario?.dailySpending ?? preferences.dailySpending;
   const byDate = new Map<string, ForecastEvent[]>();
   const add = (date: string, event: ForecastEvent) => {
     if (date >= today && date < end)
       byDate.set(date, [...(byDate.get(date) ?? []), event]);
   };
-  for (const { plan, date } of incomeOccurrences(state, today, end))
-    add(date, {
+  // Keep original occurrence identity when shifting dates, including early receipts.
+  for (const { plan, date } of incomeOccurrences(
+    state,
+    scenario ? shiftDate(today, -90) : today,
+    scenario ? shiftDate(end, 90) : end,
+    today,
+  )) {
+    const override = change("income", plan.id);
+    const amount = override?.amount ?? plan.amount;
+    if (amount === 0) continue;
+    add(shiftDate(date, override?.delayDays ?? 0), {
       id: `income:${plan.id}:${date}`,
       type: "income",
       name: plan.name,
-      amount: plan.amount,
+      amount: accountToBase(state, amount, plan.accountId),
       sourceId: plan.id,
       occurrenceDate: date,
     });
+  }
   for (const { payment, date, paid, skipped } of [
     ...overduePayments(state, today),
     ...upcoming(state, today, end),
   ]) {
     if (paid || skipped) continue;
     const overdue = date < today;
+    // A future price change must not rewrite existing arrears.
+    const amount = overdue
+      ? payment.amount
+      : (change("payment", payment.id)?.amount ?? payment.amount);
+    if (amount === 0) continue;
     add(overdue ? today : date, {
       id: `payment:${payment.id}:${date}`,
       type: "payment",
       name: payment.name,
-      amount: -payment.amount,
+      amount: -accountToBase(state, amount, payment.accountId),
       sourceId: payment.id,
       occurrenceDate: date,
       overdue,
@@ -118,7 +140,7 @@ export function forecast(
           monthKey(t.date) === monthKey(today) &&
           t.date <= today,
       )
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + receivedAmount(t), 0);
     for (
       let month = `${monthKey(today)}-01`;
       month < end && remaining > 0;
@@ -129,7 +151,7 @@ export function forecast(
         0,
         Math.min(
           remaining,
-          goal.monthly -
+          (change("goal", goal.id)?.amount ?? goal.monthly) -
             (monthKey(month) === monthKey(today) ? contributed : 0),
         ),
       );
@@ -139,7 +161,7 @@ export function forecast(
         id: `goal:${goal.id}:${date}`,
         type: "goal",
         name: goal.name,
-        amount: -amount,
+        amount: -toBase(state, amount, goal.currency),
         sourceId: goal.id,
         occurrenceDate: date,
         overdue: date < today,
@@ -148,14 +170,22 @@ export function forecast(
   }
   // Today's actual expenses are already included in the opening balance.
   for (let date = shiftDate(today, 1); date < end; date = shiftDate(date, 1))
-    if (preferences.dailySpending > 0)
+    if (dailySpending > 0)
       add(date, {
         id: `daily:${date}`,
         type: "daily",
         name: "Повседневные расходы",
-        amount: -preferences.dailySpending,
+        amount: -dailySpending,
         occurrenceDate: date,
       });
+  for (const event of scenario?.events ?? [])
+    add(event.date, {
+      id: `scenario:${event.id}`,
+      type: event.type,
+      name: event.name,
+      amount: event.type === "income" ? event.amount : -event.amount,
+      occurrenceDate: event.date,
+    });
   if (purchase)
     add(purchase.date, {
       id: "purchase",
@@ -167,7 +197,11 @@ export function forecast(
 
   const openingBalance = state.accounts
     .filter((a) => a.kind === "spending")
-    .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
+    .reduce(
+      (sum, a) =>
+        sum + accountToBase(state, accountBalance(state, a.id, today), a.id),
+      0,
+    );
   const days: ForecastDay[] = [];
   let balance = openingBalance,
     income = 0,

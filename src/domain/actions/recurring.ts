@@ -1,3 +1,4 @@
+import { accountCurrency } from "../currency";
 import {
   changedPaymentHistory,
   dateInMonth,
@@ -9,7 +10,13 @@ import {
 } from "../finance";
 import type { FinanceState, Recurring } from "../types";
 import { saveTransaction } from "./transactions";
-import { checkAmount, checkDay, checkName, ensure } from "./validation";
+import {
+  checkAmount,
+  checkCurrencyAmounts,
+  checkDay,
+  checkName,
+  ensure,
+} from "./validation";
 
 export type RecurringInput = Pick<
   Recurring,
@@ -33,6 +40,12 @@ export function saveRecurring(
     original || state.recurring.length < 200,
     "Можно создать не более 200 платежей.",
   );
+  ensure(
+    !original ||
+      accountCurrency(state, original.accountId) ===
+        accountCurrency(state, input.accountId),
+    "Для смены валюты создайте новый план. Валюта существующего плана сохраняется для истории и сценариев.",
+  );
   checkName(input.name);
   checkAmount(input.amount);
   checkDay(input.day);
@@ -50,8 +63,11 @@ export function saveRecurring(
     "Выберите повседневный счёт.",
   );
   ensure(
-    state.categories.some((c) => c.id === input.category),
-    "Выберите категорию.",
+    state.categories.some(
+      (c) =>
+        c.id === input.category && (!c.archived || original?.category === c.id),
+    ),
+    "Выберите активную категорию.",
   );
   const payment: Recurring = {
     ...input,
@@ -64,12 +80,15 @@ export function saveRecurring(
       (input.kind === "bill" ? "home-outline" : "musical-notes-outline"),
     color: original?.color ?? "#EEEBF5",
   };
-  return {
+  const next: FinanceState = {
     ...state,
     recurring: original
       ? state.recurring.map((p) => (p.id === payment.id ? payment : p))
       : [...state.recurring, payment],
   };
+
+  checkCurrencyAmounts(next, today);
+  return next;
 }
 
 export function deleteRecurring(state: FinanceState, id: string): FinanceState {

@@ -26,13 +26,13 @@ export function HomeScreen({
     <View style={{ gap: 25 }}>
       <HomeHeader />
       <View style={{ flexDirection: wide ? "row" : "column", gap: 24 }}>
-        <View style={{ flex: 1, gap: 22 }}>
+        <View style={{ flex: wide ? 1 : undefined, gap: 22 }}>
           <SpendableCard open={open} hidden={hidden} />
           <QuickActions open={open} />
           <AccountsSummary open={open} hidden={hidden} />
           {wide && <RecentTransactions open={open} navigate={navigate} />}
         </View>
-        <View style={{ flex: 1, gap: 24 }}>
+        <View style={{ flex: wide ? 1 : undefined, gap: 24 }}>
           <PurchaseInsight open={open} wide={wide} />
           <Button
             label="Прогноз по дням"

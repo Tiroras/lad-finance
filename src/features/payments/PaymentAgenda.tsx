@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { Pressable, View, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
+import { Pressable, StyleSheet, View } from "react-native";
+import { accountCurrency, accountToBase } from "../../domain/currency";
 import {
   dateLabel,
   daysBetween,
-  money,
   overduePayments,
   upcoming,
 } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
 import { Button, C, font, Icon, Notice, Row, Section, Txt } from "../../ui";
 
 export function PaymentAgenda({ open }: { open: OpenSheet }) {
+  const { money } = useMoney();
   const { state, today } = useFinance();
   const [limit, setLimit] = useState(30);
   const overdue = overduePayments(state, today);
@@ -22,9 +24,16 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
       {overdue.length > 0 && (
         <Notice tone="warning">
           Просрочено: {overdue.length} ·{" "}
-          {money(overdue.reduce((sum, o) => sum + o.payment.amount, 0))}. Эти
-          деньги остаются в резерве. Отметьте оплату или пропустите ненужный
-          платёж.
+          {money(
+            overdue.reduce(
+              (sum, o) =>
+                sum +
+                accountToBase(state, o.payment.amount, o.payment.accountId),
+              0,
+            ),
+          )}
+          . Эти деньги остаются в резерве. Отметьте оплату или пропустите
+          ненужный платёж.
         </Notice>
       )}
       {occurrences.length === 0 && (
@@ -45,7 +54,7 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
           <Pressable
             key={`${payment.id}-${date}`}
             accessibilityRole="button"
-            accessibilityLabel={`${payment.name}, ${dateLabel(date)}, ${status}, ${money(payment.amount)}`}
+            accessibilityLabel={`${payment.name}, ${dateLabel(date)}, ${status}, ${money(payment.amount, false, accountCurrency(state, payment.accountId))}`}
             onPress={() => open({ type: "payment", id: payment.id, date })}
           >
             <Row style={[styles.item, late && { borderColor: "#EED6CD" }]}>
@@ -71,7 +80,11 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
                 </Txt>
               </View>
               <Txt style={{ fontFamily: font.bold, fontSize: 12 }}>
-                {money(payment.amount)}
+                {money(
+                  payment.amount,
+                  false,
+                  accountCurrency(state, payment.accountId),
+                )}
               </Txt>
               <Icon
                 name={paid ? "checkmark-circle" : "chevron-forward"}

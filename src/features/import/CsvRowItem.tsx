@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Pressable, View } from "react-native";
+import type { CsvOverride, CsvPreviewRow } from "../../domain/csv";
+import { accountCurrency } from "../../domain/currency";
 import { AccountPicker } from "../../forms/AccountPicker";
 import { CategoryPicker } from "../../forms/CategoryPicker";
-import type { CsvOverride, CsvPreviewRow } from "../../domain/csv";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { useFinance } from "../../store";
 import {
   C,
   Card,
   Chip,
+  Field,
   font,
   Icon,
   Notice,
@@ -31,6 +34,8 @@ export function CsvRowItem({
   onToggle: () => void;
   onOverride: (value: CsvOverride) => void;
 }) {
+  const { money } = useMoney();
+  const { state } = useFinance();
   const [editing, setEditing] = useState(false);
   return (
     <Card style={{ padding: 14, gap: 10 }}>
@@ -64,7 +69,11 @@ export function CsvRowItem({
         </View>
         {row.transaction && (
           <Txt style={{ fontFamily: font.bold, fontSize: 12 }}>
-            {money(row.transaction.amount, true)}
+            {money(
+              row.transaction.amount,
+              true,
+              accountCurrency(state, row.transaction.accountId),
+            )}
           </Txt>
         )}
       </Row>
@@ -102,9 +111,27 @@ export function CsvRowItem({
                 selected={override.otherAccountId ?? ""}
                 exclude={accountId}
                 onChange={(otherAccountId) =>
-                  onOverride({ ...override, otherAccountId })
+                  onOverride({
+                    ...override,
+                    otherAccountId,
+                    otherAmount: undefined,
+                  })
                 }
               />
+              {override.otherAccountId &&
+                accountCurrency(state, accountId) !==
+                  accountCurrency(state, override.otherAccountId) && (
+                  <Field
+                    label={`Сумма на втором счёте, ${accountCurrency(state, override.otherAccountId)}`}
+                    accessibilityLabel={`Сумма второго счёта строки ${row.line}`}
+                    value={override.otherAmount ?? ""}
+                    onChangeText={(otherAmount) =>
+                      onOverride({ ...override, otherAmount })
+                    }
+                    keyboardType="decimal-pad"
+                    maxLength={16}
+                  />
+                )}
               <Txt style={{ fontSize: 11, color: C.muted }}>
                 Знак суммы задаёт направление: расход из счёта выписки или
                 приход на него. Перевод из накоплений запишите отдельно.

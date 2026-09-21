@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Icon, Progress, interactionStyles } from "../../ui";
-import { goalSaved, money } from "../../domain/finance";
+import { goalSaved } from "../../domain/finance";
 import type { Goal } from "../../domain/types";
+import { useMoney } from "../../hooks/useMoney";
+import { useFinance } from "../../store";
+import { C, font, Icon, interactionStyles, Progress, Row, Txt } from "../../ui";
 
 export function GoalPreview({
   goal,
@@ -11,6 +12,7 @@ export function GoalPreview({
   goal: Goal;
   onPress: () => void;
 }) {
+  const { money } = useMoney();
   const { state } = useFinance();
   const saved = goalSaved(state, goal),
     progress = saved / goal.target;
@@ -38,9 +40,9 @@ export function GoalPreview({
         {goal.name}
       </Txt>
       <Txt style={{ fontSize: 11, color: "#71806D", marginBottom: 14 }}>
-        {money(saved)}{" "}
+        {money(saved, false, goal.currency ?? "RUB")}{" "}
         <Txt style={{ fontSize: 10, color: "#71806D" }}>
-          из {money(goal.target)}
+          из {money(goal.target, false, goal.currency ?? "RUB")}
         </Txt>
       </Txt>
       <Progress
@@ -53,5 +55,12 @@ export function GoalPreview({
 }
 
 const st = StyleSheet.create({
-  goalPreview: { flex: 1, minWidth: 140, borderRadius: 19, padding: 16 },
+  goalPreview: {
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 140,
+    minWidth: 140,
+    borderRadius: 19,
+    padding: 16,
+  },
 });

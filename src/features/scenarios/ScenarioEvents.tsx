@@ -1,0 +1,96 @@
+import { View } from "react-native";
+import { uid } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { useFinance } from "../../store";
+import { Button, Card, Field, Segments, Txt, font } from "../../ui";
+import type { ScenarioDraft } from "./scenarioDraft";
+
+export function ScenarioEvents({
+  draft,
+  onChange,
+}: {
+  draft: ScenarioDraft;
+  onChange: (draft: ScenarioDraft) => void;
+}) {
+  const { symbol } = useMoney();
+  const { today } = useFinance();
+  return (
+    <View style={{ gap: 16 }}>
+      <Txt style={{ fontFamily: font.bold }}>Разовые события</Txt>
+      {draft.events.map((event, index) => {
+        const patch = (value: Partial<typeof event>) =>
+          onChange({
+            ...draft,
+            events: draft.events.map((entry, i) =>
+              i === index ? { ...entry, ...value } : entry,
+            ),
+          });
+        return (
+          <Card key={event.id} style={{ gap: 12 }}>
+            <Field
+              label="Название события"
+              accessibilityLabel={`Название события ${index + 1}`}
+              value={event.name}
+              maxLength={120}
+              onChangeText={(name) => patch({ name })}
+            />
+            <Segments
+              value={event.type}
+              options={[
+                { value: "expense", label: "Расход" },
+                { value: "income", label: "Доход" },
+              ]}
+              onChange={(type) => patch({ type })}
+            />
+            <Field
+              label={`Сумма события, ${symbol}`}
+              accessibilityLabel={`Сумма события ${index + 1}`}
+              keyboardType="decimal-pad"
+              value={event.amount}
+              maxLength={16}
+              onChangeText={(amount) => patch({ amount })}
+            />
+            <Field
+              label="Дата события · ГГГГ-ММ-ДД"
+              accessibilityLabel={`Дата события ${index + 1}`}
+              value={event.date}
+              maxLength={10}
+              onChangeText={(date) => patch({ date })}
+            />
+            <Button
+              label={`Убрать событие ${index + 1}`}
+              variant="secondary"
+              onPress={() =>
+                onChange({
+                  ...draft,
+                  events: draft.events.filter((_, i) => i !== index),
+                })
+              }
+            />
+          </Card>
+        );
+      })}
+      <Button
+        label="Добавить событие в сценарий"
+        variant="secondary"
+        disabled={draft.events.length >= 100}
+        icon="add"
+        onPress={() =>
+          onChange({
+            ...draft,
+            events: [
+              ...draft.events,
+              {
+                id: uid(),
+                name: "Покупка",
+                type: "expense",
+                amount: "",
+                date: today,
+              },
+            ],
+          })
+        }
+      />
+    </View>
+  );
+}

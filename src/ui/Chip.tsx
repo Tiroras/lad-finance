@@ -33,6 +33,7 @@ export function Chip({
           fontSize: 12,
           fontFamily: font.semibold,
           color: active ? "#fff" : C.muted,
+          flexShrink: 1,
         }}
       >
         {label}
@@ -43,6 +44,7 @@ export function Chip({
 
 const s = StyleSheet.create({
   chip: {
+    maxWidth: "100%",
     minHeight: 39,
     paddingHorizontal: 15,
     borderRadius: 20,

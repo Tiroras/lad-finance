@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { DEFAULT_FORECAST } from "../../domain/forecast";
-import { moneyInput, parseMoney } from "../../domain/finance";
 import { ErrorText } from "../../forms/ErrorText";
 import { useActionError } from "../../hooks/useActionError";
 import { useFinanceActions } from "../../hooks/useFinanceActions";
+import { useMoney } from "../../hooks/useMoney";
 import { useFinance } from "../../store";
 import { Button, Field, Notice } from "../../ui";
 
 export function ForecastSettingsForm({ close }: { close: () => void }) {
+  const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const preferences = state.settings.forecast ?? DEFAULT_FORECAST;
@@ -17,7 +18,7 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
   return (
     <>
       <Field
-        label="Повседневные расходы в день, ₽"
+        label={`Повседневные расходы в день, ${baseSymbol}`}
         accessibilityLabel="Расходы в день для прогноза"
         value={daily}
         onChangeText={setDaily}
@@ -49,7 +50,9 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
           run(() => {
             const dailySpending = parseMoney(daily);
             if (dailySpending === null)
-              throw new Error("Введите расходы в рублях, от нуля до 1 млрд ₽.");
+              throw new Error(
+                "Введите расходы в основной валюте, в пределах допустимого лимита.",
+              );
             actions.saveForecastPreferences({
               dailySpending,
               goalDay: Number(goalDay),

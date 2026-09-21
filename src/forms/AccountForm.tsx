@@ -1,30 +1,54 @@
+import { useState } from "react";
+import { currencySymbol, type CurrencyCode } from "../domain/currency";
+import { accountBalance } from "../domain/finance";
+import type { Account } from "../domain/types";
+import { CurrencyPicker } from "../features/currencies/CurrencyPicker";
 import { useActionError } from "../hooks/useActionError";
 import { useFinanceActions } from "../hooks/useFinanceActions";
-import { useState } from "react";
-import { Button, Segments, Field, Notice } from "../ui";
+import { useMoney } from "../hooks/useMoney";
 import { useFinance } from "../store";
-import { accountBalance, moneyInput, parseMoney } from "../domain/finance";
-import type { Account } from "../domain/types";
+import { Button, Field, Notice, Segments } from "../ui";
 import { ErrorText } from "./ErrorText";
 
-export function AccountForm({ id, close }: { id?: string; close: () => void }) {
+export function AccountForm({
+  id,
+  close,
+  defaultCurrency,
+  defaultKind,
+}: {
+  id?: string;
+  close: () => void;
+  defaultCurrency?: CurrencyCode;
+  defaultKind?: Account["kind"];
+}) {
+  const { moneyInput, parseMoney, currency: baseCode } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.accounts.find((a) => a.id === id);
+  const [currency, setCurrency] = useState<CurrencyCode>(
+    original ? (original.currency ?? "RUB") : (defaultCurrency ?? baseCode),
+  );
   const [name, setName] = useState(original?.name ?? "");
   const [kind, setKind] = useState<Account["kind"]>(
-    original?.kind ?? "spending",
+    original?.kind ?? defaultKind ?? "spending",
   );
   const [amount, setAmount] = useState(
-    original ? moneyInput(accountBalance(state, original.id)) : "0",
+    original
+      ? moneyInput(
+          accountBalance(state, original.id),
+          original.currency ?? "RUB",
+        )
+      : "0",
   );
   const { error, setError, run } = useActionError();
   const save = () =>
     run(() => {
-      const parsed = parseMoney(amount);
+      const parsed = parseMoney(amount, currency);
       if (parsed === null)
-        return setError("Укажите неотрицательный остаток до 1 млрд ₽.");
-      actions.saveAccount({ id, name, kind, balance: parsed });
+        return setError(
+          "Укажите корректный неотрицательный остаток в валюте счёта.",
+        );
+      actions.saveAccount({ id, name, kind, balance: parsed, currency });
       notify("Счёт сохранён");
       close();
     });
@@ -48,8 +72,13 @@ export function AccountForm({ id, close }: { id?: string; close: () => void }) {
           ]}
         />
       )}
+      <CurrencyPicker
+        value={currency}
+        onChange={setCurrency}
+        disabled={!!original}
+      />
       <Field
-        label="Текущий остаток, ₽"
+        label={`Текущий остаток, ${currencySymbol(currency)}`}
         accessibilityLabel="Остаток на счёте"
         value={amount}
         onChangeText={setAmount}

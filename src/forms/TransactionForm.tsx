@@ -1,27 +1,36 @@
-import { useActionError } from "../hooks/useActionError";
-import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { Pressable } from "react-native";
+import { activeCategory } from "../domain/categories";
 import {
-  C,
-  font,
-  Txt,
-  Row,
-  Card,
-  Icon,
-  Button,
-  Segments,
-  Field,
-  Notice,
-} from "../ui";
-import { useFinance } from "../store";
-import { moneyInput, parseMoney, parseQuickEntry } from "../domain/finance";
+  accountCurrency,
+  currencySymbol,
+  receivedAmount,
+  transactionValue,
+  tryConvertMoney,
+} from "../domain/currency";
+import { parseQuickEntry } from "../domain/finance";
 import type { CategoryId, Transaction } from "../domain/types";
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
+import { useMoney } from "../hooks/useMoney";
 import type { SheetState } from "../navigation/types";
-import { ErrorText } from "./ErrorText";
+import { useFinance } from "../store";
+import {
+  Button,
+  C,
+  Card,
+  Field,
+  font,
+  Icon,
+  Notice,
+  Row,
+  Segments,
+  Txt,
+} from "../ui";
 import { AccountPicker } from "./AccountPicker";
 import { CategoryPicker } from "./CategoryPicker";
 import { DeleteButton } from "./DeleteButton";
+import { ErrorText } from "./ErrorText";
 
 export function TransactionForm({
   sheet,
@@ -30,6 +39,12 @@ export function TransactionForm({
   sheet: SheetState;
   close: () => void;
 }) {
+  const {
+    moneyInput,
+    parseMoney,
+    currency: baseCode,
+    symbol: baseSymbol,
+  } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const original = state.transactions.find((t) => t.id === sheet.id);
@@ -38,7 +53,9 @@ export function TransactionForm({
   );
   const [title, setTitle] = useState(original?.title ?? "");
   const [amount, setAmount] = useState(
-    original ? moneyInput(original.amount) : "",
+    original
+      ? moneyInput(original.amount, accountCurrency(state, original.accountId))
+      : "",
   );
   const [category, setCategory] = useState<CategoryId>(
     original?.category ?? "other",
@@ -51,33 +68,73 @@ export function TransactionForm({
     original?.toAccountId ??
       state.accounts.find((a) => a.kind === "savings")!.id,
   );
+  const [received, setReceived] = useState<string | null>(
+    original?.type === "transfer"
+      ? moneyInput(
+          receivedAmount(original),
+          accountCurrency(state, original.toAccountId),
+        )
+      : null,
+  );
+  const [valuation, setValuation] = useState<string | null>(null);
+  const sourceCurrency = accountCurrency(state, accountId),
+    targetCurrency = accountCurrency(state, toAccountId);
+  const foreignTransfer =
+    type === "transfer" && sourceCurrency !== targetCurrency;
+  const parsedAmount = parseMoney(amount, sourceCurrency);
+  const receivedEstimate = tryConvertMoney(
+    state,
+    parsedAmount ?? 0,
+    sourceCurrency,
+    targetCurrency,
+  );
+  const suggestedReceived =
+    receivedEstimate === null
+      ? ""
+      : moneyInput(receivedEstimate, targetCurrency);
+  const historicalValue =
+    original &&
+    original.accountId === accountId &&
+    original.amount === parsedAmount
+      ? transactionValue(state, original)
+      : tryConvertMoney(state, parsedAmount ?? 0, sourceCurrency, baseCode);
   const [date, setDate] = useState(original?.date ?? today);
   const [note, setNote] = useState(original?.note ?? "");
   const [quick, setQuick] = useState("");
   const { error, setError, run } = useActionError();
   const applyQuick = (input = quick) => {
-    const parsed = parseQuickEntry(input);
+    const parsed = parseQuickEntry(input, accountCurrency(state, accountId));
     if (!parsed)
       return setError(
         "Напишите название и одну сумму: например, «кофе 320» или «продукты 1 450,50».",
       );
     setType(parsed.type);
     setTitle(parsed.title);
-    setAmount(moneyInput(parsed.amount));
-    setCategory(parsed.category);
+    setAmount(moneyInput(parsed.amount, accountCurrency(state, accountId)));
+    setCategory(activeCategory(state, parsed.category));
     setError("");
     notify("Распознано. Проверьте категорию и счёт перед сохранением.");
   };
   const save = () =>
     run(() => {
-      const parsed = parseMoney(amount);
+      const parsed = parseMoney(amount, accountCurrency(state, accountId));
       if (parsed === null)
-        return setError("Введите корректную сумму в рублях.");
+        return setError("Введите корректную сумму в валюте счёта.");
       actions.saveTransaction({
         id: sheet.id,
         type,
         title,
         amount: parsed,
+        toAmount: foreignTransfer
+          ? (parseMoney(received ?? suggestedReceived, targetCurrency) ?? NaN)
+          : undefined,
+        baseAmount:
+          type !== "transfer" && sourceCurrency !== baseCode
+            ? (parseMoney(
+                valuation ??
+                  (historicalValue === null ? "" : moneyInput(historicalValue)),
+              ) ?? NaN)
+            : undefined,
         date,
         category,
         accountId,
@@ -157,10 +214,13 @@ export function TransactionForm({
         />
       )}
       <Field
-        label="Сумма, ₽"
+        label={`Сумма, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма операции"
         value={amount}
-        onChangeText={setAmount}
+        onChangeText={(value) => {
+          setAmount(value);
+          setValuation(null);
+        }}
         keyboardType="decimal-pad"
         placeholder="0"
         style={{ fontSize: 36, fontFamily: font.semibold, paddingVertical: 18 }}
@@ -185,7 +245,11 @@ export function TransactionForm({
       )}
       <AccountPicker
         selected={accountId}
-        onChange={setAccountId}
+        onChange={(id) => {
+          setAccountId(id);
+          setValuation(null);
+          setReceived(null);
+        }}
         spendingOnly={!!original?.goalId || type === "expense"}
         label={type === "transfer" ? "Откуда" : "Счёт"}
       />
@@ -194,8 +258,46 @@ export function TransactionForm({
           label="Куда"
           selected={toAccountId}
           exclude={accountId}
-          onChange={setToAccountId}
+          onChange={(id) => {
+            setToAccountId(id);
+            setReceived(null);
+          }}
         />
+      )}
+      {foreignTransfer && (
+        <>
+          <Field
+            label={`Зачислено, ${currencySymbol(targetCurrency)}`}
+            accessibilityLabel="Сумма зачисления"
+            value={received ?? suggestedReceived}
+            onChangeText={setReceived}
+            keyboardType="decimal-pad"
+            maxLength={16}
+          />
+          <Notice>
+            Предложена оценка по сохранённому курсу. Укажите фактически
+            полученную сумму с учётом обмена.
+          </Notice>
+        </>
+      )}
+      {type !== "transfer" && sourceCurrency !== baseCode && (
+        <>
+          <Field
+            label={`Оценка в основной валюте, ${baseSymbol}`}
+            accessibilityLabel="Оценка в основной валюте"
+            value={
+              valuation ??
+              (historicalValue === null ? "" : moneyInput(historicalValue))
+            }
+            onChangeText={setValuation}
+            keyboardType="decimal-pad"
+            maxLength={16}
+          />
+          <Notice>
+            Эта оценка сохранится в статистике. Для прошлой операции можно
+            указать сумму по курсу на её дату.
+          </Notice>
+        </>
       )}
       <Field
         label="Дата · ГГГГ-ММ-ДД"

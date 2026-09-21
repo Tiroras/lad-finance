@@ -1,9 +1,11 @@
 import { View } from "react-native";
-import { C, font, Txt, Row, Card, Icon, IconTile, Notice } from "../../ui";
+import { dateLabel, simulatePurchase } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import { useFinance } from "../../store";
-import { dateLabel, money, simulatePurchase } from "../../domain/finance";
+import { C, Card, font, Icon, IconTile, Notice, Row, Txt } from "../../ui";
 
 export function PurchaseAllowance({ amount }: { amount: number }) {
+  const { money } = useMoney();
   const { state, today } = useFinance();
   const result = simulatePurchase(state, amount, today);
   return (

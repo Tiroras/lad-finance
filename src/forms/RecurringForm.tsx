@@ -1,14 +1,16 @@
+import { useState } from "react";
+import { accountCurrency, currencySymbol } from "../domain/currency";
+import { localDate } from "../domain/finance";
+import type { CategoryId } from "../domain/types";
 import { useActionError } from "../hooks/useActionError";
 import { useFinanceActions } from "../hooks/useFinanceActions";
-import { useState } from "react";
-import { Button, Segments, Field, Notice } from "../ui";
+import { useMoney } from "../hooks/useMoney";
 import { useFinance } from "../store";
-import { localDate, moneyInput, parseMoney } from "../domain/finance";
-import type { CategoryId } from "../domain/types";
-import { ErrorText } from "./ErrorText";
+import { Button, Field, Notice, Segments } from "../ui";
 import { AccountPicker } from "./AccountPicker";
 import { CategoryPicker } from "./CategoryPicker";
 import { DeleteButton } from "./DeleteButton";
+import { ErrorText } from "./ErrorText";
 
 export function RecurringForm({
   id,
@@ -17,12 +19,15 @@ export function RecurringForm({
   id?: string;
   close: () => void;
 }) {
+  const { moneyInput, parseMoney } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.recurring.find((p) => p.id === id);
   const [name, setName] = useState(original?.name ?? "");
   const [amount, setAmount] = useState(
-    original ? moneyInput(original.amount) : "",
+    original
+      ? moneyInput(original.amount, accountCurrency(state, original.accountId))
+      : "",
   );
   const [day, setDay] = useState(String(original?.day ?? 15));
   const [kind, setKind] = useState<"bill" | "subscription">(
@@ -42,7 +47,7 @@ export function RecurringForm({
   const { error, setError, run } = useActionError();
   const save = () =>
     run(() => {
-      const parsed = parseMoney(amount);
+      const parsed = parseMoney(amount, accountCurrency(state, accountId));
       if (parsed === null) return setError("Введите корректную сумму платежа.");
       actions.saveRecurring({
         id,
@@ -77,7 +82,7 @@ export function RecurringForm({
         maxLength={120}
       />
       <Field
-        label="Сумма в месяц, ₽"
+        label={`Сумма в месяц, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма платежа"
         value={amount}
         onChangeText={setAmount}
@@ -96,6 +101,9 @@ export function RecurringForm({
         selected={accountId}
         onChange={setAccountId}
         spendingOnly
+        currency={
+          original ? accountCurrency(state, original.accountId) : undefined
+        }
       />
       <Field
         label="Учитывать с даты · ГГГГ-ММ-ДД"

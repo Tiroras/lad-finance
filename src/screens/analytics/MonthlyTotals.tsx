@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-import { C, font, Txt, Row, Card, IconTile } from "../../ui";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { C, Card, font, IconTile, Row, Txt } from "../../ui";
 
 export function MonthlyTotals({
   income,
@@ -9,6 +9,7 @@ export function MonthlyTotals({
   income: number;
   expense: number;
 }) {
+  const { money } = useMoney();
   return (
     <Row style={{ gap: 12 }}>
       <Card style={{ flex: 1, padding: 16 }}>

@@ -1,8 +1,11 @@
-import { View, Pressable, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, IconTile, interactionStyles } from "../../ui";
-import { dateLabel, money } from "../../domain/finance";
+import { Pressable, StyleSheet, View } from "react-native";
+import { categoryLabel } from "../../domain/categories";
+import { accountCurrency, receivedAmount } from "../../domain/currency";
+import { dateLabel } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
+import { useMoney } from "../../hooks/useMoney";
+import { useFinance } from "../../store";
+import { C, font, IconTile, interactionStyles, Txt } from "../../ui";
 
 export function TransactionRow({
   transaction,
@@ -13,6 +16,7 @@ export function TransactionRow({
   onPress: () => void;
   last?: boolean;
 }) {
+  const { money } = useMoney();
   const { state } = useFinance();
   const category = state.categories.find((c) => c.id === transaction.category)!;
   const income = transaction.type === "income",
@@ -21,7 +25,7 @@ export function TransactionRow({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${transaction.title}, ${money(transaction.amount)}, открыть операцию`}
+      accessibilityLabel={`${transaction.title}, ${money(transaction.amount, true, accountCurrency(state, transaction.accountId))}, открыть операцию`}
       onPress={onPress}
       style={({ pressed }) => [
         st.transaction,
@@ -50,8 +54,12 @@ export function TransactionRow({
           {transaction.title}
         </Txt>
         <Txt numberOfLines={1} style={{ color: C.muted, fontSize: 10 }}>
-          {income ? "Доход" : transfer ? "Перевод" : category.name} ·{" "}
-          {account?.name}
+          {income
+            ? "Доход"
+            : transfer
+              ? "Перевод"
+              : categoryLabel(state, category.id)}{" "}
+          · {account?.name}
         </Txt>
       </View>
       <View style={{ alignItems: "flex-end", gap: 5 }}>
@@ -63,8 +71,24 @@ export function TransactionRow({
           }}
         >
           {income ? "+" : transfer ? "" : "−"}
-          {money(transaction.amount, transaction.amount % 100 !== 0)}
+          {money(
+            transaction.amount,
+            true,
+            accountCurrency(state, transaction.accountId),
+          )}
         </Txt>
+        {transfer &&
+          accountCurrency(state, transaction.accountId) !==
+            accountCurrency(state, transaction.toAccountId) && (
+            <Txt style={{ color: C.muted, fontSize: 10 }}>
+              →{" "}
+              {money(
+                receivedAmount(transaction),
+                true,
+                accountCurrency(state, transaction.toAccountId),
+              )}
+            </Txt>
+          )}
         <Txt style={{ color: C.muted, fontSize: 10 }}>
           {dateLabel(transaction.date, { day: "numeric", month: "short" })}
         </Txt>

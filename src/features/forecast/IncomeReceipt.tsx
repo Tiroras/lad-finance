@@ -1,14 +1,11 @@
-import {
-  dateInMonth,
-  dateLabel,
-  daysBetween,
-  money,
-} from "../../domain/finance";
+import { accountCurrency } from "../../domain/currency";
+import { dateInMonth, dateLabel, daysBetween } from "../../domain/finance";
 import { incomeReceived } from "../../domain/incomes";
 import type { PlannedIncome } from "../../domain/types";
 import { ErrorText } from "../../forms/ErrorText";
 import { useActionError } from "../../hooks/useActionError";
 import { useFinanceActions } from "../../hooks/useFinanceActions";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
 import { useFinance } from "../../store";
 import { Button, C, Notice, Txt } from "../../ui";
@@ -22,6 +19,7 @@ export function IncomeReceipt({
   date?: string;
   open: OpenSheet;
 }) {
+  const { money } = useMoney();
   const { state, today, notify } = useFinance();
   const actions = useFinanceActions();
   const { error, run } = useActionError();
@@ -56,7 +54,7 @@ export function IncomeReceipt({
     <>
       <Txt style={{ fontSize: 12, color: C.muted }}>
         Поступление по сохранённому плану · {dateLabel(occurrenceDate)} ·{" "}
-        {money(plan.amount)}
+        {money(plan.amount, false, accountCurrency(state, plan.accountId))}
       </Txt>
       <ErrorText error={error} />
       {recorded ? (

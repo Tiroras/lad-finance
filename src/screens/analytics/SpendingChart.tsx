@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { useFinance } from "../../store";
-import { Card, Section, Segments, BarChart } from "../../ui";
+import { baseCurrency, transactionValue } from "../../domain/currency";
 import { dateLabel, shiftDate } from "../../domain/finance";
+import { useFinance } from "../../store";
+import { BarChart, Card, Section, Segments } from "../../ui";
 
 export function SpendingChart({ month, end }: { month: string; end: string }) {
   const { state } = useFinance();
@@ -17,7 +18,7 @@ export function SpendingChart({ month, end }: { month: string; end: string }) {
   const values = dates.map((date) =>
     state.transactions
       .filter((t) => t.type === "expense" && t.date === date)
-      .reduce((n, t) => n + t.amount, 0),
+      .reduce((n, t) => n + transactionValue(state, t), 0),
   );
 
   return (
@@ -35,6 +36,7 @@ export function SpendingChart({ month, end }: { month: string; end: string }) {
         <BarChart
           key={`${month}-${period}`}
           values={values}
+          currency={baseCurrency(state)}
           labels={dates.map((d) =>
             period === "week"
               ? dateLabel(d, { weekday: "short" })

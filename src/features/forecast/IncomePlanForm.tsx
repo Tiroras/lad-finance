@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { moneyInput, parseMoney } from "../../domain/finance";
+import { accountCurrency, currencySymbol } from "../../domain/currency";
 import type { PlannedIncome } from "../../domain/types";
 import { AccountPicker } from "../../forms/AccountPicker";
 import { DeleteButton } from "../../forms/DeleteButton";
 import { ErrorText } from "../../forms/ErrorText";
 import { useActionError } from "../../hooks/useActionError";
 import { useFinanceActions } from "../../hooks/useFinanceActions";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet, SheetState } from "../../navigation/types";
 import { useFinance } from "../../store";
 import { Button, Field, Notice, Segments } from "../../ui";
@@ -20,12 +21,15 @@ export function IncomePlanForm({
   close: () => void;
   open: OpenSheet;
 }) {
+  const { moneyInput, parseMoney } = useMoney();
   const { state, today, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.plannedIncomes?.find((p) => p.id === sheet.id);
   const [name, setName] = useState(original?.name ?? "");
   const [amount, setAmount] = useState(
-    original ? moneyInput(original.amount) : "",
+    original
+      ? moneyInput(original.amount, accountCurrency(state, original.accountId))
+      : "",
   );
   const [date, setDate] = useState(original?.date ?? today);
   const [repeat, setRepeat] = useState<PlannedIncome["repeat"]>(
@@ -52,7 +56,7 @@ export function IncomePlanForm({
         maxLength={120}
       />
       <Field
-        label="Ожидаемая сумма, ₽"
+        label={`Ожидаемая сумма, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма планируемого дохода"
         value={amount}
         onChangeText={setAmount}
@@ -89,6 +93,9 @@ export function IncomePlanForm({
         selected={accountId}
         onChange={setAccountId}
         spendingOnly
+        currency={
+          original ? accountCurrency(state, original.accountId) : undefined
+        }
         label="Куда ожидается доход"
       />
       <ErrorText error={error} />
@@ -96,9 +103,12 @@ export function IncomePlanForm({
         label="Сохранить план дохода"
         onPress={() =>
           run(() => {
-            const parsed = parseMoney(amount);
+            const parsed = parseMoney(
+              amount,
+              accountCurrency(state, accountId),
+            );
             if (parsed === null)
-              throw new Error("Введите ожидаемую сумму в рублях.");
+              throw new Error("Введите ожидаемую сумму в валюте счёта.");
             actions.savePlannedIncome({
               id: sheet.id,
               name,

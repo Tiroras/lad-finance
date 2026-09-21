@@ -1,10 +1,5 @@
-import { useFinanceActions } from "../../hooks/useFinanceActions";
 import { useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import { useFinance } from "../../store";
-import { AccountPicker } from "../../forms/AccountPicker";
-import { ErrorText } from "../../forms/ErrorText";
-import { accountBalance, money } from "../../domain/finance";
 import {
   CSV_MAX_BYTES,
   guessCsvMapping,
@@ -16,7 +11,14 @@ import {
   type CsvOverride,
 } from "../../domain/csv";
 import { decodeCsvBytes, type CsvEncoding } from "../../domain/csvEncoding";
+import { accountCurrency } from "../../domain/currency";
+import { accountBalance } from "../../domain/finance";
+import { AccountPicker } from "../../forms/AccountPicker";
+import { ErrorText } from "../../forms/ErrorText";
+import { useFinanceActions } from "../../hooks/useFinanceActions";
+import { useMoney } from "../../hooks/useMoney";
 import { pickDocument } from "../../services/documents";
+import { useFinance } from "../../store";
 import {
   Button,
   C,
@@ -45,6 +47,7 @@ const columnLabels: Record<CsvColumn, string> = {
 };
 
 export function CsvImportSheet({ close }: { close: () => void }) {
+  const { money } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const [file, setFile] = useState<{ name: string; bytes: Uint8Array } | null>(
@@ -324,8 +327,8 @@ export function CsvImportSheet({ close }: { close: () => void }) {
                   />
                 ))}
               <Notice>
-                Все суммы учитываются в рублях. Если в выписке есть валюта,
-                выберите её колонку. Переводы между своими счетами нужно
+                Суммы учитываются в валюте выбранного счёта. Если в выписке есть
+                валюта, выберите её колонку. Переводы между своими счетами нужно
                 подтвердить отдельно в предпросмотре.
               </Notice>
               <ErrorText error={preview.error} />
@@ -351,12 +354,26 @@ export function CsvImportSheet({ close }: { close: () => void }) {
                   исправления: {rows.filter((r) => r.error).length}
                 </Txt>
                 <Txt style={{ fontSize: 12 }}>
-                  Доходы: {money(income, true)} · расходы:{" "}
-                  {money(expense, true)}
+                  Доходы:{" "}
+                  {money(
+                    income,
+                    true,
+                    accountCurrency(state, options.accountId),
+                  )}{" "}
+                  · расходы:{" "}
+                  {money(
+                    expense,
+                    true,
+                    accountCurrency(state, options.accountId),
+                  )}
                 </Txt>
                 <Txt style={{ fontSize: 12 }}>
                   Остаток счёта:{" "}
-                  {money(accountBalance(state, options.accountId, today), true)}{" "}
+                  {money(
+                    accountBalance(state, options.accountId, today),
+                    true,
+                    accountCurrency(state, options.accountId),
+                  )}{" "}
                   →{" "}
                   {money(
                     importedBalance(
@@ -367,6 +384,7 @@ export function CsvImportSheet({ close }: { close: () => void }) {
                       today,
                     ),
                     true,
+                    accountCurrency(state, options.accountId),
                   )}
                 </Txt>
                 <Txt style={{ fontSize: 11, lineHeight: 19, color: C.muted }}>

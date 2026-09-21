@@ -1,6 +1,7 @@
+import { accountToBase, MAX_MONEY } from "../currency";
 import { localDate, uid, validateTransaction } from "../finance";
 import type { FinanceState, Transaction } from "../types";
-import { checkSavings, ensure } from "./validation";
+import { checkCurrencyAmounts, checkSavings, ensure } from "./validation";
 
 export type TransactionInput = Omit<Transaction, "id"> & { id?: string };
 
@@ -9,6 +10,7 @@ export function appendTransaction(
   state: FinanceState,
   transaction: Transaction,
   today = localDate(),
+  allowArchived = false,
 ): FinanceState {
   ensure(
     state.transactions.length < 20000,
@@ -20,13 +22,34 @@ export function appendTransaction(
   );
   const error = validateTransaction(state, transaction, today);
   ensure(!error, error ?? "Некорректная операция.");
-  const next = { ...state, transactions: [transaction, ...state.transactions] };
+  ensure(
+    allowArchived ||
+      !state.categories.find((c) => c.id === transaction.category)?.archived ||
+      state.recurring.some(
+        (p) =>
+          p.id === transaction.recurringId &&
+          p.category === transaction.category,
+      ),
+    "Категория в архиве. Выберите активную категорию.",
+  );
+  const valued = {
+    ...transaction,
+    baseAmount:
+      transaction.baseAmount ??
+      accountToBase(state, transaction.amount, transaction.accountId),
+  };
+  ensure(
+    valued.baseAmount <= MAX_MONEY,
+    "Сумма в основной валюте превышает допустимый лимит.",
+  );
+  const next = { ...state, transactions: [valued, ...state.transactions] };
   if (
     transaction.type === "transfer" &&
     state.accounts.find((a) => a.id === transaction.accountId)?.kind ===
       "savings"
   )
     checkSavings(next, today);
+  checkCurrencyAmounts(next, today);
   return next;
 }
 
@@ -46,6 +69,13 @@ export function saveTransaction(
   const transaction: Transaction = {
     ...input,
     id: original?.id ?? uid(),
+    baseAmount:
+      input.baseAmount ??
+      (original?.amount === input.amount &&
+      original.accountId === input.accountId
+        ? original.baseAmount
+        : undefined),
+    toAmount: input.type === "transfer" ? input.toAmount : undefined,
     title:
       input.title.trim() ||
       (input.type === "transfer" ? "Перевод между счетами" : ""),
@@ -77,8 +107,14 @@ export function saveTransaction(
     ...state,
     transactions: state.transactions.filter((t) => t.id !== original?.id),
   };
-  const next = appendTransaction(withoutOriginal, transaction, today);
+  const next = appendTransaction(
+    withoutOriginal,
+    transaction,
+    today,
+    original?.category === transaction.category,
+  );
   if (original) checkSavings(next, today);
+  checkCurrencyAmounts(next, today);
   return next;
 }
 
@@ -92,5 +128,6 @@ export function deleteTransaction(
     transactions: state.transactions.filter((t) => t.id !== id),
   };
   checkSavings(next, today);
+  checkCurrencyAmounts(next, today);
   return next;
 }

@@ -2,12 +2,12 @@ import { Pressable, View } from "react-native";
 import {
   dateLabel,
   fromDate,
-  money,
   monthKey,
   shiftDate,
   shiftMonth,
 } from "../../domain/finance";
 import type { ForecastResult } from "../../domain/forecast";
+import { useMoney } from "../../hooks/useMoney";
 import { C, font, IconButton, Row, Txt } from "../../ui";
 
 export function ForecastCalendar({
@@ -19,6 +19,7 @@ export function ForecastCalendar({
   selected: string;
   onSelect: (date: string) => void;
 }) {
+  const { money } = useMoney();
   const month = `${monthKey(selected)}-01`;
   const first = result.days[0].date,
     last = result.days.at(-1)!.date;

@@ -22,6 +22,7 @@ export function Sheet({
   onClose,
   visible,
   blockingContent,
+  contentKey,
 }: {
   title: string;
   subtitle?: string;
@@ -29,6 +30,7 @@ export function Sheet({
   onClose: () => void;
   visible: boolean;
   blockingContent?: ReactNode;
+  contentKey?: string;
 }) {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -92,6 +94,7 @@ export function Sheet({
             />
           </Row>
           <ScrollView
+            key={contentKey}
             style={blockingContent ? { display: "none" } : undefined}
             aria-hidden={!!blockingContent}
             importantForAccessibility={

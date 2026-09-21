@@ -1,3 +1,13 @@
+import {
+  accountCurrency,
+  accountToBase,
+  MAX_MONEY,
+  parseMoney,
+  receivedAmount,
+  toBase,
+  transactionValue,
+  type CurrencyCode,
+} from "./currency";
 import type {
   CategoryId,
   FinanceState,
@@ -6,8 +16,8 @@ import type {
   Recurring,
   Transaction,
 } from "./types";
+export { MAX_MONEY, money, moneyInput, parseMoney } from "./currency";
 
-export const MAX_MONEY = 100_000_000_000;
 export const uid = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 export const localDate = (date = new Date()) =>
@@ -48,19 +58,6 @@ export const dateLabel = (
   date: string,
   options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long" },
 ) => fromDate(date).toLocaleDateString("ru-RU", options);
-export const money = (kopecks: number, decimals = false) =>
-  `${(kopecks / 100).toLocaleString("ru-RU", { minimumFractionDigits: decimals ? 2 : 0, maximumFractionDigits: decimals ? 2 : 0 })} ₽`;
-export const moneyInput = (kopecks: number) =>
-  String(kopecks / 100).replace(".", ",");
-
-export function parseMoney(input: string): number | null {
-  const clean = input.replace(/[\s\u00a0\u202f₽]/g, "").replace(",", ".");
-  if (!/^\d{1,10}(\.\d{1,2})?$/.test(clean)) return null;
-  const [whole, decimal = ""] = clean.split(".");
-  const amount = Number(whole) * 100 + Number(decimal.padEnd(2, "0"));
-  return Number.isSafeInteger(amount) && amount <= MAX_MONEY ? amount : null;
-}
-
 export function accountBalance(
   state: FinanceState,
   id: string,
@@ -72,7 +69,8 @@ export function accountBalance(
       (sum, t) => {
         if (t.accountId === id)
           sum += t.type === "income" ? t.amount : -t.amount;
-        if (t.type === "transfer" && t.toAccountId === id) sum += t.amount;
+        if (t.type === "transfer" && t.toAccountId === id)
+          sum += receivedAmount(t);
         return sum;
       },
       state.accounts.find((a) => a.id === id)?.openingBalance ?? 0,
@@ -84,27 +82,36 @@ export function totals(state: FinanceState, month = monthKey()) {
     .filter((t) => monthKey(t.date) === month && t.date <= localDate())
     .reduce(
       (sum, t) => {
-        if (t.type === "expense") sum.expense += t.amount;
-        if (t.type === "income") sum.income += t.amount;
+        if (t.type === "expense") sum.expense += transactionValue(state, t);
+        if (t.type === "income") sum.income += transactionValue(state, t);
         return sum;
       },
       { income: 0, expense: 0 },
     );
 }
 
-export function categorySpending(state: FinanceState, month = monthKey()) {
-  return state.categories.map((category) => ({
-    ...category,
-    spent: state.transactions
-      .filter(
-        (t) =>
-          t.type === "expense" &&
-          t.category === category.id &&
-          monthKey(t.date) === month &&
-          t.date <= localDate(),
-      )
-      .reduce((sum, t) => sum + t.amount, 0),
-  }));
+export function categorySpending(
+  state: FinanceState,
+  month = monthKey(),
+  today = localDate(),
+) {
+  const rootIds = new Map(
+    state.categories.map((c) => [c.id, c.parentId ?? c.id]),
+  );
+  const spent = new Map<string, number>();
+  for (const t of state.transactions) {
+    if (t.type !== "expense" || monthKey(t.date) !== month || t.date > today)
+      continue;
+    const root = rootIds.get(t.category)!;
+    spent.set(root, (spent.get(root) ?? 0) + transactionValue(state, t));
+  }
+  return state.categories
+    .filter((c) => !c.parentId)
+    .map((category) => ({
+      ...category,
+      budget: category.archived ? 0 : category.budget,
+      spent: spent.get(category.id) ?? 0,
+    }));
 }
 
 export function goalSaved(
@@ -118,7 +125,7 @@ export function goalSaved(
       .filter(
         (t) => t.type === "transfer" && t.goalId === goal.id && t.date <= today,
       )
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + receivedAmount(t), 0)
   );
 }
 
@@ -132,15 +139,19 @@ export function goalReserve(state: FinanceState, today = localDate()) {
           monthKey(t.date) === monthKey(today) &&
           t.date <= today,
       )
-      .reduce((n, t) => n + t.amount, 0);
+      .reduce((n, t) => n + receivedAmount(t), 0);
     return (
       sum +
-      Math.max(
-        0,
-        Math.min(
-          goal.target - goalSaved(state, goal, today),
-          goal.monthly - contributed,
+      toBase(
+        state,
+        Math.max(
+          0,
+          Math.min(
+            goal.target - goalSaved(state, goal, today),
+            goal.monthly - contributed,
+          ),
         ),
+        goal.currency,
       )
     );
   }, 0);
@@ -235,16 +246,25 @@ export function spendable(state: FinanceState, today = localDate()) {
   const days = daysBetween(today, payday);
   const liquid = state.accounts
     .filter((a) => a.kind === "spending")
-    .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
+    .reduce(
+      (sum, a) =>
+        sum + accountToBase(state, accountBalance(state, a.id, today), a.id),
+      0,
+    );
   const overdue = overduePayments(state, today).reduce(
-    (sum, o) => sum + o.payment.amount,
+    (sum, o) =>
+      sum + accountToBase(state, o.payment.amount, o.payment.accountId),
     0,
   );
   const payments =
     overdue +
     upcoming(state, today, payday)
       .filter((o) => !o.paid && !o.skipped)
-      .reduce((sum, o) => sum + o.payment.amount, 0);
+      .reduce(
+        (sum, o) =>
+          sum + accountToBase(state, o.payment.amount, o.payment.accountId),
+        0,
+      );
   const goals = goalReserve(state, today);
   const raw = liquid - payments - goals - state.settings.buffer;
   return {
@@ -291,18 +311,21 @@ const KEYWORDS: [CategoryId, RegExp][] = [
 ];
 export const suggestCategory = (title: string): CategoryId =>
   KEYWORDS.find(([, pattern]) => pattern.test(title))?.[0] ?? "other";
-export function parseQuickEntry(input: string): {
+export function parseQuickEntry(
+  input: string,
+  currency: CurrencyCode = "RUB",
+): {
   amount: number;
   title: string;
   category: CategoryId;
   type: "expense" | "income";
 } | null {
   const matches = [
-    ...input.matchAll(/\d+(?:[ \u00a0]\d{3})*(?:[.,]\d{1,2})?/g),
+    ...input.matchAll(/\d+(?:[ \u00a0]\d{3})*(?:[.,]\d{1,3})?/g),
   ];
   if (matches.length !== 1 || /[-−]\s*\d/.test(input)) return null;
   const match = matches[0];
-  const amount = parseMoney(match[0]);
+  const amount = parseMoney(match[0], currency);
   if (!amount) return null;
   const title =
     `${input.slice(0, match.index)} ${input.slice((match.index ?? 0) + match[0].length)}`
@@ -332,7 +355,7 @@ export function validateTransaction(
     transaction.amount <= 0 ||
     transaction.amount > MAX_MONEY
   )
-    return "Введите сумму больше нуля, не более 1 млрд ₽.";
+    return "Введите положительную сумму в пределах допустимого лимита.";
   if (!validDate(transaction.date) || transaction.date > today)
     return "Укажите корректную дату, не позднее сегодняшней.";
   if (!state.accounts.some((a) => a.id === transaction.accountId))
@@ -344,12 +367,33 @@ export function validateTransaction(
   const source = state.accounts.find((a) => a.id === transaction.accountId)!;
   if (transaction.type === "expense" && source.kind === "savings")
     return "Для расхода сначала переведите свободные накопления на обычный счёт.";
+  if (
+    transaction.baseAmount !== undefined &&
+    (!Number.isSafeInteger(transaction.baseAmount) ||
+      transaction.baseAmount < 0 ||
+      transaction.baseAmount > MAX_MONEY)
+  )
+    return "Сумма в основной валюте превышает допустимый лимит.";
+  if (transaction.type !== "transfer" && transaction.toAmount !== undefined)
+    return "Сумма зачисления допустима только для перевода.";
   if (transaction.type === "transfer") {
     if (
       transaction.toAccountId === transaction.accountId ||
       !state.accounts.some((a) => a.id === transaction.toAccountId)
     )
       return "Выберите другой счёт для зачисления.";
+    const sameCurrency =
+      accountCurrency(state, source.id) ===
+      accountCurrency(state, transaction.toAccountId);
+    if (
+      !Number.isSafeInteger(receivedAmount(transaction)) ||
+      receivedAmount(transaction) <= 0 ||
+      receivedAmount(transaction) > MAX_MONEY ||
+      (!sameCurrency && transaction.toAmount === undefined)
+    )
+      return "Укажите сумму зачисления в валюте получателя.";
+    if (sameCurrency && receivedAmount(transaction) !== transaction.amount)
+      return "Суммы перевода в одной валюте должны совпадать.";
     if (
       transaction.goalId &&
       !state.goals.some((g) => g.id === transaction.goalId)
@@ -362,19 +406,23 @@ export function validateTransaction(
       return "На выбранном счёте недостаточно средств.";
     if (
       source.kind === "savings" &&
-      state.accounts.find((a) => a.id === transaction.toAccountId)?.kind !==
-        "savings"
+      (state.accounts.find((a) => a.id === transaction.toAccountId)?.kind !==
+        "savings" ||
+        !sameCurrency)
     ) {
       const savings = state.accounts
-        .filter((a) => a.kind === "savings")
+        .filter(
+          (a) =>
+            a.kind === "savings" &&
+            (a.currency ?? "RUB") === (source.currency ?? "RUB"),
+        )
         .reduce(
           (sum, a) => sum + accountBalance(state, a.id, transaction.date),
           0,
         );
-      const allocated = state.goals.reduce(
-        (sum, g) => sum + goalSaved(state, g, transaction.date),
-        0,
-      );
+      const allocated = state.goals
+        .filter((g) => (g.currency ?? "RUB") === (source.currency ?? "RUB"))
+        .reduce((sum, g) => sum + goalSaved(state, g, transaction.date), 0);
       if (transaction.amount > savings - allocated)
         return "Эти накопления распределены по целям. Сначала освободите средства в целях.";
     }
@@ -389,7 +437,15 @@ export function validateTransaction(
         "savings"
     )
       return "Пополнять цель можно только с обычного счёта на накопительный.";
-    if (goalSaved(state, goal, today) + transaction.amount > goal.target)
+    if (
+      (goal.currency ?? "RUB") !==
+      accountCurrency(state, transaction.toAccountId)
+    )
+      return "Валюта накопительного счёта должна совпадать с валютой цели.";
+    if (
+      goalSaved(state, goal, today) + receivedAmount(transaction) >
+      goal.target
+    )
       return "Пополнение превышает оставшуюся сумму цели.";
   }
   if (transaction.recurringId) {

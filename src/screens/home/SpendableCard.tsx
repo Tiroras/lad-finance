@@ -1,8 +1,9 @@
-import { View, Pressable, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Icon, HeroArt } from "../../ui";
-import { dateLabel, money, spendable } from "../../domain/finance";
+import { Pressable, StyleSheet, View } from "react-native";
+import { dateLabel, spendable } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { C, font, HeroArt, Icon, Row, Txt } from "../../ui";
 
 export function SpendableCard({
   open,
@@ -11,6 +12,7 @@ export function SpendableCard({
   open: OpenSheet;
   hidden: boolean;
 }) {
+  const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
   const safe = spendable(state, today);
   return (
@@ -31,7 +33,7 @@ export function SpendableCard({
         </Pressable>
       </Row>
       <Txt adjustsFontSizeToFit numberOfLines={1} style={st.heroAmount}>
-        {hidden ? "••• ••• ₽" : money(safe.available)}
+        {hidden ? `••• ••• ${baseSymbol}` : money(safe.available)}
       </Txt>
       <Txt style={{ color: "#AFC5B6", fontSize: 11 }}>
         до {dateLabel(safe.payday)} · следующего дохода
@@ -49,7 +51,7 @@ export function SpendableCard({
             Комфортно на день
           </Txt>
           <Txt style={{ color: C.lime, fontSize: 22, fontFamily: font.bold }}>
-            {hidden ? "••• ₽" : money(safe.daily)}
+            {hidden ? `••• ${baseSymbol}` : money(safe.daily)}
           </Txt>
         </View>
         <Pressable

@@ -1,3 +1,10 @@
+import { validateScenarioCurrencies } from "../scenarios";
+import {
+  accountToBase,
+  CURRENCY_CODES,
+  receivedAmount,
+  toBase,
+} from "../currency";
 import { accountBalance, goalSaved, MAX_MONEY } from "../finance";
 import type { FinanceState } from "../types";
 
@@ -11,8 +18,8 @@ export function checkAmount(value: number, zero = false) {
       value >= (zero ? 0 : 1) &&
       value <= MAX_MONEY,
     zero
-      ? "Введите сумму от 0 до 1 млрд ₽."
-      : "Введите сумму больше нуля, не более 1 млрд ₽.",
+      ? "Введите неотрицательную сумму в пределах допустимого лимита."
+      : "Введите положительную сумму в пределах допустимого лимита.",
   );
 }
 
@@ -31,15 +38,56 @@ export function checkDay(value: number) {
 }
 
 export function checkSavings(state: FinanceState, today: string) {
-  const allocated = state.goals.reduce(
-    (sum, goal) => sum + goalSaved(state, goal, today),
+  for (const currency of CURRENCY_CODES) {
+    const allocated = state.goals
+      .filter((g) => (g.currency ?? "RUB") === currency)
+      .reduce((sum, goal) => sum + goalSaved(state, goal, today), 0);
+    const savings = state.accounts
+      .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === currency)
+      .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
+    ensure(
+      savings >= allocated,
+      "Эти накопления распределены по целям. Сначала освободите средства в целях.",
+    );
+  }
+}
+
+// Leave headroom for summing accounts and forecast events without unsafe integers.
+export function checkCurrencyAmounts(state: FinanceState, today: string) {
+  for (const scenario of state.scenarios ?? [])
+    validateScenarioCurrencies(state, scenario);
+  const balances = new Map(state.accounts.map((a) => [a.id, a.openingBalance]));
+  for (const t of state.transactions) {
+    if (t.date > today) continue;
+    balances.set(
+      t.accountId,
+      (balances.get(t.accountId) ?? 0) +
+        (t.type === "income" ? t.amount : -t.amount),
+    );
+    if (t.type === "transfer" && t.toAccountId)
+      balances.set(
+        t.toAccountId,
+        (balances.get(t.toAccountId) ?? 0) + receivedAmount(t),
+      );
+  }
+  const totalMagnitude = state.accounts.reduce(
+    (sum, account) =>
+      sum +
+      Math.abs(accountToBase(state, balances.get(account.id)!, account.id)),
     0,
   );
-  const savings = state.accounts
-    .filter((a) => a.kind === "savings")
-    .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
   ensure(
-    savings >= allocated,
-    "Эти накопления распределены по целям. Сначала освободите средства в целях.",
+    Number.isSafeInteger(totalMagnitude) &&
+      totalMagnitude <= Number.MAX_SAFE_INTEGER / 2,
+    "Результат пересчёта остатков слишком велик. Проверьте курсы.",
   );
+  for (const goal of state.goals) {
+    checkAmount(toBase(state, goal.target, goal.currency), true);
+    checkAmount(toBase(state, goal.monthly, goal.currency), true);
+  }
+  for (const plan of [...state.recurring, ...(state.plannedIncomes ?? [])])
+    checkAmount(accountToBase(state, plan.amount, plan.accountId), true);
+  for (const plan of state.recurring)
+    for (const rule of plan.history ?? [])
+      checkAmount(accountToBase(state, rule.amount, plan.accountId), true);
 }

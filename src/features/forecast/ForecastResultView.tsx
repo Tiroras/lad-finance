@@ -11,10 +11,12 @@ import { ForecastDayDetails } from "./ForecastDayDetails";
 export function ForecastResultView({
   result,
   baseline,
+  labels,
   open,
 }: {
   result: ForecastResult;
   baseline?: ForecastResult;
+  labels?: { result: string; baseline: string };
   open?: OpenSheet;
 }) {
   const [selected, setSelected] = useState(result.days[0].date);
@@ -30,9 +32,9 @@ export function ForecastResultView({
       }}
     >
       <View style={wide ? { flex: 1, gap: 20 } : { width: "100%", gap: 20 }}>
-        <ForecastSummary result={result} baseline={baseline} />
+        <ForecastSummary result={result} baseline={baseline} labels={labels} />
         <Card>
-          <ForecastChart result={result} baseline={baseline} />
+          <ForecastChart result={result} baseline={baseline} labels={labels} />
         </Card>
       </View>
       <Card

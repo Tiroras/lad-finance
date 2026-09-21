@@ -1,6 +1,7 @@
 import { Pressable, View } from "react-native";
+import { dateLabel } from "../../domain/finance";
 import type { ForecastDay, ForecastEvent } from "../../domain/forecast";
-import { dateLabel, money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
 import { C, font, Icon, Row, Txt } from "../../ui";
 
@@ -11,6 +12,7 @@ export function ForecastDayDetails({
   day: ForecastDay;
   open?: OpenSheet;
 }) {
+  const { money } = useMoney();
   const openEvent = (event: ForecastEvent) => {
     if (!open || !event.sourceId) return;
     if (event.type === "income")

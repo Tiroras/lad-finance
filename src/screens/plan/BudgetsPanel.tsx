@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { useFinance } from "../../store";
-import { Notice } from "../../ui";
+import { Button, Notice } from "../../ui";
 import { categorySpending } from "../../domain/finance";
 import type { OpenSheet } from "../../navigation/types";
 import { BudgetSummary } from "./BudgetSummary";
@@ -14,14 +14,22 @@ export function BudgetsPanel({ open }: { open: OpenSheet }) {
   return (
     <>
       <BudgetSummary budget={budget} spent={spent} />
+      <Button
+        label="Категории и подкатегории"
+        icon="grid-outline"
+        variant="secondary"
+        onPress={() => open({ type: "categories" })}
+      />
       <Notice>
         Лимиты категорий помогают видеть темп расходов. Сумма «можно потратить»
         рассчитывается отдельно — по вашим счетам и обязательствам.
       </Notice>
       <View style={{ gap: 12 }}>
-        {categories.map((c) => (
-          <BudgetCard key={c.id} category={c} open={open} />
-        ))}
+        {categories
+          .filter((c) => !c.archived || c.spent > 0)
+          .map((c) => (
+            <BudgetCard key={c.id} category={c} open={open} />
+          ))}
       </View>
     </>
   );

@@ -1,21 +1,27 @@
-import { CsvImportSheet } from "../features/import/CsvImportSheet";
+import { CategoriesPanel } from "../features/categories/CategoriesPanel";
+import { CategoryForm } from "../features/categories/CategoryForm";
+import { CurrencySettings } from "../features/currencies/CurrencySettings";
+import { CsvExportSheet } from "../features/export/CsvExportSheet";
 import { ForecastPanel } from "../features/forecast/ForecastPanel";
 import { ForecastSettingsForm } from "../features/forecast/ForecastSettingsForm";
 import { IncomePlanForm } from "../features/forecast/IncomePlanForm";
-import type { SheetState, OpenSheet } from "../navigation/types";
+import { CsvImportSheet } from "../features/import/CsvImportSheet";
+import { ScenarioForm } from "../features/scenarios/ScenarioForm";
+import { ScenariosPanel } from "../features/scenarios/ScenariosPanel";
 import {
-  TransactionForm,
-  FormulaContent,
-  Simulator,
-  AccountsContent,
   AccountForm,
+  AccountsContent,
   BudgetForm,
-  GoalForm,
+  FormulaContent,
   FundGoalForm,
-  RecurringForm,
+  GoalForm,
   PaymentContent,
+  RecurringForm,
   SettingsForm,
+  Simulator,
+  TransactionForm,
 } from "../forms";
+import type { OpenSheet, SheetState } from "../navigation/types";
 
 export function SheetContent({
   sheet,
@@ -28,6 +34,25 @@ export function SheetContent({
 }) {
   if (!sheet) return null;
   switch (sheet.type) {
+    case "currencies":
+      return <CurrencySettings />;
+    case "export":
+      return <CsvExportSheet />;
+    case "categories":
+      return <CategoriesPanel open={open} />;
+    case "category":
+      return (
+        <CategoryForm
+          id={sheet.id}
+          close={() => open({ type: "categories" })}
+        />
+      );
+    case "scenarios":
+      return <ScenariosPanel open={open} />;
+    case "scenario":
+      return (
+        <ScenarioForm id={sheet.id} close={() => open({ type: "scenarios" })} />
+      );
     case "transaction":
       return <TransactionForm sheet={sheet} close={close} />;
     case "formula":
@@ -37,7 +62,14 @@ export function SheetContent({
     case "accounts":
       return <AccountsContent open={open} />;
     case "account":
-      return <AccountForm id={sheet.id} close={close} />;
+      return (
+        <AccountForm
+          id={sheet.id}
+          close={close}
+          defaultCurrency={sheet.currency}
+          defaultKind={sheet.accountKind}
+        />
+      );
     case "settings":
       return <SettingsForm close={close} open={open} />;
     case "csv":

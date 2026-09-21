@@ -1,3 +1,4 @@
+import { categoryLabel, orderedCategories } from "../../domain/categories";
 import { ScrollView } from "react-native";
 import { useFinance } from "../../store";
 import { Chip, Segments, Field } from "../../ui";
@@ -69,10 +70,10 @@ export function TransactionFilters({
           active={category === "all"}
           onPress={() => setCategory("all")}
         />
-        {state.categories.map((c) => (
+        {orderedCategories(state).map((c) => (
           <Chip
             key={c.id}
-            label={c.name}
+            label={`${categoryLabel(state, c.id)}${c.archived ? " · архив" : ""}`}
             icon={c.icon}
             active={c.id === category}
             onPress={() => setCategory(c.id)}

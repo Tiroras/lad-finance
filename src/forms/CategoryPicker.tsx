@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { C, font, Txt, Chip } from "../ui";
 import { useFinance } from "../store";
 import type { CategoryId } from "../domain/types";
+import { categoryLabel, orderedCategories } from "../domain/categories";
 
 export function CategoryPicker({
   value,
@@ -17,15 +18,17 @@ export function CategoryPicker({
         Категория
       </Txt>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        {state.categories.map((c) => (
-          <Chip
-            key={c.id}
-            label={c.name}
-            icon={c.icon}
-            active={c.id === value}
-            onPress={() => onChange(c.id)}
-          />
-        ))}
+        {orderedCategories(state)
+          .filter((c) => !c.archived || c.id === value)
+          .map((c) => (
+            <Chip
+              key={c.id}
+              label={`${categoryLabel(state, c.id)}${c.archived ? " · архив" : ""}`}
+              icon={c.icon}
+              active={c.id === value}
+              onPress={() => onChange(c.id)}
+            />
+          ))}
       </View>
     </View>
   );

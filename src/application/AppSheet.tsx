@@ -24,12 +24,18 @@ export function AppSheet({
     accounts: "Мои счета",
     account: sheet?.id ? "Настроить счёт" : "Новый счёт",
     settings: "Ваш Лад",
+    currencies: "Валюты и курсы",
     goal: sheet?.id ? "Настроить цель" : "Новая мечта",
     fund: "Ближе к цели",
     recurring: sheet?.id ? "Настроить платёж" : "Новый платёж",
     budget: "Бюджет категории",
     payment: "Запланированный платёж",
     csv: "Импорт банковской выписки",
+    categories: "Категории и подкатегории",
+    category: sheet?.id ? "Настроить категорию" : "Новая категория",
+    scenarios: "Мои сценарии",
+    scenario: sheet?.id ? "Сохранённый сценарий" : "Новый сценарий",
+    export: "Экспорт операций",
     forecast: "Прогноз по дням",
     forecastSettings: "Параметры прогноза",
     income: sheet?.id ? "План дохода" : "Запланировать доход",
@@ -38,6 +44,7 @@ export function AppSheet({
   return (
     <Sheet
       visible={!!sheet}
+      contentKey={`${sheet?.type}-${sheet?.id ?? "new"}`}
       blockingContent={security.locked ? <LockScreen compact /> : undefined}
       title={sheet ? titles[sheet.type] : ""}
       onClose={close}

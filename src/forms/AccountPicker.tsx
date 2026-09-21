@@ -1,18 +1,23 @@
-import { View, ScrollView } from "react-native";
-import { C, font, Txt, Chip } from "../ui";
+import { ScrollView, View } from "react-native";
+import type { CurrencyCode } from "../domain/currency";
 import { useFinance } from "../store";
+import { C, Chip, font, Txt } from "../ui";
 
 export function AccountPicker({
   selected,
   onChange,
   exclude,
   spendingOnly = false,
+  savingsOnly = false,
+  currency,
   label = "Счёт",
 }: {
   selected: string;
   onChange: (id: string) => void;
   exclude?: string;
   spendingOnly?: boolean;
+  savingsOnly?: boolean;
+  currency?: CurrencyCode;
   label?: string;
 }) {
   const { state } = useFinance();
@@ -28,11 +33,15 @@ export function AccountPicker({
       >
         {state.accounts
           .filter(
-            (a) => a.id !== exclude && (!spendingOnly || a.kind === "spending"),
+            (a) =>
+              a.id !== exclude &&
+              (!spendingOnly || a.kind === "spending") &&
+              (!savingsOnly || a.kind === "savings") &&
+              (!currency || (a.currency ?? "RUB") === currency),
           )
           .map((a) => (
             <Chip
-              label={a.name}
+              label={`${a.name}${a.currency && a.currency !== "RUB" ? ` · ${a.currency}` : ""}`}
               icon={a.icon}
               key={a.id}
               active={selected === a.id}

@@ -1,12 +1,20 @@
+import { CURRENCY_CODES, currencyRate, type CurrencyCode } from "../currency";
 import { accountBalance, localDate, MAX_MONEY, uid } from "../finance";
 import type { Account, FinanceState } from "../types";
-import { checkAmount, checkName, checkSavings, ensure } from "./validation";
+import {
+  checkAmount,
+  checkCurrencyAmounts,
+  checkName,
+  checkSavings,
+  ensure,
+} from "./validation";
 
 export interface AccountInput {
   id?: string;
   name: string;
   kind: Account["kind"];
   balance: number;
+  currency?: CurrencyCode;
 }
 export function saveAccount(
   state: FinanceState,
@@ -23,6 +31,12 @@ export function saveAccount(
     !original || input.kind === original.kind,
     "Тип существующего счёта менять нельзя.",
   );
+  const currency = input.currency ?? original?.currency ?? "RUB";
+  ensure(
+    !original || (original.currency ?? "RUB") === currency,
+    "Валюту существующего счёта менять нельзя. Создайте новый счёт и выполните перевод.",
+  );
+  currencyRate(state, currency);
   checkName(input.name);
   checkAmount(input.balance, true);
   const openingBalance =
@@ -31,13 +45,14 @@ export function saveAccount(
     (original?.openingBalance ?? 0);
   ensure(
     Math.abs(openingBalance) <= MAX_MONEY,
-    "Корректировка начального остатка превышает 1 млрд ₽.",
+    "Корректировка начального остатка превышает допустимый лимит.",
   );
   const account: Account = {
     id: original?.id ?? uid(),
     name: input.name.trim(),
     kind: input.kind,
     openingBalance,
+    currency,
     icon:
       original?.icon ??
       (input.kind === "savings" ? "wallet-outline" : "card-outline"),
@@ -49,13 +64,18 @@ export function saveAccount(
       ? state.accounts.map((a) => (a.id === account.id ? account : a))
       : [...state.accounts, account],
   };
-  const initialGoals = next.goals.reduce((sum, g) => sum + g.initialSaved, 0);
-  ensure(
-    next.accounts
-      .filter((a) => a.kind === "savings")
-      .reduce((sum, a) => sum + a.openingBalance, 0) >= initialGoals,
-    "Начальный остаток меньше средств, распределённых по целям.",
-  );
+  for (const code of CURRENCY_CODES) {
+    const initialGoals = next.goals
+      .filter((g) => (g.currency ?? "RUB") === code)
+      .reduce((sum, g) => sum + g.initialSaved, 0);
+    ensure(
+      next.accounts
+        .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === code)
+        .reduce((sum, a) => sum + a.openingBalance, 0) >= initialGoals,
+      "Начальный остаток меньше средств, распределённых по целям.",
+    );
+  }
   checkSavings(next, today);
+  checkCurrencyAmounts(next, today);
   return next;
 }

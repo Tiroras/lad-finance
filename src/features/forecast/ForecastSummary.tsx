@@ -1,6 +1,7 @@
 import { View } from "react-native";
-import { dateLabel, money } from "../../domain/finance";
+import { dateLabel } from "../../domain/finance";
 import type { ForecastResult } from "../../domain/forecast";
+import { useMoney } from "../../hooks/useMoney";
 import { C, Card, font, Icon, Row, Txt } from "../../ui";
 
 function status(result: ForecastResult) {
@@ -14,17 +15,21 @@ function status(result: ForecastResult) {
 export function ForecastSummary({
   result,
   baseline,
+  labels,
 }: {
   result: ForecastResult;
   baseline?: ForecastResult;
+  labels?: { result: string; baseline: string };
 }) {
+  const { money } = useMoney();
   const warning = !!result.firstShortfall || !!result.firstBelowBuffer;
   return (
     <Card style={{ backgroundColor: C.green, borderColor: C.green, gap: 19 }}>
       <View style={{ gap: 7 }}>
         <Txt style={{ color: "#CBDBCA", fontSize: 12 }}>
-          {baseline ? "Остаток с покупкой" : "Остаток по плану"} ·{" "}
-          {dateLabel(result.days.at(-1)!.date)}
+          {labels?.result ??
+            (baseline ? "Остаток с покупкой" : "Остаток по плану")}{" "}
+          · {dateLabel(result.days.at(-1)!.date)}
         </Txt>
         <Txt
           testID="forecast-closing"
@@ -100,7 +105,8 @@ export function ForecastSummary({
           }}
         >
           <Txt style={{ color: "#fff", fontSize: 12 }}>
-            Без покупки: {money(baseline.closingBalance, true)}
+            {labels?.baseline ?? "Без покупки"}:{" "}
+            {money(baseline.closingBalance, true)}
           </Txt>
           <Txt style={{ color: "#CBDBCA", fontSize: 11 }}>
             {status(baseline)}

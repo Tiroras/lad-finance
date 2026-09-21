@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { useFinance } from "../store";
-import { importBackup } from "../backup";
+import { BackupPicker } from "../features/export/BackupPicker";
 import type { FinanceState } from "../domain/types";
 import { Button, Card, Notice, Txt } from "../ui";
 
@@ -25,11 +25,11 @@ export function RecoveryControls() {
   };
   return (
     <View style={{ gap: 15, marginTop: 20, maxWidth: 380 }}>
-      <Button
+      <BackupPicker
         label="Выбрать копию для восстановления"
-        variant="secondary"
         disabled={busy}
-        onPress={() => void run(async () => setPending(await importBackup()))}
+        onReady={setPending}
+        onStart={() => setPending(null)}
       />
       {pending && (
         <Card style={{ gap: 14 }}>

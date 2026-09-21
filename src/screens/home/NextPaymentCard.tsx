@@ -1,16 +1,18 @@
-import { View, Pressable, StyleSheet } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Icon } from "../../ui";
+import { Pressable, StyleSheet, View } from "react-native";
+import { accountCurrency } from "../../domain/currency";
 import {
   dateLabel,
   localDate,
-  money,
-  upcoming,
   overduePayments,
+  upcoming,
 } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { C, font, Icon, Row, Txt } from "../../ui";
 
 export function NextPaymentCard({ open }: { open: OpenSheet }) {
+  const { money } = useMoney();
   const { state } = useFinance();
   const next = [...overduePayments(state), ...upcoming(state)].find(
     (p) => !p.paid && !p.skipped,
@@ -35,7 +37,11 @@ export function NextPaymentCard({ open }: { open: OpenSheet }) {
           </Txt>
         </View>
         <Txt style={{ fontFamily: font.bold, fontSize: 12 }}>
-          {money(next.payment.amount)}
+          {money(
+            next.payment.amount,
+            false,
+            accountCurrency(state, next.payment.accountId),
+          )}
         </Txt>
         <Icon name="chevron-forward" size={15} color={C.muted} />
       </Row>

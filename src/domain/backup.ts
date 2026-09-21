@@ -1,6 +1,17 @@
 import { z } from "zod";
+import { checkCurrencyAmounts, checkSavings } from "./actions/validation";
+import { validateCategories } from "./categories";
+import {
+  accountCurrency,
+  baseCurrency,
+  CURRENCY_CODES,
+  currencyRate,
+  receivedAmount,
+} from "./currency";
+import { currencySchema, exchangeSchema } from "./currencySchema";
 import { localDate, MAX_MONEY, validDate } from "./finance";
-import type { FinanceState } from "./types";
+import { scenarioSchema } from "./scenarios";
+import { ICON_NAMES, type FinanceState } from "./types";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const positiveAmount = amount.min(1);
@@ -9,43 +20,19 @@ const name = z.string().trim().min(1).max(120);
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const day = z.number().int().min(1).max(31);
 const date = z.string().refine(validDate);
-const category = z.enum([
-  "groceries",
-  "cafe",
-  "transport",
-  "shopping",
-  "fun",
-  "health",
-  "home",
-  "other",
-]);
-const icon = z.enum([
-  "leaf-outline",
-  "cafe-outline",
-  "car-outline",
-  "bag-handle-outline",
-  "sparkles-outline",
-  "heart-outline",
-  "home-outline",
-  "grid-outline",
-  "airplane-outline",
-  "shield-checkmark-outline",
-  "wallet-outline",
-  "card-outline",
-  "cash-outline",
-  "musical-notes-outline",
-  "cloud-outline",
-  "barbell-outline",
-  "paper-plane-outline",
-  "wifi-outline",
-]);
+const category = id;
+const icon = z.enum(ICON_NAMES);
 const schema = z.object({
-  version: z.literal(1),
+  version: z
+    .union([z.literal(1), z.literal(2), z.literal(3)])
+    .transform(() => 3 as const),
   demo: z.boolean(),
   settings: z.object({
     name: z.string().max(40),
     payday: day,
     buffer: amount,
+    baseCurrency: currencySchema.optional(),
+    exchange: exchangeSchema.optional(),
     reminders: z
       .object({
         enabled: z.boolean(),
@@ -61,6 +48,7 @@ const schema = z.object({
         id,
         name,
         kind: z.enum(["spending", "savings"]),
+        currency: currencySchema.optional(),
         openingBalance: z.number().int().min(-MAX_MONEY).max(MAX_MONEY),
         icon,
         color,
@@ -77,9 +65,13 @@ const schema = z.object({
         color,
         background: color,
         budget: amount,
+        parentId: id.optional(),
+        archived: z.boolean().optional(),
       }),
     )
-    .length(8),
+    .min(1)
+    .max(200),
+  scenarios: z.array(scenarioSchema).max(20).default([]),
   goals: z
     .array(
       z.object({
@@ -87,6 +79,7 @@ const schema = z.object({
         name,
         target: positiveAmount,
         initialSaved: amount,
+        currency: currencySchema.optional(),
         monthly: amount,
         icon,
         color,
@@ -150,6 +143,8 @@ const schema = z.object({
         category,
         accountId: id,
         toAccountId: id.optional(),
+        toAmount: positiveAmount.optional(),
+        baseAmount: amount.optional(),
         goalId: id.optional(),
         recurringId: id.optional(),
         occurrenceDate: date.optional(),
@@ -183,9 +178,17 @@ export function decodeBackup(raw: string): FinanceState {
       state.recurring,
       state.transactions,
       state.plannedIncomes ?? [],
+      state.scenarios ?? [],
     ].every(unique)
   )
     throw new Error("В файле есть повторяющиеся записи. Импорт отменён.");
+  validateCategories(state.categories);
+  if (
+    [...state.transactions, ...state.recurring].some(
+      (entry) => !state.categories.some((c) => c.id === entry.category),
+    )
+  )
+    throw new Error("Операция или платёж ссылается на неизвестную категорию.");
   const account = (id: string | undefined) =>
     state.accounts.find((a) => a.id === id);
   if (
@@ -199,6 +202,9 @@ export function decodeBackup(raw: string): FinanceState {
     )
   )
     throw new Error("Платёж ссылается на недоступный счёт.");
+  currencyRate(state, baseCurrency(state));
+  for (const a of state.accounts) currencyRate(state, a.currency ?? "RUB");
+  for (const g of state.goals) currencyRate(state, g.currency ?? "RUB");
   const occurrences = new Set<string>();
   const incomeOccurrences = new Set<string>();
   if (
@@ -241,6 +247,27 @@ export function decodeBackup(raw: string): FinanceState {
         account(t.accountId)?.kind !== "spending")
     )
       throw new Error("Неверное пополнение цели.");
+    const sourceCurrency = accountCurrency(state, t.accountId);
+    if (
+      t.baseAmount === undefined &&
+      (sourceCurrency !== "RUB" || baseCurrency(state) !== "RUB")
+    )
+      throw new Error("У операции отсутствует оценка в основной валюте.");
+    if (t.type === "transfer") {
+      const targetCurrency = accountCurrency(state, t.toAccountId);
+      if (
+        (sourceCurrency !== targetCurrency && t.toAmount === undefined) ||
+        (sourceCurrency === targetCurrency && receivedAmount(t) !== t.amount)
+      )
+        throw new Error("Неверные суммы валютного перевода.");
+      if (
+        t.goalId &&
+        (state.goals.find((g) => g.id === t.goalId)?.currency ?? "RUB") !==
+          targetCurrency
+      )
+        throw new Error("Валюта цели не совпадает со счётом зачисления.");
+    } else if (t.toAmount !== undefined)
+      throw new Error("Сумма зачисления допустима только для перевода.");
     if (t.recurringId) {
       if (
         t.type !== "expense" ||
@@ -254,14 +281,20 @@ export function decodeBackup(raw: string): FinanceState {
       occurrences.add(key);
     }
   }
-  const saved = state.goals.reduce((sum, goal) => sum + goal.initialSaved, 0);
-  const openingSavings = state.accounts
-    .filter((a) => a.kind === "savings")
-    .reduce((sum, a) => sum + a.openingBalance, 0);
-  if (saved > openingSavings)
-    throw new Error(
-      "Начальные накопления по целям превышают баланс накопительных счетов.",
-    );
+  for (const currency of CURRENCY_CODES) {
+    const saved = state.goals
+      .filter((g) => (g.currency ?? "RUB") === currency)
+      .reduce((sum, goal) => sum + goal.initialSaved, 0);
+    const openingSavings = state.accounts
+      .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === currency)
+      .reduce((sum, a) => sum + a.openingBalance, 0);
+    if (saved > openingSavings)
+      throw new Error(
+        "Начальные накопления по целям превышают баланс накопительных счетов.",
+      );
+  }
+  checkSavings(state, localDate());
+  checkCurrencyAmounts(state, localDate());
   // Older backups have no start boundary. Begin tracking from the month of
   // migration, then persist that date, without inventing earlier arrears.
   return {

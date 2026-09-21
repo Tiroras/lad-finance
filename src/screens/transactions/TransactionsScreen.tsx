@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
 import { View } from "react-native";
-import { useFinance } from "../../store";
-import { C, Txt, Row, IconButton, Button } from "../../ui";
+import { categoryMatches } from "../../domain/categories";
+import { transactionValue } from "../../domain/currency";
 import { monthKey } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { Button, C, IconButton, Row, Txt } from "../../ui";
 import { MonthPicker } from "../shared/MonthPicker";
 import { ScreenHeading } from "../shared/ScreenHeading";
 import { TransactionFilters } from "./TransactionFilters";
-import { TransactionTotals } from "./TransactionTotals";
 import { TransactionGroups } from "./TransactionGroups";
+import { TransactionTotals } from "./TransactionTotals";
 
 export function TransactionsScreen({ open }: { open: OpenSheet }) {
   const { state } = useFinance();
@@ -29,20 +31,21 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
             (account === "all" ||
               t.accountId === account ||
               t.toAccountId === account) &&
-            (category === "all" || t.category === category) &&
+            (category === "all" ||
+              categoryMatches(state, t.category, category)) &&
             `${t.title} ${t.note ?? ""}`
               .toLocaleLowerCase("ru-RU")
               .includes(query.trim().toLocaleLowerCase("ru-RU")),
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
-    [state.transactions, month, type, query, account, category],
+    [state, month, type, query, account, category],
   );
   const income = filtered
       .filter((t) => t.type === "income")
-      .reduce((n, t) => n + t.amount, 0),
+      .reduce((n, t) => n + transactionValue(state, t), 0),
     expense = filtered
       .filter((t) => t.type === "expense")
-      .reduce((n, t) => n + t.amount, 0);
+      .reduce((n, t) => n + transactionValue(state, t), 0);
   const groups = new Map<string, Transaction[]>();
   filtered
     .slice(0, limit)
@@ -79,6 +82,12 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
         setAccount={setAccount}
         category={category}
         setCategory={setCategory}
+      />
+      <Button
+        label="Экспортировать операции в CSV"
+        icon="download-outline"
+        variant="secondary"
+        onPress={() => open({ type: "export" })}
       />
       <TransactionTotals income={income} expense={expense} />
       <Txt style={{ color: C.muted, fontSize: 11 }}>

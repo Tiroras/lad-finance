@@ -1,21 +1,23 @@
 import { View } from "react-native";
+import { goalSaved } from "../../domain/finance";
+import type { Goal } from "../../domain/types";
+import { useMoney } from "../../hooks/useMoney";
+import type { OpenSheet } from "../../navigation/types";
 import { useFinance } from "../../store";
 import {
-  C,
-  font,
-  Txt,
-  Row,
-  Card,
-  IconTile,
-  IconButton,
-  Progress,
   Button,
+  C,
+  Card,
+  font,
+  IconButton,
+  IconTile,
+  Progress,
+  Row,
+  Txt,
 } from "../../ui";
-import { goalSaved, money } from "../../domain/finance";
-import type { Goal } from "../../domain/types";
-import type { OpenSheet } from "../../navigation/types";
 
 export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
+  const { money } = useMoney();
   const { state } = useFinance();
   const saved = goalSaved(state, goal),
     remaining = Math.max(0, goal.target - saved);
@@ -30,7 +32,7 @@ export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
             {remaining === 0
               ? "Цель достигнута. Это ваш момент!"
               : months
-                ? `Ещё ${months} мес. при ${money(goal.monthly)} в месяц`
+                ? `Ещё ${months} мес. при ${money(goal.monthly, false, goal.currency ?? "RUB")} в месяц`
                 : "Накопления в свободном темпе"}
           </Txt>
         </View>
@@ -42,10 +44,10 @@ export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
       </Row>
       <Row style={{ justifyContent: "space-between" }}>
         <Txt style={{ fontFamily: font.bold, fontSize: 23 }}>
-          {money(saved)}
+          {money(saved, false, goal.currency ?? "RUB")}
         </Txt>
         <Txt style={{ color: C.muted, fontSize: 12 }}>
-          из {money(goal.target)}
+          из {money(goal.target, false, goal.currency ?? "RUB")}
         </Txt>
       </Row>
       <Progress value={saved / goal.target} color="#78986A" height={8} />

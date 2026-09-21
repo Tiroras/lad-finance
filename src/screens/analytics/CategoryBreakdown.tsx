@@ -1,17 +1,18 @@
 import { View } from "react-native";
+import { categorySpending } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import {
   C,
-  font,
-  Txt,
-  Row,
   Card,
-  IconTile,
-  Section,
-  Progress,
-  Empty,
   Donut,
+  Empty,
+  font,
+  IconTile,
+  Progress,
+  Row,
+  Section,
+  Txt,
 } from "../../ui";
-import { categorySpending, money } from "../../domain/finance";
 
 export function CategoryBreakdown({
   spending,
@@ -20,6 +21,7 @@ export function CategoryBreakdown({
   spending: ReturnType<typeof categorySpending>;
   expense: number;
 }) {
+  const { money } = useMoney();
   return (
     <Card>
       <Section title="Расходы по категориям" />

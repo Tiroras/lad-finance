@@ -1,5 +1,6 @@
-import { C, font, Txt, Card, Progress } from "../../ui";
-import { dateLabel, localDate, money } from "../../domain/finance";
+import { dateLabel, localDate } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { C, Card, font, Progress, Txt } from "../../ui";
 
 export function BudgetSummary({
   budget,
@@ -8,6 +9,7 @@ export function BudgetSummary({
   budget: number;
   spent: number;
 }) {
+  const { money } = useMoney();
   return (
     <Card style={{ backgroundColor: C.green, borderColor: C.green }}>
       <Txt style={{ color: "#C4D2C3", fontSize: 12, marginBottom: 12 }}>

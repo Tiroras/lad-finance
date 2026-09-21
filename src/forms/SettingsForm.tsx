@@ -1,21 +1,21 @@
-import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { View } from "react-native";
-import {
-  C,
-  font,
-  Txt,
-  Row,
-  Card,
-  IconTile,
-  Button,
-  Field,
-  Section,
-} from "../ui";
-import { useFinance } from "../store";
-import { moneyInput, parseMoney } from "../domain/finance";
-import { exportBackup, importBackup } from "../backup";
 import type { FinanceState } from "../domain/types";
+import { BackupSettings } from "../features/export/BackupSettings";
+import { useFinanceActions } from "../hooks/useFinanceActions";
+import { useMoney } from "../hooks/useMoney";
+import { useFinance } from "../store";
+import {
+  Button,
+  C,
+  Card,
+  Field,
+  font,
+  IconTile,
+  Row,
+  Section,
+  Txt,
+} from "../ui";
 import { ErrorText } from "./ErrorText";
 
 import { ReminderSettings } from "../features/payments/ReminderSettings";
@@ -30,6 +30,7 @@ export function SettingsForm({
   close: () => void;
   open: OpenSheet;
 }) {
+  const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const [name, setName] = useState(state.settings.name);
@@ -59,7 +60,9 @@ export function SettingsForm({
       const parsed = parseMoney(buffer),
         day = Number(payday);
       if (parsed === null)
-        return setError("Введите резерв в рублях, от нуля до 1 млрд ₽.");
+        return setError(
+          "Введите резерв в основной валюте, в пределах допустимого лимита.",
+        );
       actions.saveSettings({ name, payday: day, buffer: parsed });
       notify("Настройки сохранены");
       close();
@@ -101,7 +104,7 @@ export function SettingsForm({
         maxLength={2}
       />
       <Field
-        label="Неприкосновенный остаток, ₽"
+        label={`Неприкосновенный остаток, ${baseSymbol}`}
         accessibilityLabel="Неприкосновенный остаток"
         value={buffer}
         onChangeText={setBuffer}
@@ -118,6 +121,12 @@ export function SettingsForm({
       <View
         style={{ height: 1, backgroundColor: C.border, marginVertical: 4 }}
       />
+      <Button
+        label="Валюты и курсы"
+        icon="swap-horizontal-outline"
+        variant="secondary"
+        onPress={() => open({ type: "currencies" })}
+      />
       <Section title="Данные под вашим контролем" />
       <ReminderSettings />
       <SecuritySettings />
@@ -127,45 +136,36 @@ export function SettingsForm({
         variant="secondary"
         onPress={() => open({ type: "csv" })}
       />
-      <Txt style={{ fontSize: 11, color: C.muted, lineHeight: 19 }}>
-        Экспортируйте копию перед сменой устройства или удалением приложения.
-        JSON-копия не зашифрована; облачной синхронизации нет.
-      </Txt>
       <Button
-        label="Экспортировать резервную копию"
-        icon="download-outline"
+        label="Категории и подкатегории"
+        icon="grid-outline"
         variant="secondary"
-        disabled={busy}
-        onPress={() =>
-          void run(async () => {
-            await exportBackup(state);
-            notify("Резервная копия подготовлена");
-          })
-        }
+        onPress={() => open({ type: "categories" })}
       />
       <Button
-        label="Восстановить из файла"
-        icon="cloud-upload-outline"
+        label="Экспортировать операции в CSV"
+        icon="download-outline"
         variant="secondary"
-        disabled={busy}
-        onPress={() =>
-          void run(async () => {
-            const value = await importBackup();
-            if (value) {
-              setPending(value);
-              setReset(null);
-            }
-          })
-        }
+        onPress={() => open({ type: "export" })}
+      />
+      <BackupSettings
+        onStart={() => {
+          setPending(null);
+          setReset(null);
+        }}
+        onReady={(value) => {
+          setPending(value);
+          setReset(null);
+        }}
       />
       {pending && (
         <Card style={{ gap: 15, backgroundColor: "#FAF0E4" }}>
           <Txt style={{ fontFamily: font.bold }}>Копия проверена</Txt>
           <Txt style={{ fontSize: 12, lineHeight: 20 }}>
             В файле {pending.transactions.length} операций,{" "}
-            {pending.accounts.length} счетов и {pending.goals.length} целей.
-            Восстановление заменит все текущие данные. Сначала экспортируйте их,
-            если хотите сохранить.
+            {pending.accounts.length} счетов, {pending.goals.length} целей и{" "}
+            {pending.scenarios?.length ?? 0} сценариев. Восстановление заменит
+            все текущие данные. Сначала экспортируйте их, если хотите сохранить.
           </Txt>
           <Button
             label="Заменить данные этой копией"
@@ -225,8 +225,8 @@ export function SettingsForm({
             {reset === "demo" ? "Загрузить пример?" : "Начать с чистого листа?"}
           </Txt>
           <Txt style={{ fontSize: 12, lineHeight: 20 }}>
-            Текущие операции, цели, платежи и остатки будут заменены. При
-            необходимости сначала экспортируйте резервную копию.
+            Текущие операции, категории, цели, платежи, сценарии и остатки будут
+            заменены. При необходимости сначала экспортируйте резервную копию.
           </Txt>
           <Button
             label={

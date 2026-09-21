@@ -1,24 +1,34 @@
-import { useActionError } from "../hooks/useActionError";
-import { useFinanceActions } from "../hooks/useFinanceActions";
 import { useState } from "react";
 import { Pressable } from "react-native";
-import { C, Row, IconTile, Button, Field, Notice } from "../ui";
-import { useFinance } from "../store";
-import { moneyInput, parseMoney } from "../domain/finance";
+import { currencySymbol, type CurrencyCode } from "../domain/currency";
 import type { Goal } from "../domain/types";
-import { ErrorText } from "./ErrorText";
+import { CurrencyPicker } from "../features/currencies/CurrencyPicker";
+import { useActionError } from "../hooks/useActionError";
+import { useFinanceActions } from "../hooks/useFinanceActions";
+import { useMoney } from "../hooks/useMoney";
+import { useFinance } from "../store";
+import { Button, C, Field, IconTile, Notice, Row } from "../ui";
 import { DeleteButton } from "./DeleteButton";
+import { ErrorText } from "./ErrorText";
 
 export function GoalForm({ id, close }: { id?: string; close: () => void }) {
+  const { moneyInput, parseMoney, currency: baseCode } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.goals.find((g) => g.id === id);
+  const [currency, setCurrency] = useState<CurrencyCode>(
+    original ? (original.currency ?? "RUB") : baseCode,
+  );
   const [name, setName] = useState(original?.name ?? "");
   const [target, setTarget] = useState(
-    original ? moneyInput(original.target) : "100000",
+    original
+      ? moneyInput(original.target, original.currency ?? "RUB")
+      : "100000",
   );
   const [monthly, setMonthly] = useState(
-    original ? moneyInput(original.monthly) : "5000",
+    original
+      ? moneyInput(original.monthly, original.currency ?? "RUB")
+      : "5000",
   );
   const [icon, setIcon] = useState<Goal["icon"]>(
     original?.icon ?? "airplane-outline",
@@ -26,16 +36,19 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
   const { error, setError, run } = useActionError();
   const save = () =>
     run(() => {
-      const targetAmount = parseMoney(target),
-        monthlyAmount = parseMoney(monthly);
+      const targetAmount = parseMoney(target, currency),
+        monthlyAmount = parseMoney(monthly, currency);
       if (targetAmount === null || monthlyAmount === null)
-        return setError("Укажите сумму цели и ежемесячный взнос в рублях.");
+        return setError(
+          "Укажите сумму цели и ежемесячный взнос в выбранной валюте.",
+        );
       actions.saveGoal({
         id,
         name,
         target: targetAmount,
         monthly: monthlyAmount,
         icon,
+        currency,
       });
       notify(original ? "Цель обновлена" : "Первый шаг к мечте сделан");
       close();
@@ -75,8 +88,13 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
         onChangeText={setName}
         maxLength={120}
       />
+      <CurrencyPicker
+        value={currency}
+        onChange={setCurrency}
+        disabled={!!original}
+      />
       <Field
-        label="Сколько нужно накопить, ₽"
+        label={`Сколько нужно накопить, ${currencySymbol(currency)}`}
         accessibilityLabel="Сумма цели"
         value={target}
         onChangeText={setTarget}
@@ -84,7 +102,7 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
         maxLength={16}
       />
       <Field
-        label="Планирую откладывать в месяц, ₽"
+        label={`Планирую откладывать в месяц, ${currencySymbol(currency)}`}
         accessibilityLabel="Ежемесячный взнос"
         value={monthly}
         onChangeText={setMonthly}

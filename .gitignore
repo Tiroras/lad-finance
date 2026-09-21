@@ -44,3 +44,6 @@ yarn-error.*
 test-results/
 playwright-report/
 native-export/
+
+# Generated UI captures
+docs/screenshots/

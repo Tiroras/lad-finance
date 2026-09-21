@@ -1,3 +1,4 @@
+import { ExchangeRateProvider } from "../features/currencies/ExchangeRateProvider";
 import { FinanceProvider } from "../store";
 import { ReminderProvider } from "../features/payments/ReminderProvider";
 import { SecurityProvider } from "../security/SecurityProvider";
@@ -7,7 +8,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <SecurityProvider>
       <FinanceProvider>
-        <ReminderProvider>{children}</ReminderProvider>
+        <ReminderProvider>
+          <ExchangeRateProvider>{children}</ExchangeRateProvider>
+        </ReminderProvider>
       </FinanceProvider>
     </SecurityProvider>
   );

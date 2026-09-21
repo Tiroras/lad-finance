@@ -1,3 +1,12 @@
+import { appendTransaction } from "./actions/transactions";
+import { activeCategory, categoryLabel } from "./categories";
+import {
+  CURRENCIES,
+  accountCurrency,
+  accountToBase,
+  receivedAmount,
+  type CurrencyCode,
+} from "./currency";
 import {
   accountBalance,
   localDate,
@@ -8,7 +17,6 @@ import {
   validateTransaction,
 } from "./finance";
 import type { CategoryId, FinanceState, Transaction } from "./types";
-import { appendTransaction } from "./actions/transactions";
 
 export const CSV_MAX_BYTES = 2_000_000;
 export const CSV_MAX_ROWS = 5000;
@@ -39,6 +47,7 @@ export interface CsvOptions {
 export interface CsvOverride {
   type?: Transaction["type"];
   otherAccountId?: string;
+  otherAmount?: string;
   category?: CategoryId;
 }
 export interface CsvPreviewRow {
@@ -196,9 +205,9 @@ function csvDate(value: string, order: CsvOptions["dateOrder"]): string | null {
   const date = `${local[4]}-${local[2] === "." || order === "dmy" ? second : first}-${local[2] === "." || order === "dmy" ? first : second}`;
   return validDate(date) ? date : null;
 }
-function signedAmount(value: string) {
+function signedAmount(value: string, currency: CurrencyCode) {
   const clean = value.trim().replace(/^−/, "-");
-  const amount = parseMoney(clean.replace(/^[+-]/, ""));
+  const amount = parseMoney(clean.replace(/^[+-]/, ""), currency);
   return amount === null ? null : clean.startsWith("-") ? -amount : amount;
 }
 const fingerprint = (t: Transaction) =>
@@ -208,6 +217,7 @@ const fingerprint = (t: Transaction) =>
     t.type,
     t.date,
     t.amount,
+    t.type === "transfer" ? receivedAmount(t) : "",
     t.title.toLocaleLowerCase("ru-RU").replace(/\s+/g, " ").trim(),
   ]);
 
@@ -235,6 +245,7 @@ export function previewCsv(
     )
   )
     throw new Error("Выберите повседневный счёт для выписки.");
+  const currency = accountCurrency(state, options.accountId);
   const existing = new Map<string, number>();
   const existingIds = new Map<string, Transaction>();
   state.transactions.forEach((t) => {
@@ -260,11 +271,13 @@ export function previewCsv(
     const date = csvDate(value("date"), options.dateOrder);
     if (!date || date > today || date < "2000-01-01")
       return fail("Некорректная дата или операция из будущего.");
-    if (
-      value("currency") &&
-      !/^(RUB|RUR|₽|руб\.?|643)$/i.test(value("currency"))
-    )
-      return fail("Поддерживаются только рублёвые операции.");
+    const rowCurrency = /^(RUR|₽|руб\.?|643)$/i.test(value("currency"))
+      ? "RUB"
+      : value("currency").toUpperCase();
+    if (rowCurrency && rowCurrency !== currency)
+      return fail(
+        `Валюта строки не совпадает с валютой счёта (${currency}). Выберите соответствующий счёт.`,
+      );
     if (
       value("status") &&
       !/^(OK|успешно|исполнено|выполнено|проведено|обработано|completed|posted|success)$/i.test(
@@ -274,8 +287,12 @@ export function previewCsv(
       return fail("Операция не подтверждена банком: проверьте статус.");
     let amount: number | null, type: Transaction["type"];
     if (options.mode === "split") {
-      const expense = value("expense") ? signedAmount(value("expense")) : 0;
-      const income = value("income") ? signedAmount(value("income")) : 0;
+      const expense = value("expense")
+        ? signedAmount(value("expense"), currency)
+        : 0;
+      const income = value("income")
+        ? signedAmount(value("income"), currency)
+        : 0;
       if (
         expense === null ||
         income === null ||
@@ -289,10 +306,10 @@ export function previewCsv(
       amount = income || expense;
       type = income ? "income" : "expense";
     } else {
-      const signed = signedAmount(value("amount"));
+      const signed = signedAmount(value("amount"), currency);
       if (signed === null || signed === 0)
         return fail(
-          "Проверьте сумму: не больше двух знаков после запятой, без разделителей тысяч точками или запятыми.",
+          `Проверьте сумму: для ${currency} допустимо знаков после запятой: ${CURRENCIES[currency].digits}.`,
         );
       amount = Math.abs(signed);
       type =
@@ -329,6 +346,18 @@ export function previewCsv(
         override.otherAccountId === options.accountId)
     )
       return fail("Выберите второй счёт для перевода.");
+    const categoryName = normalize(value("category"));
+    const matchingCategories = categoryName
+      ? state.categories.filter(
+          (c) =>
+            !c.archived &&
+            normalize(categoryLabel(state, c.id)) === categoryName,
+        )
+      : [];
+    if (matchingCategories.length > 1 && !override.category)
+      return fail(
+        "Название категории неоднозначно. Выберите категорию вручную.",
+      );
     const transaction: Transaction = {
       id: `csv-preview-${line}`,
       title,
@@ -346,11 +375,39 @@ export function previewCsv(
         : {}),
       category:
         override.category ??
-        state.categories.find(
-          (c) => normalize(c.name) === normalize(value("category")),
-        )?.id ??
-        suggestCategory(title),
+        matchingCategories[0]?.id ??
+        activeCategory(state, suggestCategory(title)),
     };
+    if (type === "transfer") {
+      if (!state.accounts.some((a) => a.id === override.otherAccountId))
+        return fail("Выберите второй счёт для перевода.");
+      const otherCurrency = accountCurrency(state, override.otherAccountId);
+      if (otherCurrency !== currency) {
+        const otherAmount = parseMoney(
+          override.otherAmount ?? "",
+          otherCurrency,
+        );
+        if (!otherAmount)
+          return fail(
+            `Укажите фактическую сумму на втором счёте в ${otherCurrency}.`,
+          );
+        transaction.amount = incoming ? otherAmount : amount;
+        transaction.toAmount = incoming ? amount : otherAmount;
+      }
+    }
+    try {
+      transaction.baseAmount = accountToBase(
+        state,
+        transaction.amount,
+        transaction.accountId,
+      );
+    } catch (e) {
+      return fail(
+        e instanceof Error ? e.message : "Не удалось пересчитать валюту.",
+      );
+    }
+    if (state.categories.find((c) => c.id === transaction.category)?.archived)
+      return fail("Категория в архиве. Выберите активную категорию.");
     const error = validateTransaction(state, transaction, today);
     if (error) return fail(error);
     const key = fingerprint(transaction),

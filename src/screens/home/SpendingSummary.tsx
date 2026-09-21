@@ -1,13 +1,9 @@
 import { View } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Card, Section, Empty, Donut } from "../../ui";
-import {
-  categorySpending,
-  dateLabel,
-  money,
-  totals,
-} from "../../domain/finance";
+import { categorySpending, dateLabel, totals } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { Navigate } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { C, Card, Donut, Empty, font, Row, Section, Txt } from "../../ui";
 
 export function SpendingSummary({
   navigate,
@@ -16,6 +12,7 @@ export function SpendingSummary({
   navigate: Navigate;
   hidden: boolean;
 }) {
+  const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
   const spending = categorySpending(state).sort((a, b) => b.spent - a.spent);
   const monthTotals = totals(state);
@@ -45,7 +42,7 @@ export function SpendingSummary({
               value: c.spent,
               color: c.color,
             }))}
-            center={hidden ? "••• ₽" : money(monthTotals.expense)}
+            center={hidden ? `••• ${baseSymbol}` : money(monthTotals.expense)}
             subtitle="всего за месяц"
           />
           <View style={{ flex: 1, gap: 17 }}>
@@ -77,7 +74,7 @@ export function SpendingSummary({
                       fontFamily: font.bold,
                     }}
                   >
-                    {hidden ? "••• ₽" : money(c.spent)}
+                    {hidden ? `••• ${baseSymbol}` : money(c.spent)}
                   </Txt>
                 </View>
               ))}

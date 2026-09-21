@@ -26,6 +26,7 @@ export function incomeOccurrences(
   state: FinanceState,
   start: string,
   end: string,
+  asOf = start,
 ): IncomeOccurrence[] {
   const result: IncomeOccurrence[] = [];
   for (const plan of state.plannedIncomes ?? []) {
@@ -34,7 +35,7 @@ export function incomeOccurrences(
         date >= start &&
         date < end &&
         date >= plan.date &&
-        !incomeReceived(state, plan, date, start)
+        !incomeReceived(state, plan, date, asOf)
       )
         result.push({ plan, date });
     };

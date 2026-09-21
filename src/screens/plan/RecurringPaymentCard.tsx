@@ -1,12 +1,13 @@
+import { Pressable, Switch, View } from "react-native";
+import { accountCurrency } from "../../domain/currency";
+import type { Recurring } from "../../domain/types";
 import { ErrorText } from "../../forms/ErrorText";
 import { useActionError } from "../../hooks/useActionError";
 import { useFinanceActions } from "../../hooks/useFinanceActions";
-import { View, Pressable, Switch } from "react-native";
-import { useFinance } from "../../store";
-import { C, font, Txt, Row, Card, IconTile } from "../../ui";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
-import type { Recurring } from "../../domain/types";
+import { useFinance } from "../../store";
+import { C, Card, font, IconTile, Row, Txt } from "../../ui";
 
 export function RecurringPaymentCard({
   payment: p,
@@ -15,7 +16,8 @@ export function RecurringPaymentCard({
   payment: Recurring;
   open: OpenSheet;
 }) {
-  const { notify } = useFinance();
+  const { money } = useMoney();
+  const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const { error, run } = useActionError();
   return (
@@ -44,7 +46,7 @@ export function RecurringPaymentCard({
         </Pressable>
         <View style={{ alignItems: "flex-end", gap: 8 }}>
           <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
-            {money(p.amount)}
+            {money(p.amount, false, accountCurrency(state, p.accountId))}
           </Txt>
           <Switch
             accessibilityLabel={`Учитывать ${p.name} в плане`}

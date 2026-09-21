@@ -31,8 +31,8 @@ export function saveBudget(
 ): FinanceState {
   checkAmount(budget, true);
   ensure(
-    state.categories.some((c) => c.id === id),
-    "Категория не найдена.",
+    state.categories.some((c) => c.id === id && !c.parentId && !c.archived),
+    "Категория недоступна для отдельного бюджета. Выберите активную основную категорию.",
   );
   return {
     ...state,

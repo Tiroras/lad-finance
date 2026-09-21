@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import { font, Txt, Row, Card, IconTile } from "../../ui";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { Card, font, IconTile, Row, Txt } from "../../ui";
 
 export function SavingsSummary({
   income,
@@ -9,6 +9,7 @@ export function SavingsSummary({
   income: number;
   expense: number;
 }) {
+  const { money } = useMoney();
   const savingsRate = income > 0 ? (income - expense) / income : null;
 
   return (

@@ -1,31 +1,26 @@
-export type CategoryId =
-  | "groceries"
-  | "cafe"
-  | "transport"
-  | "shopping"
-  | "fun"
-  | "health"
-  | "home"
-  | "other";
-export type IconName =
-  | "leaf-outline"
-  | "cafe-outline"
-  | "car-outline"
-  | "bag-handle-outline"
-  | "sparkles-outline"
-  | "heart-outline"
-  | "home-outline"
-  | "grid-outline"
-  | "airplane-outline"
-  | "shield-checkmark-outline"
-  | "wallet-outline"
-  | "card-outline"
-  | "cash-outline"
-  | "musical-notes-outline"
-  | "cloud-outline"
-  | "barbell-outline"
-  | "paper-plane-outline"
-  | "wifi-outline";
+import type { CurrencyCode, ExchangeSettings } from "./currency";
+export type CategoryId = string;
+export const ICON_NAMES = [
+  "leaf-outline",
+  "cafe-outline",
+  "car-outline",
+  "bag-handle-outline",
+  "sparkles-outline",
+  "heart-outline",
+  "home-outline",
+  "grid-outline",
+  "airplane-outline",
+  "shield-checkmark-outline",
+  "wallet-outline",
+  "card-outline",
+  "cash-outline",
+  "musical-notes-outline",
+  "cloud-outline",
+  "barbell-outline",
+  "paper-plane-outline",
+  "wifi-outline",
+] as const;
+export type IconName = (typeof ICON_NAMES)[number];
 
 export interface Category {
   id: CategoryId;
@@ -34,14 +29,17 @@ export interface Category {
   color: string;
   background: string;
   budget: number;
+  parentId?: CategoryId;
+  archived?: boolean;
 }
 
-// All monetary values are integer kopecks. Dates are local calendar dates.
+// Money uses integer minor units of the account/goal currency; summaries use the base currency.
 export interface Account {
   id: string;
   name: string;
   kind: "spending" | "savings";
   openingBalance: number;
+  currency?: CurrencyCode;
   icon: IconName;
   color: string;
 }
@@ -55,6 +53,8 @@ export interface Transaction {
   category: CategoryId;
   accountId: string;
   toAccountId?: string;
+  toAmount?: number;
+  baseAmount?: number;
   goalId?: string;
   recurringId?: string;
   occurrenceDate?: string;
@@ -70,6 +70,7 @@ export interface Goal {
   target: number;
   initialSaved: number;
   monthly: number;
+  currency?: CurrencyCode;
   icon: IconName;
   color: string;
 }
@@ -111,7 +112,7 @@ export interface ForecastPreferences {
 }
 
 export interface FinanceState {
-  version: 1;
+  version: 2 | 3;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];
@@ -119,13 +120,42 @@ export interface FinanceState {
   goals: Goal[];
   recurring: Recurring[];
   plannedIncomes?: PlannedIncome[];
+  scenarios?: SavedScenario[];
   settings: {
     name: string;
     payday: number;
     buffer: number;
+    baseCurrency?: CurrencyCode;
+    exchange?: ExchangeSettings;
     reminders?: ReminderPreferences;
     forecast?: ForecastPreferences;
   };
+}
+
+export interface ScenarioChange {
+  currency?: CurrencyCode;
+  source: "income" | "payment" | "goal";
+  sourceId: string;
+  name: string;
+  amount: number;
+  delayDays: number;
+}
+
+export interface ScenarioEvent {
+  id: string;
+  name: string;
+  type: "income" | "expense";
+  amount: number;
+  date: string;
+}
+
+export interface SavedScenario {
+  id: string;
+  name: string;
+  horizon: 30 | 60 | 90;
+  dailySpending?: number;
+  changes: ScenarioChange[];
+  events: ScenarioEvent[];
 }
 
 export interface Occurrence {

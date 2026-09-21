@@ -1,10 +1,13 @@
 import { Pressable, View } from "react-native";
-import { dateLabel, money } from "../../domain/finance";
+import { accountCurrency } from "../../domain/currency";
+import { dateLabel } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
 import { useFinance } from "../../store";
 import { C, Card, font, Icon, Notice, Row, Section, Txt } from "../../ui";
 
 export function IncomePlans({ open }: { open: OpenSheet }) {
+  const { money } = useMoney();
   const { state } = useFinance();
   return (
     <View style={{ gap: 12 }}>
@@ -29,7 +32,12 @@ export function IncomePlans({ open }: { open: OpenSheet }) {
               <Icon name="chevron-forward" size={16} color={C.muted} />
             </Row>
             <Txt style={{ fontSize: 12, color: C.green }}>
-              {money(plan.amount)} ·{" "}
+              {money(
+                plan.amount,
+                false,
+                accountCurrency(state, plan.accountId),
+              )}{" "}
+              ·{" "}
               {plan.repeat === "monthly"
                 ? `${Number(plan.date.slice(-2))}-го каждый месяц`
                 : dateLabel(plan.date)}

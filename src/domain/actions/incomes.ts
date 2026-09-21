@@ -1,8 +1,14 @@
+import { accountCurrency } from "../currency";
 import { dateInMonth, localDate, uid, validDate } from "../finance";
 import { incomeReceived } from "../incomes";
 import type { FinanceState, PlannedIncome } from "../types";
 import { saveTransaction } from "./transactions";
-import { checkAmount, checkName, ensure } from "./validation";
+import {
+  checkAmount,
+  checkCurrencyAmounts,
+  checkName,
+  ensure,
+} from "./validation";
 
 export type IncomeInput = Omit<PlannedIncome, "id"> & { id?: string };
 export function savePlannedIncome(
@@ -15,6 +21,12 @@ export function savePlannedIncome(
   ensure(
     original || plans.length < 200,
     "Можно создать не более 200 планируемых доходов.",
+  );
+  ensure(
+    !original ||
+      accountCurrency(state, original.accountId) ===
+        accountCurrency(state, input.accountId),
+    "Для смены валюты создайте новый план. Валюта существующего плана сохраняется для истории и сценариев.",
   );
   checkName(input.name);
   checkAmount(input.amount);
@@ -45,12 +57,15 @@ export function savePlannedIncome(
     name: input.name.trim(),
     id: original?.id ?? uid(),
   };
-  return {
+  const next: FinanceState = {
     ...state,
     plannedIncomes: original
       ? plans.map((p) => (p.id === plan.id ? plan : p))
       : [...plans, plan],
   };
+
+  checkCurrencyAmounts(next, localDate());
+  return next;
 }
 export function deletePlannedIncome(
   state: FinanceState,

@@ -1,42 +1,57 @@
-import { Platform } from "react-native";
-import * as Sharing from "expo-sharing";
-import { File, Paths } from "expo-file-system";
-import { decodeBackup, encodeBackup } from "./domain/backup";
+import { decodeBackup } from "./domain/backup";
 import { localDate } from "./domain/finance";
 import type { FinanceState } from "./domain/types";
 import { pickDocument } from "./services/documents";
+import { shareFile } from "./services/shareFile";
+import { backupCrypto } from "./services/backupCrypto";
+import {
+  checkedBackupContent,
+  decryptBackup,
+  encryptBackup,
+  MAX_ENCRYPTED_BACKUP_BYTES,
+  MAX_PLAIN_BACKUP_BYTES,
+  parsePasswordEnvelope,
+} from "./security/passwordBackup";
 
-export async function exportBackup(state: FinanceState) {
-  const content = encodeBackup(state);
-  const name = `lad-backup-${localDate()}.json`;
-  if (Platform.OS === "web") {
-    const url = URL.createObjectURL(
-      new Blob([content], { type: "application/json" }),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = name;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    return;
-  }
-  if (!(await Sharing.isAvailableAsync()))
-    throw new Error("Системное меню экспорта сейчас недоступно.");
-  const file = new File(Paths.cache, name);
-  file.create({ overwrite: true });
-  file.write(content);
+export async function exportBackup(state: FinanceState, password?: string) {
+  const encrypted = password !== undefined;
+  const content = encrypted
+    ? await encryptBackup(state, password, backupCrypto)
+    : checkedBackupContent(state);
+  await shareFile(
+    content,
+    `lad-backup-${localDate()}.${encrypted ? "ladbackup" : "json"}`,
+    encrypted ? "application/octet-stream" : "application/json",
+  );
+}
+
+export type PickedBackup =
+  { kind: "open"; state: FinanceState } | { kind: "encrypted"; raw: string };
+export async function pickBackup(): Promise<PickedBackup | null> {
+  const file = await pickDocument(
+    ["json", "ladbackup"],
+    MAX_ENCRYPTED_BACKUP_BYTES,
+  );
+  if (!file) return null;
+  const raw = new TextDecoder().decode(file.bytes);
+  let value: unknown;
   try {
-    await Sharing.shareAsync(file.uri, {
-      mimeType: "application/json",
-      UTI: "public.json",
-      dialogTitle: "Сохранить резервную копию Лада",
-    });
-  } finally {
-    if (file.exists) file.delete();
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error("Не удалось прочитать файл резервной копии.");
   }
+  if (
+    value &&
+    typeof value === "object" &&
+    "format" in value &&
+    value.format === "lad-password-backup"
+  ) {
+    parsePasswordEnvelope(raw);
+    return { kind: "encrypted", raw };
+  }
+  if (file.bytes.length > MAX_PLAIN_BACKUP_BYTES)
+    throw new Error("Открытая копия должна быть не больше 5 МБ.");
+  return { kind: "open", state: decodeBackup(raw) };
 }
-
-export async function importBackup(): Promise<FinanceState | null> {
-  const file = await pickDocument(["json"], 5_000_000);
-  return file ? decodeBackup(new TextDecoder().decode(file.bytes)) : null;
-}
+export const unlockBackup = (raw: string, password: string) =>
+  decryptBackup(raw, password, backupCrypto);

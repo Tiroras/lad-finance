@@ -1,9 +1,11 @@
 import { View } from "react-native";
-import { C, font, Txt, Row, Card, Notice } from "../ui";
+import { dateLabel, spendable } from "../domain/finance";
+import { useMoney } from "../hooks/useMoney";
 import { useFinance } from "../store";
-import { dateLabel, money, spendable } from "../domain/finance";
+import { C, Card, font, Notice, Row, Txt } from "../ui";
 
 export function FormulaContent() {
+  const { money } = useMoney();
   const { state, today } = useFinance();
   const safe = spendable(state, today);
   return (
@@ -62,7 +64,7 @@ export function FormulaContent() {
       <Txt style={{ fontSize: 12, lineHeight: 21, color: C.muted }}>
         {money(safe.available)} ÷ {safe.days} дн. до {dateLabel(safe.payday)} ={" "}
         {money(safe.daily)} в день. В расчёте дня используется округление вниз
-        до копейки.
+        до минимальной единицы основной валюты.
       </Txt>
       <Txt style={{ fontSize: 12, lineHeight: 21, color: C.muted }}>
         Это ориентир по внесённым данным. Он не учитывает расходы, которые вы

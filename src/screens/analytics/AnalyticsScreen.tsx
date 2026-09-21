@@ -1,24 +1,25 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { useFinance } from "../../store";
-import { font, Txt, Row, Notice, Button } from "../../ui";
 import {
   categorySpending,
-  money,
   monthKey,
   shiftDate,
   shiftMonth,
   totals,
 } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { useFinance } from "../../store";
+import { Button, font, Notice, Row, Txt } from "../../ui";
 import { MonthPicker } from "../shared/MonthPicker";
 import { ScreenHeading } from "../shared/ScreenHeading";
-import { SpendingChart } from "./SpendingChart";
 import { CategoryBreakdown } from "./CategoryBreakdown";
 import { MonthlyTotals } from "./MonthlyTotals";
 import { SavingsSummary } from "./SavingsSummary";
+import { SpendingChart } from "./SpendingChart";
 
 export function AnalyticsScreen({ open }: { open: OpenSheet }) {
+  const { money } = useMoney();
   const { state, today } = useFinance();
   const [month, setMonth] = useState(monthKey());
   const spending = categorySpending(state, month).sort(

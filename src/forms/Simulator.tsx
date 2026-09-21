@@ -1,20 +1,23 @@
 import { useState } from "react";
-import {
-  dateLabel,
-  money,
-  parseMoney,
-  shiftDate,
-  validDate,
-} from "../domain/finance";
+import { CURRENCIES } from "../domain/currency";
+import { dateLabel, shiftDate, validDate } from "../domain/finance";
 import type { ForecastHorizon } from "../domain/forecast";
 import { ForecastRange } from "../features/forecast/ForecastRange";
 import { PurchaseAllowance } from "../features/forecast/PurchaseAllowance";
 import { PurchaseForecast } from "../features/forecast/PurchaseForecast";
+import { PurchasePlanner } from "../features/forecast/PurchasePlanner";
+import { useMoney } from "../hooks/useMoney";
 import { useFinance } from "../store";
 import { Chip, Field, font, Notice, Row } from "../ui";
 import { ErrorText } from "./ErrorText";
 
 export function Simulator() {
+  const {
+    money,
+    parseMoney,
+    currency: baseCode,
+    symbol: baseSymbol,
+  } = useMoney();
   const { today } = useFinance();
   const [amount, setAmount] = useState("12000");
   const [date, setDate] = useState(today);
@@ -29,7 +32,7 @@ export function Simulator() {
         не создаётся.
       </Notice>
       <Field
-        label="Сколько стоит покупка, ₽"
+        label={`Сколько стоит покупка, ${baseSymbol}`}
         accessibilityLabel="Стоимость покупки"
         value={amount}
         onChangeText={setAmount}
@@ -41,8 +44,8 @@ export function Simulator() {
         {[3000, 12000, 30000, 60000].map((n) => (
           <Chip
             key={n}
-            label={money(n * 100)}
-            active={parsed === n * 100}
+            label={money(n * 10 ** CURRENCIES[baseCode].digits)}
+            active={parsed === n * 10 ** CURRENCIES[baseCode].digits}
             onPress={() => setAmount(String(n))}
           />
         ))}
@@ -60,6 +63,15 @@ export function Simulator() {
         }
       />
       <ForecastRange value={horizon} onChange={setHorizon} />
+      {dateValid && (
+        <PurchasePlanner
+          amount={parsed ?? 0}
+          date={date}
+          horizon={horizon}
+          setDate={setDate}
+          setAmount={setAmount}
+        />
+      )}
       {parsed !== null && parsed > 0 ? (
         dateValid && (
           <>
@@ -68,7 +80,7 @@ export function Simulator() {
           </>
         )
       ) : (
-        <ErrorText error="Введите стоимость покупки больше нуля, не более 1 млрд ₽." />
+        <ErrorText error="Введите стоимость покупки больше нуля, в пределах допустимого лимита." />
       )}
     </>
   );

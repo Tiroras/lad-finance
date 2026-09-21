@@ -1,7 +1,8 @@
-import { View, Pressable } from "react-native";
-import { C, font, Txt, Row, Card, IconTile, Progress } from "../../ui";
-import { categorySpending, money } from "../../domain/finance";
+import { Pressable, View } from "react-native";
+import { categorySpending } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
 import type { OpenSheet } from "../../navigation/types";
+import { C, Card, font, IconTile, Progress, Row, Txt } from "../../ui";
 
 export function BudgetCard({
   category: c,
@@ -10,11 +11,14 @@ export function BudgetCard({
   category: ReturnType<typeof categorySpending>[number];
   open: OpenSheet;
 }) {
+  const { money } = useMoney();
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Изменить бюджет: ${c.name}`}
-      onPress={() => open({ type: "budget", id: c.id })}
+      accessibilityLabel={`${c.archived ? "Архивная категория" : "Изменить бюджет"}: ${c.name}`}
+      onPress={() =>
+        open({ type: c.archived ? "category" : "budget", id: c.id })
+      }
     >
       <Card style={{ padding: 17 }}>
         <Row style={{ marginBottom: 16 }}>
@@ -25,16 +29,21 @@ export function BudgetCard({
             size={40}
           />
           <View style={{ flex: 1, gap: 5 }}>
-            <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>{c.name}</Txt>
+            <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
+              {c.name}
+              {c.archived ? " · архив" : ""}
+            </Txt>
             <Txt
               style={{
                 fontSize: 10,
-                color: c.spent > c.budget ? C.red : C.muted,
+                color: !c.archived && c.spent > c.budget ? C.red : C.muted,
               }}
             >
-              {c.spent > c.budget
-                ? `Сверх плана ${money(c.spent - c.budget)}`
-                : `Осталось ${money(c.budget - c.spent)}`}
+              {c.archived
+                ? "Расходы сохранены в истории"
+                : c.spent > c.budget
+                  ? `Сверх плана ${money(c.spent - c.budget)}`
+                  : `Осталось ${money(c.budget - c.spent)}`}
             </Txt>
           </View>
           <View style={{ alignItems: "flex-end", gap: 5 }}>
@@ -42,7 +51,7 @@ export function BudgetCard({
               {money(c.spent)}
             </Txt>
             <Txt style={{ color: C.muted, fontSize: 10 }}>
-              из {money(c.budget)}
+              {c.archived ? "Лимит не действует" : `из ${money(c.budget)}`}
             </Txt>
           </View>
         </Row>

@@ -1,12 +1,13 @@
+import { useState } from "react";
 import { useActionError } from "../hooks/useActionError";
 import { useFinanceActions } from "../hooks/useFinanceActions";
-import { useState } from "react";
-import { font, Txt, Row, IconTile, Button, Field, Notice } from "../ui";
+import { useMoney } from "../hooks/useMoney";
 import { useFinance } from "../store";
-import { moneyInput, parseMoney } from "../domain/finance";
+import { Button, Field, font, IconTile, Notice, Row, Txt } from "../ui";
 import { ErrorText } from "./ErrorText";
 
 export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
+  const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
   const category = state.categories.find((c) => c.id === id)!;
@@ -25,7 +26,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
         </Txt>
       </Row>
       <Field
-        label="Лимит на месяц, ₽"
+        label={`Лимит на месяц, ${baseSymbol}`}
         accessibilityLabel="Лимит категории"
         value={amount}
         onChangeText={setAmount}
@@ -34,7 +35,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
       />
       <Notice>
         Лимит повторяется каждый месяц. Его изменение не меняет записанные
-        расходы.
+        расходы. В лимит включены расходы всех подкатегорий.
       </Notice>
       <ErrorText error={error} />
       <Button
@@ -43,7 +44,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
           run(() => {
             const parsed = parseMoney(amount);
             if (parsed === null)
-              return setError("Введите сумму от 0 до 1 млрд ₽.");
+              return setError("Введите корректную неотрицательную сумму.");
             actions.saveBudget(category.id, parsed);
             notify("Лимит обновлён");
             close();

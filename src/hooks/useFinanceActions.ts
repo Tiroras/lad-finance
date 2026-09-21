@@ -1,4 +1,3 @@
-import { useFinance } from "../store";
 import * as actions from "../domain/actions";
 import {
   applyCsvImport,
@@ -6,15 +5,35 @@ import {
   type CsvOverride,
   type CsvTable,
 } from "../domain/csv";
+import type { CurrencyCode, ExchangeRate } from "../domain/currency";
 import type {
   FinanceState,
   ForecastPreferences,
   ReminderPreferences,
 } from "../domain/types";
+import { useFinance } from "../store";
 
 export function useFinanceActions() {
   const { update, today } = useFinance();
   return {
+    saveCurrencyRate: (currency: CurrencyCode, value: number) =>
+      update((s) => actions.saveCurrencyRate(s, currency, value, today)),
+    restoreAutomaticRate: (currency: CurrencyCode) =>
+      update((s) => actions.restoreAutomaticRate(s, currency, today)),
+    mergeCurrencyRates: (rates: Partial<Record<CurrencyCode, ExchangeRate>>) =>
+      update((s) => actions.mergeCurrencyRates(s, rates, today)),
+    setAutomaticRates: (automatic: boolean) =>
+      update((s) => actions.setAutomaticRates(s, automatic)),
+    changeBaseCurrency: (currency: CurrencyCode) =>
+      update((s) => actions.changeBaseCurrency(s, currency, today)),
+    saveCategory: (input: actions.CategoryInput) =>
+      update((s) => actions.saveCategory(s, input)),
+    setCategoryArchived: (id: string, archived: boolean) =>
+      update((s) => actions.setCategoryArchived(s, id, archived)),
+    saveScenario: (input: actions.ScenarioInput) =>
+      update((s) => actions.saveScenario(s, input)),
+    deleteScenario: (id: string) =>
+      update((s) => actions.deleteScenario(s, id)),
     saveTransaction: (input: actions.TransactionInput) =>
       update((s) => actions.saveTransaction(s, input, today)),
     deleteTransaction: (id: string) =>
@@ -24,8 +43,13 @@ export function useFinanceActions() {
     saveGoal: (input: actions.GoalInput) =>
       update((s) => actions.saveGoal(s, input, today)),
     deleteGoal: (id: string) => update((s) => actions.deleteGoal(s, id)),
-    fundGoal: (input: { goalId: string; amount: number; accountId: string }) =>
-      update((s) => actions.fundGoal(s, input, today)),
+    fundGoal: (input: {
+      goalId: string;
+      amount: number;
+      accountId: string;
+      toAccountId?: string;
+      toAmount?: number;
+    }) => update((s) => actions.fundGoal(s, input, today)),
     saveRecurring: (input: actions.RecurringInput) =>
       update((s) => actions.saveRecurring(s, input, today)),
     deleteRecurring: (id: string) =>

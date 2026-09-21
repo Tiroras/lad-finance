@@ -1,11 +1,13 @@
-import { ErrorText } from "./ErrorText";
+import { View } from "react-native";
+import { accountCurrency } from "../domain/currency";
+import { dateLabel, paymentForMonth } from "../domain/finance";
 import { useActionError } from "../hooks/useActionError";
 import { useFinanceActions } from "../hooks/useFinanceActions";
-import { View } from "react-native";
-import { C, font, Txt, IconTile, Button, Notice } from "../ui";
-import { useFinance } from "../store";
-import { dateLabel, money, paymentForMonth } from "../domain/finance";
+import { useMoney } from "../hooks/useMoney";
 import type { OpenSheet, SheetState } from "../navigation/types";
+import { useFinance } from "../store";
+import { Button, C, font, IconTile, Notice, Txt } from "../ui";
+import { ErrorText } from "./ErrorText";
 
 export function PaymentContent({
   sheet,
@@ -16,6 +18,7 @@ export function PaymentContent({
   close: () => void;
   open: OpenSheet;
 }) {
+  const { money } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const { error, run } = useActionError();
@@ -49,7 +52,11 @@ export function PaymentContent({
           {payment.name}
         </Txt>
         <Txt style={{ fontSize: 37, fontFamily: font.semibold }}>
-          {money(recorded?.amount ?? payment.amount)}
+          {money(
+            recorded?.amount ?? payment.amount,
+            false,
+            accountCurrency(state, payment.accountId),
+          )}
         </Txt>
         <Txt style={{ fontSize: 12, color: C.muted }}>
           По плану — {dateLabel(date)}

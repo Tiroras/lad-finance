@@ -1,8 +1,9 @@
 import { View } from "react-native";
-import { C, font, Txt, Row, Card, Icon } from "../../ui";
-import { money } from "../../domain/finance";
+import { useMoney } from "../../hooks/useMoney";
+import { C, Card, font, Icon, Row, Txt } from "../../ui";
 
 export function SubscriptionSummary({ monthly }: { monthly: number }) {
+  const { money } = useMoney();
   return (
     <Card style={{ backgroundColor: C.lavender, borderColor: "#E4E0ED" }}>
       <Row style={{ justifyContent: "space-between" }}>

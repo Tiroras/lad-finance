@@ -1,15 +1,16 @@
+import { accountToBase } from "../../domain/currency";
 import { PaymentAgenda } from "../../features/payments/PaymentAgenda";
-import { useFinance } from "../../store";
-import { Section, Empty, Notice } from "../../ui";
 import type { OpenSheet } from "../../navigation/types";
-import { SubscriptionSummary } from "./SubscriptionSummary";
+import { useFinance } from "../../store";
+import { Empty, Notice, Section } from "../../ui";
 import { RecurringPaymentCard } from "./RecurringPaymentCard";
+import { SubscriptionSummary } from "./SubscriptionSummary";
 
 export function PaymentsPanel({ open }: { open: OpenSheet }) {
   const { state } = useFinance();
   const monthly = state.recurring
     .filter((p) => p.active && p.kind === "subscription")
-    .reduce((sum, p) => sum + p.amount, 0);
+    .reduce((sum, p) => sum + accountToBase(state, p.amount, p.accountId), 0);
   return (
     <>
       <SubscriptionSummary monthly={monthly} />

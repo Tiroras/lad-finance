@@ -1,16 +1,20 @@
 import { View } from "react-native";
 import Svg, { Line, Polyline } from "react-native-svg";
-import { dateLabel, money } from "../../domain/finance";
+import { dateLabel } from "../../domain/finance";
 import type { ForecastResult } from "../../domain/forecast";
+import { useMoney } from "../../hooks/useMoney";
 import { C, font, Row, Txt } from "../../ui";
 
 export function ForecastChart({
   result,
   baseline,
+  labels,
 }: {
   result: ForecastResult;
   baseline?: ForecastResult;
+  labels?: { result: string; baseline: string };
 }) {
+  const { money } = useMoney();
   const values = [
     0,
     result.buffer,
@@ -102,8 +106,12 @@ export function ForecastChart({
       </Row>
       {baseline && (
         <Row style={{ flexWrap: "wrap", gap: 14 }}>
-          <Txt style={{ fontSize: 11, color: "#81729C" }}>━ С покупкой</Txt>
-          <Txt style={{ fontSize: 11, color: "#68775E" }}>┄ Без покупки</Txt>
+          <Txt style={{ fontSize: 11, color: "#81729C" }}>
+            ━ {labels?.result ?? "С покупкой"}
+          </Txt>
+          <Txt style={{ fontSize: 11, color: "#68775E" }}>
+            ┄ {labels?.baseline ?? "Без покупки"}
+          </Txt>
         </Row>
       )}
     </View>
