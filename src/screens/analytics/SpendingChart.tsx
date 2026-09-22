@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { baseCurrency, transactionValue } from "../../domain/currency";
+import { baseCurrency } from "../../domain/currency";
+import { expenseContributions } from "../../domain/transactionAmounts";
 import { dateLabel, money, shiftDate } from "../../domain/finance";
 import { useFinance } from "../../state/finance";
-import { BarChart, Card, Section, Segments } from "../../shared/ui";
+import { BarChart, C, Card, Section, Segments, Txt } from "../../shared/ui";
 
 export function SpendingChart({ month, end }: { month: string; end: string }) {
   const { state } = useFinance();
@@ -17,8 +18,16 @@ export function SpendingChart({ month, end }: { month: string; end: string }) {
   );
   const values = dates.map((date) =>
     state.transactions
-      .filter((t) => t.type === "expense" && t.date === date)
-      .reduce((n, t) => n + transactionValue(state, t), 0),
+      .filter((t) => t.date === date)
+      .reduce(
+        (n, t) =>
+          n +
+          expenseContributions(state, t).reduce(
+            (sum, part) => sum + part.amount,
+            0,
+          ),
+        0,
+      ),
   );
 
   return (
@@ -43,6 +52,19 @@ export function SpendingChart({ month, end }: { month: string; end: string }) {
               : dateLabel(d, { day: "numeric", month: "short" }),
           )}
         />
+        {values.some((value) => value < 0) && (
+          <Txt
+            style={{
+              color: C.muted,
+              fontSize: 11,
+              lineHeight: 18,
+              marginTop: 12,
+            }}
+          >
+            Ниже нуля — дни, когда возвраты превысили расходы. Основная сумма
+            долгов и переводы не учитываются.
+          </Txt>
+        )}
       </View>
     </Card>
   );

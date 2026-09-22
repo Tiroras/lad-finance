@@ -22,14 +22,21 @@ export function CategoryBreakdown({
   expense: number;
 }) {
   const { money } = useMoney();
+  const positiveTotal = spending.reduce(
+    (sum, category) => sum + Math.max(0, category.spent),
+    0,
+  );
+  const hasRefundCredit = spending.some((category) => category.spent < 0);
   return (
     <Card>
       <Section title="Расходы по категориям" />
-      {expense > 0 ? (
+      {spending.some((category) => category.spent !== 0) ? (
         <>
           <View style={{ alignItems: "center", marginVertical: 10 }}>
             <Donut
-              data={spending.map((c) => ({ value: c.spent, color: c.color }))}
+              data={spending
+                .filter((c) => c.spent > 0)
+                .map((c) => ({ value: c.spent, color: c.color }))}
               center={money(expense)}
               subtitle="расходы за месяц"
               size={205}
@@ -37,7 +44,7 @@ export function CategoryBreakdown({
           </View>
           <View style={{ marginTop: 20, gap: 22 }}>
             {spending
-              .filter((c) => c.spent > 0)
+              .filter((c) => c.spent !== 0)
               .map((c) => (
                 <View key={c.id} style={{ gap: 10 }}>
                   <Row>
@@ -57,7 +64,9 @@ export function CategoryBreakdown({
                       {c.name}
                     </Txt>
                     <Txt style={{ fontSize: 10, color: C.muted }}>
-                      {Math.round((c.spent / expense) * 100)}%
+                      {c.spent < 0
+                        ? "Возвраты"
+                        : `${Math.round((c.spent / positiveTotal) * 100)}%`}
                     </Txt>
                     <Txt
                       style={{
@@ -70,10 +79,26 @@ export function CategoryBreakdown({
                       {money(c.spent)}
                     </Txt>
                   </Row>
-                  <Progress value={c.spent / expense} color={c.color} />
+                  {c.spent > 0 && (
+                    <Progress value={c.spent / positiveTotal} color={c.color} />
+                  )}
                 </View>
               ))}
           </View>
+          {hasRefundCredit && (
+            <Txt
+              style={{
+                color: C.muted,
+                fontSize: 11,
+                lineHeight: 18,
+                marginTop: 16,
+              }}
+            >
+              Отрицательные суммы — возвраты сверх расходов этой категории за
+              месяц. Доли на круге рассчитаны только по положительным суммам,
+              общий итог учитывает все возвраты.
+            </Txt>
+          )}
         </>
       ) : (
         <Empty

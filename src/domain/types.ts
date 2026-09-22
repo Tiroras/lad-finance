@@ -1,4 +1,16 @@
 import type { CurrencyCode, ExchangeSettings } from "./currency";
+import type {
+  CategoryRule,
+  TransactionTemplate,
+  CsvSourceProfile,
+} from "./automation";
+import type {
+  BalanceAdjustment,
+  AccountReconciliation,
+} from "./reconciliation";
+import type { RecurrenceSchedule } from "./recurrence";
+import type { BudgetPlan } from "./budgets";
+import type { Debt } from "./debts";
 export type CategoryId = string;
 export const ICON_NAMES = [
   "leaf-outline",
@@ -37,7 +49,11 @@ export interface Category {
 export interface Account {
   id: string;
   name: string;
-  kind: "spending" | "savings";
+  kind: "spending" | "savings" | "credit";
+  creditLimit?: number;
+  paymentDueDate?: string;
+  paymentDueAmount?: number;
+  paymentDueBaselineIds?: string[];
   openingBalance: number;
   currency?: CurrencyCode;
   icon: IconName;
@@ -62,6 +78,11 @@ export interface Transaction {
   importKey?: string;
   plannedIncomeId?: string;
   incomeOccurrenceDate?: string;
+  splits?: { category: CategoryId; amount: number }[];
+  refundOf?: string;
+  refundSourceAmount?: number;
+  debtId?: string;
+  debtAction?: "issue" | "repay";
 }
 
 export interface Goal {
@@ -89,6 +110,9 @@ export interface Recurring {
   startsOn?: string;
   skippedMonths?: string[];
   history?: { untilMonth: string; amount: number; day: number }[];
+  schedule?: RecurrenceSchedule;
+  skippedDates?: string[];
+  amountHistory?: { until: string; amount: number }[];
 }
 
 export interface ReminderPreferences {
@@ -103,6 +127,7 @@ export interface PlannedIncome {
   amount: number;
   date: string;
   repeat: "once" | "monthly";
+  schedule?: RecurrenceSchedule;
   accountId: string;
 }
 
@@ -112,7 +137,7 @@ export interface ForecastPreferences {
 }
 
 export interface FinanceState {
-  version: 2 | 3;
+  version: 2 | 3 | 4;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];
@@ -121,9 +146,18 @@ export interface FinanceState {
   recurring: Recurring[];
   plannedIncomes?: PlannedIncome[];
   scenarios?: SavedScenario[];
+  categoryRules?: CategoryRule[];
+  transactionTemplates?: TransactionTemplate[];
+  csvProfiles?: CsvSourceProfile[];
+  balanceAdjustments?: BalanceAdjustment[];
+  reconciliations?: AccountReconciliation[];
+  budgetPlans?: BudgetPlan[];
+  debts?: Debt[];
   settings: {
     name: string;
     payday: number;
+    spendableIncomeId?: string;
+    onboardingCompleted?: boolean;
     buffer: number;
     baseCurrency?: CurrencyCode;
     exchange?: ExchangeSettings;

@@ -86,7 +86,15 @@ export function PurchaseAllowance({ amount }: { amount: number }) {
       )}
       <Txt style={{ color: C.muted, fontSize: 11, lineHeight: 19 }}>
         Расчёт до {dateLabel(result.payday)} по текущим остаткам и известным
-        платежам. Неучтённые расходы могут изменить результат.
+        платежам
+        {result.income
+          ? `; опорный доход — «${result.income.plan.name}»`
+          : "; дата из настроек"}
+        .
+        {result.protection
+          ? ` Дальнейшие обязательства проверены до ${dateLabel(result.protection.end)}.`
+          : ""}{" "}
+        Неучтённые расходы могут изменить результат.
       </Txt>
     </>
   );

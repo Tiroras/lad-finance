@@ -7,7 +7,14 @@ import {
   paymentForMonth,
   uid,
   validDate,
+  shiftDate,
 } from "../finance";
+import { paymentOccurrenceKey } from "../payments";
+import {
+  isScheduledDate,
+  scheduleSchema,
+  validateSchedules,
+} from "../recurrence";
 import type { FinanceState, Recurring } from "../types";
 import { saveTransaction } from "./transactions";
 import {
@@ -28,6 +35,8 @@ export type RecurringInput = Pick<
   | "accountId"
   | "startsOn"
   | "skippedMonths"
+  | "schedule"
+  | "skippedDates"
 > & { id?: string };
 export function saveRecurring(
   state: FinanceState,
@@ -49,6 +58,27 @@ export function saveRecurring(
   checkName(input.name);
   checkAmount(input.amount);
   checkDay(input.day);
+  ensure(
+    !input.schedule || scheduleSchema.safeParse(input.schedule).success,
+    "Укажите корректный интервал повторения от 1 до 365 и дату начала.",
+  );
+  const sameSchedule =
+    JSON.stringify(original?.schedule) === JSON.stringify(input.schedule);
+  ensure(
+    !original || sameSchedule,
+    "График существующего платежа сохраняется для истории. Создайте новый платёж для другой периодичности.",
+  );
+  ensure(
+    !original?.schedule || original.startsOn === input.startsOn,
+    "Для другой даты начала создайте новый платёж: старые обязательства должны сохраниться.",
+  );
+  ensure(
+    original ||
+      !input.schedule ||
+      (input.schedule.anchor >= (input.startsOn ?? "") &&
+        input.schedule.anchor >= shiftDate(today, -366)),
+    "Первое повторение должно быть не раньше даты начала учёта и не старше года.",
+  );
   ensure(
     input.startsOn &&
       validDate(input.startsOn) &&
@@ -74,7 +104,20 @@ export function saveRecurring(
     id: original?.id ?? uid(),
     name: input.name.trim(),
     active: original?.active ?? true,
-    history: changedPaymentHistory(original, input.amount, input.day, today),
+    history: input.schedule
+      ? original?.history
+      : changedPaymentHistory(original, input.amount, input.day, today),
+    amountHistory:
+      input.schedule && original && original.amount !== input.amount
+        ? [
+            ...(original.amountHistory ?? []),
+            ...(original.amountHistory?.some(
+              (rule) => rule.until >= shiftDate(today, -1),
+            )
+              ? []
+              : [{ until: shiftDate(today, -1), amount: original.amount }]),
+          ]
+        : original?.amountHistory,
     icon:
       original?.icon ??
       (input.kind === "bill" ? "home-outline" : "musical-notes-outline"),
@@ -87,6 +130,7 @@ export function saveRecurring(
       : [...state.recurring, payment],
   };
 
+  validateSchedules(next);
   checkCurrencyAmounts(next, today);
   return next;
 }
@@ -113,7 +157,7 @@ export function setRecurringActive(
     state.recurring.some((p) => p.id === id),
     "Платёж уже удалён.",
   );
-  return {
+  const next: FinanceState = {
     ...state,
     recurring: state.recurring.map((p) =>
       p.id === id
@@ -121,6 +165,8 @@ export function setRecurringActive(
         : p,
     ),
   };
+  checkCurrencyAmounts(next, today);
+  return next;
 }
 
 function occurrence(
@@ -135,7 +181,9 @@ function occurrence(
   const payment = paymentForMonth(template, date);
   ensure(
     date >= (payment.startsOn ?? `${monthKey(today)}-01`) &&
-      date === dateInMonth(date, payment.day),
+      (payment.schedule
+        ? isScheduledDate(payment.schedule, date)
+        : date === dateInMonth(date, payment.day)),
     "Дата не соответствует плану платежа. Откройте его заново.",
   );
   return payment;
@@ -148,28 +196,42 @@ export function setPaymentSkipped(
   skipped: boolean,
   today = localDate(),
 ): FinanceState {
-  occurrence(state, id, date, today);
+  const payment = occurrence(state, id, date, today);
   ensure(
     !state.transactions.some(
       (t) =>
         t.recurringId === id &&
-        t.occurrenceDate?.slice(0, 7) === monthKey(date),
+        t.occurrenceDate &&
+        paymentOccurrenceKey(payment, t.occurrenceDate) ===
+          paymentOccurrenceKey(payment, date),
     ),
-    "Оплаченный месяц нельзя пропустить.",
+    "Оплаченный платёж нельзя пропустить.",
   );
-  return {
+  const next: FinanceState = {
     ...state,
     recurring: state.recurring.map((p) =>
       p.id === id
         ? {
             ...p,
-            skippedMonths: skipped
-              ? [...new Set([...(p.skippedMonths ?? []), monthKey(date)])]
-              : (p.skippedMonths ?? []).filter((m) => m !== monthKey(date)),
+            ...(p.schedule
+              ? {
+                  skippedDates: skipped
+                    ? [...new Set([...(p.skippedDates ?? []), date])]
+                    : (p.skippedDates ?? []).filter((d) => d !== date),
+                }
+              : {
+                  skippedMonths: skipped
+                    ? [...new Set([...(p.skippedMonths ?? []), monthKey(date)])]
+                    : (p.skippedMonths ?? []).filter(
+                        (m) => m !== monthKey(date),
+                      ),
+                }),
           }
         : p,
     ),
   };
+  checkCurrencyAmounts(next, today);
+  return next;
 }
 
 export function payRecurring(
@@ -184,13 +246,17 @@ export function payRecurring(
     state.transactions.some(
       (t) =>
         t.recurringId === id &&
-        t.occurrenceDate?.slice(0, 7) === monthKey(date),
+        t.occurrenceDate &&
+        paymentOccurrenceKey(payment, t.occurrenceDate) ===
+          paymentOccurrenceKey(payment, date),
     )
   )
     return state;
   ensure(
-    !payment.skippedMonths?.includes(monthKey(date)),
-    "Сначала верните этот месяц в план.",
+    !(payment.schedule
+      ? payment.skippedDates?.includes(date)
+      : payment.skippedMonths?.includes(monthKey(date))),
+    "Сначала верните этот платёж в план.",
   );
   if (transactionId) {
     const transaction = state.transactions.find((t) => t.id === transactionId);

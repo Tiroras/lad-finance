@@ -1,4 +1,9 @@
-import { accountToBase, MAX_MONEY } from "../currency";
+import {
+  transactionAmountsError,
+  validateTransactionAmountsState,
+} from "../transactionAmounts";
+import { validateDebts, validateCreditAccounts } from "../debts";
+import { accountCurrency, accountToBase, MAX_MONEY } from "../currency";
 import { localDate, uid, validateTransaction } from "../finance";
 import type { FinanceState, Transaction } from "../types";
 import { checkCurrencyAmounts, checkSavings, ensure } from "./validation";
@@ -20,10 +25,19 @@ export function appendTransaction(
     !state.transactions.some((t) => t.id === transaction.id),
     "Операция с таким ID уже существует.",
   );
+  const amountError = transactionAmountsError(state, transaction);
+  ensure(!amountError, amountError ?? "Проверьте части покупки и возвраты.");
   const error = validateTransaction(state, transaction, today);
   ensure(!error, error ?? "Некорректная операция.");
   ensure(
     allowArchived ||
+      (!!transaction.refundOf &&
+        state.transactions.some(
+          (entry) =>
+            entry.id === transaction.refundOf &&
+            entry.type === "expense" &&
+            entry.category === transaction.category,
+        )) ||
       !state.categories.find((c) => c.id === transaction.category)?.archived ||
       state.recurring.some(
         (p) =>
@@ -31,6 +45,15 @@ export function appendTransaction(
           p.category === transaction.category,
       ),
     "Категория в архиве. Выберите активную категорию.",
+  );
+  ensure(
+    allowArchived ||
+      !transaction.splits?.some(
+        (part) =>
+          state.categories.find((category) => category.id === part.category)
+            ?.archived,
+      ),
+    "Категория части в архиве. Выберите активную категорию.",
   );
   const valued = {
     ...transaction,
@@ -49,6 +72,9 @@ export function appendTransaction(
       "savings"
   )
     checkSavings(next, today);
+  validateTransactionAmountsState(next);
+  validateDebts(next, today);
+  validateCreditAccounts(next, today);
   checkCurrencyAmounts(next, today);
   return next;
 }
@@ -62,6 +88,14 @@ export function saveTransaction(
     ? state.transactions.find((t) => t.id === input.id)
     : undefined;
   ensure(!input.id || original, "Операция уже удалена. Откройте форму заново.");
+  ensure(!original?.debtId, "Операции долга изменяются через раздел «Долги».");
+  ensure(
+    !original ||
+      !state.transactions.some((entry) => entry.refundOf === original.id) ||
+      accountCurrency(state, original.accountId) ===
+        accountCurrency(state, input.accountId),
+    "У покупки есть возвраты. Чтобы изменить валюту покупки, сначала удалите связанные возвраты и запишите их заново.",
+  );
   ensure(
     !original?.goalId || input.type === "transfer",
     "Пополнение цели должно оставаться переводом между счетами.",
@@ -80,6 +114,13 @@ export function saveTransaction(
       input.title.trim() ||
       (input.type === "transfer" ? "Перевод между счетами" : ""),
     note: input.note?.trim(),
+    splits: input.type === "expense" ? input.splits : undefined,
+    refundOf:
+      input.type === "income"
+        ? (original?.refundOf ?? input.refundOf)
+        : undefined,
+    refundSourceAmount:
+      input.type === "income" ? input.refundSourceAmount : undefined,
     importKey: original?.importKey ?? input.importKey,
     toAccountId: input.type === "transfer" ? input.toAccountId : undefined,
     goalId:
@@ -103,6 +144,23 @@ export function saveTransaction(
         ? (original?.incomeOccurrenceDate ?? input.incomeOccurrenceDate)
         : undefined,
   };
+  ensure(
+    !original?.refundOf ||
+      (input.type === "income" &&
+        (!input.refundOf || input.refundOf === original.refundOf)),
+    "Сохраните связь возврата с исходной покупкой.",
+  );
+  const protectedCategories = new Set(
+    original?.splits?.map((part) => part.category) ?? [original?.category],
+  );
+  ensure(
+    !transaction.splits?.some(
+      (part) =>
+        state.categories.find((category) => category.id === part.category)
+          ?.archived && !protectedCategories.has(part.category),
+    ),
+    "Категория части в архиве. Выберите активную категорию.",
+  );
   const withoutOriginal = {
     ...state,
     transactions: state.transactions.filter((t) => t.id !== original?.id),
@@ -123,10 +181,16 @@ export function deleteTransaction(
   id: string,
   today = localDate(),
 ): FinanceState {
+  ensure(
+    !state.transactions.some((entry) => entry.refundOf === id),
+    "У покупки есть возвраты. Сначала удалите связанные возвраты.",
+  );
   const next = {
     ...state,
     transactions: state.transactions.filter((t) => t.id !== id),
   };
+  validateDebts(next, today);
+  validateCreditAccounts(next, today);
   checkSavings(next, today);
   checkCurrencyAmounts(next, today);
   return next;

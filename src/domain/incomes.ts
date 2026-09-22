@@ -1,5 +1,9 @@
-import { dateInMonth, monthKey, shiftMonth } from "./finance";
+import { dateInMonth, monthKey, shiftMonth } from "../shared/lib/dates";
 import type { FinanceState, PlannedIncome } from "./types";
+import { scheduleDates } from "./recurrence";
+
+export const incomeOccurrenceKey = (plan: PlannedIncome, date: string) =>
+  plan.repeat === "once" ? "once" : plan.schedule ? date : monthKey(date);
 
 export interface IncomeOccurrence {
   plan: PlannedIncome;
@@ -17,8 +21,9 @@ export function incomeReceived(
       t.type === "income" &&
       t.date <= today &&
       t.plannedIncomeId === plan.id &&
-      (plan.repeat === "once" ||
-        t.incomeOccurrenceDate?.slice(0, 7) === monthKey(date)),
+      t.incomeOccurrenceDate &&
+      incomeOccurrenceKey(plan, t.incomeOccurrenceDate) ===
+        incomeOccurrenceKey(plan, date),
   );
 }
 
@@ -40,6 +45,8 @@ export function incomeOccurrences(
         result.push({ plan, date });
     };
     if (plan.repeat === "once") add(plan.date);
+    else if (plan.schedule)
+      for (const date of scheduleDates(plan.schedule, start, end)) add(date);
     else
       for (
         let month = `${monthKey(start)}-01`;

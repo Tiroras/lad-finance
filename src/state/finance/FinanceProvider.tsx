@@ -59,7 +59,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     setLoadError("");
     try {
       const saved = await ledgerStorage.load();
-      replace(saved ?? createInitialState());
+      const initial = saved ?? createInitialState();
+      replace(
+        saved
+          ? initial
+          : {
+              ...initial,
+              settings: { ...initial.settings, onboardingCompleted: false },
+            },
+      );
       setReady(true);
     } catch {
       setLoadError(

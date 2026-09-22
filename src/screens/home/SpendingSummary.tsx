@@ -1,5 +1,10 @@
 import { View } from "react-native";
-import { categorySpending, dateLabel, totals } from "../../domain/finance";
+import {
+  categorySpending,
+  dateLabel,
+  monthKey,
+  totals,
+} from "../../domain/finance";
 import { useMoney, useFinance } from "../../state/finance";
 import type { Navigate } from "../../application/navigation/types";
 import {
@@ -22,8 +27,10 @@ export function SpendingSummary({
 }) {
   const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
-  const spending = categorySpending(state).sort((a, b) => b.spent - a.spent);
-  const monthTotals = totals(state);
+  const spending = categorySpending(state, monthKey(today), today).sort(
+    (a, b) => b.spent - a.spent,
+  );
+  const monthTotals = totals(state, monthKey(today));
   return (
     <Card>
       <Section
@@ -42,20 +49,22 @@ export function SpendingSummary({
       >
         {dateLabel(today, { month: "long" })}
       </Txt>
-      {monthTotals.expense > 0 ? (
+      {spending.some((category) => category.spent !== 0) ? (
         <Row style={{ gap: 18, justifyContent: "space-between" }}>
           <Donut
             size={146}
-            data={spending.map((c) => ({
-              value: c.spent,
-              color: c.color,
-            }))}
+            data={spending
+              .filter((c) => c.spent > 0)
+              .map((c) => ({
+                value: c.spent,
+                color: c.color,
+              }))}
             center={hidden ? `••• ${baseSymbol}` : money(monthTotals.expense)}
             subtitle="всего за месяц"
           />
           <View style={{ flex: 1, gap: 17 }}>
             {spending
-              .filter((c) => c.spent > 0)
+              .filter((c) => c.spent !== 0)
               .slice(0, 3)
               .map((c) => (
                 <View key={c.id} style={{ gap: 5 }}>

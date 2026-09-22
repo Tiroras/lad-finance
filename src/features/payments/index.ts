@@ -4,3 +4,4 @@ export { PaymentsPanel } from "./components/PaymentsPanel";
 export { RecurringForm } from "./components/RecurringForm";
 export { ReminderSettings } from "./components/ReminderSettings";
 export { ReminderProvider, useReminders } from "./model/ReminderProvider";
+export { RecurrenceFields } from "./components/RecurrenceFields";

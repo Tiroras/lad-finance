@@ -73,7 +73,7 @@ export function createInitialState(
   today = localDate(),
 ): FinanceState {
   const state: FinanceState = {
-    version: 3,
+    version: 4,
     demo,
     settings: { name: "", payday: 25, buffer: demo ? 1000000 : 0 },
     accounts: [

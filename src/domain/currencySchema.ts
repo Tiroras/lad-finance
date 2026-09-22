@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CURRENCY_CODES, MAX_RATE } from "./currency";
-import { validDate } from "./finance";
+import { validDate } from "../shared/lib/dates";
 
 export const currencySchema = z.enum(CURRENCY_CODES);
 const rate = z.number().int().positive().max(MAX_RATE);

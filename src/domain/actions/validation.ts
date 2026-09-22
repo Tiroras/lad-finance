@@ -1,4 +1,5 @@
 import { validateScenarioCurrencies } from "../scenarios";
+import { debtBalance, creditPaymentRemaining } from "../debts";
 import {
   accountToBase,
   CURRENCY_CODES,
@@ -7,6 +8,8 @@ import {
 } from "../currency";
 import { accountBalance, goalSaved, MAX_MONEY } from "../finance";
 import type { FinanceState } from "../types";
+import { validatePaymentCapacity } from "../payments";
+import { validateBudgetCapacity } from "../budgets";
 
 export function ensure(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -54,6 +57,8 @@ export function checkSavings(state: FinanceState, today: string) {
 
 // Leave headroom for summing accounts and forecast events without unsafe integers.
 export function checkCurrencyAmounts(state: FinanceState, today: string) {
+  validatePaymentCapacity(state, today);
+  validateBudgetCapacity(state);
   for (const scenario of state.scenarios ?? [])
     validateScenarioCurrencies(state, scenario);
   const balances = new Map(state.accounts.map((a) => [a.id, a.openingBalance]));
@@ -73,7 +78,16 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
   const totalMagnitude = state.accounts.reduce(
     (sum, account) =>
       sum +
-      Math.abs(accountToBase(state, balances.get(account.id)!, account.id)),
+      Math.abs(
+        accountToBase(
+          state,
+          (balances.get(account.id) ?? 0) +
+            (state.balanceAdjustments ?? [])
+              .filter((a) => a.accountId === account.id && a.date <= today)
+              .reduce((n, a) => n + a.amount, 0),
+          account.id,
+        ),
+      ),
     0,
   );
   ensure(
@@ -88,6 +102,21 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
   for (const plan of [...state.recurring, ...(state.plannedIncomes ?? [])])
     checkAmount(accountToBase(state, plan.amount, plan.accountId), true);
   for (const plan of state.recurring)
-    for (const rule of plan.history ?? [])
+    for (const rule of [...(plan.history ?? []), ...(plan.amountHistory ?? [])])
       checkAmount(accountToBase(state, rule.amount, plan.accountId), true);
+  for (const debt of state.debts ?? [])
+    checkAmount(
+      accountToBase(state, debtBalance(state, debt, today), debt.accountId),
+      true,
+    );
+  for (const account of state.accounts)
+    if (account.kind === "credit")
+      checkAmount(
+        accountToBase(
+          state,
+          creditPaymentRemaining(state, account, today),
+          account.id,
+        ),
+        true,
+      );
 }

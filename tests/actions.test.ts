@@ -164,7 +164,7 @@ test("account correction keeps transactions and cannot spend money reserved for 
         { id: "savings", name: "Копилка", kind: "savings", balance: 149999 },
         TODAY,
       ),
-    /распределён/,
+    /распредел[её]н/,
   );
   assert.throws(
     () =>

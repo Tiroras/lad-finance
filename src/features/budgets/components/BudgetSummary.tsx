@@ -1,4 +1,3 @@
-import { dateLabel, localDate } from "../../../domain/finance";
 import { useMoney } from "../../../state/finance";
 import { C, Card, font, Progress, Txt } from "../../../shared/ui";
 
@@ -13,7 +12,7 @@ export function BudgetSummary({
   return (
     <Card style={{ backgroundColor: C.green, borderColor: C.green }}>
       <Txt style={{ color: "#C4D2C3", fontSize: 12, marginBottom: 12 }}>
-        Ваш план на {dateLabel(localDate(), { month: "long" })}
+        Ваш план · текущие периоды категорий
       </Txt>
       <Txt style={{ color: "#fff", fontFamily: font.bold, fontSize: 30 }}>
         {money(Math.max(0, budget - spent))}

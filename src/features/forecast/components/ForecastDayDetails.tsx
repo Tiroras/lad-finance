@@ -20,6 +20,9 @@ export function ForecastDayDetails({
     if (event.type === "payment")
       open({ type: "payment", id: event.sourceId, date: event.occurrenceDate });
     if (event.type === "goal") open({ type: "fund", id: event.sourceId });
+    if (event.type === "debt") open({ type: "repayDebt", id: event.sourceId });
+    if (event.type === "credit")
+      open({ type: "repayCredit", id: event.sourceId });
   };
   return (
     <View testID="forecast-day" style={{ gap: 14 }}>
@@ -69,6 +72,13 @@ export function ForecastDayDetails({
               {event.type === "goal" && (
                 <Txt style={{ fontSize: 10, color: C.muted }}>
                   Плановый взнос на цель
+                </Txt>
+              )}
+              {(event.type === "debt" || event.type === "credit") && (
+                <Txt style={{ fontSize: 10, color: C.muted }}>
+                  {event.type === "debt"
+                    ? "Возврат заёмных денег"
+                    : "Обязательный платёж по карте"}
                 </Txt>
               )}
             </View>

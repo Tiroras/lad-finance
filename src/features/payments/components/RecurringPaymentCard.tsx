@@ -1,6 +1,9 @@
 import { Pressable, Switch, View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
 import type { Recurring } from "../../../domain/types";
+import { scheduleLabel } from "../../../domain/recurrence";
+import { annualPreparation } from "../../../domain/payments";
+import { dateLabel } from "../../../shared/lib/dates";
 import {
   ErrorText,
   C,
@@ -26,7 +29,8 @@ export function RecurringPaymentCard({
   open: OpenSheet;
 }) {
   const { money } = useMoney();
-  const { state, notify } = useFinance();
+  const { state, today, notify } = useFinance();
+  const preparation = annualPreparation(state, p, today);
   const actions = useFinanceActions();
   const { error, run } = useActionError();
   return (
@@ -48,7 +52,9 @@ export function RecurringPaymentCard({
             <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>{p.name}</Txt>
             <Txt style={{ color: C.muted, fontSize: 10 }}>
               {p.active
-                ? `Каждый месяц, ${p.day}-го числа`
+                ? p.schedule
+                  ? scheduleLabel(p.schedule)
+                  : `Каждый месяц, ${p.day}-го числа`
                 : "Исключён из плана"}
             </Txt>
           </View>
@@ -76,6 +82,25 @@ export function RecurringPaymentCard({
         </View>
       </Row>
       <ErrorText error={error} />
+      {preparation && (
+        <Txt
+          style={{
+            color: C.muted,
+            fontSize: 11,
+            lineHeight: 18,
+            marginTop: 12,
+          }}
+        >
+          Подготовка с нуля к {dateLabel(preparation.date)}: около{" "}
+          {money(
+            preparation.monthly,
+            true,
+            accountCurrency(state, p.accountId),
+          )}{" "}
+          в месяц за {preparation.months} мес. Это ориентир для накопления;
+          отдельный резерв не создаётся.
+        </Txt>
+      )}
     </Card>
   );
 }

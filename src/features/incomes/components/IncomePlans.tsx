@@ -1,5 +1,6 @@
 import { Pressable, View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
+import { scheduleLabel } from "../../../domain/recurrence";
 import { dateLabel } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
 import type { OpenSheet } from "../../../application/navigation/types";
@@ -46,9 +47,11 @@ export function IncomePlans({ open }: { open: OpenSheet }) {
                 accountCurrency(state, plan.accountId),
               )}{" "}
               ·{" "}
-              {plan.repeat === "monthly"
-                ? `${Number(plan.date.slice(-2))}-го каждый месяц`
-                : dateLabel(plan.date)}
+              {plan.schedule
+                ? scheduleLabel(plan.schedule)
+                : plan.repeat === "monthly"
+                  ? `${Number(plan.date.slice(-2))}-го каждый месяц`
+                  : dateLabel(plan.date)}
             </Txt>
           </Card>
         </Pressable>

@@ -1,5 +1,6 @@
 import { Pressable, View } from "react-native";
-import { categorySpending } from "../../../domain/finance";
+import { categoryBudgets } from "../../../domain/budgets";
+import { dateLabel, shiftDate } from "../../../shared/lib/dates";
 import { useMoney } from "../../../state/finance";
 import type { OpenSheet } from "../../../application/navigation/types";
 import {
@@ -16,7 +17,7 @@ export function BudgetCard({
   category: c,
   open,
 }: {
-  category: ReturnType<typeof categorySpending>[number];
+  category: ReturnType<typeof categoryBudgets>[number];
   open: OpenSheet;
 }) {
   const { money } = useMoney();
@@ -67,6 +68,10 @@ export function BudgetCard({
           value={c.budget ? c.spent / c.budget : c.spent ? 1 : 0}
           color={c.spent > c.budget ? "#CA8B78" : c.color}
         />
+        <Txt style={{ color: C.muted, fontSize: 10, marginTop: 10 }}>
+          {dateLabel(c.start)} — {dateLabel(shiftDate(c.end, -1))}
+          {c.carried ? ` · перенос ${money(c.carried)}` : ""}
+        </Txt>
       </Card>
     </Pressable>
   );

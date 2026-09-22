@@ -1,3 +1,23 @@
+import { accountBalance } from "./accountBalances";
+import { goalReserve, goalSaved } from "./goals";
+import { overduePayments, upcoming, paymentOccurrenceKey } from "./payments";
+import { forecast, type ForecastHorizon } from "./forecast";
+import { incomeOccurrences, incomeOccurrenceKey } from "./incomes";
+import { debtObligations } from "./debts";
+import { isScheduledDate } from "./recurrence";
+import {
+  expenseContributions,
+  transactionIncomeAmount,
+  transactionAmountsError,
+} from "./transactionAmounts";
+export { accountBalance } from "./accountBalances";
+export { goalReserve, goalSaved } from "./goals";
+export {
+  upcoming,
+  paymentForMonth,
+  changedPaymentHistory,
+  overduePayments,
+} from "./payments";
 import {
   localDate,
   fromDate,
@@ -26,18 +46,10 @@ import {
   MAX_MONEY,
   parseMoney,
   receivedAmount,
-  toBase,
   transactionValue,
   type CurrencyCode,
 } from "./currency";
-import type {
-  CategoryId,
-  FinanceState,
-  Goal,
-  Occurrence,
-  Recurring,
-  Transaction,
-} from "./types";
+import type { CategoryId, FinanceState, Transaction } from "./types";
 export { MAX_MONEY, money, moneyInput, parseMoney } from "./currency";
 
 export const uid = () =>
@@ -46,32 +58,16 @@ export function nextPayday(day: number, today = localDate()) {
   const thisMonth = dateInMonth(today, day);
   return thisMonth > today ? thisMonth : dateInMonth(shiftMonth(today, 1), day);
 }
-export function accountBalance(
-  state: FinanceState,
-  id: string,
-  today = localDate(),
-) {
-  return state.transactions
-    .filter((t) => t.date <= today)
-    .reduce(
-      (sum, t) => {
-        if (t.accountId === id)
-          sum += t.type === "income" ? t.amount : -t.amount;
-        if (t.type === "transfer" && t.toAccountId === id)
-          sum += receivedAmount(t);
-        return sum;
-      },
-      state.accounts.find((a) => a.id === id)?.openingBalance ?? 0,
-    );
-}
-
 export function totals(state: FinanceState, month = monthKey()) {
   return state.transactions
     .filter((t) => monthKey(t.date) === month && t.date <= localDate())
     .reduce(
       (sum, t) => {
-        if (t.type === "expense") sum.expense += transactionValue(state, t);
-        if (t.type === "income") sum.income += transactionValue(state, t);
+        sum.expense += expenseContributions(state, t).reduce(
+          (n, p) => n + p.amount,
+          0,
+        );
+        sum.income += transactionIncomeAmount(state, t);
         return sum;
       },
       { income: 0, expense: 0 },
@@ -88,10 +84,11 @@ export function categorySpending(
   );
   const spent = new Map<string, number>();
   for (const t of state.transactions) {
-    if (t.type !== "expense" || monthKey(t.date) !== month || t.date > today)
-      continue;
-    const root = rootIds.get(t.category)!;
-    spent.set(root, (spent.get(root) ?? 0) + transactionValue(state, t));
+    if (monthKey(t.date) !== month || t.date > today) continue;
+    for (const part of expenseContributions(state, t)) {
+      const root = rootIds.get(part.category)!;
+      spent.set(root, (spent.get(root) ?? 0) + part.amount);
+    }
   }
   return state.categories
     .filter((c) => !c.parentId)
@@ -102,136 +99,17 @@ export function categorySpending(
     }));
 }
 
-export function goalSaved(
-  state: FinanceState,
-  goal: Goal,
-  today = localDate(),
-) {
-  return (
-    goal.initialSaved +
-    state.transactions
-      .filter(
-        (t) => t.type === "transfer" && t.goalId === goal.id && t.date <= today,
-      )
-      .reduce((sum, t) => sum + receivedAmount(t), 0)
-  );
-}
-
-export function goalReserve(state: FinanceState, today = localDate()) {
-  return state.goals.reduce((sum, goal) => {
-    const contributed = state.transactions
-      .filter(
-        (t) =>
-          t.goalId === goal.id &&
-          t.type === "transfer" &&
-          monthKey(t.date) === monthKey(today) &&
-          t.date <= today,
-      )
-      .reduce((n, t) => n + receivedAmount(t), 0);
-    return (
-      sum +
-      toBase(
-        state,
-        Math.max(
-          0,
-          Math.min(
-            goal.target - goalSaved(state, goal, today),
-            goal.monthly - contributed,
-          ),
-        ),
-        goal.currency,
-      )
-    );
-  }, 0);
-}
-
-export function upcoming(
-  state: FinanceState,
-  start = localDate(),
-  end = shiftDate(start, 31),
-): Occurrence[] {
-  return paymentOccurrences(state, start, end, start);
-}
-
-function paymentOccurrences(
-  state: FinanceState,
-  start: string,
-  end: string,
-  today: string,
-): Occurrence[] {
-  const result: Occurrence[] = [];
-  const paidMonths = new Set(
-    state.transactions
-      .filter(
-        (t) =>
-          t.type === "expense" &&
-          t.recurringId &&
-          t.occurrenceDate &&
-          t.date <= today,
-      )
-      .map((t) => `${t.recurringId}:${monthKey(t.occurrenceDate!)}`),
-  );
-  for (
-    let month = `${monthKey(start)}-01`;
-    month <= end;
-    month = shiftMonth(month, 1)
-  ) {
-    state.recurring
-      .filter((p) => p.active)
-      .forEach((template) => {
-        const payment = paymentForMonth(template, month);
-        const date = dateInMonth(month, payment.day);
-        if (date < start || date >= end || date < (payment.startsOn ?? start))
-          return;
-        const paid = paidMonths.has(`${payment.id}:${monthKey(date)}`);
-        const skipped =
-          payment.skippedMonths?.includes(monthKey(date)) ?? false;
-        result.push({ payment, date, paid, skipped });
-      });
-  }
-  return result.sort((a, b) => a.date.localeCompare(b.date));
-}
-
-export function paymentForMonth(payment: Recurring, date: string): Recurring {
-  const rule = payment.history
-    ?.slice()
-    .sort((a, b) => a.untilMonth.localeCompare(b.untilMonth))
-    .find((item) => monthKey(date) <= item.untilMonth);
-  return rule ? { ...payment, day: rule.day, amount: rule.amount } : payment;
-}
-
-export function changedPaymentHistory(
-  original: Recurring | undefined,
-  amount: number,
-  day: number,
-  today = localDate(),
-) {
-  if (!original || (original.amount === amount && original.day === day))
-    return original?.history;
-  const untilMonth = monthKey(shiftMonth(today, -1));
-  const history = original.history ?? [];
-  if (history.some((rule) => rule.untilMonth >= untilMonth)) return history;
-  return [
-    ...history,
-    { untilMonth, day: original.day, amount: original.amount },
-  ];
-}
-
-export function overduePayments(state: FinanceState, today = localDate()) {
-  const start = state.recurring
-    .filter((p) => p.active)
-    .reduce(
-      (first, p) => (p.startsOn && p.startsOn < first ? p.startsOn : first),
-      today,
-    );
-  return paymentOccurrences(state, start, today, today).filter(
-    (o) => !o.paid && !o.skipped,
-  );
-}
-
 export function spendable(state: FinanceState, today = localDate()) {
-  const payday = nextPayday(state.settings.payday, today);
-  const days = daysBetween(today, payday);
+  // Use the same occurrence identities as the forecast, including early receipts.
+  // An income beyond 90 days is not a dependable boundary for a daily allowance.
+  const income = incomeOccurrences(state, today, shiftDate(today, 90)).find(
+    ({ plan }) =>
+      !state.settings.spendableIncomeId ||
+      plan.id === state.settings.spendableIncomeId,
+  );
+  const payday = income?.date ?? nextPayday(state.settings.payday, today);
+  const days = Math.max(1, daysBetween(today, payday));
+  const paymentEnd = payday === today ? shiftDate(today, 1) : payday;
   const liquid = state.accounts
     .filter((a) => a.kind === "spending")
     .reduce(
@@ -246,7 +124,7 @@ export function spendable(state: FinanceState, today = localDate()) {
   );
   const payments =
     overdue +
-    upcoming(state, today, payday)
+    upcoming(state, today, paymentEnd)
       .filter((o) => !o.paid && !o.skipped)
       .reduce(
         (sum, o) =>
@@ -254,10 +132,22 @@ export function spendable(state: FinanceState, today = localDate()) {
         0,
       );
   const goals = goalReserve(state, today);
-  const raw = liquid - payments - goals - state.settings.buffer;
+  const debts = debtObligations(state, today, shiftDate(paymentEnd, -1)).reduce(
+    (sum, item) => sum + accountToBase(state, item.amount, item.accountId),
+    0,
+  );
+  const beforeProtection =
+    liquid - payments - debts - goals - state.settings.buffer;
+  const protection = income
+    ? spendableProtection(state, today, payday, days)
+    : undefined;
+  // Both calculations already account for bills, goals and the buffer. Compare
+  // their limits rather than subtracting the forecast's obligations a second time.
+  const raw = Math.min(beforeProtection, protection?.limit ?? beforeProtection);
   return {
     liquid,
     payments,
+    debts,
     overdue,
     goals,
     buffer: state.settings.buffer,
@@ -266,6 +156,59 @@ export function spendable(state: FinanceState, today = localDate()) {
     daily: Math.floor(Math.max(0, raw) / days),
     days,
     payday,
+    income,
+    selectedIncomeUnavailable: Boolean(
+      state.settings.spendableIncomeId && !income,
+    ),
+    beforeProtection,
+    protectedAmount: beforeProtection - raw,
+    protection,
+  };
+}
+
+function spendableProtection(
+  state: FinanceState,
+  today: string,
+  payday: string,
+  days: number,
+) {
+  const horizon: ForecastHorizon = days < 30 ? 30 : days < 60 ? 60 : 90;
+  const dailySpending = state.settings.forecast?.dailySpending ?? 0;
+  const withoutDailySpending = forecast(
+    {
+      ...state,
+      settings: {
+        ...state.settings,
+        forecast: {
+          goalDay: state.settings.forecast?.goalDay ?? 31,
+          dailySpending: 0,
+        },
+      },
+    },
+    horizon,
+    today,
+  );
+  // The allowance funds everyday spending before the chosen income. Reserving
+  // that spending here too would double-count it. From the income date onward,
+  // retain the user's forecast assumption; today's actual spending is in balance.
+  const dailyStart = payday === today ? shiftDate(today, 1) : payday;
+  const checked = withoutDailySpending.days.map((day) => ({
+    date: day.date,
+    available:
+      day.balance -
+      state.settings.buffer -
+      Math.max(0, daysBetween(dailyStart, day.date) + 1) * dailySpending,
+  }));
+  const minimum = checked.reduce((min, day) =>
+    day.available < min.available ? day : min,
+  );
+  return {
+    horizon,
+    end: checked[checked.length - 1].date,
+    limit: minimum.available,
+    date: minimum.date,
+    dailySpending,
+    dailyStart,
   };
 }
 
@@ -350,6 +293,8 @@ export function validateTransaction(
     return "Выберите счёт.";
   if (!state.categories.some((c) => c.id === transaction.category))
     return "Выберите категорию.";
+  const amountsError = transactionAmountsError(state, transaction);
+  if (amountsError) return amountsError;
   if ((transaction.note?.length ?? 0) > 500)
     return "Примечание должно быть не длиннее 500 символов.";
   const source = state.accounts.find((a) => a.id === transaction.accountId)!;
@@ -444,15 +389,26 @@ export function validateTransaction(
       !state.recurring.some((p) => p.id === transaction.recurringId)
     )
       return "Неверная связь регулярного платежа.";
+    const payment = state.recurring.find(
+      (p) => p.id === transaction.recurringId,
+    )!;
+    if (
+      payment.schedule &&
+      !isScheduledDate(payment.schedule, transaction.occurrenceDate)
+    )
+      return "Дата оплаты не соответствует графику.";
     if (
       state.transactions.some(
         (t) =>
           t.recurringId === transaction.recurringId &&
-          t.occurrenceDate?.slice(0, 7) ===
-            transaction.occurrenceDate?.slice(0, 7),
+          !!t.occurrenceDate &&
+          paymentOccurrenceKey(payment, t.occurrenceDate) ===
+            paymentOccurrenceKey(payment, transaction.occurrenceDate!),
       )
     )
-      return "Этот месяц уже оплачен.";
+      return payment.schedule
+        ? "Эта дата уже оплачена."
+        : "Этот месяц уже оплачен.";
   }
   if (transaction.plannedIncomeId) {
     const plan = state.plannedIncomes?.find(
@@ -461,17 +417,24 @@ export function validateTransaction(
     if (
       !plan ||
       transaction.type !== "income" ||
+      transaction.refundOf ||
+      transaction.debtId ||
       !transaction.incomeOccurrenceDate ||
       !validDate(transaction.incomeOccurrenceDate)
     )
       return "Неверная связь планируемого дохода.";
     if (
+      plan.schedule &&
+      !isScheduledDate(plan.schedule, transaction.incomeOccurrenceDate)
+    )
+      return "Дата поступления не соответствует графику.";
+    if (
       state.transactions.some(
         (t) =>
           t.plannedIncomeId === plan.id &&
-          (plan.repeat === "once" ||
-            t.incomeOccurrenceDate?.slice(0, 7) ===
-              transaction.incomeOccurrenceDate?.slice(0, 7)),
+          !!t.incomeOccurrenceDate &&
+          incomeOccurrenceKey(plan, t.incomeOccurrenceDate) ===
+            incomeOccurrenceKey(plan, transaction.incomeOccurrenceDate!),
       )
     )
       return "Это поступление уже записано.";

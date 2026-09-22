@@ -207,7 +207,7 @@ test("version 1 migrates without losing operations; newer unknown versions fail 
     scenarios: undefined,
   };
   const restored = decodeBackup(JSON.stringify(old));
-  assert.equal(restored.version, 3);
+  assert.equal(restored.version, 4);
   assert.deepEqual(restored.scenarios, []);
   assert.deepEqual(
     restored.transactions,

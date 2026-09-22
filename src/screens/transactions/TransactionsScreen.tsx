@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { View } from "react-native";
 import { categoryMatches } from "../../domain/categories";
-import { transactionValue } from "../../domain/currency";
+import {
+  expenseContributions,
+  transactionIncomeAmount,
+} from "../../domain/transactionAmounts";
 import { monthKey } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
 import type { OpenSheet } from "../../application/navigation/types";
@@ -22,8 +25,8 @@ import {
 } from "../../features/transactions";
 
 export function TransactionsScreen({ open }: { open: OpenSheet }) {
-  const { state } = useFinance();
-  const [month, setMonth] = useState(monthKey());
+  const { state, today } = useFinance();
+  const [month, setMonth] = useState(monthKey(today));
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
   const [account, setAccount] = useState("all");
@@ -35,25 +38,47 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
         .filter(
           (t) =>
             monthKey(t.date) === month &&
-            (type === "all" || t.type === type) &&
+            t.date <= today &&
+            (type === "all" ||
+              (type === "debt"
+                ? !!t.debtId
+                : type === "expense"
+                  ? expenseContributions(state, t).length > 0
+                  : type === "income"
+                    ? t.type === "income" && !t.refundOf && !t.debtId
+                    : t.type === type)) &&
             (account === "all" ||
               t.accountId === account ||
               t.toAccountId === account) &&
             (category === "all" ||
-              categoryMatches(state, t.category, category)) &&
+              (t.type === "expense" || t.refundOf
+                ? expenseContributions(state, t).some((part) =>
+                    categoryMatches(state, part.category, category),
+                  )
+                : !t.debtId && categoryMatches(state, t.category, category))) &&
             `${t.title} ${t.note ?? ""}`
               .toLocaleLowerCase("ru-RU")
               .includes(query.trim().toLocaleLowerCase("ru-RU")),
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
-    [state, month, type, query, account, category],
+    [state, today, month, type, query, account, category],
   );
-  const income = filtered
-      .filter((t) => t.type === "income")
-      .reduce((n, t) => n + transactionValue(state, t), 0),
-    expense = filtered
-      .filter((t) => t.type === "expense")
-      .reduce((n, t) => n + transactionValue(state, t), 0);
+  const income = filtered.reduce(
+      (sum, transaction) => sum + transactionIncomeAmount(state, transaction),
+      0,
+    ),
+    expense = filtered.reduce(
+      (sum, transaction) =>
+        sum +
+        expenseContributions(state, transaction)
+          .filter(
+            (part) =>
+              category === "all" ||
+              categoryMatches(state, part.category, category),
+          )
+          .reduce((value, part) => value + part.amount, 0),
+      0,
+    );
   const groups = new Map<string, Transaction[]>();
   filtered
     .slice(0, limit)
@@ -99,7 +124,11 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
       />
       <TransactionTotals income={income} expense={expense} />
       <Txt style={{ color: C.muted, fontSize: 11 }}>
-        По выбранным фильтрам · операций: {filtered.length}
+        По выбранным фильтрам · операций: {filtered.length}. Возвраты уменьшают
+        расходы; переводы и основная сумма долгов исключены из итогов.
+        {category !== "all"
+          ? " В расходах показана только часть выбранной категории."
+          : ""}
       </Txt>
       <TransactionGroups groups={groups} open={open} />
       {filtered.length > limit && (

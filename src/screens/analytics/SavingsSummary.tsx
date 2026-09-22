@@ -18,11 +18,13 @@ export function SavingsSummary({
         <IconTile name="leaf-outline" background="#DCE7D1" size={46} />
         <View style={{ flex: 1, gap: 6 }}>
           <Txt style={{ fontFamily: font.bold, fontSize: 15 }}>
-            {savingsRate === null
-              ? "Доходы пока не добавлены"
-              : savingsRate >= 0
-                ? `${Math.round(savingsRate * 100)}% дохода осталось с вами`
-                : "Расходы превысили доходы"}
+            {expense < 0
+              ? "Возвраты превысили расходы"
+              : savingsRate === null
+                ? "Доходы пока не добавлены"
+                : savingsRate >= 0
+                  ? `${Math.round(savingsRate * 100)}% дохода осталось с вами`
+                  : "Расходы превысили доходы"}
           </Txt>
           <Txt style={{ color: "#78816F", fontSize: 11, lineHeight: 18 }}>
             Разница доходов и расходов: {money(income - expense)}. Переводы

@@ -1,19 +1,18 @@
 import { validateScenarioCurrencies } from "./scenarios";
-import { accountToBase, receivedAmount, toBase } from "./currency";
+import { accountToBase, MAX_MONEY, receivedAmount, toBase } from "./currency";
+import { accountBalance } from "./accountBalances";
+import { goalSaved } from "./goals";
+import { overduePayments, upcoming } from "./payments";
 import {
-  accountBalance,
   dateInMonth,
-  goalSaved,
   localDate,
-  MAX_MONEY,
   monthKey,
-  overduePayments,
   shiftDate,
   shiftMonth,
-  upcoming,
   validDate,
-} from "./finance";
+} from "../shared/lib/dates";
 import { incomeOccurrences } from "./incomes";
+import { debtObligations } from "./debts";
 import type { FinanceState, ForecastPreferences, SavedScenario } from "./types";
 
 export type ForecastHorizon = 30 | 60 | 90;
@@ -27,7 +26,15 @@ export interface PurchaseScenario {
 }
 export interface ForecastEvent {
   id: string;
-  type: "income" | "payment" | "goal" | "daily" | "purchase" | "expense";
+  type:
+    | "income"
+    | "payment"
+    | "goal"
+    | "daily"
+    | "purchase"
+    | "expense"
+    | "debt"
+    | "credit";
   name: string;
   // Signed change in the balance of spending accounts, in base-currency minor units.
   amount: number;
@@ -86,8 +93,11 @@ export function forecast(
   const dailySpending = scenario?.dailySpending ?? preferences.dailySpending;
   const byDate = new Map<string, ForecastEvent[]>();
   const add = (date: string, event: ForecastEvent) => {
-    if (date >= today && date < end)
-      byDate.set(date, [...(byDate.get(date) ?? []), event]);
+    if (date >= today && date < end) {
+      const events = byDate.get(date);
+      if (events) events.push(event);
+      else byDate.set(date, [event]);
+    }
   };
   // Keep original occurrence identity when shifting dates, including early receipts.
   for (const { plan, date } of incomeOccurrences(
@@ -127,6 +137,18 @@ export function forecast(
       sourceId: payment.id,
       occurrenceDate: date,
       overdue,
+    });
+  }
+
+  for (const obligation of debtObligations(state, today, shiftDate(end, -1))) {
+    add(obligation.date < today ? today : obligation.date, {
+      id: `${obligation.kind}:${obligation.id}`,
+      type: obligation.kind,
+      name: obligation.name,
+      amount: -accountToBase(state, obligation.amount, obligation.accountId),
+      sourceId: obligation.id,
+      occurrenceDate: obligation.date,
+      overdue: obligation.date < today,
     });
   }
 

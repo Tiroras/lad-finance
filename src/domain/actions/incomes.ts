@@ -1,6 +1,11 @@
 import { accountCurrency } from "../currency";
 import { dateInMonth, localDate, uid, validDate } from "../finance";
 import { incomeReceived } from "../incomes";
+import {
+  isScheduledDate,
+  scheduleSchema,
+  validateSchedules,
+} from "../recurrence";
 import type { FinanceState, PlannedIncome } from "../types";
 import { saveTransaction } from "./transactions";
 import {
@@ -30,6 +35,20 @@ export function savePlannedIncome(
   );
   checkName(input.name);
   checkAmount(input.amount);
+  ensure(
+    !input.schedule || scheduleSchema.safeParse(input.schedule).success,
+    "Укажите корректный интервал повторения и дату начала.",
+  );
+  ensure(
+    !original ||
+      JSON.stringify(original.schedule) === JSON.stringify(input.schedule),
+    "Для другой периодичности создайте новый план дохода, чтобы сохранить историю поступлений.",
+  );
+  ensure(
+    !input.schedule ||
+      (input.repeat !== "once" && input.schedule.anchor === input.date),
+    "Дата первого поступления должна совпадать с началом повторений.",
+  );
   ensure(
     validDate(input.date) &&
       input.date >= "2000-01-01" &&
@@ -64,6 +83,7 @@ export function savePlannedIncome(
       : [...plans, plan],
   };
 
+  validateSchedules(next);
   checkCurrencyAmounts(next, localDate());
   return next;
 }
@@ -73,6 +93,10 @@ export function deletePlannedIncome(
 ): FinanceState {
   return {
     ...state,
+    settings:
+      state.settings.spendableIncomeId === id
+        ? { ...state.settings, spendableIncomeId: undefined }
+        : state.settings,
     plannedIncomes: (state.plannedIncomes ?? []).filter((p) => p.id !== id),
     transactions: state.transactions.map((t) =>
       t.plannedIncomeId === id
@@ -95,7 +119,9 @@ export function receivePlannedIncome(
       date >= plan.date &&
       (plan.repeat === "once"
         ? date === plan.date
-        : date === dateInMonth(date, Number(plan.date.slice(-2)))),
+        : plan.schedule
+          ? isScheduledDate(plan.schedule, date)
+          : date === dateInMonth(date, Number(plan.date.slice(-2)))),
     "Дата не соответствует планируемому доходу.",
   );
   if (incomeReceived(state, plan, date, today)) return state;
@@ -104,6 +130,8 @@ export function receivePlannedIncome(
     ensure(
       transaction &&
         transaction.type === "income" &&
+        !transaction.refundOf &&
+        !transaction.debtId &&
         !transaction.plannedIncomeId &&
         transaction.amount === plan.amount &&
         transaction.accountId === plan.accountId &&

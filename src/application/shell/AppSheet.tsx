@@ -18,6 +18,12 @@ export function AppSheet({
   const { toast } = useFinance();
   const titles: Record<SheetState["type"], string> = {
     transaction: sheet?.id ? "Детали операции" : "Новая операция",
+    automation: "Правила и шаблоны",
+    reconcile: "Сверка счёта",
+    onboarding: "Начнём ваш учёт",
+    debt: sheet?.id ? "Условия долга" : "Новый долг",
+    repayDebt: "Возврат долга",
+    repayCredit: "Погашение кредитной карты",
     formula: "Всё прозрачно",
     simulate: "Примерка покупки",
     accounts: "Мои счета",

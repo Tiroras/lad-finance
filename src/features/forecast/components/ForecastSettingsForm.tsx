@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DEFAULT_FORECAST } from "../../../domain/forecast";
+import { DailySpendingEstimate } from "../../insights";
 import { ErrorText, Button, Field, Notice } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -31,6 +32,9 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
         Укажите её без регулярных платежей и взносов на цели: они уже учтены
         отдельно. При нуле ежедневные траты в прогноз не добавляются.
       </Notice>
+      <DailySpendingEstimate
+        onApply={(amount) => setDaily(moneyInput(amount))}
+      />
       <Field
         label="День ежемесячного взноса на цели"
         accessibilityLabel="День взноса на цели"

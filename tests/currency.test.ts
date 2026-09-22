@@ -531,10 +531,10 @@ test("universal CSV preserves both currencies; destination and YNAB exports use 
 });
 
 test("old RUB backups migrate without reinterpreting money and invalid foreign data fails closed", () => {
-  for (const version of [1, 2]) {
+  for (const version of [1, 2, 3]) {
     const old = { ...createInitialState(true, TODAY), version };
     const restored = decodeBackup(JSON.stringify(old));
-    assert.equal(restored.version, 3);
+    assert.equal(restored.version, 4);
     assert.equal(baseCurrency(restored), "RUB");
     assert.equal(accountCurrency(restored, "card"), "RUB");
     assert.deepEqual(restored.transactions, old.transactions);
@@ -644,4 +644,19 @@ test("choosing an operation's own currency uses its actual amount even after ref
   state = changeBaseCurrency(state, "USD", TODAY);
   assert.equal(totals(state, "2026-09").expense, 250);
   assert.equal(state.transactions[0].amount, 250);
+});
+
+test("version 3 multicurrency backup upgrades to 4 without changing valuations or amounts", () => {
+  const state = saveTransaction(fixture(), expense, TODAY);
+  const legacy = JSON.parse(encodeBackup(state));
+  legacy.version = 3;
+  const restored = decodeBackup(JSON.stringify(legacy));
+  assert.equal(restored.version, 4);
+  assert.deepEqual(restored.accounts, legacy.accounts);
+  assert.deepEqual(restored.transactions, legacy.transactions);
+  assert.deepEqual(restored.settings, legacy.settings);
+  assert.equal(restored.categoryRules, undefined);
+  assert.equal(restored.balanceAdjustments, undefined);
+  assert.equal(restored.debts, undefined);
+  assert.deepEqual(decodeBackup(encodeBackup(restored)), restored);
 });

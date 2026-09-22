@@ -1,3 +1,4 @@
+import { matchCategoryRule } from "./automation";
 import { appendTransaction } from "./actions/transactions";
 import { activeCategory, categoryLabel } from "./categories";
 import {
@@ -56,6 +57,7 @@ export interface CsvPreviewRow {
   transaction?: Transaction;
   error?: string;
   duplicate: boolean;
+  categoryReason?: string;
 }
 
 // CSV is parsed as text only; formulas are never evaluated. Quoted delimiters,
@@ -354,10 +356,18 @@ export function previewCsv(
             normalize(categoryLabel(state, c.id)) === categoryName,
         )
       : [];
-    if (matchingCategories.length > 1 && !override.category)
+    if (
+      matchingCategories.length > 1 &&
+      !override.category &&
+      !(type === "expense" && matchCategoryRule(state, title))
+    )
       return fail(
         "Название категории неоднозначно. Выберите категорию вручную.",
       );
+    const categoryRule =
+      type === "expense" ? matchCategoryRule(state, title) : undefined;
+    if (!override.category && categoryRule)
+      result.categoryReason = `Правило «${categoryRule.pattern}» → ${categoryLabel(state, categoryRule.category)}`;
     const transaction: Transaction = {
       id: `csv-preview-${line}`,
       title,
@@ -375,6 +385,7 @@ export function previewCsv(
         : {}),
       category:
         override.category ??
+        categoryRule?.category ??
         matchingCategories[0]?.id ??
         activeCategory(state, suggestCategory(title)),
     };

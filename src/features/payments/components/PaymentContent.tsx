@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
 import { dateLabel, paymentForMonth } from "../../../domain/finance";
+import { paymentOccurrenceKey } from "../../../domain/payments";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
@@ -39,11 +40,15 @@ export function PaymentContent({
     state.recurring.find((p) => p.id === sheet.id)!,
     date,
   );
-  const skipped = payment.skippedMonths?.includes(date.slice(0, 7));
+  const skipped = payment.schedule
+    ? payment.skippedDates?.includes(date)
+    : payment.skippedMonths?.includes(date.slice(0, 7));
   const recorded = state.transactions.find(
     (t) =>
       t.recurringId === payment.id &&
-      t.occurrenceDate?.slice(0, 7) === date.slice(0, 7),
+      t.occurrenceDate &&
+      paymentOccurrenceKey(payment, t.occurrenceDate) ===
+        paymentOccurrenceKey(payment, date),
   );
   const candidates = state.transactions
     .filter(
@@ -77,7 +82,7 @@ export function PaymentContent({
       <ErrorText error={error} />
       <Notice>
         {skipped && !recorded
-          ? "Этот месяц пропущен: сумма не резервируется. Вы можете вернуть платёж в план."
+          ? "Этот платёж пропущен: сумма не резервируется. Вы можете вернуть его в план."
           : recorded
             ? "Этот платёж уже записан в расходах и не резервируется повторно."
             : "Если вы уже оплатили, запишите расход. Баланс уменьшится, а соответствующий платёж будет отмечен выполненным."}
@@ -103,7 +108,13 @@ export function PaymentContent({
       {!recorded && (
         <Button
           label={
-            skipped ? "Вернуть этот месяц в план" : "Пропустить этот месяц"
+            payment.schedule
+              ? skipped
+                ? "Вернуть этот платёж в план"
+                : "Пропустить этот платёж"
+              : skipped
+                ? "Вернуть этот месяц в план"
+                : "Пропустить этот месяц"
           }
           variant="secondary"
           onPress={() =>

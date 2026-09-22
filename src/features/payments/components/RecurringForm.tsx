@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { accountCurrency, currencySymbol } from "../../../domain/currency";
 import { localDate } from "../../../domain/finance";
+import { shiftDate } from "../../../shared/lib/dates";
+import { RecurrenceFields } from "./RecurrenceFields";
+import type { RecurrenceSchedule } from "../../../domain/recurrence";
 import type { CategoryId } from "../../../domain/types";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -21,33 +24,54 @@ import { CategoryPicker } from "../../categories";
 
 export function RecurringForm({
   id,
+  sourceTransactionId,
   close,
 }: {
   id?: string;
+  sourceTransactionId?: string;
   close: () => void;
 }) {
   const { moneyInput, parseMoney } = useMoney();
-  const { state, notify } = useFinance();
+  const { state, today, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.recurring.find((p) => p.id === id);
-  const [name, setName] = useState(original?.name ?? "");
+  const source = state.transactions.find(
+    (t) => t.id === sourceTransactionId && t.type === "expense" && !t.debtId,
+  );
+  const [name, setName] = useState(original?.name ?? source?.title ?? "");
   const [amount, setAmount] = useState(
     original
       ? moneyInput(original.amount, accountCurrency(state, original.accountId))
-      : "",
+      : source
+        ? moneyInput(source.amount, accountCurrency(state, source.accountId))
+        : "",
   );
-  const [day, setDay] = useState(String(original?.day ?? 15));
+  const [day, setDay] = useState(
+    String(original?.day ?? (source ? Number(source.date.slice(-2)) : 15)),
+  );
   const [kind, setKind] = useState<"bill" | "subscription">(
     original?.kind ?? "subscription",
   );
   const [category, setCategory] = useState<CategoryId>(
-    original?.category ?? "other",
+    original?.category ??
+      (state.categories.some((c) => c.id === source?.category && !c.archived)
+        ? source!.category
+        : "other"),
   );
   const [accountId, setAccountId] = useState(
     original?.accountId ??
+      source?.accountId ??
       state.accounts.find((a) => a.kind === "spending")!.id,
   );
-  const [startsOn, setStartsOn] = useState(original?.startsOn ?? localDate());
+  const [startsOn, setStartsOn] = useState(
+    original?.startsOn ?? (source ? shiftDate(today, 1) : today),
+  );
+  const [schedule, setSchedule] = useState<RecurrenceSchedule | undefined>(
+    original?.schedule,
+  );
+  const [skippedDates, setSkippedDates] = useState(
+    original?.skippedDates ?? [],
+  );
   const [skippedMonths, setSkippedMonths] = useState(
     original?.skippedMonths ?? [],
   );
@@ -66,6 +90,10 @@ export function RecurringForm({
         accountId,
         startsOn,
         skippedMonths,
+        skippedDates,
+        schedule: schedule
+          ? { ...schedule, anchor: original?.schedule?.anchor ?? startsOn }
+          : undefined,
       });
       notify("Платёж сохранён");
       close();
@@ -89,21 +117,29 @@ export function RecurringForm({
         maxLength={120}
       />
       <Field
-        label={`Сумма в месяц, ${currencySymbol(accountCurrency(state, accountId))}`}
+        label={`Сумма одного платежа, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма платежа"
         value={amount}
         onChangeText={setAmount}
         keyboardType="decimal-pad"
         maxLength={16}
       />
-      <Field
-        label="День списания · от 1 до 31"
-        accessibilityLabel="День списания"
-        value={day}
-        onChangeText={setDay}
-        keyboardType="number-pad"
-        maxLength={2}
+      <RecurrenceFields
+        schedule={schedule}
+        onChange={setSchedule}
+        anchor={startsOn}
+        locked={!!original}
       />
+      {!schedule && (
+        <Field
+          label="День списания · от 1 до 31"
+          accessibilityLabel="День списания"
+          value={day}
+          onChangeText={setDay}
+          keyboardType="number-pad"
+          maxLength={2}
+        />
+      )}
       <AccountPicker
         selected={accountId}
         onChange={setAccountId}
@@ -116,7 +152,11 @@ export function RecurringForm({
         label="Учитывать с даты · ГГГГ-ММ-ДД"
         accessibilityLabel="Дата начала платежа"
         value={startsOn}
-        onChangeText={setStartsOn}
+        onChangeText={(value) => {
+          setStartsOn(value);
+          if (schedule && !original)
+            setSchedule({ ...schedule, anchor: value });
+        }}
         placeholder={localDate()}
         maxLength={10}
       />
@@ -124,8 +164,10 @@ export function RecurringForm({
       <Notice>
         Если в месяце нет выбранного числа, платёж планируется на последний день
         месяца. Неотмеченные платежи после даты начала остаются просроченными.
-        Реального списания приложение не выполняет. Изменение суммы и дня
-        действует с текущего месяца; прошлые месяцы сохраняют прежние условия.
+        Реального списания приложение не выполняет.
+        {schedule
+          ? " Изменение суммы действует с сегодняшнего дня; прошлые обязательства сохраняют прежнюю сумму."
+          : " Изменение суммы и дня действует с текущего месяца; прошлые месяцы сохраняют прежние условия."}
       </Notice>
       <ErrorText error={error} />
       {skippedMonths.length > 0 && (
@@ -138,6 +180,16 @@ export function RecurringForm({
             label="Вернуть все пропущенные месяцы"
             variant="secondary"
             onPress={() => setSkippedMonths([])}
+          />
+        </>
+      )}
+      {skippedDates.length > 0 && (
+        <>
+          <Notice>Пропущено платежей: {skippedDates.length}.</Notice>
+          <Button
+            label="Вернуть все пропущенные платежи"
+            variant="secondary"
+            onPress={() => setSkippedDates([])}
           />
         </>
       )}

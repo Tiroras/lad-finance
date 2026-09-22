@@ -1,0 +1,161 @@
+import { expect, test, type Page } from "@playwright/test";
+import { createInitialState } from "../../src/domain/seed";
+import type { FinanceState } from "../../src/domain/types";
+
+const TODAY = "2026-09-10",
+  KEY = "lad-finance-v1";
+const button = (page: Page, name: string) =>
+  page.getByRole("button", { name, exact: true });
+const read = (page: Page): Promise<FinanceState> =>
+  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
+async function importFile(page: Page) {
+  const chooser = page.waitForEvent("filechooser");
+  await button(page, "Выбрать CSV-файл").click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "bank.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "Дата;Описание;Сумма;ID\n10.09.2026;Соседний магазин;-123;bank-1",
+    ),
+  });
+}
+async function openImport(page: Page) {
+  await button(page, "Профиль и настройки").click();
+  await button(page, "Импортировать банковский CSV").click();
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
+  const state = createInitialState(false, TODAY);
+  state.settings.exchange = { automatic: false, rates: {} };
+  state.settings.onboardingCompleted = true;
+  state.accounts[0].openingBalance = 1000000;
+  await page.addInitScript(
+    ({ key, state }) => {
+      if (!localStorage.getItem(key))
+        localStorage.setItem(key, JSON.stringify(state));
+    },
+    { key: KEY, state },
+  );
+  await page.goto("/");
+  await expect(page.getByText("Больше ясности.")).toBeVisible();
+});
+
+test("explicit rule, favorite template and saved CSV profile survive reload and retain duplicate checks", async ({
+  page,
+}) => {
+  await button(page, "Добавить операцию").click();
+  await page
+    .getByLabel("Название операции", { exact: true })
+    .fill("Соседний магазин");
+  await page.getByLabel("Сумма операции", { exact: true }).fill("250");
+  await button(page, "Продукты").click();
+  await button(page, "Запомнить категорию для «Соседний магазин»").click();
+  await expect
+    .poll(async () => (await read(page)).categoryRules?.length)
+    .toBe(1);
+  await button(page, "Избранные шаблоны").click();
+  await page
+    .getByLabel("Имя нового шаблона", { exact: true })
+    .fill("Магазин у дома");
+  await button(page, "Сохранить новый шаблон").click();
+  await expect
+    .poll(async () => (await read(page)).transactionTemplates?.length)
+    .toBe(1);
+  expect((await read(page)).transactions).toHaveLength(0);
+  await button(page, "Добавить операцию").click();
+  await expect.poll(async () => (await read(page)).transactions.length).toBe(1);
+  await button(page, "Добавить операцию").click();
+  await button(page, "Избранные шаблоны").click();
+  await page.getByRole("button", { name: /^Магазин у дома ·/ }).click();
+  await expect(page.getByLabel("Сумма операции", { exact: true })).toHaveValue(
+    "250",
+  );
+  await expect(page.getByLabel("Дата операции", { exact: true })).toHaveValue(
+    TODAY,
+  );
+  await button(page, "Закрыть").click();
+  await openImport(page);
+  await importFile(page);
+  await button(page, "Распознать колонки").click();
+  await button(page, "Профили CSV").click();
+  await page
+    .getByLabel("Название профиля CSV", { exact: true })
+    .fill("Банк: карта");
+  await button(page, "Сохранить профиль CSV").click();
+  await expect.poll(async () => (await read(page)).csvProfiles?.length).toBe(1);
+  await button(page, "Проверить операции").click();
+  await expect(
+    page.getByText(/Правило «Соседний магазин» → Продукты/),
+  ).toBeVisible();
+  await button(page, "Импортировать 1 операций").click();
+  await expect.poll(async () => (await read(page)).transactions.length).toBe(2);
+  await page.reload();
+  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await openImport(page);
+  await importFile(page);
+  await button(page, "Профили CSV").click();
+  await button(page, "Применить профиль «Банк: карта»").click();
+  await button(page, "Проверить операции").click();
+  await expect(page.getByText(/Новых выбрано: 0 · повторов: 1/)).toBeVisible();
+  await expect(button(page, "Импортировать 0 операций")).toBeDisabled();
+});
+
+test("split purchase and partial refund stay one account movement each on narrow screen", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await button(page, "Добавить операцию").click();
+  await page
+    .getByLabel("Название операции", { exact: true })
+    .fill("Покупка с частями");
+  await page.getByLabel("Сумма операции", { exact: true }).fill("1000");
+  await button(page, "Разделить покупку по категориям").click();
+  await page.getByLabel("Сумма части 1", { exact: true }).fill("700");
+  await button(page, "Продукты").first().click();
+  await page.getByLabel("Сумма части 2", { exact: true }).fill("300");
+  await button(page, "Дом").last().click();
+  await page
+    .getByLabel("Сумма части 1", { exact: true })
+    .scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: "test-results/split-editor-320.png",
+    fullPage: true,
+  });
+  await button(page, "Добавить операцию").click();
+  await expect.poll(async () => (await read(page)).transactions.length).toBe(1);
+  const purchase = (await read(page)).transactions[0];
+  expect(purchase.splits).toEqual([
+    { category: "groceries", amount: 70000 },
+    { category: "home", amount: 30000 },
+  ]);
+  await page
+    .getByRole("button", { name: /Покупка с частями,.*открыть операцию/ })
+    .first()
+    .click();
+  await button(page, "Записать возврат покупки").click();
+  await page.getByLabel("Сумма операции", { exact: true }).fill("500");
+  await button(page, "Добавить операцию").click();
+  await expect.poll(async () => (await read(page)).transactions.length).toBe(2);
+  expect((await read(page)).transactions[0].refundOf).toBe(purchase.id);
+  await page.reload();
+  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  const state = await read(page);
+  expect(
+    state.transactions.filter((entry) => entry.type === "expense"),
+  ).toHaveLength(1);
+  expect(state.transactions.find((entry) => entry.refundOf)?.amount).toBe(
+    50000,
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/split-refund-320.png",
+    fullPage: true,
+  });
+});

@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { Pressable } from "react-native";
+import {
+  matchCategoryRule,
+  templateDraft,
+  type TransactionTemplate,
+} from "../../../domain/automation";
+import { CategoryRuleSuggestion } from "./CategoryRuleSuggestion";
+import { refundedAmount } from "../../../domain/transactionAmounts";
+import { RefundFields } from "./RefundFields";
+import { TransactionSplits, type SplitDraft } from "./TransactionSplits";
+import { TransactionTemplates } from "./TransactionTemplates";
 import { activeCategory } from "../../../domain/categories";
 import {
   accountCurrency,
@@ -32,6 +42,7 @@ import {
   ErrorText,
 } from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
+import { DebtTransactionDetails } from "../../debts";
 import { CategoryPicker } from "../../categories";
 
 export function TransactionForm({
@@ -49,7 +60,11 @@ export function TransactionForm({
   } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
-  const original = state.transactions.find((t) => t.id === sheet.id);
+  const sourceOriginal = state.transactions.find((t) => t.id === sheet.id);
+  const [repeating, setRepeating] = useState(false);
+  const original = repeating ? undefined : sourceOriginal;
+  const [templateId, setTemplateId] = useState<string>();
+  const [manualCategory, setManualCategory] = useState(!!original);
   const [type, setType] = useState<Transaction["type"]>(
     original?.type ?? sheet.transactionType ?? "expense",
   );
@@ -103,6 +118,45 @@ export function TransactionForm({
   const [date, setDate] = useState(original?.date ?? today);
   const [note, setNote] = useState(original?.note ?? "");
   const [quick, setQuick] = useState("");
+  const [splitEnabled, setSplitEnabled] = useState(!!original?.splits);
+  const [parts, setParts] = useState<SplitDraft[]>(
+    () =>
+      original?.splits?.map((part, index) => ({
+        key: String(index),
+        category: part.category,
+        amount: moneyInput(part.amount, sourceCurrency),
+      })) ?? [],
+  );
+  const [refundOf, setRefundOf] = useState(original?.refundOf);
+  const [refundSource, setRefundSource] = useState(
+    original?.refundSourceAmount === undefined
+      ? ""
+      : moneyInput(
+          original.refundSourceAmount,
+          accountCurrency(
+            state,
+            state.transactions.find((t) => t.id === original.refundOf)
+              ?.accountId,
+          ),
+        ),
+  );
+  const purchase = state.transactions.find((entry) => entry.id === refundOf);
+  const selectRefund = (expense: Transaction) => {
+    setRefundOf(expense.id);
+    setRefundSource("");
+    setType("income");
+    setSplitEnabled(false);
+    setAccountId(expense.accountId);
+    setCategory(expense.category);
+    setAmount(
+      moneyInput(
+        expense.amount - refundedAmount(state, expense.id, original?.id),
+        accountCurrency(state, expense.accountId),
+      ),
+    );
+    setValuation(null);
+    setTitle(`Возврат: ${expense.title}`.slice(0, 120));
+  };
   const { error, setError, run } = useActionError();
   const applyQuick = (input = quick) => {
     const parsed = parseQuickEntry(input, accountCurrency(state, accountId));
@@ -113,17 +167,84 @@ export function TransactionForm({
     setType(parsed.type);
     setTitle(parsed.title);
     setAmount(moneyInput(parsed.amount, accountCurrency(state, accountId)));
-    setCategory(activeCategory(state, parsed.category));
+    setCategory(
+      parsed.type === "expense"
+        ? (matchCategoryRule(state, parsed.title)?.category ??
+            activeCategory(state, parsed.category))
+        : "other",
+    );
+    setManualCategory(false);
     setError("");
     notify("Распознано. Проверьте категорию и счёт перед сохранением.");
   };
+  const applyTemplate = (template: TransactionTemplate) =>
+    run(() => {
+      const draft = templateDraft(state, template, today);
+      setType(draft.type);
+      setTitle(draft.title);
+      setAmount(moneyInput(draft.amount, template.currency));
+      setCategory(draft.category);
+      setAccountId(draft.accountId);
+      if (draft.toAccountId) setToAccountId(draft.toAccountId);
+      setReceived(
+        draft.toAmount === undefined
+          ? null
+          : moneyInput(draft.toAmount, template.toCurrency),
+      );
+      setDate(today);
+      setNote(draft.note ?? "");
+      setValuation(null);
+      setManualCategory(true);
+      setTemplateId(template.id);
+      setRefundOf(undefined);
+      setSplitEnabled(!!draft.splits);
+      setParts(
+        draft.splits?.map((part, index) => ({
+          key: String(index),
+          category: part.category,
+          amount: moneyInput(part.amount, template.currency),
+        })) ?? [],
+      );
+      notify("Шаблон заполнил черновик. Проверьте сумму и дату.");
+    });
+  const saveTemplate = (name: string, id?: string) =>
+    run(() => {
+      if (refundOf || original?.debtId)
+        throw new Error(
+          "Возврат покупки и операции долга сохраняются через связанные записи, без шаблона обычного дохода или расхода.",
+        );
+      actions.saveTransactionTemplate({
+        id,
+        name,
+        title,
+        type,
+        amount: parseMoney(amount, sourceCurrency) ?? NaN,
+        category: type === "expense" ? category : "other",
+        accountId,
+        currency: sourceCurrency,
+        toAccountId: type === "transfer" ? toAccountId : undefined,
+        toCurrency: type === "transfer" ? targetCurrency : undefined,
+        toAmount: foreignTransfer
+          ? (parseMoney(received ?? suggestedReceived, targetCurrency) ?? NaN)
+          : undefined,
+        note,
+        splits:
+          type === "expense" && splitEnabled
+            ? parts.map((part) => ({
+                category: part.category,
+                amount: parseMoney(part.amount, sourceCurrency) ?? NaN,
+              }))
+            : undefined,
+      });
+      notify(id ? "Шаблон обновлён" : "Шаблон сохранён");
+    });
   const save = () =>
     run(() => {
       const parsed = parseMoney(amount, accountCurrency(state, accountId));
       if (parsed === null)
         return setError("Введите корректную сумму в валюте счёта.");
       actions.saveTransaction({
-        id: sheet.id,
+        id: original?.id,
         type,
         title,
         amount: parsed,
@@ -142,6 +263,23 @@ export function TransactionForm({
         accountId,
         toAccountId,
         note,
+        splits:
+          type === "expense" && splitEnabled
+            ? parts.map((part) => ({
+                category: part.category,
+                amount: parseMoney(part.amount, sourceCurrency) ?? NaN,
+              }))
+            : undefined,
+        refundOf: type === "income" ? refundOf : undefined,
+        refundSourceAmount:
+          type === "income" &&
+          purchase &&
+          accountCurrency(state, purchase.accountId) !== sourceCurrency
+            ? (parseMoney(
+                refundSource,
+                accountCurrency(state, purchase.accountId),
+              ) ?? NaN)
+            : undefined,
       });
       notify(
         original
@@ -152,8 +290,23 @@ export function TransactionForm({
       );
       close();
     });
+  if (original?.debtId)
+    return <DebtTransactionDetails transaction={original} close={close} />;
   return (
     <>
+      {!original && (
+        <TransactionTemplates
+          selectedId={templateId}
+          onApply={applyTemplate}
+          onSave={saveTemplate}
+        />
+      )}
+      {repeating && (
+        <Notice>
+          Новая копия операции на сегодня. Проверьте сумму и дату; связи с
+          целями и планами не повторяются.
+        </Notice>
+      )}
       {!original && type !== "transfer" && (
         <Card
           style={{
@@ -239,11 +392,47 @@ export function TransactionForm({
               : "Перевод между счетами"
         }
         value={title}
-        onChangeText={setTitle}
+        onChangeText={(value) => {
+          setTitle(value);
+          if (!manualCategory && type === "expense")
+            setCategory(matchCategoryRule(state, value)?.category ?? "other");
+        }}
         maxLength={120}
       />
       {type === "expense" && (
-        <CategoryPicker value={category} onChange={setCategory} />
+        <>
+          <TransactionSplits
+            enabled={splitEnabled}
+            parts={parts}
+            currency={sourceCurrency}
+            total={parsedAmount}
+            onChange={setParts}
+            onToggle={() => {
+              setSplitEnabled(!splitEnabled);
+              if (parts.length < 2)
+                setParts([
+                  { key: "first", category, amount },
+                  {
+                    key: "second",
+                    category: category === "other" ? "groceries" : "other",
+                    amount: "",
+                  },
+                ]);
+            }}
+          />
+          {!splitEnabled && (
+            <>
+              <CategoryPicker
+                value={category}
+                onChange={(value) => {
+                  setCategory(value);
+                  setManualCategory(true);
+                }}
+              />
+              <CategoryRuleSuggestion title={title} category={category} />
+            </>
+          )}
+        </>
       )}
       <AccountPicker
         selected={accountId}
@@ -253,8 +442,23 @@ export function TransactionForm({
           setReceived(null);
         }}
         spendingOnly={!!original?.goalId || type === "expense"}
+        includeCredit={
+          type === "expense" && !original?.goalId && !original?.debtId
+        }
         label={type === "transfer" ? "Откуда" : "Счёт"}
       />
+      {type === "income" && !original?.plannedIncomeId && !original?.debtId && (
+        <RefundFields
+          refundOf={refundOf}
+          sourceAmount={refundSource}
+          accountId={accountId}
+          transactionId={original?.id}
+          locked={!!original?.refundOf}
+          onSelect={selectRefund}
+          onClear={() => setRefundOf(undefined)}
+          onSourceAmount={setRefundSource}
+        />
+      )}
       {type === "transfer" && !original?.goalId && (
         <AccountPicker
           label="Куда"
@@ -331,6 +535,46 @@ export function TransactionForm({
         icon="checkmark"
         onPress={save}
       />
+      {original?.type === "expense" &&
+        !original.debtId &&
+        original.amount > refundedAmount(state, original.id) && (
+          <Button
+            label="Записать возврат покупки"
+            variant="secondary"
+            onPress={() => {
+              setRepeating(true);
+              selectRefund(original);
+              setDate(today);
+              setNote("");
+            }}
+          />
+        )}
+      {original && (
+        <>
+          <Button
+            label="Повторить операцию"
+            variant="secondary"
+            icon="copy-outline"
+            onPress={() => {
+              setRepeating(true);
+              setDate(today);
+              setValuation(null);
+              notify(
+                "Создан черновик новой операции. Подтвердите сумму и дату.",
+              );
+            }}
+          />
+          <TransactionTemplates
+            selectedId={templateId}
+            onApply={() =>
+              setError(
+                "Сначала нажмите «Повторить операцию» для нового черновика.",
+              )
+            }
+            onSave={saveTemplate}
+          />
+        </>
+      )}
       {original && (
         <DeleteButton
           label="Удалить операцию"

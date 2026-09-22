@@ -14,7 +14,10 @@ export function BarChart({
   formatValue: (value: number) => string;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
-  const max = Math.max(1, ...values);
+  const positive = Math.max(1, ...values);
+  const negative = Math.max(0, ...values.map((value) => -value));
+  const range = positive + negative;
+  const zero = (negative / range) * 82;
   return (
     <View>
       <Row style={{ justifyContent: "space-between", marginBottom: 12 }}>
@@ -55,17 +58,38 @@ export function BarChart({
                 justifyContent: "flex-end",
                 borderRadius: 6,
                 backgroundColor: "#F4F6F0",
+                overflow: "hidden",
               }}
             >
+              {negative > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: zero,
+                    borderTopWidth: 1,
+                    borderTopColor: C.muted,
+                  }}
+                />
+              )}
               <View
                 style={{
-                  height: Math.max(value ? 7 : 0, (value / max) * 82),
+                  position: "absolute",
+                  bottom:
+                    value >= 0 ? zero : zero - (Math.abs(value) / range) * 82,
+                  height:
+                    negative > 0
+                      ? (Math.abs(value) / range) * 82
+                      : Math.max(value ? 7 : 0, (value / range) * 82),
                   width: "100%",
                   borderRadius: 6,
                   backgroundColor:
-                    selected === index || index === values.length - 1
-                      ? C.green
-                      : "#C9DCAA",
+                    value < 0
+                      ? C.orange
+                      : selected === index || index === values.length - 1
+                        ? C.green
+                        : "#C9DCAA",
                 }}
               />
             </View>

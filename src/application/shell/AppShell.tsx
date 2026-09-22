@@ -19,6 +19,7 @@ import { AppStatusBanners } from "./AppStatusBanners";
 import { ActiveScreen } from "./ActiveScreen";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 import { AppToast } from "./AppToast";
+import { WelcomeBanner } from "../../features/settings";
 
 export function AppShell() {
   const { ready } = useFinance();
@@ -59,6 +60,7 @@ export function AppShell() {
               wide && { paddingHorizontal: 38, paddingTop: 28, maxWidth: 1220 },
             ]}
           >
+            <WelcomeBanner open={open} />
             <ActiveScreen
               tab={tab}
               open={open}

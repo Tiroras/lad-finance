@@ -1,5 +1,11 @@
 import { CategoriesPanel, CategoryForm } from "../../features/categories";
 import { CurrencySettings } from "../../features/currencies";
+import {
+  DebtForm,
+  DebtRepaymentForm,
+  CreditRepaymentForm,
+  DebtsPanel,
+} from "../../features/debts";
 import { CsvExportSheet, CsvImportSheet } from "../../features/data-transfer";
 import {
   ForecastPanel,
@@ -9,12 +15,19 @@ import {
 } from "../../features/forecast";
 import { IncomePlanForm } from "../../features/incomes";
 import { ScenarioForm, ScenariosPanel } from "../../features/scenarios";
-import { AccountForm, AccountsContent } from "../../features/accounts";
+import {
+  AccountForm,
+  AccountsContent,
+  ReconciliationForm,
+} from "../../features/accounts";
 import { BudgetForm } from "../../features/budgets";
 import { FundGoalForm, GoalForm } from "../../features/goals";
 import { PaymentContent, RecurringForm } from "../../features/payments";
-import { SettingsForm } from "../../features/settings";
-import { TransactionForm } from "../../features/transactions";
+import { SettingsForm, OnboardingFlow } from "../../features/settings";
+import {
+  TransactionForm,
+  AutomationSettings,
+} from "../../features/transactions";
 import type { OpenSheet, SheetState } from "../navigation/types";
 
 export function SheetContent({
@@ -28,6 +41,36 @@ export function SheetContent({
 }) {
   if (!sheet) return null;
   switch (sheet.type) {
+    case "debt":
+      return (
+        <DebtForm id={sheet.id} close={() => open({ type: "accounts" })} />
+      );
+    case "repayDebt":
+      return (
+        <DebtRepaymentForm
+          id={sheet.id ?? ""}
+          close={() => open({ type: "accounts" })}
+        />
+      );
+    case "repayCredit":
+      return (
+        <CreditRepaymentForm
+          id={sheet.id ?? ""}
+          close={() => open({ type: "accounts" })}
+        />
+      );
+    case "onboarding":
+      return <OnboardingFlow close={close} />;
+    case "automation":
+      return <AutomationSettings />;
+    case "reconcile":
+      return (
+        <ReconciliationForm
+          id={sheet.id}
+          close={() => open({ type: "accounts" })}
+          open={open}
+        />
+      );
     case "currencies":
       return <CurrencySettings />;
     case "export":
@@ -54,7 +97,12 @@ export function SheetContent({
     case "simulate":
       return <Simulator />;
     case "accounts":
-      return <AccountsContent open={open} />;
+      return (
+        <>
+          <AccountsContent open={open} />
+          <DebtsPanel open={open} />
+        </>
+      );
     case "account":
       return (
         <AccountForm
@@ -85,7 +133,13 @@ export function SheetContent({
     case "fund":
       return <FundGoalForm id={sheet.id} close={close} open={open} />;
     case "recurring":
-      return <RecurringForm id={sheet.id} close={close} />;
+      return (
+        <RecurringForm
+          id={sheet.id}
+          sourceTransactionId={sheet.sourceTransactionId}
+          close={close}
+        />
+      );
     case "budget":
       return <BudgetForm id={sheet.id} close={close} />;
     case "payment":

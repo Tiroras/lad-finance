@@ -16,6 +16,34 @@ import { useFinance } from "./FinanceProvider";
 export function useFinanceActions() {
   const { update, today } = useFinance();
   return {
+    saveDebt: (input: actions.DebtInput) =>
+      update((s) => actions.saveDebt(s, input, today)),
+    repayDebt: (input: actions.DebtRepaymentInput) =>
+      update((s) => actions.repayDebt(s, input, today)),
+    deleteDebt: (id: string) => update((s) => actions.deleteDebt(s, id)),
+    repayCredit: (input: actions.CreditRepaymentInput) =>
+      update((s) => actions.repayCredit(s, input, today)),
+    saveBudgetPlan: (input: actions.BudgetPlanInput) =>
+      update((s) => actions.saveBudgetPlan(s, input, today)),
+    acceptDemo: () => update((s) => actions.acceptDemo(s)),
+    completeOnboarding: (input: actions.OnboardingInput) =>
+      update((s) => actions.completeOnboarding(s, input, today)),
+    reconcileAccount: (input: actions.ReconciliationInput) =>
+      update((s) => actions.reconcileAccount(s, input, today)),
+    saveCategoryRule: (input: actions.CategoryRuleInput) =>
+      update((s) => actions.saveCategoryRule(s, input)),
+    deleteCategoryRule: (id: string) =>
+      update((s) => actions.deleteCategoryRule(s, id)),
+    moveCategoryRule: (id: string, direction: -1 | 1) =>
+      update((s) => actions.moveCategoryRule(s, id, direction)),
+    saveTransactionTemplate: (input: actions.TransactionTemplateInput) =>
+      update((s) => actions.saveTransactionTemplate(s, input)),
+    deleteTransactionTemplate: (id: string) =>
+      update((s) => actions.deleteTransactionTemplate(s, id)),
+    saveCsvProfile: (input: actions.CsvProfileInput) =>
+      update((s) => actions.saveCsvProfile(s, input)),
+    deleteCsvProfile: (id: string) =>
+      update((s) => actions.deleteCsvProfile(s, id)),
     saveCurrencyRate: (currency: CurrencyCode, value: number) =>
       update((s) => actions.saveCurrencyRate(s, currency, value, today)),
     restoreAutomaticRate: (currency: CurrencyCode) =>
@@ -61,9 +89,12 @@ export function useFinanceActions() {
     payRecurring: (id: string, date: string, transactionId?: string) =>
       update((s) => actions.payRecurring(s, id, date, today, transactionId)),
     saveBudget: (id: string, amount: number) =>
-      update((s) => actions.saveBudget(s, id, amount)),
+      update((s) => actions.saveBudget(s, id, amount, today)),
     saveSettings: (
-      input: Pick<FinanceState["settings"], "name" | "payday" | "buffer">,
+      input: Pick<
+        FinanceState["settings"],
+        "name" | "payday" | "buffer" | "spendableIncomeId"
+      >,
     ) => update((s) => actions.saveSettings(s, input)),
     saveReminderPreferences: (patch: Partial<ReminderPreferences>) =>
       update((s) => actions.saveReminderPreferences(s, patch)),

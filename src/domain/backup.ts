@@ -1,4 +1,25 @@
 import { z } from "zod";
+import {
+  categoryRuleSchema,
+  transactionTemplateSchema,
+  csvSourceProfileSchema,
+  validateAutomation,
+} from "./automation";
+import {
+  adjustmentSchema,
+  reconciliationSchema,
+  validateReconciliations,
+} from "./reconciliation";
+import {
+  scheduleSchema,
+  validateSchedules,
+  isScheduledDate,
+} from "./recurrence";
+import { validateTransactionAmountsState } from "./transactionAmounts";
+import { budgetPlanSchema, validateBudgetPlans } from "./budgets";
+import { debtSchema, validateDebts, validateCreditAccounts } from "./debts";
+import { paymentOccurrenceKey } from "./payments";
+import { incomeOccurrenceKey } from "./incomes";
 import { checkCurrencyAmounts, checkSavings } from "./actions/validation";
 import { validateCategories } from "./categories";
 import {
@@ -24,12 +45,14 @@ const category = id;
 const icon = z.enum(ICON_NAMES);
 const schema = z.object({
   version: z
-    .union([z.literal(1), z.literal(2), z.literal(3)])
-    .transform(() => 3 as const),
+    .union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
+    .transform(() => 4 as const),
   demo: z.boolean(),
   settings: z.object({
     name: z.string().max(40),
     payday: day,
+    spendableIncomeId: id.optional(),
+    onboardingCompleted: z.boolean().optional(),
     buffer: amount,
     baseCurrency: currencySchema.optional(),
     exchange: exchangeSchema.optional(),
@@ -47,7 +70,11 @@ const schema = z.object({
       z.object({
         id,
         name,
-        kind: z.enum(["spending", "savings"]),
+        kind: z.enum(["spending", "savings", "credit"]),
+        creditLimit: amount.optional(),
+        paymentDueDate: date.optional(),
+        paymentDueAmount: amount.optional(),
+        paymentDueBaselineIds: z.array(id).max(20000).optional(),
         currency: currencySchema.optional(),
         openingBalance: z.number().int().min(-MAX_MONEY).max(MAX_MONEY),
         icon,
@@ -72,6 +99,13 @@ const schema = z.object({
     .min(1)
     .max(200),
   scenarios: z.array(scenarioSchema).max(20).default([]),
+  categoryRules: z.array(categoryRuleSchema).max(200).optional(),
+  transactionTemplates: z.array(transactionTemplateSchema).max(100).optional(),
+  csvProfiles: z.array(csvSourceProfileSchema).max(30).optional(),
+  balanceAdjustments: z.array(adjustmentSchema).max(5000).optional(),
+  reconciliations: z.array(reconciliationSchema).max(1000).optional(),
+  budgetPlans: z.array(budgetPlanSchema).max(200).optional(),
+  debts: z.array(debtSchema).max(200).optional(),
   goals: z
     .array(
       z.object({
@@ -106,6 +140,12 @@ const schema = z.object({
           .array(z.string().regex(/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/))
           .max(1212)
           .optional(),
+        schedule: scheduleSchema.optional(),
+        skippedDates: z.array(date).max(36890).optional(),
+        amountHistory: z
+          .array(z.object({ until: date, amount: positiveAmount }))
+          .max(5000)
+          .optional(),
         history: z
           .array(
             z.object({
@@ -127,6 +167,7 @@ const schema = z.object({
         amount: positiveAmount,
         date: date.refine((d) => d >= "2000-01-01" && d <= "2100-12-31"),
         repeat: z.enum(["once", "monthly"]),
+        schedule: scheduleSchema.optional(),
         accountId: id,
       }),
     )
@@ -152,6 +193,15 @@ const schema = z.object({
         importKey: z.string().max(500).optional(),
         plannedIncomeId: id.optional(),
         incomeOccurrenceDate: date.optional(),
+        splits: z
+          .array(z.object({ category, amount: positiveAmount }))
+          .min(2)
+          .max(50)
+          .optional(),
+        refundOf: id.optional(),
+        refundSourceAmount: positiveAmount.optional(),
+        debtId: id.optional(),
+        debtAction: z.enum(["issue", "repay"]).optional(),
       }),
     )
     .max(20000),
@@ -168,6 +218,15 @@ export function decodeBackup(raw: string): FinanceState {
       "Не удалось прочитать файл. Выберите резервную копию Лада в формате JSON.",
     );
   }
+  // Validate the same normalized calendar that will be returned to the app.
+  // Old copies start tracking this month instead of inventing older arrears.
+  state = {
+    ...state,
+    recurring: state.recurring.map((payment) => ({
+      ...payment,
+      startsOn: payment.startsOn ?? `${localDate().slice(0, 7)}-01`,
+    })),
+  };
   const unique = (items: { id: string }[]) =>
     new Set(items.map((item) => item.id)).size === items.length;
   if (
@@ -183,6 +242,20 @@ export function decodeBackup(raw: string): FinanceState {
   )
     throw new Error("В файле есть повторяющиеся записи. Импорт отменён.");
   validateCategories(state.categories);
+  validateAutomation(state);
+  validateReconciliations(state, localDate());
+  validateSchedules(state);
+  validateTransactionAmountsState(state);
+  validateBudgetPlans(state);
+  validateDebts(state);
+  validateCreditAccounts(state);
+  if (
+    state.settings.spendableIncomeId &&
+    !state.plannedIncomes?.some(
+      (p) => p.id === state.settings.spendableIncomeId,
+    )
+  )
+    throw new Error("Опорный доход отсутствует в плане.");
   if (
     [...state.transactions, ...state.recurring].some(
       (entry) => !state.categories.some((c) => c.id === entry.category),
@@ -227,7 +300,14 @@ export function decodeBackup(raw: string): FinanceState {
       );
       if (!plan || t.type !== "income" || !t.incomeOccurrenceDate)
         throw new Error("Неверная связь планируемого дохода.");
-      const key = `${plan.id}:${plan.repeat === "once" ? "once" : t.incomeOccurrenceDate.slice(0, 7)}`;
+      if (
+        t.refundOf ||
+        t.debtId ||
+        (plan.schedule &&
+          !isScheduledDate(plan.schedule, t.incomeOccurrenceDate))
+      )
+        throw new Error("Неверная связь планируемого дохода.");
+      const key = `${plan.id}:${incomeOccurrenceKey(plan, t.incomeOccurrenceDate)}`;
       if (incomeOccurrences.has(key))
         throw new Error("В файле одно поступление отмечено дважды.");
       incomeOccurrences.add(key);
@@ -275,7 +355,13 @@ export function decodeBackup(raw: string): FinanceState {
         !state.recurring.some((p) => p.id === t.recurringId)
       )
         throw new Error("Неверная связь регулярного платежа.");
-      const key = `${t.recurringId}:${t.occurrenceDate.slice(0, 7)}`;
+      const payment = state.recurring.find((p) => p.id === t.recurringId)!;
+      if (
+        payment.schedule &&
+        !isScheduledDate(payment.schedule, t.occurrenceDate)
+      )
+        throw new Error("Дата оплаты не соответствует графику.");
+      const key = `${t.recurringId}:${paymentOccurrenceKey(payment, t.occurrenceDate)}`;
       if (occurrences.has(key))
         throw new Error("В файле один платёж отмечен дважды.");
       occurrences.add(key);
@@ -295,15 +381,7 @@ export function decodeBackup(raw: string): FinanceState {
   }
   checkSavings(state, localDate());
   checkCurrencyAmounts(state, localDate());
-  // Older backups have no start boundary. Begin tracking from the month of
-  // migration, then persist that date, without inventing earlier arrears.
-  return {
-    ...state,
-    recurring: state.recurring.map((payment) => ({
-      ...payment,
-      startsOn: payment.startsOn ?? `${localDate().slice(0, 7)}-01`,
-    })),
-  };
+  return state;
 }
 
 export const encodeBackup = (state: FinanceState) =>

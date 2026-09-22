@@ -35,7 +35,8 @@ export function SpendableCard({
         {hidden ? `••• ••• ${baseSymbol}` : money(safe.available)}
       </Txt>
       <Txt style={{ color: "#AFC5B6", fontSize: 11 }}>
-        до {dateLabel(safe.payday)} · следующего дохода
+        {safe.payday === today ? "На сегодня" : `до ${dateLabel(safe.payday)}`}{" "}
+        · {safe.income ? safe.income.plan.name : "дата из настроек"}
       </Txt>
       <View style={st.heroDivider} />
       <Row
@@ -72,7 +73,11 @@ export function SpendableCard({
               fontFamily: font.medium,
             }}
           >
-            {safe.raw < 0 ? "План требует внимания" : "Счета и цели учтены"}
+            {safe.raw < 0
+              ? "План требует внимания"
+              : safe.protectedAmount > 0
+                ? "Учтены будущие обязательства"
+                : "Счета и цели учтены"}
           </Txt>
         </Pressable>
       </Row>

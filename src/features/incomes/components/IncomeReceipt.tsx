@@ -1,6 +1,8 @@
 import { accountCurrency } from "../../../domain/currency";
 import { dateInMonth, dateLabel, daysBetween } from "../../../domain/finance";
 import { incomeReceived } from "../../../domain/incomes";
+import { scheduleDates } from "../../../domain/recurrence";
+import { shiftDate } from "../../../shared/lib/dates";
 import type { PlannedIncome } from "../../../domain/types";
 import { ErrorText, Button, C, Notice, Txt } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
@@ -27,7 +29,11 @@ export function IncomeReceipt({
   const currentDate =
     plan.repeat === "once"
       ? plan.date
-      : dateInMonth(today, Number(plan.date.slice(-2)));
+      : plan.schedule
+        ? (scheduleDates(plan.schedule, plan.date, shiftDate(today, 1)).at(
+            -1,
+          ) ?? plan.date)
+        : dateInMonth(today, Number(plan.date.slice(-2)));
   const occurrenceDate =
     date ?? (currentDate < plan.date ? plan.date : currentDate);
   const recorded = incomeReceived(state, plan, occurrenceDate, today);
@@ -36,6 +42,8 @@ export function IncomeReceipt({
       (t) =>
         t.type === "income" &&
         !t.plannedIncomeId &&
+        !t.refundOf &&
+        !t.debtId &&
         t.accountId === plan.accountId &&
         t.amount === plan.amount &&
         t.date <= today,

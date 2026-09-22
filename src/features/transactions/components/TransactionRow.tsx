@@ -20,6 +20,7 @@ export function TransactionRow({
   const category = state.categories.find((c) => c.id === transaction.category)!;
   const income = transaction.type === "income",
     transfer = transaction.type === "transfer";
+  const refund = !!transaction.refundOf;
   const account = state.accounts.find((a) => a.id === transaction.accountId);
   return (
     <Pressable
@@ -53,11 +54,15 @@ export function TransactionRow({
           {transaction.title}
         </Txt>
         <Txt numberOfLines={1} style={{ color: C.muted, fontSize: 10 }}>
-          {income
-            ? "Доход"
-            : transfer
-              ? "Перевод"
-              : categoryLabel(state, category.id)}{" "}
+          {refund
+            ? "Возврат покупки"
+            : income
+              ? "Доход"
+              : transfer
+                ? "Перевод"
+                : transaction.splits
+                  ? `Покупка · ${transaction.splits.length} категории`
+                  : categoryLabel(state, category.id)}{" "}
           · {account?.name}
         </Txt>
       </View>

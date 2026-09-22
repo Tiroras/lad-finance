@@ -1,7 +1,12 @@
 import { z } from "zod";
-import { accountCurrency, toBase, type CurrencyCode } from "./currency";
+import {
+  accountCurrency,
+  MAX_MONEY,
+  toBase,
+  type CurrencyCode,
+} from "./currency";
 import { currencySchema } from "./currencySchema";
-import { MAX_MONEY, validDate } from "./finance";
+import { validDate } from "../shared/lib/dates";
 import type { FinanceState, SavedScenario } from "./types";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);

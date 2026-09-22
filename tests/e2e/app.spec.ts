@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
+import { categoryBudget } from "../../src/domain/budgets";
 import {
   accountBalance as actualBalance,
   goalSaved as actualGoalSaved,
@@ -173,7 +174,10 @@ test("budget editing and subscription toggle persist", async ({ page }) => {
     .getByRole("button", { name: "Сохранить лимит", exact: true })
     .click();
   await expect
-    .poll(async () => (await getState(page)).categories[0].budget)
+    .poll(
+      async () =>
+        categoryBudget(await getState(page), "groceries", TODAY, TODAY).budget,
+    )
     .toBe(2200000);
   await page.getByRole("tab", { name: "Платежи", exact: true }).click();
   await page
@@ -190,6 +194,9 @@ test("budget editing and subscription toggle persist", async ({ page }) => {
   expect(
     (await getState(page)).recurring.find((p) => p.id === "plus")?.active,
   ).toBe(false);
+  expect(
+    categoryBudget(await getState(page), "groceries", TODAY, TODAY).budget,
+  ).toBe(2200000);
 });
 
 test("a paid subscription remains paid after changing its monthly date", async ({

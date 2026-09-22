@@ -4,6 +4,7 @@ import { createInitialState } from "../src/domain/seed";
 import { exportTransactionsCsv } from "../src/domain/csvExport";
 import { parseCsv } from "../src/domain/csv";
 import { saveCategory, saveTransaction } from "../src/domain/actions";
+import { saveDebt, repayDebt } from "../src/domain/actions/debts";
 import { encodeBackup } from "../src/domain/backup";
 
 const TODAY = "2026-09-10";
@@ -154,4 +155,71 @@ test("YNAB layout uses separate inflow/outflow columns; spreadsheet formulas are
     ).content,
   );
   assert.deepEqual(savings.rows[0].slice(3), ["", "500.00"]);
+});
+
+test("debt CSV retains cash amounts and explains principal, direction, action and identity in Note and Memo", () => {
+  let state = createInitialState(false, TODAY);
+  state = saveDebt(
+    state,
+    {
+      name: 'Близкий, "срочный"',
+      direction: "borrowed",
+      amount: 12345,
+      accountId: "card",
+      date: "2026-09-09",
+      recordTransaction: true,
+    },
+    TODAY,
+  );
+  const debt = state.debts![0];
+  state = repayDebt(
+    state,
+    { debtId: debt.id, accountId: "card", amount: 5000, date: TODAY },
+    TODAY,
+  );
+  const before = encodeBackup(state);
+  const universal = parseCsv(
+    exportTransactionsCsv(state, { format: "universal" }, TODAY).content,
+  );
+  assert.deepEqual(
+    universal.rows.map((row) => [row[1], row[2], row[3]]),
+    [
+      ["income", "123.45", "RUB"],
+      ["expense", "-50.00", "RUB"],
+    ],
+  );
+  const ynab = parseCsv(
+    exportTransactionsCsv(state, { format: "ynab", accountId: "card" }, TODAY)
+      .content,
+  );
+  assert.deepEqual(
+    ynab.rows.map((row) => row.slice(3)),
+    [
+      ["", "123.45"],
+      ["50.00", ""],
+    ],
+  );
+  for (const notes of [
+    universal.rows.map((row) => row[8]),
+    ynab.rows.map((row) => row[2]),
+  ]) {
+    assert.ok(
+      notes.every((note) => note.includes(debt.id) && note.includes(debt.name)),
+    );
+    assert.ok(
+      notes.every(
+        (note) =>
+          note.includes("Основная сумма долга") &&
+          note.includes("я должен (borrowed)"),
+      ),
+    );
+    assert.ok(
+      notes.every((note) =>
+        note.includes("В Ладе не входит в доходы и расходы"),
+      ),
+    );
+    assert.ok(notes[0].includes("получение (issue)"));
+    assert.ok(notes[1].includes("возврат (repay)"));
+  }
+  assert.equal(encodeBackup(state), before);
 });

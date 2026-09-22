@@ -3,6 +3,7 @@ import { Pressable, View } from "react-native";
 import type { CsvOverride, CsvPreviewRow } from "../../../domain/csv";
 import { accountCurrency } from "../../../domain/currency";
 import { AccountPicker } from "../../accounts";
+import { CategoryRuleSuggestion } from "../../transactions";
 import { CategoryPicker } from "../../categories";
 import { useMoney, useFinance } from "../../../state/finance";
 import {
@@ -76,6 +77,7 @@ export function CsvRowItem({
           </Txt>
         )}
       </Row>
+      {!!row.categoryReason && <Notice>{row.categoryReason}</Notice>}
       {!!row.error && <Notice tone="warning">{row.error}</Notice>}
       {row.duplicate && (
         <Txt style={{ fontSize: 11, color: C.muted }}>
@@ -92,6 +94,14 @@ export function CsvRowItem({
           onPress={() => setEditing(!editing)}
         />
       )}
+      {editing &&
+        row.transaction?.type === "expense" &&
+        !!override?.category && (
+          <CategoryRuleSuggestion
+            title={row.title}
+            category={override.category}
+          />
+        )}
       {editing && (
         <>
           <Segments

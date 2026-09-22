@@ -1,6 +1,7 @@
 import { CURRENCY_CODES, currencyRate, type CurrencyCode } from "../currency";
 import { accountBalance, localDate, MAX_MONEY, uid } from "../finance";
 import type { Account, FinanceState } from "../types";
+import { validateCreditAccounts } from "../debts";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -15,6 +16,9 @@ export interface AccountInput {
   kind: Account["kind"];
   balance: number;
   currency?: CurrencyCode;
+  creditLimit?: number;
+  paymentDueDate?: string;
+  paymentDueAmount?: number;
 }
 export function saveAccount(
   state: FinanceState,
@@ -38,15 +42,36 @@ export function saveAccount(
   );
   currencyRate(state, currency);
   checkName(input.name);
-  checkAmount(input.balance, true);
-  const openingBalance =
-    input.balance -
-    (original ? accountBalance(state, original.id, today) : 0) +
-    (original?.openingBalance ?? 0);
   ensure(
-    Math.abs(openingBalance) <= MAX_MONEY,
-    "Корректировка начального остатка превышает допустимый лимит.",
+    ["spending", "savings", "credit"].includes(input.kind),
+    "Выберите тип счёта.",
   );
+  if (input.kind === "credit" || original)
+    checkAmount(Math.abs(input.balance), true);
+  else checkAmount(input.balance, true);
+  const openingBalance = original?.openingBalance ?? input.balance;
+  const adjustment = original
+    ? input.balance - accountBalance(state, original.id, today)
+    : 0;
+  ensure(
+    Math.abs(adjustment) <= MAX_MONEY,
+    "Корректировка остатка превышает допустимый лимит.",
+  );
+  ensure(
+    !adjustment || (state.balanceAdjustments?.length ?? 0) < 5000,
+    "Достигнут лимит корректировок остатков.",
+  );
+  const creditLimit = input.creditLimit ?? original?.creditLimit;
+  const paymentDueDate =
+    input.paymentDueDate === undefined
+      ? original?.paymentDueDate
+      : input.paymentDueDate || undefined;
+  const paymentDueAmount =
+    input.paymentDueAmount ?? original?.paymentDueAmount ?? 0;
+  const dueChanged =
+    !original ||
+    original.paymentDueDate !== paymentDueDate ||
+    (original.paymentDueAmount ?? 0) !== paymentDueAmount;
   const account: Account = {
     id: original?.id ?? uid(),
     name: input.name.trim(),
@@ -57,12 +82,43 @@ export function saveAccount(
       original?.icon ??
       (input.kind === "savings" ? "wallet-outline" : "card-outline"),
     color: original?.color ?? "#234B3C",
+    ...(input.kind === "credit"
+      ? {
+          creditLimit,
+          paymentDueDate,
+          paymentDueAmount,
+          paymentDueBaselineIds: dueChanged
+            ? state.transactions
+                .filter(
+                  (transaction) =>
+                    transaction.type === "transfer" &&
+                    transaction.toAccountId === original?.id &&
+                    transaction.date <= today,
+                )
+                .map((transaction) => transaction.id)
+            : (original?.paymentDueBaselineIds ?? []),
+        }
+      : {}),
   };
-  const next = {
+  const next: FinanceState = {
     ...state,
     accounts: original
       ? state.accounts.map((a) => (a.id === account.id ? account : a))
       : [...state.accounts, account],
+    ...(adjustment
+      ? {
+          balanceAdjustments: [
+            ...(state.balanceAdjustments ?? []),
+            {
+              id: uid(),
+              accountId: account.id,
+              date: today,
+              amount: adjustment,
+              note: "Изменение остатка в настройках",
+            },
+          ],
+        }
+      : {}),
   };
   for (const code of CURRENCY_CODES) {
     const initialGoals = next.goals
@@ -76,6 +132,7 @@ export function saveAccount(
     );
   }
   checkSavings(next, today);
+  validateCreditAccounts(next, today);
   checkCurrencyAmounts(next, today);
   return next;
 }

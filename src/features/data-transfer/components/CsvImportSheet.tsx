@@ -1,4 +1,9 @@
 import { useMemo, useRef, useState } from "react";
+import {
+  applyCsvProfile,
+  type CsvSourceProfile,
+} from "../../../domain/automation";
+import { CsvProfiles } from "./CsvProfiles";
 import { View } from "react-native";
 import {
   CSV_MAX_BYTES,
@@ -56,7 +61,9 @@ export function CsvImportSheet({ close }: { close: () => void }) {
     null,
   );
   const [encoding, setEncoding] = useState<CsvEncoding>("auto");
-  const [separator, setSeparator] = useState("auto");
+  const [separator, setSeparator] =
+    useState<CsvSourceProfile["separator"]>("auto");
+  const [profileId, setProfileId] = useState<string>();
   const [headerRow, setHeaderRow] = useState("1");
   const [options, setOptions] = useState<CsvOptions>({
     accountId: state.accounts.find((a) => a.kind === "spending")!.id,
@@ -122,6 +129,7 @@ export function CsvImportSheet({ close }: { close: () => void }) {
       const picked = await pickDocument(["csv", "tsv"], CSV_MAX_BYTES);
       if (picked) {
         setFile(picked);
+        setProfileId(undefined);
         setConfigured(false);
         setReview(false);
         setOverrides({});
@@ -140,7 +148,12 @@ export function CsvImportSheet({ close }: { close: () => void }) {
     const mapping = guessCsvMapping(parsed.table.headers);
     setOptions((o) => ({
       ...o,
-      mapping,
+      mapping: {
+        ...mapping,
+        ...(mapping.amount < 0 && mapping.expense >= 0 && mapping.income >= 0
+          ? { amount: -1 }
+          : { expense: -1, income: -1 }),
+      },
       mode:
         mapping.amount < 0 && mapping.expense >= 0 && mapping.income >= 0
           ? "split"
@@ -151,6 +164,67 @@ export function CsvImportSheet({ close }: { close: () => void }) {
     setError("");
     setOverrides({});
     setExcluded(new Set());
+  };
+  const useProfile = (profile: CsvSourceProfile) => {
+    if (!file) return setError("Сначала выберите CSV-файл.");
+    try {
+      const raw = decodeCsvBytes(file.bytes, profile.encoding);
+      const table = parseCsv(
+        raw
+          .split(/\r?\n/)
+          .slice(profile.headerRow - 1)
+          .join("\n"),
+        profile.separator === "auto" ? undefined : profile.separator,
+      );
+      const nextOptions = applyCsvProfile(state, profile, table.headers);
+      setOptions(nextOptions);
+      setEncoding(profile.encoding);
+      setSeparator(profile.separator);
+      setHeaderRow(String(profile.headerRow));
+      setProfileId(profile.id);
+      setConfigured(true);
+      setReview(false);
+      setOverrides({});
+      setExcluded(new Set());
+      setPage(0);
+      setError("");
+      notify(`Применён профиль «${profile.name}». Проверьте счёт и операции.`);
+    } catch (failure) {
+      setConfigured(false);
+      setReview(false);
+      setProfileId(undefined);
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Не удалось применить профиль.",
+      );
+    }
+  };
+  const saveProfile = (name: string, id?: string) => {
+    if (!parsed.table || !configured) return;
+    try {
+      const next = actions.saveCsvProfile({
+        id,
+        name,
+        encoding,
+        separator,
+        headerRow: Number(headerRow),
+        headers: parsed.table.headers,
+        currency: accountCurrency(state, options.accountId),
+        options,
+      });
+      setProfileId(
+        next.csvProfiles?.find((entry) => entry.name === name.trim())?.id,
+      );
+      setError("");
+      notify("Профиль CSV сохранён");
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Не удалось сохранить профиль.",
+      );
+    }
   };
   const rows = preview.rows;
   const selected = rows.filter(
@@ -200,6 +274,14 @@ export function CsvImportSheet({ close }: { close: () => void }) {
             onPress={() => void selectFile()}
           />
         </>
+      )}
+      {!review && (
+        <CsvProfiles
+          selectedId={profileId}
+          canSave={configured && !!parsed.table && !preview.error}
+          onApply={useProfile}
+          onSave={saveProfile}
+        />
       )}
       {!!file && (
         <>

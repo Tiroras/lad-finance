@@ -1,14 +1,14 @@
 import { View } from "react-native";
 import { useFinance } from "../../../state/finance";
 import { Button, Notice } from "../../../shared/ui";
-import { categorySpending } from "../../../domain/finance";
+import { categoryBudgets } from "../../../domain/budgets";
 import type { OpenSheet } from "../../../application/navigation/types";
 import { BudgetSummary } from "./BudgetSummary";
 import { BudgetCard } from "./BudgetCard";
 
 export function BudgetsPanel({ open }: { open: OpenSheet }) {
-  const { state } = useFinance();
-  const categories = categorySpending(state);
+  const { state, today } = useFinance();
+  const categories = categoryBudgets(state, today, today);
   const budget = categories.reduce((n, c) => n + c.budget, 0),
     spent = categories.reduce((n, c) => n + c.spent, 0);
   return (

@@ -13,14 +13,14 @@ export function TransactionTotals({
   return (
     <Row style={{ gap: 12 }}>
       <Card style={{ flex: 1, padding: 16 }}>
-        <Txt style={st.metricLabel}>Поступило</Txt>
+        <Txt style={st.metricLabel}>Доходы</Txt>
         <Txt style={[st.metricValue, { color: "#59816A" }]}>
-          +{money(income)}
+          {money(income)}
         </Txt>
       </Card>
       <Card style={{ flex: 1, padding: 16 }}>
-        <Txt style={st.metricLabel}>Потрачено</Txt>
-        <Txt style={st.metricValue}>−{money(expense)}</Txt>
+        <Txt style={st.metricLabel}>Расходы</Txt>
+        <Txt style={st.metricValue}>{money(expense)}</Txt>
       </Card>
     </Row>
   );

@@ -8,6 +8,7 @@ export function AccountPicker({
   onChange,
   exclude,
   spendingOnly = false,
+  includeCredit = false,
   savingsOnly = false,
   currency,
   label = "Счёт",
@@ -16,6 +17,7 @@ export function AccountPicker({
   onChange: (id: string) => void;
   exclude?: string;
   spendingOnly?: boolean;
+  includeCredit?: boolean;
   savingsOnly?: boolean;
   currency?: CurrencyCode;
   label?: string;
@@ -35,13 +37,15 @@ export function AccountPicker({
           .filter(
             (a) =>
               a.id !== exclude &&
-              (!spendingOnly || a.kind === "spending") &&
+              (!spendingOnly ||
+                a.kind === "spending" ||
+                (includeCredit && a.kind === "credit")) &&
               (!savingsOnly || a.kind === "savings") &&
               (!currency || (a.currency ?? "RUB") === currency),
           )
           .map((a) => (
             <Chip
-              label={`${a.name}${a.currency && a.currency !== "RUB" ? ` · ${a.currency}` : ""}`}
+              label={`${a.name}${a.kind === "credit" ? " · кредитная" : ""}${a.currency && a.currency !== "RUB" ? ` · ${a.currency}` : ""}`}
               icon={a.icon}
               key={a.id}
               active={selected === a.id}

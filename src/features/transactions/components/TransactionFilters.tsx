@@ -39,6 +39,7 @@ export function TransactionFilters({
           { value: "expense", label: "Расходы" },
           { value: "income", label: "Доходы" },
           { value: "transfer", label: "Переводы" },
+          { value: "debt", label: "Долги" },
         ]}
       />
       <ScrollView

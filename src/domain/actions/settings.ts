@@ -8,10 +8,14 @@ import type {
   ReminderPreferences,
 } from "../types";
 import { checkAmount, checkDay, ensure } from "./validation";
+import { saveBudgetPlan } from "./budgets";
 
 export function saveSettings(
   state: FinanceState,
-  input: Pick<FinanceState["settings"], "name" | "payday" | "buffer">,
+  input: Pick<
+    FinanceState["settings"],
+    "name" | "payday" | "buffer" | "spendableIncomeId"
+  >,
 ): FinanceState {
   ensure(
     input.name.trim().length <= 40,
@@ -19,6 +23,11 @@ export function saveSettings(
   );
   checkDay(input.payday);
   checkAmount(input.buffer, true);
+  ensure(
+    !input.spendableIncomeId ||
+      state.plannedIncomes?.some((p) => p.id === input.spendableIncomeId),
+    "Выбранный доход отсутствует в плане.",
+  );
   return {
     ...state,
     settings: { ...state.settings, ...input, name: input.name.trim() },
@@ -28,12 +37,20 @@ export function saveBudget(
   state: FinanceState,
   id: string,
   budget: number,
+  today = localDate(),
 ): FinanceState {
   checkAmount(budget, true);
   ensure(
     state.categories.some((c) => c.id === id && !c.parentId && !c.archived),
     "Категория недоступна для отдельного бюджета. Выберите активную основную категорию.",
   );
+  const plan = state.budgetPlans?.find((item) => item.categoryId === id);
+  if (plan)
+    return saveBudgetPlan(
+      state,
+      { ...plan, date: today, amount: budget, onlyThisPeriod: false },
+      today,
+    );
   return {
     ...state,
     categories: state.categories.map((c) =>

@@ -20,6 +20,8 @@ import type {
   OpenSheet,
   SheetState,
 } from "../../../application/navigation/types";
+import { RecurrenceFields } from "../../payments";
+import type { RecurrenceSchedule } from "../../../domain/recurrence";
 import { IncomeReceipt } from "./IncomeReceipt";
 
 export function IncomePlanForm({
@@ -44,6 +46,9 @@ export function IncomePlanForm({
   const [date, setDate] = useState(original?.date ?? today);
   const [repeat, setRepeat] = useState<PlannedIncome["repeat"]>(
     original?.repeat ?? "monthly",
+  );
+  const [schedule, setSchedule] = useState<RecurrenceSchedule | undefined>(
+    original?.schedule,
   );
   const [accountId, setAccountId] = useState(
     original?.accountId ??
@@ -77,10 +82,18 @@ export function IncomePlanForm({
         value={repeat}
         onChange={setRepeat}
         options={[
-          { value: "monthly", label: "Каждый месяц" },
+          { value: "monthly", label: "Повторять" },
           { value: "once", label: "Один раз" },
         ]}
       />
+      {repeat !== "once" && (
+        <RecurrenceFields
+          schedule={schedule}
+          onChange={setSchedule}
+          anchor={date}
+          locked={!!original}
+        />
+      )}
       <Field
         label={
           repeat === "monthly"
@@ -89,11 +102,15 @@ export function IncomePlanForm({
         }
         accessibilityLabel="Дата планируемого дохода"
         value={date}
-        onChangeText={setDate}
+        onChangeText={(value) => {
+          setDate(value);
+          if (schedule && !original)
+            setSchedule({ ...schedule, anchor: value });
+        }}
         placeholder="2026-09-25"
         maxLength={10}
       />
-      {repeat === "monthly" && (
+      {repeat === "monthly" && !schedule && (
         <Notice>
           Доход ожидается в то же число каждого месяца, начиная с указанной
           даты. Если такого числа нет — в последний день месяца.
@@ -125,6 +142,12 @@ export function IncomePlanForm({
               amount: parsed,
               date,
               repeat,
+              schedule:
+                repeat === "once"
+                  ? undefined
+                  : schedule
+                    ? { ...schedule, anchor: date }
+                    : undefined,
               accountId,
             });
             notify(
