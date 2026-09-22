@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import { useFinance } from "../../state/finance";
-import { C, Txt, Sheet } from "../../shared/ui";
+import { Sheet } from "../../shared/ui";
 import { useSecurity, LockScreen } from "../../features/security";
 import type { SheetState, OpenSheet } from "../navigation/types";
 import { SheetContent } from "./SheetContent";
+import { SheetToast } from "./AppToast";
 
 export function AppSheet({
   sheet,
@@ -15,56 +15,49 @@ export function AppSheet({
   open: OpenSheet;
 }) {
   const security = useSecurity();
-  const { toast } = useFinance();
+  const id = sheet && "id" in sheet ? sheet.id : undefined;
   const titles: Record<SheetState["type"], string> = {
-    transaction: sheet?.id ? "Детали операции" : "Новая операция",
+    transaction: id ? "Детали операции" : "Новая операция",
     automation: "Правила и шаблоны",
     reconcile: "Сверка счёта",
     onboarding: "Начнём ваш учёт",
-    debt: sheet?.id ? "Условия долга" : "Новый долг",
+    debt: id ? "Условия долга" : "Новый долг",
     repayDebt: "Возврат долга",
     repayCredit: "Погашение кредитной карты",
     formula: "Всё прозрачно",
     simulate: "Примерка покупки",
     accounts: "Мои счета",
-    account: sheet?.id ? "Настроить счёт" : "Новый счёт",
+    account: id ? "Настроить счёт" : "Новый счёт",
     settings: "Ваш Лад",
     currencies: "Валюты и курсы",
-    goal: sheet?.id ? "Настроить цель" : "Новая мечта",
+    goal: id ? "Настроить цель" : "Новая мечта",
     fund: "Ближе к цели",
-    recurring: sheet?.id ? "Настроить платёж" : "Новый платёж",
+    recurring: id ? "Настроить платёж" : "Новый платёж",
     budget: "Бюджет категории",
     payment: "Запланированный платёж",
     csv: "Импорт банковской выписки",
     categories: "Категории и подкатегории",
-    category: sheet?.id ? "Настроить категорию" : "Новая категория",
+    category: id ? "Настроить категорию" : "Новая категория",
     scenarios: "Мои сценарии",
-    scenario: sheet?.id ? "Сохранённый сценарий" : "Новый сценарий",
+    scenario: id ? "Сохранённый сценарий" : "Новый сценарий",
     export: "Экспорт операций",
     forecast: "Прогноз по дням",
     forecastSettings: "Параметры прогноза",
-    income: sheet?.id ? "План дохода" : "Запланировать доход",
+    income: id ? "План дохода" : "Запланировать доход",
   };
 
   return (
     <Sheet
       visible={!!sheet}
-      contentKey={`${sheet?.type}-${sheet?.id ?? "new"}`}
+      contentKey={`${sheet?.type}-${id ?? "new"}`}
       blockingContent={security.locked ? <LockScreen compact /> : undefined}
       title={sheet ? titles[sheet.type] : ""}
       onClose={close}
     >
       {/* Keep drafts mounted while the lock screen covers the form. */}
-      <View key={`${sheet?.type}-${sheet?.id ?? "new"}`} style={{ gap: 20 }}>
+      <View key={`${sheet?.type}-${id ?? "new"}`} style={{ gap: 20 }}>
         <SheetContent sheet={sheet} close={close} open={open} />
-        {!!toast && (
-          <Txt
-            accessibilityRole="alert"
-            style={{ color: C.green, fontSize: 12 }}
-          >
-            {toast}
-          </Txt>
-        )}
+        <SheetToast />
       </View>
     </Sheet>
   );

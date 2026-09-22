@@ -1,5 +1,4 @@
-import { ScrollView, View } from "react-native";
-import { C, Chip, font, Txt } from "../../../shared/ui";
+import { ChoiceGroup } from "../../../shared/ui";
 
 export function ColumnPicker({
   label,
@@ -13,29 +12,19 @@ export function ColumnPicker({
   onChange: (value: number) => void;
 }) {
   return (
-    <View style={{ gap: 8 }}>
-      <Txt style={{ fontFamily: font.semibold, fontSize: 12, color: C.muted }}>
-        {label}
-      </Txt>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 8 }}
-      >
-        <Chip
-          label="Не выбрана"
-          active={value === -1}
-          onPress={() => onChange(-1)}
-        />
-        {headers.map((header, index) => (
-          <Chip
-            key={index}
-            label={`${index + 1}. ${header}`}
-            active={value === index}
-            onPress={() => onChange(index)}
-          />
-        ))}
-      </ScrollView>
-    </View>
+    <ChoiceGroup
+      label={label}
+      value={value}
+      onChange={onChange}
+      horizontal
+      gap={8}
+      options={[
+        { value: -1, label: "Не выбрана" },
+        ...headers.map((header, index) => ({
+          value: index,
+          label: `${index + 1}. ${header}`,
+        })),
+      ]}
+    />
   );
 }

@@ -1,7 +1,7 @@
 import { validateScenarioCurrencies } from "./scenarios";
-import { accountToBase, MAX_MONEY, receivedAmount, toBase } from "./currency";
-import { accountBalance } from "./accountBalances";
-import { goalSaved } from "./goals";
+import { accountToBase, MAX_MONEY, toBase } from "./currency";
+import { accountBalances } from "./accountBalances";
+import { goalContributions } from "./goals";
 import { overduePayments, upcoming } from "./payments";
 import {
   dateInMonth,
@@ -152,17 +152,13 @@ export function forecast(
     });
   }
 
+  const contributions = goalContributions(state, today);
   for (const goal of state.goals) {
-    let remaining = Math.max(0, goal.target - goalSaved(state, goal, today));
-    const contributed = state.transactions
-      .filter(
-        (t) =>
-          t.type === "transfer" &&
-          t.goalId === goal.id &&
-          monthKey(t.date) === monthKey(today) &&
-          t.date <= today,
-      )
-      .reduce((sum, t) => sum + receivedAmount(t), 0);
+    const contributed = contributions.get(goal.id);
+    let remaining = Math.max(
+      0,
+      goal.target - goal.initialSaved - (contributed?.total ?? 0),
+    );
     for (
       let month = `${monthKey(today)}-01`;
       month < end && remaining > 0;
@@ -174,7 +170,9 @@ export function forecast(
         Math.min(
           remaining,
           (change("goal", goal.id)?.amount ?? goal.monthly) -
-            (monthKey(month) === monthKey(today) ? contributed : 0),
+            (monthKey(month) === monthKey(today)
+              ? (contributed?.month ?? 0)
+              : 0),
         ),
       );
       if (date >= end || amount === 0) continue;
@@ -217,11 +215,11 @@ export function forecast(
       occurrenceDate: purchase.date,
     });
 
+  const balances = accountBalances(state, today);
   const openingBalance = state.accounts
     .filter((a) => a.kind === "spending")
     .reduce(
-      (sum, a) =>
-        sum + accountToBase(state, accountBalance(state, a.id, today), a.id),
+      (sum, a) => sum + accountToBase(state, balances.get(a.id) ?? 0, a.id),
       0,
     );
   const days: ForecastDay[] = [];

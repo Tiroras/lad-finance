@@ -1,11 +1,9 @@
-import { expect, test, type Page } from "@playwright/test";
+import { readState, startApp, setState } from "./helpers";
+import { expect, test } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
-import type { FinanceState, Transaction } from "../../src/domain/types";
+import type { Transaction } from "../../src/domain/types";
 
-const STORAGE_KEY = "lad-finance-v1";
 const TODAY = "2026-09-20";
-const readState = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
 
 function fixture() {
   const state = createInitialState(false, TODAY);
@@ -51,16 +49,7 @@ function fixture() {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-20T12:00:00+04:00") });
-  await page.addInitScript(
-    ({ key, state }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(key, JSON.stringify(state));
-    },
-    { key: STORAGE_KEY, state: fixture() },
-  );
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, TODAY, fixture());
 });
 
 test("analytics explains changes with source operations and provides a year overview on narrow and wide screens", async ({
@@ -156,11 +145,7 @@ test("a reserve shortfall explains the date and opens scenarios without changing
   state.accounts[0].openingBalance = 10_000;
   state.settings.buffer = 1_000;
   state.settings.forecast = { dailySpending: 5_000, goalDay: 31 };
-  await page.evaluate(
-    ({ key, value }) => localStorage.setItem(key, JSON.stringify(value)),
-    { key: STORAGE_KEY, value: state },
-  );
-  await page.reload();
+  await setState(page, state);
   await page.getByRole("tab", { name: "Аналитика", exact: true }).click();
   await expect(
     page.getByText(

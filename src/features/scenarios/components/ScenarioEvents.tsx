@@ -1,7 +1,16 @@
 import { View } from "react-native";
 import { uid } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
-import { Button, Card, Field, Segments, Txt, font } from "../../../shared/ui";
+import {
+  Button,
+  Card,
+  Field,
+  Segments,
+  Txt,
+  font,
+  AmountField,
+  DateField,
+} from "../../../shared/ui";
 import type { ScenarioDraft } from "../model/scenarioDraft";
 
 export function ScenarioEvents({
@@ -41,19 +50,16 @@ export function ScenarioEvents({
               ]}
               onChange={(type) => patch({ type })}
             />
-            <Field
+            <AmountField
               label={`Сумма события, ${symbol}`}
               accessibilityLabel={`Сумма события ${index + 1}`}
-              keyboardType="decimal-pad"
               value={event.amount}
-              maxLength={16}
               onChangeText={(amount) => patch({ amount })}
             />
-            <Field
-              label="Дата события · ГГГГ-ММ-ДД"
+            <DateField
+              label="Дата события"
               accessibilityLabel={`Дата события ${index + 1}`}
               value={event.date}
-              maxLength={10}
               onChangeText={(date) => patch({ date })}
             />
             <Button

@@ -16,13 +16,13 @@ import type { OpenSheet } from "../../../application/navigation/types";
 import {
   Button,
   C,
-  Field,
   font,
   IconTile,
   Notice,
   Progress,
   Txt,
   ErrorText,
+  AmountField,
 } from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 
@@ -31,19 +31,19 @@ export function FundGoalForm({
   close,
   open,
 }: {
-  id?: string;
+  id: string;
   close: () => void;
   open: OpenSheet;
 }) {
   const { money, moneyInput, parseMoney } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
-  const goal = state.goals.find((g) => g.id === id)!;
-  const goalCurrency = goal.currency ?? "RUB";
-  const saved = goalSaved(state, goal, today),
-    remaining = Math.max(0, goal.target - saved);
+  const goal = state.goals.find((g) => g.id === id);
+  const goalCurrency = goal?.currency ?? "RUB";
+  const saved = goal ? goalSaved(state, goal, today) : 0,
+    remaining = goal ? Math.max(0, goal.target - saved) : 0;
   const [amount, setAmount] = useState(
-    moneyInput(Math.min(goal.monthly || remaining, remaining), goalCurrency),
+    moneyInput(Math.min(goal?.monthly || remaining, remaining), goalCurrency),
   );
   const [accountId, setAccountId] = useState(
     state.accounts.find((a) => a.kind === "spending")!.id,
@@ -64,6 +64,8 @@ export function FundGoalForm({
   const suggestedDebit =
     debitEstimate === null ? "" : moneyInput(debitEstimate, sourceCurrency);
   const { error, setError, run } = useActionError();
+  if (!goal)
+    return <Notice>Цель уже удалена. Закройте окно и выберите другую.</Notice>;
   const save = () =>
     run(() => {
       const parsed = parseMoney(amount, goalCurrency);
@@ -99,13 +101,11 @@ export function FundGoalForm({
       <Progress value={saved / goal.target} color="#78986A" height={8} />
       {remaining > 0 ? (
         <>
-          <Field
+          <AmountField
             label={`Сколько вы отложили, ${currencySymbol(goalCurrency)}`}
             accessibilityLabel="Сумма пополнения цели"
             value={amount}
             onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            maxLength={16}
           />
           <AccountPicker
             selected={accountId}
@@ -137,13 +137,11 @@ export function FundGoalForm({
             />
           )}
           {sourceCurrency !== goalCurrency && (
-            <Field
+            <AmountField
               label={`Списано, ${currencySymbol(sourceCurrency)}`}
               accessibilityLabel="Списано на пополнение цели"
               value={debit ?? suggestedDebit}
               onChangeText={setDebit}
-              keyboardType="decimal-pad"
-              maxLength={16}
             />
           )}
           <Notice>

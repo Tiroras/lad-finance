@@ -48,14 +48,14 @@ export function SheetContent({
     case "repayDebt":
       return (
         <DebtRepaymentForm
-          id={sheet.id ?? ""}
+          id={sheet.id}
           close={() => open({ type: "accounts" })}
         />
       );
     case "repayCredit":
       return (
         <CreditRepaymentForm
-          id={sheet.id ?? ""}
+          id={sheet.id}
           close={() => open({ type: "accounts" })}
         />
       );

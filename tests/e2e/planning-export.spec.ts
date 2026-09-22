@@ -1,27 +1,21 @@
+import {
+  readState as read,
+  setState,
+  startApp,
+  STORAGE_KEY as KEY,
+} from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { createInitialState } from "../../src/domain/seed";
 import { money } from "../../src/domain/finance";
 import { parseCsv } from "../../src/domain/csv";
-import type { FinanceState } from "../../src/domain/types";
 import { encryptBackup } from "../../src/infrastructure/crypto/passwordBackup";
 import { backupCrypto } from "../../src/infrastructure/crypto/backupCrypto";
 
-const TODAY = "2026-09-10",
-  KEY = "lad-finance-v1";
-const read = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
+const TODAY = "2026-09-10";
 const button = (page: Page, name: string) =>
   page.getByRole("button", { name, exact: true });
 const close = (page: Page) => button(page, "Закрыть").click();
-async function setState(page: Page, state: FinanceState) {
-  await page.evaluate(
-    ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-    { key: KEY, state },
-  );
-  await page.reload();
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-}
 function fixture() {
   const state = createInitialState(false, TODAY);
   state.accounts[0].openingBalance = 2000000;
@@ -70,12 +64,7 @@ async function pick(
   });
 }
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-  await expect
-    .poll(() => page.evaluate((key) => !!localStorage.getItem(key), KEY))
-    .toBe(true);
+  await startApp(page, TODAY);
   await setState(page, fixture());
 });
 

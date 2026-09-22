@@ -1,32 +1,24 @@
-import {
-  transactionAmountsError,
-  validateTransactionAmountsState,
-} from "../transactionAmounts";
+import { validateTransactionAmountsState } from "../transactionAmounts";
+import { accountBalances } from "../accountBalances";
 import { validateDebts, validateCreditAccounts } from "../debts";
 import { accountCurrency, accountToBase, MAX_MONEY } from "../currency";
 import { localDate, uid, validateTransaction } from "../finance";
 import type { FinanceState, Transaction } from "../types";
-import { checkCurrencyAmounts, checkSavings, ensure } from "./validation";
+import {
+  checkBalanceCapacity,
+  checkCurrencyAmounts,
+  checkSavings,
+  ensure,
+} from "./validation";
 
 export type TransactionInput = Omit<Transaction, "id"> & { id?: string };
 
-// Every write validates against the latest state supplied by the store.
-export function appendTransaction(
+function prepareTransaction(
   state: FinanceState,
   transaction: Transaction,
-  today = localDate(),
-  allowArchived = false,
-): FinanceState {
-  ensure(
-    state.transactions.length < 20000,
-    "В учёте допустимо не более 20 000 операций.",
-  );
-  ensure(
-    !state.transactions.some((t) => t.id === transaction.id),
-    "Операция с таким ID уже существует.",
-  );
-  const amountError = transactionAmountsError(state, transaction);
-  ensure(!amountError, amountError ?? "Проверьте части покупки и возвраты.");
+  today: string,
+  allowArchived: boolean,
+): Transaction {
   const error = validateTransaction(state, transaction, today);
   ensure(!error, error ?? "Некорректная операция.");
   ensure(
@@ -65,6 +57,32 @@ export function appendTransaction(
     valued.baseAmount <= MAX_MONEY,
     "Сумма в основной валюте превышает допустимый лимит.",
   );
+  return valued;
+}
+
+function validateAppendedState(state: FinanceState, today: string) {
+  validateTransactionAmountsState(state);
+  validateDebts(state, today);
+  validateCreditAccounts(state, today);
+  checkCurrencyAmounts(state, today);
+}
+
+// Every write validates against the latest state supplied by the store.
+export function appendTransaction(
+  state: FinanceState,
+  transaction: Transaction,
+  today = localDate(),
+  allowArchived = false,
+): FinanceState {
+  ensure(
+    state.transactions.length < 20000,
+    "В учёте допустимо не более 20 000 операций.",
+  );
+  ensure(
+    !state.transactions.some((t) => t.id === transaction.id),
+    "Операция с таким ID уже существует.",
+  );
+  const valued = prepareTransaction(state, transaction, today, allowArchived);
   const next = { ...state, transactions: [valued, ...state.transactions] };
   if (
     transaction.type === "transfer" &&
@@ -72,10 +90,77 @@ export function appendTransaction(
       "savings"
   )
     checkSavings(next, today);
-  validateTransactionAmountsState(next);
-  validateDebts(next, today);
-  validateCreditAccounts(next, today);
-  checkCurrencyAmounts(next, today);
+  validateAppendedState(next, today);
+  return next;
+}
+
+/** Atomic import. Input order is retained; dependent entries validate by date. */
+export function appendTransactions(
+  state: FinanceState,
+  transactions: readonly Transaction[],
+  today = localDate(),
+): FinanceState {
+  if (!transactions.length) return state;
+  ensure(
+    state.transactions.length + transactions.length <= 20000,
+    "В учёте допустимо не более 20 000 операций.",
+  );
+  const spendingAccounts = new Set(
+    state.accounts
+      .filter((account) => account.kind === "spending")
+      .map((account) => account.id),
+  );
+  // Unlinked spending-account entries cannot alter goals, debts, credit limits,
+  // refunds or paid occurrences. Their budget capacity only grows. All other
+  // batches retain sequential validation, including dated transfer constraints.
+  const independent = transactions.every(
+    (transaction) =>
+      transaction.type !== "transfer" &&
+      spendingAccounts.has(transaction.accountId) &&
+      !transaction.refundOf &&
+      !transaction.goalId &&
+      !transaction.recurringId &&
+      !transaction.plannedIncomeId &&
+      !transaction.debtId &&
+      !transaction.debtAction,
+  );
+  const ids = new Set(state.transactions.map((transaction) => transaction.id));
+  const balances = independent ? accountBalances(state, today) : undefined;
+  const added = new Map<string, Transaction>();
+  let next = state;
+  for (const transaction of [...transactions].sort((a, b) =>
+    a.date.localeCompare(b.date),
+  )) {
+    try {
+      if (balances) {
+        ensure(!ids.has(transaction.id), "Операция с таким ID уже существует.");
+        const valued = prepareTransaction(state, transaction, today, false);
+        ids.add(valued.id);
+        balances.set(
+          valued.accountId,
+          (balances.get(valued.accountId) ?? 0) +
+            (valued.type === "income" ? valued.amount : -valued.amount),
+        );
+        checkBalanceCapacity(state, balances);
+        added.set(valued.id, valued);
+      } else {
+        next = appendTransaction(next, transaction, today);
+        added.set(transaction.id, next.transactions[0]);
+      }
+    } catch (error) {
+      throw new Error(
+        `«${transaction.title}»: ${error instanceof Error ? error.message : "Не удалось добавить операцию."}`,
+      );
+    }
+  }
+  next = {
+    ...next,
+    transactions: [
+      ...transactions.map((transaction) => added.get(transaction.id)!),
+      ...state.transactions,
+    ],
+  };
+  if (independent) validateAppendedState(next, today);
   return next;
 }
 
@@ -172,7 +257,6 @@ export function saveTransaction(
     original?.category === transaction.category,
   );
   if (original) checkSavings(next, today);
-  checkCurrencyAmounts(next, today);
   return next;
 }
 

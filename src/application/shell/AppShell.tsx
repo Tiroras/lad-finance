@@ -5,7 +5,7 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
-import { useFinance } from "../../state/finance";
+import { useFinanceStatus } from "../../state/finance";
 import { C } from "../../shared/ui";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,7 +22,7 @@ import { AppToast } from "./AppToast";
 import { WelcomeBanner } from "../../features/settings";
 
 export function AppShell() {
-  const { ready } = useFinance();
+  const { ready } = useFinanceStatus();
   const security = useSecurity();
   const { tab, sheet, scroll, navigate, open, close } = useAppNavigation();
   const [hidden, setHidden] = useState(false);

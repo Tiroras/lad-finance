@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CURRENCIES } from "../../../domain/currency";
 import { dateLabel, shiftDate, validDate } from "../../../domain/finance";
-import type { ForecastHorizon } from "../../../domain/forecast";
+import { forecast, type ForecastHorizon } from "../../../domain/forecast";
 import { ForecastRange } from "./ForecastRange";
 import { PurchaseAllowance } from "./PurchaseAllowance";
 import { PurchaseForecast } from "./PurchaseForecast";
 import { PurchasePlanner } from "./PurchasePlanner";
 import { useMoney, useFinance } from "../../../state/finance";
-import { Chip, Field, font, Notice, Row, ErrorText } from "../../../shared/ui";
+import {
+  Chip,
+  font,
+  Notice,
+  Row,
+  ErrorText,
+  AmountField,
+  DateField,
+} from "../../../shared/ui";
 
 export function Simulator() {
   const {
@@ -16,10 +24,14 @@ export function Simulator() {
     currency: baseCode,
     symbol: baseSymbol,
   } = useMoney();
-  const { today } = useFinance();
+  const { state, today } = useFinance();
   const [amount, setAmount] = useState("12000");
   const [date, setDate] = useState(today);
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
+  const baseline = useMemo(
+    () => forecast(state, horizon, today),
+    [state, horizon, today],
+  );
   const parsed = parseMoney(amount);
   const last = shiftDate(today, horizon - 1);
   const dateValid = validDate(date) && date >= today && date <= last;
@@ -29,14 +41,12 @@ export function Simulator() {
         Примерьте покупку к плану. Это сценарий: деньги не списываются, операция
         не создаётся.
       </Notice>
-      <Field
+      <AmountField
         label={`Сколько стоит покупка, ${baseSymbol}`}
         accessibilityLabel="Стоимость покупки"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
         style={{ fontSize: 36, fontFamily: font.semibold }}
-        maxLength={16}
       />
       <Row style={{ flexWrap: "wrap" }}>
         {[3000, 12000, 30000, 60000].map((n) => (
@@ -48,12 +58,11 @@ export function Simulator() {
           />
         ))}
       </Row>
-      <Field
-        label="Дата покупки · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата покупки"
         accessibilityLabel="Дата покупки"
         value={date}
         onChangeText={setDate}
-        maxLength={10}
         error={
           dateValid
             ? undefined
@@ -65,7 +74,7 @@ export function Simulator() {
         <PurchasePlanner
           amount={parsed ?? 0}
           date={date}
-          horizon={horizon}
+          baseline={baseline}
           setDate={setDate}
           setAmount={setAmount}
         />
@@ -74,7 +83,12 @@ export function Simulator() {
         dateValid && (
           <>
             {date === today && <PurchaseAllowance amount={parsed} />}
-            <PurchaseForecast amount={parsed} date={date} horizon={horizon} />
+            <PurchaseForecast
+              amount={parsed}
+              date={date}
+              horizon={horizon}
+              baseline={baseline}
+            />
           </>
         )
       ) : (

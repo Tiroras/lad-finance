@@ -1,5 +1,5 @@
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { useFinance } from "../../state/finance";
+import { useFinanceStatus } from "../../state/finance";
 import { C, Txt, Button } from "../../shared/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSecurity, LockScreen } from "../../features/security";
@@ -7,7 +7,7 @@ import { RecoveryControls } from "../../features/data-transfer";
 import { Brand } from "./Brand";
 
 export function AppLoadingScreen() {
-  const { loadError, reload } = useFinance();
+  const { loadError, reload } = useFinanceStatus();
   const security = useSecurity();
   return (
     <SafeAreaView style={st.loading}>

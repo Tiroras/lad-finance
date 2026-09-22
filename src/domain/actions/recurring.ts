@@ -9,7 +9,7 @@ import {
   validDate,
   shiftDate,
 } from "../finance";
-import { paymentOccurrenceKey } from "../payments";
+import { canLinkPayment, paymentOccurrenceKey } from "../payments";
 import {
   isScheduledDate,
   scheduleSchema,
@@ -261,13 +261,7 @@ export function payRecurring(
   if (transactionId) {
     const transaction = state.transactions.find((t) => t.id === transactionId);
     ensure(
-      transaction &&
-        transaction.type === "expense" &&
-        !transaction.recurringId &&
-        transaction.amount === payment.amount &&
-        transaction.accountId === payment.accountId &&
-        transaction.date >= `${monthKey(date)}-01` &&
-        transaction.date <= today,
+      transaction && canLinkPayment(transaction, payment, date, today),
       "Расход больше не подходит для этого платежа.",
     );
     return saveTransaction(

@@ -13,7 +13,12 @@ import {
   type VaultDependencies,
 } from "../src/infrastructure/storage/vault";
 import { createInitialState } from "../src/domain/seed";
-import { encodeBackup } from "../src/domain/backup";
+import {
+  backupByteLength,
+  checkedBackupContent,
+  encodeBackup,
+  MAX_BACKUP_BYTES,
+} from "../src/domain/backup";
 
 function fixture() {
   const items = new Map<string, string>(),
@@ -86,6 +91,23 @@ function fixture() {
     vault: createVault(dependencies),
   };
 }
+
+function largeLegacyLedger() {
+  const state = createInitialState(false, "2026-09-10");
+  state.transactions = Array.from({ length: 9000 }, (_, index) => ({
+    id: `legacy-${index}`,
+    type: "expense" as const,
+    title: "Покупка",
+    amount: 100,
+    baseAmount: 100,
+    date: "2026-09-10",
+    category: "other",
+    accountId: "card",
+    note: "Я".repeat(200),
+  }));
+  return state;
+}
+
 test("legacy migration verifies encrypted data before removing plaintext, and reopens after restart", async () => {
   const { dependencies, vault, state, items, secrets } = fixture();
   items.set(LEGACY_STORAGE_KEY, encodeBackup(state));
@@ -184,3 +206,85 @@ test("a corrupt legacy snapshot never creates an encrypted replacement", async (
   assert.equal(items.has(VAULT_STORAGE_KEY), false);
   assert.equal(secrets.size, 0);
 });
+
+test("legacy Unicode snapshots migrate, shrink gradually and reject later growth after restart or recovery", async () => {
+  const { items, vault, dependencies } = fixture();
+  const state = largeLegacyLedger();
+  const raw = encodeBackup(state);
+  assert.ok(raw.length < 5_000_000);
+  assert.ok(Buffer.byteLength(raw, "utf8") > 5_000_000);
+  items.set(LEGACY_STORAGE_KEY, raw);
+  assert.deepEqual(await vault.load(), state);
+  assert.equal(items.has(LEGACY_STORAGE_KEY), false);
+  assert.deepEqual(await createVault(dependencies).load(), state);
+  const first = { ...state, transactions: state.transactions.slice(1) };
+  const second = { ...state, transactions: state.transactions.slice(2) };
+  assert.ok(backupByteLength(encodeBackup(second)) > MAX_BACKUP_BYTES);
+  await vault.save(first);
+  const restarted = createVault(dependencies);
+  // save() also reads a previous encrypted snapshot before granting an allowance.
+  await restarted.save(second);
+  const previous = items.get(VAULT_STORAGE_KEY);
+  for (const candidate of [state, first, second]) {
+    await assert.rejects(restarted.save(candidate), /5 МБ/);
+    if (candidate === second) await restarted.recover(candidate);
+    else await assert.rejects(restarted.recover(candidate), /5 МБ/);
+    assert.equal(items.get(VAULT_STORAGE_KEY), previous);
+  }
+  const third = { ...state, transactions: state.transactions.slice(3) };
+  await restarted.recover(third);
+  assert.deepEqual(await createVault(dependencies).load(), third);
+  assert.throws(() => checkedBackupContent(third), /5 МБ/);
+  const small = createInitialState(false, "2026-09-10");
+  await restarted.save(small);
+  await assert.rejects(restarted.save(third), /5 МБ/);
+  assert.deepEqual(await createVault(dependencies).load(), small);
+});
+
+test("native recovery and a first save can shrink a valid plaintext legacy snapshot but never trust corrupt lengths", async () => {
+  const { vault, items, dependencies } = fixture();
+  const state = largeLegacyLedger();
+  const smaller = { ...state, transactions: state.transactions.slice(1) };
+  items.set(LEGACY_STORAGE_KEY, encodeBackup(state));
+  await vault.recover(smaller);
+  assert.equal(items.has(LEGACY_STORAGE_KEY), false);
+  assert.deepEqual(await createVault(dependencies).load(), smaller);
+  items.delete(VAULT_STORAGE_KEY);
+  items.set(LEGACY_STORAGE_KEY, encodeBackup(state));
+  await createVault(dependencies).save(smaller);
+  assert.equal(items.has(LEGACY_STORAGE_KEY), false);
+  const damaged = "broken".repeat(1_000_000);
+  items.set(VAULT_STORAGE_KEY, damaged);
+  const recovering = createVault(dependencies);
+  await assert.rejects(recovering.recover(smaller), /5 МБ/);
+  assert.equal(items.get(VAULT_STORAGE_KEY), damaged);
+  const small = createInitialState(false, "2026-09-10");
+  await recovering.recover(small);
+  assert.deepEqual(await createVault(dependencies).load(), small);
+});
+
+for (const action of ["save", "recover"] as const)
+  test(`a failed legacy cleanup leaves a shrinking snapshot retryable through ${action}`, async () => {
+    const { vault, items, dependencies } = fixture();
+    const state = largeLegacyLedger();
+    items.set(LEGACY_STORAGE_KEY, encodeBackup(state));
+    await vault.load();
+    const smaller = { ...state, transactions: state.transactions.slice(1) };
+    assert.ok(backupByteLength(encodeBackup(smaller)) > MAX_BACKUP_BYTES);
+    const remove = dependencies.storage.removeItem;
+    let failOnce = true;
+    dependencies.storage.removeItem = async (key) => {
+      if (key === LEGACY_STORAGE_KEY && failOnce) {
+        failOnce = false;
+        throw new Error("cleanup failed");
+      }
+      return remove(key);
+    };
+    await assert.rejects(vault[action](smaller), /cleanup failed/);
+    const committed = items.get(VAULT_STORAGE_KEY);
+    await vault[action](smaller);
+    if (action === "recover")
+      assert.equal(items.get(VAULT_STORAGE_KEY), committed);
+    assert.deepEqual(await createVault(dependencies).load(), smaller);
+    await assert.rejects(vault.save(state), /5 МБ/);
+  });

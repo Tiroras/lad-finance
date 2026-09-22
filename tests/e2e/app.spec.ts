@@ -1,3 +1,4 @@
+import { readState as getState, startApp } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { categoryBudget } from "../../src/domain/budgets";
@@ -9,24 +10,16 @@ import {
 } from "../../src/domain/finance";
 import type { FinanceState } from "../../src/domain/types";
 
-const key = "lad-finance-v1";
 const TODAY = "2026-09-10";
 const accountBalance = (state: FinanceState, id: string) =>
   actualBalance(state, id, TODAY);
 const goalSaved = (state: FinanceState, goal: FinanceState["goals"][number]) =>
   actualGoalSaved(state, goal, TODAY);
 const spendable = (state: FinanceState) => actualSpendable(state, TODAY);
-const getState = (page: Page): Promise<FinanceState> =>
-  page.evaluate((k) => JSON.parse(localStorage.getItem(k)!), key);
 const closeSheet = (page: Page) =>
   page.getByRole("button", { name: "Закрыть", exact: true }).click();
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-  await expect
-    .poll(() => page.evaluate((k) => !!localStorage.getItem(k), key))
-    .toBe(true);
+  await startApp(page, TODAY);
 });
 
 test("overview, accessible navigation, balance visibility and mobile width", async ({
@@ -70,6 +63,11 @@ test("quick expense, persistence, search, edit and delete update balances", asyn
   await page
     .getByLabel("Быстрый ввод", { exact: true })
     .fill("кофе тест 320,50");
+  await page.getByRole("tab", { name: "Перевод", exact: true }).click();
+  await page.getByRole("tab", { name: "Расход", exact: true }).click();
+  await expect(page.getByLabel("Быстрый ввод", { exact: true })).toHaveValue(
+    "кофе тест 320,50",
+  );
   await page
     .getByRole("button", { name: "Распознать запись", exact: true })
     .click();

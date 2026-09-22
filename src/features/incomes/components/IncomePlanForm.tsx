@@ -9,6 +9,7 @@ import {
   Field,
   Notice,
   Segments,
+  AmountField,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -16,10 +17,7 @@ import {
   useMoney,
   useFinance,
 } from "../../../state/finance";
-import type {
-  OpenSheet,
-  SheetState,
-} from "../../../application/navigation/types";
+import type { OpenSheet, SheetOf } from "../../../application/navigation/types";
 import { RecurrenceFields } from "../../payments";
 import type { RecurrenceSchedule } from "../../../domain/recurrence";
 import { IncomeReceipt } from "./IncomeReceipt";
@@ -29,7 +27,7 @@ export function IncomePlanForm({
   close,
   open,
 }: {
-  sheet: SheetState;
+  sheet: SheetOf<"income">;
   close: () => void;
   open: OpenSheet;
 }) {
@@ -70,13 +68,11 @@ export function IncomePlanForm({
         placeholder="Зарплата, аванс, подработка"
         maxLength={120}
       />
-      <Field
+      <AmountField
         label={`Ожидаемая сумма, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма планируемого дохода"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Segments
         value={repeat}

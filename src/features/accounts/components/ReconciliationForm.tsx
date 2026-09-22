@@ -18,6 +18,7 @@ import {
   Notice,
   Section,
   Txt,
+  DateField,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import type { OpenSheet } from "../../../application/navigation/types";
@@ -79,15 +80,14 @@ export function ReconciliationForm({
         банковский остаток с учётом тех же операций, которые уже записаны в
         Ладе; незавершённые банковские списания сначала проверьте отдельно.
       </Notice>
-      <Field
-        label="Дата сверки · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата сверки"
         accessibilityLabel="Дата сверки"
         value={date}
         onChangeText={(v) => {
           setDate(v);
           setAdjust(false);
         }}
-        maxLength={10}
       />
       <Field
         label={`Остаток по банку, ${code}`}

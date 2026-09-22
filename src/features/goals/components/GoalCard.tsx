@@ -17,8 +17,8 @@ import {
 
 export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
   const { money } = useMoney();
-  const { state } = useFinance();
-  const saved = goalSaved(state, goal),
+  const { state, today } = useFinance();
+  const saved = goalSaved(state, goal, today),
     remaining = Math.max(0, goal.target - saved);
   const months = goal.monthly ? Math.ceil(remaining / goal.monthly) : null;
   return (

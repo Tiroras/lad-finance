@@ -21,6 +21,8 @@ import {
   Txt,
   ErrorText,
   Segments,
+  AmountField,
+  DateField,
 } from "../../../shared/ui";
 
 export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
@@ -75,12 +77,11 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
               onChangeText={setStartDay}
             />
           ) : (
-            <Field
-              label="Начало первого периода · ГГГГ-ММ-ДД"
+            <DateField
+              label="Начало первого периода"
               accessibilityLabel="Начало бюджетного периода"
               value={anchor}
               onChangeText={setAnchor}
-              maxLength={10}
             />
           )}
           <Row style={{ justifyContent: "space-between" }}>
@@ -112,20 +113,17 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
           {deficit ? "включён" : "выключен"}. График сохраняется для истории.
         </Notice>
       )}
-      <Field
-        label="Дата внутри периода · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата внутри периода"
         accessibilityLabel="Дата бюджетного периода"
         value={date}
         onChangeText={setDate}
-        maxLength={10}
       />
-      <Field
+      <AmountField
         label={`Лимит периода, ${baseSymbol}`}
         accessibilityLabel="Лимит категории"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Segments
         value={scope}

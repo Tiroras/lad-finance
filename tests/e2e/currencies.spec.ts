@@ -1,3 +1,4 @@
+import { readState as read, startApp, setState } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 import {
   saveAccount,
@@ -7,10 +8,8 @@ import {
 import { RATE_SCALE } from "../../src/domain/currency";
 import { accountBalance } from "../../src/domain/finance";
 import { createInitialState } from "../../src/domain/seed";
-import type { FinanceState } from "../../src/domain/types";
 
-const TODAY = "2026-09-10",
-  KEY = "lad-finance-v1";
+const TODAY = "2026-09-10";
 const rates = [
   { base: "USD", quote: "RUB", rate: 90, date: TODAY },
   { base: "USD", quote: "EUR", rate: 0.9, date: TODAY },
@@ -19,8 +18,6 @@ const rates = [
 ];
 const button = (page: Page, name: string) =>
   page.getByRole("button", { name, exact: true });
-const read = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
 async function close(page: Page) {
   await button(page, "Закрыть").click();
 }
@@ -29,21 +26,12 @@ async function currencies(page: Page) {
   await button(page, "Валюты и курсы").click();
 }
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
   await page.route("https://api.frankfurter.dev/**", (route) =>
     route.fulfill({ json: rates }),
   );
   const state = createInitialState(false, TODAY);
   state.accounts[0].openingBalance = 1_000_000;
-  await page.addInitScript(
-    ({ key, state }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(key, JSON.stringify(state));
-    },
-    { key: KEY, state },
-  );
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, TODAY, state);
   await expect
     .poll(async () => (await read(page)).settings.exchange?.rates.USD?.value)
     .toBe(90 * RATE_SCALE);
@@ -164,11 +152,7 @@ test("goals fund the selected currency and currency forms fit 320, 390 and 1440 
     },
     TODAY,
   );
-  await page.evaluate(
-    ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-    { key: KEY, state },
-  );
-  await page.reload();
+  await setState(page, state);
   await page.getByRole("button", { name: /Отпуск в евро/ }).click();
   await page.getByLabel("Сумма пополнения цели", { exact: true }).fill("10");
   await page

@@ -1,10 +1,10 @@
 import { View, StyleSheet } from "react-native";
-import { useFinance } from "../../state/finance";
+import { useFinanceToast } from "../../state/finance";
 import { C, Txt, Icon } from "../../shared/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function AppToast({ wide }: { wide: boolean }) {
-  const { toast } = useFinance();
+  const toast = useFinanceToast();
   const insets = useSafeAreaInsets();
   if (!toast) return null;
   return (
@@ -40,3 +40,12 @@ const st = StyleSheet.create({
     boxShadow: "0 5px 15px rgba(20,35,25,.15)",
   },
 });
+
+export function SheetToast() {
+  const toast = useFinanceToast();
+  return toast ? (
+    <Txt accessibilityRole="alert" style={{ color: C.green, fontSize: 12 }}>
+      {toast}
+    </Txt>
+  ) : null;
+}

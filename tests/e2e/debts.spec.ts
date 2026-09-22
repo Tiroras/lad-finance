@@ -1,28 +1,16 @@
-import { expect, test, type Page } from "@playwright/test";
+import { readState, startApp } from "./helpers";
+import { expect, test } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { accountBalance } from "../../src/domain/accountBalances";
 import { creditPaymentRemaining, debtBalance } from "../../src/domain/debts";
 import { totals } from "../../src/domain/finance";
-import type { FinanceState } from "../../src/domain/types";
 
-const KEY = "lad-finance-v1";
 const TODAY = "2026-09-20";
-const readState = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
 
 test.beforeEach(async ({ page }) => {
   const state = createInitialState(false, TODAY);
   state.accounts[0].openingBalance = 1_000_000;
-  await page.clock.install({ time: new Date("2026-09-20T12:00:00+04:00") });
-  await page.addInitScript(
-    ({ key, initial }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(key, JSON.stringify(initial));
-    },
-    { key: KEY, initial: state },
-  );
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, TODAY, state);
   await page
     .getByRole("button", { name: "Открыть мои счета", exact: true })
     .click();

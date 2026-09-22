@@ -1,24 +1,11 @@
+import { readState, setState, startApp, STORAGE_KEY as KEY } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { accountBalance, spendable } from "../../src/domain/finance";
-import type { FinanceState } from "../../src/domain/types";
 
-const TODAY = "2026-09-10",
-  KEY = "lad-finance-v1";
-const readState = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
-async function setState(page: Page, state: FinanceState) {
-  await page.evaluate(
-    ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-    { key: KEY, state },
-  );
-  await page.reload();
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-}
+const TODAY = "2026-09-10";
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, TODAY);
 });
 test("overdue payment stays reserved, can be skipped, restored and paid without double counting", async ({
   page,
@@ -106,6 +93,23 @@ test("CSV requires preview, rejects bad rows, imports selected records once and 
     page.getByText(/Новых выбрано: 2 · повторов: 0 · требуют исправления: 1/),
   ).toBeVisible();
   expect((await readState(page)).transactions).toHaveLength(0);
+  await page.getByRole("checkbox", { name: "Импортировать строку 3" }).click();
+  await page
+    .getByRole("button", { name: "Назад к колонкам", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "UTF-8", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Проверить операции", exact: true }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Распознать колонки", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Проверить операции", exact: true })
+    .click();
+  await expect(
+    page.getByText(/Новых выбрано: 2 · повторов: 0 · требуют исправления: 1/),
+  ).toBeVisible();
   await page.getByRole("checkbox", { name: "Импортировать строку 3" }).click();
   await page
     .getByRole("button", { name: "Импортировать 1 операций", exact: true })

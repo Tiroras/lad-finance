@@ -1,3 +1,4 @@
+import { startApp, readState } from "./helpers";
 import { expect, test } from "@playwright/test";
 import { money } from "../../src/domain/currency";
 import { createInitialState } from "../../src/domain/seed";
@@ -41,15 +42,7 @@ test("income-based allowance explains the later bill limit and survives a reload
       color: "#EEEEEE",
     },
   ];
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-  await page.evaluate(
-    (data) => localStorage.setItem("lad-finance-v1", JSON.stringify(data)),
-    state,
-  );
-  await page.reload();
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, today, state);
   await expect(
     page.getByText("до 11 сентября · Небольшой доход", { exact: true }),
   ).toBeVisible();
@@ -73,9 +66,7 @@ test("income-based allowance explains the later bill limit and survives a reload
   await expect(
     page.getByText(/Дополнительно проверены 30 дней до 9 октября/),
   ).toBeVisible();
-  const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lad-finance-v1")!),
-  );
+  const saved = await readState(page);
   expect(saved.accounts).toEqual(state.accounts);
   expect(saved.transactions).toEqual([]);
   await page.getByRole("button", { name: "Закрыть", exact: true }).click();

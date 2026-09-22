@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { View } from "react-native";
 import {
   categorySpending,
@@ -33,10 +33,15 @@ export function AnalyticsScreen({ open }: { open: OpenSheet }) {
   const { money } = useMoney();
   const { state, today } = useFinance();
   const [month, setMonth] = useState(monthKey(today));
-  const spending = categorySpending(state, month, today).sort(
-      (a, b) => b.spent - a.spent,
-    ),
-    monthTotals = totals(state, month);
+  const spending = useMemo(
+    () =>
+      categorySpending(state, month, today).sort((a, b) => b.spent - a.spent),
+    [state, month, today],
+  );
+  const monthTotals = useMemo(
+    () => totals(state, month, today),
+    [state, month, today],
+  );
   const end =
     month === monthKey(today)
       ? today

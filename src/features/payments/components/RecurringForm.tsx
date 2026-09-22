@@ -18,6 +18,8 @@ import {
   Segments,
   DeleteButton,
   ErrorText,
+  AmountField,
+  DateField,
 } from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 import { CategoryPicker } from "../../categories";
@@ -116,13 +118,11 @@ export function RecurringForm({
         onChangeText={setName}
         maxLength={120}
       />
-      <Field
+      <AmountField
         label={`Сумма одного платежа, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма платежа"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <RecurrenceFields
         schedule={schedule}
@@ -148,8 +148,8 @@ export function RecurringForm({
           original ? accountCurrency(state, original.accountId) : undefined
         }
       />
-      <Field
-        label="Учитывать с даты · ГГГГ-ММ-ДД"
+      <DateField
+        label="Учитывать с даты"
         accessibilityLabel="Дата начала платежа"
         value={startsOn}
         onChangeText={(value) => {
@@ -158,7 +158,6 @@ export function RecurringForm({
             setSchedule({ ...schedule, anchor: value });
         }}
         placeholder={localDate()}
-        maxLength={10}
       />
       <CategoryPicker value={category} onChange={setCategory} />
       <Notice>

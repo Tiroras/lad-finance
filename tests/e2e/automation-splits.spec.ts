@@ -1,13 +1,10 @@
+import { readState as read, startApp } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
-import type { FinanceState } from "../../src/domain/types";
 
-const TODAY = "2026-09-10",
-  KEY = "lad-finance-v1";
+const TODAY = "2026-09-10";
 const button = (page: Page, name: string) =>
   page.getByRole("button", { name, exact: true });
-const read = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
 async function importFile(page: Page) {
   const chooser = page.waitForEvent("filechooser");
   await button(page, "Выбрать CSV-файл").click();
@@ -27,20 +24,11 @@ async function openImport(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
   const state = createInitialState(false, TODAY);
   state.settings.exchange = { automatic: false, rates: {} };
   state.settings.onboardingCompleted = true;
   state.accounts[0].openingBalance = 1000000;
-  await page.addInitScript(
-    ({ key, state }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(key, JSON.stringify(state));
-    },
-    { key: KEY, state },
-  );
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  await startApp(page, TODAY, state);
 });
 
 test("explicit rule, favorite template and saved CSV profile survive reload and retain duplicate checks", async ({
@@ -98,6 +86,11 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
   await importFile(page);
   await button(page, "Профили CSV").click();
   await button(page, "Применить профиль «Банк: карта»").click();
+  await button(page, "Распознать колонки заново").click();
+  await expect(button(page, "Обновить профиль «Банк: карта»")).toBeVisible();
+  await page.getByRole("tab", { name: "UTF-8", exact: true }).click();
+  await button(page, "Распознать колонки").click();
+  await expect(button(page, "Обновить профиль «Банк: карта»")).toBeVisible();
   await button(page, "Проверить операции").click();
   await expect(page.getByText(/Новых выбрано: 0 · повторов: 1/)).toBeVisible();
   await expect(button(page, "Импортировать 0 операций")).toBeDisabled();

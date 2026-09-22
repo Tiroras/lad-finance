@@ -1,12 +1,8 @@
 import { validateScenarioCurrencies } from "../scenarios";
 import { debtBalance, creditPaymentRemaining } from "../debts";
-import {
-  accountToBase,
-  CURRENCY_CODES,
-  receivedAmount,
-  toBase,
-} from "../currency";
-import { accountBalance, goalSaved, MAX_MONEY } from "../finance";
+import { accountToBase, CURRENCY_CODES, MAX_MONEY, toBase } from "../currency";
+import { accountBalances } from "../accountBalances";
+import { goalContributions } from "../goals";
 import type { FinanceState } from "../types";
 import { validatePaymentCapacity } from "../payments";
 import { validateBudgetCapacity } from "../budgets";
@@ -41,13 +37,19 @@ export function checkDay(value: number) {
 }
 
 export function checkSavings(state: FinanceState, today: string) {
+  const balances = accountBalances(state, today);
+  const contributions = goalContributions(state, today);
   for (const currency of CURRENCY_CODES) {
     const allocated = state.goals
       .filter((g) => (g.currency ?? "RUB") === currency)
-      .reduce((sum, goal) => sum + goalSaved(state, goal, today), 0);
+      .reduce(
+        (sum, goal) =>
+          sum + goal.initialSaved + (contributions.get(goal.id)?.total ?? 0),
+        0,
+      );
     const savings = state.accounts
       .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === currency)
-      .reduce((sum, a) => sum + accountBalance(state, a.id, today), 0);
+      .reduce((sum, a) => sum + (balances.get(a.id) ?? 0), 0);
     ensure(
       savings >= allocated,
       "Эти накопления распределены по целям. Сначала освободите средства в целях.",
@@ -56,38 +58,14 @@ export function checkSavings(state: FinanceState, today: string) {
 }
 
 // Leave headroom for summing accounts and forecast events without unsafe integers.
-export function checkCurrencyAmounts(state: FinanceState, today: string) {
-  validatePaymentCapacity(state, today);
-  validateBudgetCapacity(state);
-  for (const scenario of state.scenarios ?? [])
-    validateScenarioCurrencies(state, scenario);
-  const balances = new Map(state.accounts.map((a) => [a.id, a.openingBalance]));
-  for (const t of state.transactions) {
-    if (t.date > today) continue;
-    balances.set(
-      t.accountId,
-      (balances.get(t.accountId) ?? 0) +
-        (t.type === "income" ? t.amount : -t.amount),
-    );
-    if (t.type === "transfer" && t.toAccountId)
-      balances.set(
-        t.toAccountId,
-        (balances.get(t.toAccountId) ?? 0) + receivedAmount(t),
-      );
-  }
+export function checkBalanceCapacity(
+  state: FinanceState,
+  balances: ReadonlyMap<string, number>,
+) {
   const totalMagnitude = state.accounts.reduce(
     (sum, account) =>
       sum +
-      Math.abs(
-        accountToBase(
-          state,
-          (balances.get(account.id) ?? 0) +
-            (state.balanceAdjustments ?? [])
-              .filter((a) => a.accountId === account.id && a.date <= today)
-              .reduce((n, a) => n + a.amount, 0),
-          account.id,
-        ),
-      ),
+      Math.abs(accountToBase(state, balances.get(account.id) ?? 0, account.id)),
     0,
   );
   ensure(
@@ -95,6 +73,14 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
       totalMagnitude <= Number.MAX_SAFE_INTEGER / 2,
     "Результат пересчёта остатков слишком велик. Проверьте курсы.",
   );
+}
+
+export function checkCurrencyAmounts(state: FinanceState, today: string) {
+  validatePaymentCapacity(state, today);
+  validateBudgetCapacity(state);
+  for (const scenario of state.scenarios ?? [])
+    validateScenarioCurrencies(state, scenario);
+  checkBalanceCapacity(state, accountBalances(state, today));
   for (const goal of state.goals) {
     checkAmount(toBase(state, goal.target, goal.currency), true);
     checkAmount(toBase(state, goal.monthly, goal.currency), true);

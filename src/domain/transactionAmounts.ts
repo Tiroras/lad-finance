@@ -111,6 +111,21 @@ export const transactionIncomeAmount = (
     ? transactionValue(state, transaction)
     : 0;
 
+/** Inclusive calendar boundaries; callers supply the latest day to include. */
+export function periodTotals(state: FinanceState, start: string, end: string) {
+  let income = 0;
+  let expense = 0;
+  let count = 0;
+  for (const transaction of state.transactions) {
+    if (transaction.date < start || transaction.date > end) continue;
+    income += transactionIncomeAmount(state, transaction);
+    for (const part of expenseContributions(state, transaction))
+      expense += part.amount;
+    if (transaction.type !== "transfer") count++;
+  }
+  return { income, expense, count };
+}
+
 export const refundPrincipal = (transaction: Transaction) =>
   transaction.refundSourceAmount ?? transaction.amount;
 

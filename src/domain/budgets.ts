@@ -10,7 +10,7 @@ import {
 } from "../shared/lib/dates";
 import { MAX_MONEY, transactionValue } from "./currency";
 import { expenseContributions } from "./transactionAmounts";
-import type { FinanceState } from "./types";
+import type { Category, FinanceState } from "./types";
 
 export interface BudgetPlan {
   categoryId: string;
@@ -90,27 +90,41 @@ function periodLimit(
   );
 }
 
-export function categoryBudget(
-  state: FinanceState,
-  id: string,
-  date = localDate(),
-  today = localDate(),
-) {
-  const category = state.categories.find((entry) => entry.id === id);
-  if (!category || category.parentId)
-    throw new Error("Выберите основную категорию бюджета.");
-  const plan = state.budgetPlans?.find((entry) => entry.categoryId === id);
-  const period = budgetPeriod(plan, date);
+interface DatedExpense {
+  date: string;
+  amount: number;
+}
+
+function spendingByCategory(state: FinanceState, today: string) {
   const roots = new Map(
     state.categories.map((entry) => [entry.id, entry.parentId ?? entry.id]),
   );
-  const spending = new Map<string, number>();
+  const spending = new Map<string, DatedExpense[]>();
   for (const transaction of state.transactions) {
-    if (transaction.date > today || transaction.date >= period.end) continue;
-    const key = budgetPeriod(plan, transaction.date).start;
-    for (const entry of expenseContributions(state, transaction))
-      if (roots.get(entry.category) === id)
-        spending.set(key, (spending.get(key) ?? 0) + entry.amount);
+    if (transaction.date > today) continue;
+    for (const entry of expenseContributions(state, transaction)) {
+      const root = roots.get(entry.category);
+      if (!root) continue;
+      const expenses = spending.get(root) ?? [];
+      expenses.push({ date: transaction.date, amount: entry.amount });
+      spending.set(root, expenses);
+    }
+  }
+  return spending;
+}
+
+function calculateCategoryBudget(
+  category: Category,
+  plan: BudgetPlan | undefined,
+  date: string,
+  expenses: DatedExpense[],
+) {
+  const period = budgetPeriod(plan, date);
+  const spending = new Map<string, number>();
+  for (const expense of expenses) {
+    if (expense.date >= period.end) continue;
+    const key = budgetPeriod(plan, expense.date).start;
+    spending.set(key, (spending.get(key) ?? 0) + expense.amount);
   }
   let carried = 0;
   if (
@@ -152,16 +166,42 @@ export function categoryBudget(
   };
 }
 
+export function categoryBudget(
+  state: FinanceState,
+  id: string,
+  date = localDate(),
+  today = localDate(),
+) {
+  const category = state.categories.find((entry) => entry.id === id);
+  if (!category || category.parentId)
+    throw new Error("Выберите основную категорию бюджета.");
+  return calculateCategoryBudget(
+    category,
+    state.budgetPlans?.find((entry) => entry.categoryId === id),
+    date,
+    spendingByCategory(state, today).get(id) ?? [],
+  );
+}
+
 export function categoryBudgets(
   state: FinanceState,
   date = localDate(),
   today = localDate(),
 ) {
+  const spending = spendingByCategory(state, today);
+  const plans = new Map(
+    (state.budgetPlans ?? []).map((plan) => [plan.categoryId, plan]),
+  );
   return state.categories
     .filter((category) => !category.parentId)
     .map((category) => ({
       ...category,
-      ...categoryBudget(state, category.id, date, today),
+      ...calculateCategoryBudget(
+        category,
+        plans.get(category.id),
+        date,
+        spending.get(category.id) ?? [],
+      ),
     }));
 }
 

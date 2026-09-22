@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  scheduleDates,
-  type RecurrenceSchedule,
-} from "../src/domain/recurrence";
+import { scheduleDates } from "../src/domain/recurrence";
 import {
   saveRecurring,
   payRecurring,

@@ -2,7 +2,14 @@ import { useState } from "react";
 import { accountCurrency } from "../../../domain/currency";
 import { refundedAmount } from "../../../domain/transactionAmounts";
 import type { Transaction } from "../../../domain/types";
-import { Button, Card, Field, Notice, Txt } from "../../../shared/ui";
+import {
+  Button,
+  Card,
+  Field,
+  Notice,
+  Txt,
+  AmountField,
+} from "../../../shared/ui";
 import { useFinance, useMoney } from "../../../state/finance";
 
 export function RefundFields({
@@ -58,13 +65,11 @@ export function RefundFields({
           </Notice>
           {currency !== accountCurrency(state, accountId) && (
             <>
-              <Field
+              <AmountField
                 label={`Возвращённая часть покупки, ${currency}`}
                 accessibilityLabel="Возвращённая часть покупки"
                 value={sourceAmount}
                 onChangeText={onSourceAmount}
-                keyboardType="decimal-pad"
-                maxLength={16}
               />
               <Notice>
                 Укажите, какую часть исходной покупки вернули. Сумма поступления

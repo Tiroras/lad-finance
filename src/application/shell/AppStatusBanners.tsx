@@ -1,12 +1,12 @@
 import { Pressable } from "react-native";
-import { useFinance } from "../../state/finance";
+import { useFinanceStatus } from "../../state/finance";
 import { C, Txt } from "../../shared/ui";
 import { useReminders } from "../../features/payments";
 import type { OpenSheet } from "../navigation/types";
 
 export function AppStatusBanners({ open }: { open: OpenSheet }) {
   const reminders = useReminders();
-  const { saveError, retrySave } = useFinance();
+  const { saveError, retrySave } = useFinanceStatus();
   return (
     <>
       {(!!reminders.error || reminders.result?.status === "denied") && (

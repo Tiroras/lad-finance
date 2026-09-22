@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppState } from "react-native";
-import { useFinance } from "../../../state/finance";
+import { useFinance, useFinanceStatus } from "../../../state/finance";
 import { synchronizeReminders } from "../../../infrastructure/notifications/notifications";
 import type { ReminderStatus } from "../../../infrastructure/notifications/notifications.types";
 
@@ -16,7 +16,8 @@ const Context = createContext<{
   retry: () => void;
 }>({ result: null, error: "", retry: () => {} });
 export function ReminderProvider({ children }: { children: ReactNode }) {
-  const { state, ready, today } = useFinance();
+  const { state, today } = useFinance();
+  const { ready } = useFinanceStatus();
   const [revision, setRevision] = useState(0);
   const [result, setResult] = useState<ReminderStatus | null>(null);
   const [error, setError] = useState("");

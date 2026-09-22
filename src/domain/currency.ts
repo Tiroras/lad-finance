@@ -145,8 +145,9 @@ export const accountToBase = (
   amount: number,
   accountId: string,
 ) => toBase(state, amount, accountCurrency(state, accountId));
-export const receivedAmount = (transaction: Transaction) =>
-  transaction.toAmount ?? transaction.amount;
+export const receivedAmount = (
+  transaction: Pick<Transaction, "amount" | "toAmount">,
+) => transaction.toAmount ?? transaction.amount;
 // Recorded income/expense valuations are fixed until the amount/account is edited.
 export const transactionValue = (
   state: FinanceState,

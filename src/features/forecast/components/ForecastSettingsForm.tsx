@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { DEFAULT_FORECAST } from "../../../domain/forecast";
 import { DailySpendingEstimate } from "../../insights";
-import { ErrorText, Button, Field, Notice } from "../../../shared/ui";
+import {
+  ErrorText,
+  Button,
+  Field,
+  Notice,
+  AmountField,
+} from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
@@ -19,13 +25,11 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
   const { error, run } = useActionError();
   return (
     <>
-      <Field
+      <AmountField
         label={`Повседневные расходы в день, ${baseSymbol}`}
         accessibilityLabel="Расходы в день для прогноза"
         value={daily}
         onChangeText={setDaily}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Notice>
         Сумма на еду, транспорт и другие обычные траты с завтрашнего дня.

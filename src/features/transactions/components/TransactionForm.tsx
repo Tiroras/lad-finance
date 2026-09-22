@@ -1,286 +1,121 @@
 import { useState } from "react";
-import { Pressable } from "react-native";
 import {
   matchCategoryRule,
-  templateDraft,
   type TransactionTemplate,
 } from "../../../domain/automation";
-import { CategoryRuleSuggestion } from "./CategoryRuleSuggestion";
 import { refundedAmount } from "../../../domain/transactionAmounts";
-import { RefundFields } from "./RefundFields";
-import { TransactionSplits, type SplitDraft } from "./TransactionSplits";
-import { TransactionTemplates } from "./TransactionTemplates";
-import { activeCategory } from "../../../domain/categories";
-import {
-  accountCurrency,
-  currencySymbol,
-  receivedAmount,
-  transactionValue,
-  tryConvertMoney,
-} from "../../../domain/currency";
-import { parseQuickEntry } from "../../../domain/finance";
-import type { CategoryId, Transaction } from "../../../domain/types";
+import { accountCurrency, currencySymbol } from "../../../domain/currency";
+import type { Transaction } from "../../../domain/types";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
   useMoney,
   useFinance,
 } from "../../../state/finance";
-import type { SheetState } from "../../../application/navigation/types";
+import type { SheetOf } from "../../../application/navigation/types";
 import {
   Button,
-  C,
-  Card,
   Field,
   font,
-  Icon,
   Notice,
-  Row,
   Segments,
-  Txt,
   DeleteButton,
   ErrorText,
+  AmountField,
+  DateField,
 } from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 import { DebtTransactionDetails } from "../../debts";
 import { CategoryPicker } from "../../categories";
+import { CategoryRuleSuggestion } from "./CategoryRuleSuggestion";
+import { RefundFields } from "./RefundFields";
+import { TransactionSplits } from "./TransactionSplits";
+import { TransactionTemplates } from "./TransactionTemplates";
+import { QuickEntry } from "./QuickEntry";
+import {
+  applyQuickEntry,
+  applyTransactionTemplate,
+  changeTransactionType,
+  createTransactionDraft,
+  repeatTransaction,
+  selectRefund as selectRefundDraft,
+  toggleTransactionSplits,
+  transactionDraftAmounts,
+  transactionInput,
+  transactionTemplateInput,
+  type TransactionDraft,
+} from "../model/transactionDraft";
 
 export function TransactionForm({
   sheet,
   close,
 }: {
-  sheet: SheetState;
+  sheet: SheetOf<"transaction">;
   close: () => void;
 }) {
-  const {
-    moneyInput,
-    parseMoney,
-    currency: baseCode,
-    symbol: baseSymbol,
-  } = useMoney();
+  const { moneyInput, currency: baseCode, symbol: baseSymbol } = useMoney();
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const sourceOriginal = state.transactions.find((t) => t.id === sheet.id);
-  const [repeating, setRepeating] = useState(false);
+  const [quick, setQuick] = useState("");
+  const [draft, setDraft] = useState(() =>
+    createTransactionDraft(state, today, sourceOriginal, sheet.transactionType),
+  );
+  const {
+    repeating,
+    templateId,
+    manualCategory,
+    type,
+    title,
+    amount,
+    category,
+    accountId,
+    toAccountId,
+    received,
+    valuation,
+    date,
+    note,
+    splitEnabled,
+    parts,
+    refundOf,
+    refundSource,
+  } = draft;
   const original = repeating ? undefined : sourceOriginal;
-  const [templateId, setTemplateId] = useState<string>();
-  const [manualCategory, setManualCategory] = useState(!!original);
-  const [type, setType] = useState<Transaction["type"]>(
-    original?.type ?? sheet.transactionType ?? "expense",
-  );
-  const [title, setTitle] = useState(original?.title ?? "");
-  const [amount, setAmount] = useState(
-    original
-      ? moneyInput(original.amount, accountCurrency(state, original.accountId))
-      : "",
-  );
-  const [category, setCategory] = useState<CategoryId>(
-    original?.category ?? "other",
-  );
-  const [accountId, setAccountId] = useState(
-    original?.accountId ??
-      state.accounts.find((a) => a.kind === "spending")!.id,
-  );
-  const [toAccountId, setToAccountId] = useState(
-    original?.toAccountId ??
-      state.accounts.find((a) => a.kind === "savings")!.id,
-  );
-  const [received, setReceived] = useState<string | null>(
-    original?.type === "transfer"
-      ? moneyInput(
-          receivedAmount(original),
-          accountCurrency(state, original.toAccountId),
-        )
-      : null,
-  );
-  const [valuation, setValuation] = useState<string | null>(null);
-  const sourceCurrency = accountCurrency(state, accountId),
-    targetCurrency = accountCurrency(state, toAccountId);
-  const foreignTransfer =
-    type === "transfer" && sourceCurrency !== targetCurrency;
-  const parsedAmount = parseMoney(amount, sourceCurrency);
-  const receivedEstimate = tryConvertMoney(
-    state,
-    parsedAmount ?? 0,
+  const {
     sourceCurrency,
     targetCurrency,
-  );
-  const suggestedReceived =
-    receivedEstimate === null
-      ? ""
-      : moneyInput(receivedEstimate, targetCurrency);
-  const historicalValue =
-    original &&
-    original.accountId === accountId &&
-    original.amount === parsedAmount
-      ? transactionValue(state, original)
-      : tryConvertMoney(state, parsedAmount ?? 0, sourceCurrency, baseCode);
-  const [date, setDate] = useState(original?.date ?? today);
-  const [note, setNote] = useState(original?.note ?? "");
-  const [quick, setQuick] = useState("");
-  const [splitEnabled, setSplitEnabled] = useState(!!original?.splits);
-  const [parts, setParts] = useState<SplitDraft[]>(
-    () =>
-      original?.splits?.map((part, index) => ({
-        key: String(index),
-        category: part.category,
-        amount: moneyInput(part.amount, sourceCurrency),
-      })) ?? [],
-  );
-  const [refundOf, setRefundOf] = useState(original?.refundOf);
-  const [refundSource, setRefundSource] = useState(
-    original?.refundSourceAmount === undefined
-      ? ""
-      : moneyInput(
-          original.refundSourceAmount,
-          accountCurrency(
-            state,
-            state.transactions.find((t) => t.id === original.refundOf)
-              ?.accountId,
-          ),
-        ),
-  );
-  const purchase = state.transactions.find((entry) => entry.id === refundOf);
-  const selectRefund = (expense: Transaction) => {
-    setRefundOf(expense.id);
-    setRefundSource("");
-    setType("income");
-    setSplitEnabled(false);
-    setAccountId(expense.accountId);
-    setCategory(expense.category);
-    setAmount(
-      moneyInput(
-        expense.amount - refundedAmount(state, expense.id, original?.id),
-        accountCurrency(state, expense.accountId),
-      ),
-    );
-    setValuation(null);
-    setTitle(`Возврат: ${expense.title}`.slice(0, 120));
-  };
+    foreignTransfer,
+    parsedAmount,
+    suggestedReceived,
+    historicalValue,
+  } = transactionDraftAmounts(state, draft, original);
+  const patch = (values: Partial<TransactionDraft>) =>
+    setDraft((current) => ({ ...current, ...values }));
   const { error, setError, run } = useActionError();
-  const applyQuick = (input = quick) => {
-    const parsed = parseQuickEntry(input, accountCurrency(state, accountId));
-    if (!parsed)
-      return setError(
-        "Напишите название и одну сумму: например, «кофе 320» или «продукты 1 450,50».",
-      );
-    setType(parsed.type);
-    setTitle(parsed.title);
-    setAmount(moneyInput(parsed.amount, accountCurrency(state, accountId)));
-    setCategory(
-      parsed.type === "expense"
-        ? (matchCategoryRule(state, parsed.title)?.category ??
-            activeCategory(state, parsed.category))
-        : "other",
+  const selectRefund = (expense: Transaction) =>
+    setDraft((current) =>
+      selectRefundDraft(state, current, expense, original?.id),
     );
-    setManualCategory(false);
-    setError("");
-    notify("Распознано. Проверьте категорию и счёт перед сохранением.");
-  };
+  const applyQuick = (input: string) =>
+    run(() => {
+      setDraft(applyQuickEntry(state, draft, input));
+      notify("Распознано. Проверьте категорию и счёт перед сохранением.");
+    });
   const applyTemplate = (template: TransactionTemplate) =>
     run(() => {
-      const draft = templateDraft(state, template, today);
-      setType(draft.type);
-      setTitle(draft.title);
-      setAmount(moneyInput(draft.amount, template.currency));
-      setCategory(draft.category);
-      setAccountId(draft.accountId);
-      if (draft.toAccountId) setToAccountId(draft.toAccountId);
-      setReceived(
-        draft.toAmount === undefined
-          ? null
-          : moneyInput(draft.toAmount, template.toCurrency),
-      );
-      setDate(today);
-      setNote(draft.note ?? "");
-      setValuation(null);
-      setManualCategory(true);
-      setTemplateId(template.id);
-      setRefundOf(undefined);
-      setSplitEnabled(!!draft.splits);
-      setParts(
-        draft.splits?.map((part, index) => ({
-          key: String(index),
-          category: part.category,
-          amount: moneyInput(part.amount, template.currency),
-        })) ?? [],
-      );
+      setDraft(applyTransactionTemplate(state, draft, template, today));
       notify("Шаблон заполнил черновик. Проверьте сумму и дату.");
     });
   const saveTemplate = (name: string, id?: string) =>
     run(() => {
-      if (refundOf || original?.debtId)
-        throw new Error(
-          "Возврат покупки и операции долга сохраняются через связанные записи, без шаблона обычного дохода или расхода.",
-        );
-      actions.saveTransactionTemplate({
-        id,
-        name,
-        title,
-        type,
-        amount: parseMoney(amount, sourceCurrency) ?? NaN,
-        category: type === "expense" ? category : "other",
-        accountId,
-        currency: sourceCurrency,
-        toAccountId: type === "transfer" ? toAccountId : undefined,
-        toCurrency: type === "transfer" ? targetCurrency : undefined,
-        toAmount: foreignTransfer
-          ? (parseMoney(received ?? suggestedReceived, targetCurrency) ?? NaN)
-          : undefined,
-        note,
-        splits:
-          type === "expense" && splitEnabled
-            ? parts.map((part) => ({
-                category: part.category,
-                amount: parseMoney(part.amount, sourceCurrency) ?? NaN,
-              }))
-            : undefined,
-      });
+      actions.saveTransactionTemplate(
+        transactionTemplateInput(state, draft, name, id, original),
+      );
       notify(id ? "Шаблон обновлён" : "Шаблон сохранён");
     });
   const save = () =>
     run(() => {
-      const parsed = parseMoney(amount, accountCurrency(state, accountId));
-      if (parsed === null)
-        return setError("Введите корректную сумму в валюте счёта.");
-      actions.saveTransaction({
-        id: original?.id,
-        type,
-        title,
-        amount: parsed,
-        toAmount: foreignTransfer
-          ? (parseMoney(received ?? suggestedReceived, targetCurrency) ?? NaN)
-          : undefined,
-        baseAmount:
-          type !== "transfer" && sourceCurrency !== baseCode
-            ? (parseMoney(
-                valuation ??
-                  (historicalValue === null ? "" : moneyInput(historicalValue)),
-              ) ?? NaN)
-            : undefined,
-        date,
-        category,
-        accountId,
-        toAccountId,
-        note,
-        splits:
-          type === "expense" && splitEnabled
-            ? parts.map((part) => ({
-                category: part.category,
-                amount: parseMoney(part.amount, sourceCurrency) ?? NaN,
-              }))
-            : undefined,
-        refundOf: type === "income" ? refundOf : undefined,
-        refundSourceAmount:
-          type === "income" &&
-          purchase &&
-          accountCurrency(state, purchase.accountId) !== sourceCurrency
-            ? (parseMoney(
-                refundSource,
-                accountCurrency(state, purchase.accountId),
-              ) ?? NaN)
-            : undefined,
-      });
+      actions.saveTransaction(transactionInput(state, draft, original));
       notify(
         original
           ? "Операция обновлена"
@@ -308,48 +143,7 @@ export function TransactionForm({
         </Notice>
       )}
       {!original && type !== "transfer" && (
-        <Card
-          style={{
-            backgroundColor: C.lavender,
-            borderColor: "#E5E0EE",
-            gap: 12,
-          }}
-        >
-          <Row>
-            <Icon name="flash-outline" color="#8C7FA4" size={18} />
-            <Txt
-              style={{ fontFamily: font.bold, color: "#756785", fontSize: 12 }}
-            >
-              Запишите как говорите
-            </Txt>
-          </Row>
-          <Row>
-            <Field
-              containerStyle={{ flex: 1 }}
-              style={{ backgroundColor: "#fff" }}
-              accessibilityLabel="Быстрый ввод"
-              placeholder="Кофе 320"
-              value={quick}
-              onChangeText={setQuick}
-              onSubmitEditing={() => applyQuick()}
-            />
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Распознать запись"
-              onPress={() => applyQuick()}
-              style={{
-                padding: 13,
-                backgroundColor: "#DED7E8",
-                borderRadius: 13,
-              }}
-            >
-              <Icon name="arrow-forward" color="#756785" />
-            </Pressable>
-          </Row>
-          <Txt style={{ color: "#91869E", fontSize: 10 }}>
-            Распознаётся на устройстве · проверьте перед сохранением
-          </Txt>
-        </Card>
+        <QuickEntry value={quick} onChange={setQuick} onApply={applyQuick} />
       )}
       {original?.goalId ? (
         <Notice>
@@ -360,7 +154,11 @@ export function TransactionForm({
       ) : (
         <Segments
           value={type}
-          onChange={setType}
+          onChange={(value) =>
+            setDraft((current) =>
+              changeTransactionType(current, value, original),
+            )
+          }
           options={[
             { value: "expense", label: "Расход" },
             { value: "income", label: "Доход" },
@@ -368,18 +166,15 @@ export function TransactionForm({
           ]}
         />
       )}
-      <Field
+      <AmountField
         label={`Сумма, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма операции"
         value={amount}
         onChangeText={(value) => {
-          setAmount(value);
-          setValuation(null);
+          patch({ amount: value, valuation: null });
         }}
-        keyboardType="decimal-pad"
         placeholder="0"
         style={{ fontSize: 36, fontFamily: font.semibold, paddingVertical: 18 }}
-        maxLength={16}
       />
       <Field
         label={type === "transfer" ? "Название перевода" : "На что или откуда?"}
@@ -393,9 +188,13 @@ export function TransactionForm({
         }
         value={title}
         onChangeText={(value) => {
-          setTitle(value);
-          if (!manualCategory && type === "expense")
-            setCategory(matchCategoryRule(state, value)?.category ?? "other");
+          patch({
+            title: value,
+            category:
+              !manualCategory && type === "expense"
+                ? (matchCategoryRule(state, value)?.category ?? "other")
+                : category,
+          });
         }}
         maxLength={120}
       />
@@ -406,27 +205,15 @@ export function TransactionForm({
             parts={parts}
             currency={sourceCurrency}
             total={parsedAmount}
-            onChange={setParts}
-            onToggle={() => {
-              setSplitEnabled(!splitEnabled);
-              if (parts.length < 2)
-                setParts([
-                  { key: "first", category, amount },
-                  {
-                    key: "second",
-                    category: category === "other" ? "groceries" : "other",
-                    amount: "",
-                  },
-                ]);
-            }}
+            onChange={(parts) => patch({ parts })}
+            onToggle={() => setDraft(toggleTransactionSplits)}
           />
           {!splitEnabled && (
             <>
               <CategoryPicker
                 value={category}
                 onChange={(value) => {
-                  setCategory(value);
-                  setManualCategory(true);
+                  patch({ category: value, manualCategory: true });
                 }}
               />
               <CategoryRuleSuggestion title={title} category={category} />
@@ -437,9 +224,7 @@ export function TransactionForm({
       <AccountPicker
         selected={accountId}
         onChange={(id) => {
-          setAccountId(id);
-          setValuation(null);
-          setReceived(null);
+          patch({ accountId: id, valuation: null, received: null });
         }}
         spendingOnly={!!original?.goalId || type === "expense"}
         includeCredit={
@@ -455,8 +240,8 @@ export function TransactionForm({
           transactionId={original?.id}
           locked={!!original?.refundOf}
           onSelect={selectRefund}
-          onClear={() => setRefundOf(undefined)}
-          onSourceAmount={setRefundSource}
+          onClear={() => patch({ refundOf: undefined, refundSource: "" })}
+          onSourceAmount={(refundSource) => patch({ refundSource })}
         />
       )}
       {type === "transfer" && !original?.goalId && (
@@ -465,20 +250,17 @@ export function TransactionForm({
           selected={toAccountId}
           exclude={accountId}
           onChange={(id) => {
-            setToAccountId(id);
-            setReceived(null);
+            patch({ toAccountId: id, received: null });
           }}
         />
       )}
       {foreignTransfer && (
         <>
-          <Field
+          <AmountField
             label={`Зачислено, ${currencySymbol(targetCurrency)}`}
             accessibilityLabel="Сумма зачисления"
             value={received ?? suggestedReceived}
-            onChangeText={setReceived}
-            keyboardType="decimal-pad"
-            maxLength={16}
+            onChangeText={(received) => patch({ received })}
           />
           <Notice>
             Предложена оценка по сохранённому курсу. Укажите фактически
@@ -488,16 +270,14 @@ export function TransactionForm({
       )}
       {type !== "transfer" && sourceCurrency !== baseCode && (
         <>
-          <Field
+          <AmountField
             label={`Оценка в основной валюте, ${baseSymbol}`}
             accessibilityLabel="Оценка в основной валюте"
             value={
               valuation ??
               (historicalValue === null ? "" : moneyInput(historicalValue))
             }
-            onChangeText={setValuation}
-            keyboardType="decimal-pad"
-            maxLength={16}
+            onChangeText={(valuation) => patch({ valuation })}
           />
           <Notice>
             Эта оценка сохранится в статистике. Для прошлой операции можно
@@ -505,13 +285,12 @@ export function TransactionForm({
           </Notice>
         </>
       )}
-      <Field
-        label="Дата · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата"
         accessibilityLabel="Дата операции"
         value={date}
-        onChangeText={setDate}
+        onChangeText={(date) => patch({ date })}
         placeholder={today}
-        maxLength={10}
         autoCapitalize="none"
       />
       <Field
@@ -519,7 +298,7 @@ export function TransactionForm({
         accessibilityLabel="Заметка"
         placeholder="Что хочется запомнить?"
         value={note}
-        onChangeText={setNote}
+        onChangeText={(note) => patch({ note })}
         maxLength={500}
         multiline
       />
@@ -542,10 +321,14 @@ export function TransactionForm({
             label="Записать возврат покупки"
             variant="secondary"
             onPress={() => {
-              setRepeating(true);
-              selectRefund(original);
-              setDate(today);
-              setNote("");
+              setDraft((current) => ({
+                ...selectRefundDraft(
+                  state,
+                  repeatTransaction(current, today),
+                  original,
+                ),
+                note: "",
+              }));
             }}
           />
         )}
@@ -556,9 +339,7 @@ export function TransactionForm({
             variant="secondary"
             icon="copy-outline"
             onPress={() => {
-              setRepeating(true);
-              setDate(today);
-              setValuation(null);
+              setDraft((current) => repeatTransaction(current, today));
               notify(
                 "Создан черновик новой операции. Подтвердите сумму и дату.",
               );

@@ -7,7 +7,13 @@ import {
   useFinanceActions,
   useMoney,
 } from "../../../state/finance";
-import { Button, ErrorText, Field, Notice } from "../../../shared/ui";
+import {
+  Button,
+  ErrorText,
+  Notice,
+  AmountField,
+  DateField,
+} from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 
 export function DebtRepaymentForm({
@@ -37,13 +43,11 @@ export function DebtRepaymentForm({
         {money(debtBalance(state, debt, today), false, debt.currency)}. Можно
         вернуть часть суммы.
       </Notice>
-      <Field
+      <AmountField
         label={`Сумма возврата, ${currencySymbol(debt.currency)}`}
         accessibilityLabel="Сумма возврата долга"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <AccountPicker
         selected={accountId}
@@ -56,12 +60,11 @@ export function DebtRepaymentForm({
             : "Зачислить на счёт"
         }
       />
-      <Field
-        label="Дата возврата · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата возврата"
         accessibilityLabel="Дата возврата долга"
         value={date}
         onChangeText={setDate}
-        maxLength={10}
       />
       <Notice>
         Подтверждайте только состоявшийся перевод. Приложение запишет движение

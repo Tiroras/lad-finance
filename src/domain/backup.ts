@@ -43,6 +43,7 @@ const day = z.number().int().min(1).max(31);
 const date = z.string().refine(validDate);
 const category = id;
 const icon = z.enum(ICON_NAMES);
+export const MAX_BACKUP_BYTES = 5_000_000;
 const schema = z.object({
   version: z
     .union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
@@ -208,7 +209,10 @@ const schema = z.object({
 });
 
 export function decodeBackup(raw: string): FinanceState {
-  if (raw.length > 5_000_000)
+  // Keep reading older snapshots whose limit was measured in UTF-16 characters.
+  // Portable files and new ledgers use the UTF-8 byte limit below. Existing
+  // oversized local ledgers remain readable while they are gradually reduced.
+  if (raw.length > MAX_BACKUP_BYTES)
     throw new Error("Файл слишком большой. Максимальный размер — 5 МБ.");
   let state: FinanceState;
   try {
@@ -384,5 +388,28 @@ export function decodeBackup(raw: string): FinanceState {
   return state;
 }
 
-export const encodeBackup = (state: FinanceState) =>
-  JSON.stringify(state, null, 2);
+export const encodeBackup = (state: FinanceState) => JSON.stringify(state);
+
+export const backupByteLength = (content: string) =>
+  new TextEncoder().encode(content).length;
+
+/** Existing oversized ledgers may shrink; portable copies have no allowance. */
+export function assertBackupSize(content: string, previousBytes = 0) {
+  const bytes = backupByteLength(content);
+  if (
+    content.length > MAX_BACKUP_BYTES ||
+    (bytes > MAX_BACKUP_BYTES && !(bytes < previousBytes))
+  )
+    throw new Error(
+      "Учёт превышает 5 МБ. Изменение не сохранено: уменьшите объём заметок или число операций. Старый большой учёт можно только уменьшать.",
+    );
+  return bytes;
+}
+
+/** Validate a snapshot before replacing durable data or creating a portable copy. */
+export function checkedBackupContent(state: FinanceState, previousBytes = 0) {
+  const content = encodeBackup(state);
+  assertBackupSize(content, previousBytes);
+  decodeBackup(content);
+  return content;
+}

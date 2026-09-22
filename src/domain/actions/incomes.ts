@@ -1,6 +1,6 @@
 import { accountCurrency } from "../currency";
 import { dateInMonth, localDate, uid, validDate } from "../finance";
-import { incomeReceived } from "../incomes";
+import { canLinkIncome, incomeReceived } from "../incomes";
 import {
   isScheduledDate,
   scheduleSchema,
@@ -128,14 +128,7 @@ export function receivePlannedIncome(
   if (transactionId) {
     const transaction = state.transactions.find((t) => t.id === transactionId);
     ensure(
-      transaction &&
-        transaction.type === "income" &&
-        !transaction.refundOf &&
-        !transaction.debtId &&
-        !transaction.plannedIncomeId &&
-        transaction.amount === plan.amount &&
-        transaction.accountId === plan.accountId &&
-        transaction.date <= today,
+      transaction && canLinkIncome(transaction, plan, today),
       "Запись больше не подходит для этого поступления.",
     );
     return saveTransaction(

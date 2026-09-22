@@ -1,4 +1,4 @@
-import { accountBalance } from "./accountBalances";
+import { accountBalance, accountBalances } from "./accountBalances";
 import { goalReserve, goalSaved } from "./goals";
 import { overduePayments, upcoming, paymentOccurrenceKey } from "./payments";
 import { forecast, type ForecastHorizon } from "./forecast";
@@ -7,7 +7,7 @@ import { debtObligations } from "./debts";
 import { isScheduledDate } from "./recurrence";
 import {
   expenseContributions,
-  transactionIncomeAmount,
+  periodTotals,
   transactionAmountsError,
 } from "./transactionAmounts";
 export { accountBalance } from "./accountBalances";
@@ -20,14 +20,12 @@ export {
 } from "./payments";
 import {
   localDate,
-  fromDate,
   monthKey,
   shiftDate,
   shiftMonth,
   daysBetween,
   validDate,
   dateInMonth,
-  dateLabel,
 } from "../shared/lib/dates";
 export {
   localDate,
@@ -46,7 +44,6 @@ import {
   MAX_MONEY,
   parseMoney,
   receivedAmount,
-  transactionValue,
   type CurrencyCode,
 } from "./currency";
 import type { CategoryId, FinanceState, Transaction } from "./types";
@@ -58,20 +55,19 @@ export function nextPayday(day: number, today = localDate()) {
   const thisMonth = dateInMonth(today, day);
   return thisMonth > today ? thisMonth : dateInMonth(shiftMonth(today, 1), day);
 }
-export function totals(state: FinanceState, month = monthKey()) {
-  return state.transactions
-    .filter((t) => monthKey(t.date) === month && t.date <= localDate())
-    .reduce(
-      (sum, t) => {
-        sum.expense += expenseContributions(state, t).reduce(
-          (n, p) => n + p.amount,
-          0,
-        );
-        sum.income += transactionIncomeAmount(state, t);
-        return sum;
-      },
-      { income: 0, expense: 0 },
-    );
+export function totals(
+  state: FinanceState,
+  month?: string,
+  today = localDate(),
+) {
+  const selectedMonth = month ?? monthKey(today);
+  const last = dateInMonth(selectedMonth, 31);
+  const { income, expense } = periodTotals(
+    state,
+    `${selectedMonth}-01`,
+    last < today ? last : today,
+  );
+  return { income, expense };
 }
 
 export function categorySpending(
@@ -110,11 +106,11 @@ export function spendable(state: FinanceState, today = localDate()) {
   const payday = income?.date ?? nextPayday(state.settings.payday, today);
   const days = Math.max(1, daysBetween(today, payday));
   const paymentEnd = payday === today ? shiftDate(today, 1) : payday;
+  const balances = accountBalances(state, today);
   const liquid = state.accounts
     .filter((a) => a.kind === "spending")
     .reduce(
-      (sum, a) =>
-        sum + accountToBase(state, accountBalance(state, a.id, today), a.id),
+      (sum, a) => sum + accountToBase(state, balances.get(a.id) ?? 0, a.id),
       0,
     );
   const overdue = overduePayments(state, today).reduce(

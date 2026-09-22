@@ -2,42 +2,38 @@ import type { Transaction } from "../../domain/types";
 import type { CurrencyCode } from "../../domain/currency";
 
 export type Tab = "home" | "transactions" | "plan" | "analytics";
-export type SheetName =
-  | "transaction"
+type SimpleSheetName =
   | "automation"
-  | "reconcile"
   | "onboarding"
-  | "debt"
-  | "repayDebt"
-  | "repayCredit"
   | "simulate"
   | "formula"
   | "accounts"
-  | "account"
   | "currencies"
   | "settings"
-  | "goal"
-  | "fund"
-  | "recurring"
-  | "budget"
-  | "payment"
   | "csv"
   | "forecast"
   | "forecastSettings"
-  | "income"
   | "categories"
-  | "category"
   | "scenarios"
-  | "scenario"
   | "export";
-export interface SheetState {
-  type: SheetName;
-  id?: string;
-  sourceTransactionId?: string;
-  transactionType?: Transaction["type"];
-  date?: string;
-  currency?: CurrencyCode;
-  accountKind?: "spending" | "savings" | "credit";
-}
+export type SheetState =
+  | { type: SimpleSheetName }
+  | { type: "debt" | "goal" | "category" | "scenario"; id?: string }
+  | {
+      type: "reconcile" | "repayDebt" | "repayCredit" | "fund" | "budget";
+      id: string;
+    }
+  | { type: "transaction"; id?: string; transactionType?: Transaction["type"] }
+  | {
+      type: "account";
+      id?: string;
+      currency?: CurrencyCode;
+      accountKind?: "spending" | "savings" | "credit";
+    }
+  | { type: "recurring"; id?: string; sourceTransactionId?: string }
+  | { type: "income"; id?: string; date?: string }
+  | { type: "payment"; id: string; date: string };
+export type SheetName = SheetState["type"];
+export type SheetOf<T extends SheetName> = SheetState & { type: T };
 export type OpenSheet = (sheet: SheetState) => void;
 export type Navigate = (tab: Tab) => void;

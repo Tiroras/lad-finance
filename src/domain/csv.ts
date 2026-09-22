@@ -1,5 +1,5 @@
 import { matchCategoryRule } from "./automation";
-import { appendTransaction } from "./actions/transactions";
+import { appendTransactions } from "./actions/transactions";
 import { activeCategory, categoryLabel } from "./categories";
 import {
   CURRENCIES,
@@ -483,21 +483,7 @@ export function applyCsvImport(
     .map((row) => ({ ...row.transaction!, id: uid() }));
   if (!transactions.length)
     throw new Error("Нет новых выбранных операций для импорта.");
-  if (state.transactions.length + transactions.length > 20000)
-    throw new Error("В учёте допустимо не более 20 000 операций.");
-  let next = state;
-  for (const transaction of transactions
-    .slice()
-    .sort((a, b) => a.date.localeCompare(b.date))) {
-    try {
-      next = appendTransaction(next, transaction, today);
-    } catch (error) {
-      throw new Error(
-        `«${transaction.title}»: ${error instanceof Error ? error.message : "Не удалось добавить операцию."}`,
-      );
-    }
-  }
-  return { ...state, transactions: [...transactions, ...state.transactions] };
+  return appendTransactions(state, transactions, today);
 }
 
 export const importedBalance = (

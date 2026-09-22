@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View } from "react-native";
 import { forecast } from "../../../domain/forecast";
 import { dateLabel } from "../../../shared/lib/dates";
@@ -13,7 +14,7 @@ export function ForecastRiskInsight({
 }) {
   const { state, today } = useFinance();
   const { money } = useMoney();
-  const result = forecast(state, 30, today);
+  const result = useMemo(() => forecast(state, 30, today), [state, today]);
   const day = result.firstBelowBuffer ?? result.firstShortfall;
   if (!day) return null;
   return (

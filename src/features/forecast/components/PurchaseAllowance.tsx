@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View } from "react-native";
 import { dateLabel, simulatePurchase } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
@@ -15,7 +16,10 @@ import {
 export function PurchaseAllowance({ amount }: { amount: number }) {
   const { money } = useMoney();
   const { state, today } = useFinance();
-  const result = simulatePurchase(state, amount, today);
+  const result = useMemo(
+    () => simulatePurchase(state, amount, today),
+    [state, amount, today],
+  );
   return (
     <>
       <Txt style={{ fontFamily: font.bold, fontSize: 15 }}>

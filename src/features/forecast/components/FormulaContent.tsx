@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View } from "react-native";
 import { dateLabel, spendable } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
@@ -6,7 +7,7 @@ import { C, Card, font, Notice, Row, Txt } from "../../../shared/ui";
 export function FormulaContent() {
   const { money } = useMoney();
   const { state, today } = useFinance();
-  const safe = spendable(state, today);
+  const safe = useMemo(() => spendable(state, today), [state, today]);
   return (
     <>
       <Notice>

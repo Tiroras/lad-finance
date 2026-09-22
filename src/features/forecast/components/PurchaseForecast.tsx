@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import { forecast, type ForecastHorizon } from "../../../domain/forecast";
+import {
+  forecast,
+  type ForecastHorizon,
+  type ForecastResult,
+} from "../../../domain/forecast";
 import { useFinance } from "../../../state/finance";
 import { C, font, Txt } from "../../../shared/ui";
 import { ForecastResultView } from "./ForecastResultView";
@@ -8,16 +12,14 @@ export function PurchaseForecast({
   amount,
   date,
   horizon,
+  baseline,
 }: {
   amount: number;
   date: string;
   horizon: ForecastHorizon;
+  baseline: ForecastResult;
 }) {
   const { state, today } = useFinance();
-  const baseline = useMemo(
-    () => forecast(state, horizon, today),
-    [state, horizon, today],
-  );
   const result = useMemo(
     () => forecast(state, horizon, today, { amount, date }),
     [state, horizon, today, amount, date],

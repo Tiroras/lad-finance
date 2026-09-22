@@ -11,6 +11,7 @@ import {
   Row,
   Txt,
   font,
+  AmountField,
 } from "../../../shared/ui";
 import type { ScenarioDraft } from "../model/scenarioDraft";
 
@@ -79,12 +80,10 @@ export function ScenarioChanges({
         />
       </Row>
       {draft.dailySpending !== undefined && (
-        <Field
+        <AmountField
           label={`В день, ${baseSymbol}`}
           accessibilityLabel="Расходы в день в сценарии"
           value={draft.dailySpending}
-          keyboardType="decimal-pad"
-          maxLength={16}
           onChangeText={(dailySpending) =>
             onChange({ ...draft, dailySpending })
           }
@@ -141,12 +140,10 @@ export function ScenarioChanges({
         return (
           <Card key={`${c.source}:${c.sourceId}`} style={{ gap: 12 }}>
             <Txt style={{ fontFamily: font.bold }}>{c.name}</Txt>
-            <Field
+            <AmountField
               label={`${c.source === "goal" ? "Взнос в месяц" : "Новая сумма"}, ${scenarioChangeCurrency(state, c)}`}
               accessibilityLabel={`Сумма в сценарии: ${c.name}`}
               value={c.amount}
-              maxLength={16}
-              keyboardType="decimal-pad"
               onChangeText={(amount) => patch({ amount })}
             />
             {c.source === "income" && (

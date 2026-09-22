@@ -14,6 +14,8 @@ import {
   Field,
   Notice,
   Segments,
+  AmountField,
+  DateField,
 } from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 
@@ -84,20 +86,17 @@ export function DebtForm({ id, close }: { id?: string; close: () => void }) {
                 : "Сумма долга спишется с выбранного счёта одной операцией. Возвраты поступят обратно."
               : "Добавится только остаток уже существующего долга. Деньги на счетах не изменятся: убедитесь, что их движение уже учтено."}
           </Notice>
-          <Field
+          <AmountField
             label={`${mode === "record" ? "Сумма долга" : "Остаток долга"}, ${currencySymbol(currency)}`}
             accessibilityLabel="Сумма долга"
             value={amount}
             onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            maxLength={16}
           />
-          <Field
-            label="Дата начала учёта долга · ГГГГ-ММ-ДД"
+          <DateField
+            label="Дата начала учёта долга"
             accessibilityLabel="Дата долга"
             value={date}
             onChangeText={setDate}
-            maxLength={10}
           />
         </>
       )}

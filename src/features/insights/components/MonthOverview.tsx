@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { View } from "react-native";
 import { monthlyOverview } from "../../../domain/insights";
 import { dateLabel } from "../../../shared/lib/dates";
@@ -9,11 +9,9 @@ export function MonthOverview({ month }: { month: string }) {
   const { state, today } = useFinance();
   const { money } = useMoney();
   const [period, setPeriod] = useState<"3" | "6" | "12">("3");
-  const months = monthlyOverview(
-    state,
-    month,
-    Number(period) as 3 | 6 | 12,
-    today,
+  const months = useMemo(
+    () => monthlyOverview(state, month, Number(period) as 3 | 6 | 12, today),
+    [state, month, period, today],
   );
   return (
     <Card>

@@ -5,11 +5,28 @@ import {
   shiftDate,
   shiftMonth,
 } from "../shared/lib/dates";
-import type { FinanceState, Occurrence, Recurring } from "./types";
+import type { FinanceState, Occurrence, Recurring, Transaction } from "./types";
 import { iterateScheduleDates, scheduleDates } from "./recurrence";
 
 export const paymentOccurrenceKey = (payment: Recurring, date: string) =>
   payment.schedule ? date : monthKey(date);
+
+export function canLinkPayment(
+  transaction: Transaction,
+  payment: Recurring,
+  date: string,
+  today: string,
+) {
+  return (
+    transaction.type === "expense" &&
+    !transaction.recurringId &&
+    !transaction.debtId &&
+    transaction.amount === payment.amount &&
+    transaction.accountId === payment.accountId &&
+    transaction.date >= `${monthKey(date)}-01` &&
+    transaction.date <= today
+  );
+}
 
 export function annualPreparation(
   state: FinanceState,

@@ -1,17 +1,14 @@
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
 import { dateLabel, paymentForMonth } from "../../../domain/finance";
-import { paymentOccurrenceKey } from "../../../domain/payments";
+import { canLinkPayment, paymentOccurrenceKey } from "../../../domain/payments";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
   useMoney,
   useFinance,
 } from "../../../state/finance";
-import type {
-  OpenSheet,
-  SheetState,
-} from "../../../application/navigation/types";
+import type { OpenSheet, SheetOf } from "../../../application/navigation/types";
 import {
   Button,
   C,
@@ -27,7 +24,7 @@ export function PaymentContent({
   close,
   open,
 }: {
-  sheet: SheetState;
+  sheet: SheetOf<"payment">;
   close: () => void;
   open: OpenSheet;
 }) {
@@ -35,11 +32,10 @@ export function PaymentContent({
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const { error, run } = useActionError();
-  const date = sheet.date ?? today;
-  const payment = paymentForMonth(
-    state.recurring.find((p) => p.id === sheet.id)!,
-    date,
-  );
+  const date = sheet.date;
+  const template = state.recurring.find((payment) => payment.id === sheet.id);
+  if (!template) return <Notice>Платёж уже удалён.</Notice>;
+  const payment = paymentForMonth(template, date);
   const skipped = payment.schedule
     ? payment.skippedDates?.includes(date)
     : payment.skippedMonths?.includes(date.slice(0, 7));
@@ -51,15 +47,7 @@ export function PaymentContent({
         paymentOccurrenceKey(payment, date),
   );
   const candidates = state.transactions
-    .filter(
-      (t) =>
-        t.type === "expense" &&
-        !t.recurringId &&
-        t.amount === payment.amount &&
-        t.accountId === payment.accountId &&
-        t.date >= `${date.slice(0, 7)}-01` &&
-        t.date <= today,
-    )
+    .filter((transaction) => canLinkPayment(transaction, payment, date, today))
     .slice(0, 8);
   return (
     <>

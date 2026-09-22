@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { dateLabel, spendable } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
@@ -13,7 +14,7 @@ export function SpendableCard({
 }) {
   const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
-  const safe = spendable(state, today);
+  const safe = useMemo(() => spendable(state, today), [state, today]);
   return (
     <View style={st.hero}>
       <HeroArt />

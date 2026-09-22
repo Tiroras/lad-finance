@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
-import type { FinanceState } from "../../../domain/types";
-import { BackupSettings } from "../../data-transfer";
+import { DataManagement } from "../../data-transfer";
+import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
   useMoney,
@@ -40,27 +40,9 @@ export function SettingsForm({
     state.settings.spendableIncomeId,
   );
   const [buffer, setBuffer] = useState(moneyInput(state.settings.buffer));
-  const [error, setError] = useState("");
-  const [pending, setPending] = useState<FinanceState | null>(null);
-  const [reset, setReset] = useState<"clean" | "demo" | null>(null);
-  const [busy, setBusy] = useState(false);
-  const run = async (fn: () => Promise<void>) => {
-    setBusy(true);
-    setError("");
-    try {
-      await fn();
-    } catch (e) {
-      setError(
-        e instanceof Error
-          ? e.message
-          : "Не удалось выполнить действие. Повторите попытку.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  };
+  const { error, setError, run } = useActionError();
   const save = () =>
-    void run(async () => {
+    run(() => {
       const parsed = parseMoney(buffer),
         day = Number(payday);
       if (parsed === null)
@@ -190,111 +172,7 @@ export function SettingsForm({
         variant="secondary"
         onPress={() => open({ type: "export" })}
       />
-      <BackupSettings
-        onStart={() => {
-          setPending(null);
-          setReset(null);
-        }}
-        onReady={(value) => {
-          setPending(value);
-          setReset(null);
-        }}
-      />
-      {pending && (
-        <Card style={{ gap: 15, backgroundColor: "#FAF0E4" }}>
-          <Txt style={{ fontFamily: font.bold }}>Копия проверена</Txt>
-          <Txt style={{ fontSize: 12, lineHeight: 20 }}>
-            В файле {pending.transactions.length} операций,{" "}
-            {pending.accounts.length} счетов, {pending.goals.length} целей и{" "}
-            {pending.scenarios?.length ?? 0} сценариев. Восстановление заменит
-            все текущие данные. Сначала экспортируйте их, если хотите сохранить.
-          </Txt>
-          <Button
-            label="Заменить данные этой копией"
-            onPress={() =>
-              void run(async () => {
-                actions.restore(pending);
-                notify("Данные восстановлены");
-                close();
-              })
-            }
-          />
-          <Button
-            label="Отмена восстановления"
-            variant="secondary"
-            onPress={() => setPending(null)}
-          />
-        </Card>
-      )}
-      <View
-        style={{ height: 1, backgroundColor: C.border, marginVertical: 4 }}
-      />
-      {state.demo ? (
-        <Button
-          label="Начать свой учёт с нуля"
-          icon="leaf-outline"
-          variant="secondary"
-          onPress={() => {
-            setReset("clean");
-            setPending(null);
-          }}
-        />
-      ) : (
-        <Row>
-          <Button
-            label="Очистить учёт"
-            variant="danger"
-            style={{ flex: 1 }}
-            onPress={() => {
-              setReset("clean");
-              setPending(null);
-            }}
-          />
-          <Button
-            label="Загрузить демо"
-            variant="secondary"
-            style={{ flex: 1 }}
-            onPress={() => {
-              setReset("demo");
-              setPending(null);
-            }}
-          />
-        </Row>
-      )}
-      {reset && (
-        <Card style={{ gap: 15, backgroundColor: "#FAF0E4" }}>
-          <Txt style={{ fontFamily: font.bold }}>
-            {reset === "demo" ? "Загрузить пример?" : "Начать с чистого листа?"}
-          </Txt>
-          <Txt style={{ fontSize: 12, lineHeight: 20 }}>
-            Текущие операции, категории, цели, платежи, сценарии и остатки будут
-            заменены. При необходимости сначала экспортируйте резервную копию.
-          </Txt>
-          <Button
-            label={
-              reset === "demo"
-                ? "Да, заменить демоданными"
-                : "Да, начать с пустых счетов"
-            }
-            onPress={() =>
-              void run(async () => {
-                actions.reset(reset === "demo");
-                notify(
-                  reset === "demo"
-                    ? "Демонстрационные данные загружены"
-                    : "Всё готово для вашего первого шага",
-                );
-                close();
-              })
-            }
-          />
-          <Button
-            label="Отмена"
-            variant="secondary"
-            onPress={() => setReset(null)}
-          />
-        </Card>
-      )}
+      <DataManagement close={close} />
       <Txt
         style={{
           color: "#9BA391",

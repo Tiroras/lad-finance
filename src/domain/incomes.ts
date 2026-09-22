@@ -1,9 +1,25 @@
 import { dateInMonth, monthKey, shiftMonth } from "../shared/lib/dates";
-import type { FinanceState, PlannedIncome } from "./types";
+import type { FinanceState, PlannedIncome, Transaction } from "./types";
 import { scheduleDates } from "./recurrence";
 
 export const incomeOccurrenceKey = (plan: PlannedIncome, date: string) =>
   plan.repeat === "once" ? "once" : plan.schedule ? date : monthKey(date);
+
+export function canLinkIncome(
+  transaction: Transaction,
+  plan: PlannedIncome,
+  today: string,
+) {
+  return (
+    transaction.type === "income" &&
+    !transaction.plannedIncomeId &&
+    !transaction.refundOf &&
+    !transaction.debtId &&
+    transaction.accountId === plan.accountId &&
+    transaction.amount === plan.amount &&
+    transaction.date <= today
+  );
+}
 
 export interface IncomeOccurrence {
   plan: PlannedIncome;
@@ -34,13 +50,31 @@ export function incomeOccurrences(
   asOf = start,
 ): IncomeOccurrence[] {
   const result: IncomeOccurrence[] = [];
-  for (const plan of state.plannedIncomes ?? []) {
+  const plans = new Map(
+    (state.plannedIncomes ?? []).map((plan) => [plan.id, plan]),
+  );
+  const received = new Set<string>();
+  for (const transaction of state.transactions) {
+    const plan = transaction.plannedIncomeId
+      ? plans.get(transaction.plannedIncomeId)
+      : undefined;
+    if (
+      plan &&
+      transaction.type === "income" &&
+      transaction.date <= asOf &&
+      transaction.incomeOccurrenceDate
+    )
+      received.add(
+        `${plan.id}:${incomeOccurrenceKey(plan, transaction.incomeOccurrenceDate)}`,
+      );
+  }
+  for (const plan of plans.values()) {
     const add = (date: string) => {
       if (
         date >= start &&
         date < end &&
         date >= plan.date &&
-        !incomeReceived(state, plan, date, asOf)
+        !received.has(`${plan.id}:${incomeOccurrenceKey(plan, date)}`)
       )
         result.push({ plan, date });
     };

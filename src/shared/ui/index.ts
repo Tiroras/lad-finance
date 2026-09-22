@@ -22,3 +22,6 @@ export { DeleteButton } from "./DeleteButton";
 export { ErrorText } from "./ErrorText";
 export { ScreenHeading } from "./ScreenHeading";
 export { MonthPicker } from "./MonthPicker";
+export { ChoiceGroup } from "./ChoiceGroup";
+export { AmountField } from "./AmountField";
+export { DateField } from "./DateField";

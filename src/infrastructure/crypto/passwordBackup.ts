@@ -1,9 +1,14 @@
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils.js";
-import { decodeBackup, encodeBackup } from "../../domain/backup";
+import {
+  checkedBackupContent,
+  decodeBackup,
+  MAX_BACKUP_BYTES,
+} from "../../domain/backup";
 import type { FinanceState } from "../../domain/types";
 
 export const BACKUP_ITERATIONS = 600_000;
-export const MAX_PLAIN_BACKUP_BYTES = 5_000_000;
+export const MAX_PLAIN_BACKUP_BYTES = MAX_BACKUP_BYTES;
+export { checkedBackupContent } from "../../domain/backup";
 export const MAX_ENCRYPTED_BACKUP_BYTES = 10_001_000;
 export interface BackupCrypto {
   random(length: number): Uint8Array;
@@ -78,16 +83,6 @@ export function validateBackupPassword(password: string, creating = true) {
     throw new Error(
       "Пароль должен содержать от 10 до 256 символов, не только пробелы.",
     );
-}
-
-export function checkedBackupContent(state: FinanceState) {
-  const content = encodeBackup(state);
-  if (utf8.encode(content).length > MAX_PLAIN_BACKUP_BYTES)
-    throw new Error(
-      "Копия превышает 5 МБ — допустимый размер файла восстановления.",
-    );
-  decodeBackup(content);
-  return content;
 }
 
 export async function encryptBackup(

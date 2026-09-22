@@ -18,6 +18,7 @@ import {
   Row,
   DeleteButton,
   ErrorText,
+  AmountField,
 } from "../../../shared/ui";
 
 export function GoalForm({ id, close }: { id?: string; close: () => void }) {
@@ -102,21 +103,17 @@ export function GoalForm({ id, close }: { id?: string; close: () => void }) {
         onChange={setCurrency}
         disabled={!!original}
       />
-      <Field
+      <AmountField
         label={`Сколько нужно накопить, ${currencySymbol(currency)}`}
         accessibilityLabel="Сумма цели"
         value={target}
         onChangeText={setTarget}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
-      <Field
+      <AmountField
         label={`Планирую откладывать в месяц, ${currencySymbol(currency)}`}
         accessibilityLabel="Ежемесячный взнос"
         value={monthly}
         onChangeText={setMonthly}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Notice>
         Лад зарезервирует взнос в расчёте доступных денег. Само пополнение вы

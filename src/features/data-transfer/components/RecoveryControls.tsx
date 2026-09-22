@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { useFinance } from "../../../state/finance";
+import { useFinanceStatus } from "../../../state/finance";
 import { BackupPicker } from "./BackupPicker";
 import type { FinanceState } from "../../../domain/types";
-import { Button, Card, Notice, Txt } from "../../../shared/ui";
+import { Notice } from "../../../shared/ui";
+import { DataConfirmation } from "./DataConfirmation";
 
 export function RecoveryControls() {
-  const { recover } = useFinance();
+  const { recover } = useFinanceStatus();
   const [pending, setPending] = useState<FinanceState | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -32,24 +33,17 @@ export function RecoveryControls() {
         onStart={() => setPending(null)}
       />
       {pending && (
-        <Card style={{ gap: 14 }}>
-          <Txt>
-            Копия проверена: {pending.transactions.length} операций.
-            Восстановление заменит недоступное хранилище этой копией и создаст
-            новый ключ шифрования на телефоне.
-          </Txt>
-          <Button
-            label="Подтвердить восстановление хранилища"
-            disabled={busy}
-            onPress={() => void run(async () => recover(pending))}
-          />
-          <Button
-            label="Отмена восстановления"
-            variant="secondary"
-            disabled={busy}
-            onPress={() => setPending(null)}
-          />
-        </Card>
+        <DataConfirmation
+          confirmLabel="Подтвердить восстановление хранилища"
+          cancelLabel="Отмена восстановления"
+          busy={busy}
+          onConfirm={() => void run(async () => recover(pending))}
+          onCancel={() => setPending(null)}
+        >
+          Копия проверена: {pending.transactions.length} операций.
+          Восстановление заменит недоступное хранилище этой копией и создаст
+          новый ключ шифрования на телефоне.
+        </DataConfirmation>
       )}
       {!!error && <Notice tone="warning">{error}</Notice>}
     </View>

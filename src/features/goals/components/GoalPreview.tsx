@@ -20,8 +20,8 @@ export function GoalPreview({
   onPress: () => void;
 }) {
   const { money } = useMoney();
-  const { state } = useFinance();
-  const saved = goalSaved(state, goal),
+  const { state, today } = useFinance();
+  const saved = goalSaved(state, goal, today),
     progress = saved / goal.target;
   return (
     <Pressable

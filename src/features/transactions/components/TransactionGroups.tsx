@@ -1,8 +1,9 @@
 import { View } from "react-native";
 import { C, font, Txt, Card, Empty } from "../../../shared/ui";
-import { dateLabel, localDate, shiftDate } from "../../../domain/finance";
+import { dateLabel, shiftDate } from "../../../domain/finance";
 import type { Transaction } from "../../../domain/types";
 import type { OpenSheet } from "../../../application/navigation/types";
+import { useFinance } from "../../../state/finance";
 import { TransactionRow } from "./TransactionRow";
 
 export function TransactionGroups({
@@ -12,6 +13,7 @@ export function TransactionGroups({
   groups: Map<string, Transaction[]>;
   open: OpenSheet;
 }) {
+  const { today } = useFinance();
   return (
     <>
       {groups.size ? (
@@ -25,9 +27,9 @@ export function TransactionGroups({
                 marginBottom: 12,
               }}
             >
-              {date === localDate()
+              {date === today
                 ? "Сегодня"
-                : date === shiftDate(localDate(), -1)
+                : date === shiftDate(today, -1)
                   ? "Вчера"
                   : dateLabel(date)}
             </Txt>

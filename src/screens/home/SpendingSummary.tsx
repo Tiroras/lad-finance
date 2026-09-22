@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View } from "react-native";
 import {
   categorySpending,
@@ -27,10 +28,17 @@ export function SpendingSummary({
 }) {
   const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
-  const spending = categorySpending(state, monthKey(today), today).sort(
-    (a, b) => b.spent - a.spent,
+  const spending = useMemo(
+    () =>
+      categorySpending(state, monthKey(today), today).sort(
+        (a, b) => b.spent - a.spent,
+      ),
+    [state, today],
   );
-  const monthTotals = totals(state, monthKey(today));
+  const monthTotals = useMemo(
+    () => totals(state, monthKey(today), today),
+    [state, today],
+  );
   return (
     <Card>
       <Section

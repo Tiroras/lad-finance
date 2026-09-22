@@ -5,12 +5,13 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
   type ReactNode,
 } from "react";
 import { mergeCurrencyRates } from "../../../domain/actions/currencies";
 import { useSecurity } from "../../security";
 import { fetchExchangeRates } from "../../../infrastructure/exchange-rates/exchangeRates";
-import { useFinance } from "../../../state/finance";
+import { useFinance, useFinanceStatus } from "../../../state/finance";
 
 const Context = createContext<{
   busy: boolean;
@@ -18,7 +19,8 @@ const Context = createContext<{
   refresh: () => Promise<void>;
 } | null>(null);
 export function ExchangeRateProvider({ children }: { children: ReactNode }) {
-  const { state, ready, loadError, today, update } = useFinance();
+  const { state, today, update } = useFinance();
+  const { ready, loadError } = useFinanceStatus();
   const { locked } = useSecurity();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -29,6 +31,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
     if (request.current || !ready || loadError || locked) return;
     const controller = new AbortController();
     request.current = controller;
+    attempted.current = today;
     setBusy(true);
     setError("");
     try {
@@ -39,6 +42,9 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       if (!controller.signal.aborted)
         setError(e instanceof Error ? e.message : "Не удалось обновить курсы.");
     } finally {
+      // A cancelled request did not consume this day's automatic update.
+      if (controller.signal.aborted && attempted.current === today)
+        attempted.current = "";
       request.current = null;
       setBusy(false);
     }
@@ -48,17 +54,18 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       ready &&
       !loadError &&
       !locked &&
+      !busy &&
       automatic &&
       state.settings.exchange?.fetchedOn !== today &&
       attempted.current !== today
     ) {
-      attempted.current = today;
       void refresh();
     }
   }, [
     ready,
     loadError,
     locked,
+    busy,
     automatic,
     today,
     state.settings.exchange?.fetchedOn,
@@ -73,11 +80,11 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
     },
     [],
   );
-  return (
-    <Context.Provider value={{ busy, error, refresh }}>
-      {children}
-    </Context.Provider>
+  const value = useMemo(
+    () => ({ busy, error, refresh }),
+    [busy, error, refresh],
   );
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 export function useExchangeRates() {
   const value = useContext(Context);

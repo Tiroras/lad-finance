@@ -1,6 +1,6 @@
+import { startApp, readState } from "./helpers";
 import { expect, test } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
-import type { FinanceState } from "../../src/domain/types";
 
 const TODAY = "2026-09-10";
 test("weekly budgets and payment schedules are editable on a narrow screen and persist", async ({
@@ -10,15 +10,8 @@ test("weekly budgets and payment schedules are editable on a narrow screen and p
   const initial = createInitialState(false, TODAY);
   initial.accounts[0].openingBalance = 100_000;
   initial.settings.onboardingCompleted = true;
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.addInitScript((state) => {
-    if (!localStorage.getItem("lad-finance-v1"))
-      localStorage.setItem("lad-finance-v1", JSON.stringify(state));
-  }, initial);
-  const read = (): Promise<FinanceState> =>
-    page.evaluate(() => JSON.parse(localStorage.getItem("lad-finance-v1")!));
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
+  const read = () => readState(page);
+  await startApp(page, TODAY, initial);
   await page.getByRole("tab", { name: "План", exact: true }).click();
   await page
     .getByRole("button", { name: "Изменить бюджет: Продукты", exact: true })

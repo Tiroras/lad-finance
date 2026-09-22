@@ -1,6 +1,6 @@
 import { accountCurrency } from "../../../domain/currency";
 import { dateInMonth, dateLabel, daysBetween } from "../../../domain/finance";
-import { incomeReceived } from "../../../domain/incomes";
+import { canLinkIncome, incomeReceived } from "../../../domain/incomes";
 import { scheduleDates } from "../../../domain/recurrence";
 import { shiftDate } from "../../../shared/lib/dates";
 import type { PlannedIncome } from "../../../domain/types";
@@ -38,16 +38,7 @@ export function IncomeReceipt({
     date ?? (currentDate < plan.date ? plan.date : currentDate);
   const recorded = incomeReceived(state, plan, occurrenceDate, today);
   const candidates = state.transactions
-    .filter(
-      (t) =>
-        t.type === "income" &&
-        !t.plannedIncomeId &&
-        !t.refundOf &&
-        !t.debtId &&
-        t.accountId === plan.accountId &&
-        t.amount === plan.amount &&
-        t.date <= today,
-    )
+    .filter((transaction) => canLinkIncome(transaction, plan, today))
     .sort(
       (a, b) =>
         Math.abs(daysBetween(a.date, occurrenceDate)) -

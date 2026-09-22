@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ScrollView, Platform, BackHandler, Keyboard } from "react-native";
-import { useFinance } from "../../state/finance";
+import { useFinance, useFinanceStatus } from "../../state/finance";
 import { observePaymentNotifications } from "../../infrastructure/notifications/notifications";
 import { useSecurity } from "../../features/security";
 import type { Tab, SheetState } from "./types";
 
 export function useAppNavigation() {
-  const { state, ready } = useFinance();
+  const { state } = useFinance();
+  const { ready } = useFinanceStatus();
   const { locked } = useSecurity();
   const stateRef = useRef(state);
   stateRef.current = state;

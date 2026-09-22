@@ -1,29 +1,23 @@
-import { useMemo } from "react";
 import { dateLabel } from "../../../domain/finance";
-import { forecast, type ForecastHorizon } from "../../../domain/forecast";
+import type { ForecastResult } from "../../../domain/forecast";
 import { planPurchase } from "../../../domain/purchasePlanner";
-import { useMoney, useFinance } from "../../../state/finance";
+import { useMoney } from "../../../state/finance";
 import { Button, Card, Notice, Txt, font } from "../../../shared/ui";
 
 export function PurchasePlanner({
   amount,
   date,
-  horizon,
+  baseline,
   setDate,
   setAmount,
 }: {
   amount: number;
   date: string;
-  horizon: ForecastHorizon;
+  baseline: ForecastResult;
   setDate: (date: string) => void;
   setAmount: (value: string) => void;
 }) {
   const { money, moneyInput } = useMoney();
-  const { state, today } = useFinance();
-  const baseline = useMemo(
-    () => forecast(state, horizon, today),
-    [state, today, horizon],
-  );
   const plan = planPurchase(baseline, amount, date);
   return (
     <Card style={{ gap: 14 }}>

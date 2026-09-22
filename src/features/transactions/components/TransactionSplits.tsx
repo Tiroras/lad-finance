@@ -1,15 +1,11 @@
 import { View } from "react-native";
 import type { CurrencyCode } from "../../../domain/currency";
 import { uid } from "../../../domain/finance";
-import { Button, Card, Field, Notice, Txt } from "../../../shared/ui";
+import { Button, Card, Notice, Txt, AmountField } from "../../../shared/ui";
 import { useMoney } from "../../../state/finance";
 import { CategoryPicker } from "../../categories";
 
-export interface SplitDraft {
-  key: string;
-  category: string;
-  amount: string;
-}
+import type { SplitDraft } from "../model/transactionDraft";
 
 export function TransactionSplits({
   enabled,
@@ -62,7 +58,7 @@ export function TransactionSplits({
                   )
                 }
               />
-              <Field
+              <AmountField
                 label={`Сумма части, ${currency}`}
                 accessibilityLabel={`Сумма части ${index + 1}`}
                 value={part.amount}
@@ -73,8 +69,6 @@ export function TransactionSplits({
                     ),
                   )
                 }
-                keyboardType="decimal-pad"
-                maxLength={16}
               />
               {parts.length > 2 && (
                 <Button

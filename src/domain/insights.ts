@@ -8,7 +8,7 @@ import {
 import { transactionValue } from "./currency";
 import {
   expenseContributions as expenseParts,
-  transactionIncomeAmount,
+  periodTotals,
 } from "./transactionAmounts";
 import type { FinanceState, Transaction } from "./types";
 
@@ -37,10 +37,11 @@ const normalizeTitle = (value: string) =>
     .trim();
 
 function historyStart(state: FinanceState, today: string) {
-  return state.transactions
-    .filter((transaction) => transaction.date <= today)
-    .map((transaction) => transaction.date)
-    .sort()[0];
+  let first: string | undefined;
+  for (const transaction of state.transactions)
+    if (transaction.date <= today && (!first || transaction.date < first))
+      first = transaction.date;
+  return first;
 }
 
 function evidence(
@@ -52,29 +53,6 @@ function evidence(
     title: transaction.title,
     date: transaction.date,
     amount,
-  };
-}
-
-function periodTotals(state: FinanceState, start: string, end: string) {
-  const transactions = state.transactions.filter(
-    (transaction) => transaction.date >= start && transaction.date <= end,
-  );
-  return {
-    income: transactions.reduce(
-      (sum, transaction) => sum + transactionIncomeAmount(state, transaction),
-      0,
-    ),
-    expense: transactions.reduce(
-      (sum, transaction) =>
-        sum +
-        expenseParts(state, transaction).reduce(
-          (value, part) => value + part.amount,
-          0,
-        ),
-      0,
-    ),
-    count: transactions.filter((transaction) => transaction.type !== "transfer")
-      .length,
   };
 }
 

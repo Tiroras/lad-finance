@@ -10,7 +10,13 @@ import {
   useFinanceActions,
   useMoney,
 } from "../../../state/finance";
-import { Button, ErrorText, Field, Notice } from "../../../shared/ui";
+import {
+  Button,
+  ErrorText,
+  Notice,
+  AmountField,
+  DateField,
+} from "../../../shared/ui";
 import { AccountPicker } from "../../accounts";
 
 export function CreditRepaymentForm({
@@ -68,30 +74,25 @@ export function CreditRepaymentForm({
         spendingOnly
         label="Откуда перевести"
       />
-      <Field
+      <AmountField
         label={`Списано, ${currencySymbol(sourceCurrency)}`}
         accessibilityLabel="Сумма погашения карты"
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       {foreign && (
-        <Field
+        <AmountField
           label={`Зачислено на карту, ${currencySymbol(targetCurrency)}`}
           accessibilityLabel="Зачисление на кредитную карту"
           value={received}
           onChangeText={setReceived}
-          keyboardType="decimal-pad"
-          maxLength={16}
         />
       )}
-      <Field
-        label="Дата перевода · ГГГГ-ММ-ДД"
+      <DateField
+        label="Дата перевода"
         accessibilityLabel="Дата погашения карты"
         value={date}
         onChangeText={setDate}
-        maxLength={10}
       />
       <ErrorText error={error} />
       <Button

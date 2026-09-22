@@ -1,5 +1,5 @@
 import { currencySymbol, type CurrencyCode } from "../../../domain/currency";
-import { Field, Notice } from "../../../shared/ui";
+import { Notice, AmountField, DateField } from "../../../shared/ui";
 
 export function CreditCardFields({
   currency,
@@ -20,29 +20,24 @@ export function CreditCardFields({
 }) {
   return (
     <>
-      <Field
+      <AmountField
         label={`Кредитный лимит, ${currencySymbol(currency)}`}
         accessibilityLabel="Кредитный лимит"
         value={limit}
         onChangeText={onLimitChange}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
-      <Field
-        label="Срок обязательного платежа · ГГГГ-ММ-ДД"
+      <DateField
+        label="Срок обязательного платежа"
         accessibilityLabel="Срок платежа по карте"
         value={dueDate}
         onChangeText={onDueDateChange}
-        maxLength={10}
         placeholder="Без срока"
       />
-      <Field
+      <AmountField
         label={`Осталось внести по выписке, ${currencySymbol(currency)}`}
         accessibilityLabel="Обязательный платёж по карте"
         value={dueAmount}
         onChangeText={onDueAmountChange}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Notice>
         Сверьте срок и оставшийся платёж с выпиской банка. После сохранения

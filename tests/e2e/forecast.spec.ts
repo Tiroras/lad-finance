@@ -1,24 +1,13 @@
+import { readState, setState, startApp } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { accountBalance, money } from "../../src/domain/finance";
 import { createInitialState } from "../../src/domain/seed";
-import type { FinanceState } from "../../src/domain/types";
 
-const TODAY = "2026-09-10",
-  KEY = "lad-finance-v1";
-const readState = (page: Page): Promise<FinanceState> =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), KEY);
+const TODAY = "2026-09-10";
 const close = (page: Page) =>
   page.getByRole("button", { name: "Закрыть", exact: true }).click();
 const openForecast = (page: Page) =>
   page.getByRole("button", { name: "Прогноз по дням", exact: true }).click();
-async function setState(page: Page, state: FinanceState) {
-  await page.evaluate(
-    ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-    { key: KEY, state },
-  );
-  await page.reload();
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-}
 function fixture() {
   const state = createInitialState(false, TODAY);
   state.accounts[0].openingBalance = 500000;
@@ -26,12 +15,7 @@ function fixture() {
   return state;
 }
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-  await page.goto("/");
-  await expect(page.getByText("Больше ясности.")).toBeVisible();
-  await expect
-    .poll(() => page.evaluate((key) => !!localStorage.getItem(key), KEY))
-    .toBe(true);
+  await startApp(page, TODAY);
 });
 
 test("planned income and daily assumptions change all horizons, persist and never post actual money", async ({

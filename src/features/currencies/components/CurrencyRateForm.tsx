@@ -10,9 +10,9 @@ import {
   Button,
   C,
   Card,
-  Field,
   font,
   Txt,
+  AmountField,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import { useFinanceActions, useFinance } from "../../../state/finance";
@@ -27,11 +27,9 @@ export function CurrencyRateForm({ currency }: { currency: CurrencyCode }) {
   return (
     <Card style={{ gap: 14 }}>
       <Txt style={{ fontFamily: font.bold }}>{CURRENCIES[currency].name}</Txt>
-      <Field
+      <AmountField
         label={`1 ${currency} в рублях`}
         accessibilityLabel={`Курс ${currency}`}
-        keyboardType="decimal-pad"
-        maxLength={16}
         value={draft ?? (rate ? rateInput(rate.value) : "")}
         onChangeText={setDraft}
         placeholder="Введите курс"

@@ -1,7 +1,6 @@
-import { ScrollView, View } from "react-native";
 import type { CurrencyCode } from "../../../domain/currency";
 import { useFinance } from "../../../state/finance";
-import { C, Chip, font, Txt } from "../../../shared/ui";
+import { ChoiceGroup } from "../../../shared/ui";
 
 export function AccountPicker({
   selected,
@@ -24,35 +23,26 @@ export function AccountPicker({
 }) {
   const { state } = useFinance();
   return (
-    <View style={{ gap: 10 }}>
-      <Txt style={{ fontFamily: font.semibold, fontSize: 12, color: C.muted }}>
-        {label}
-      </Txt>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 8 }}
-      >
-        {state.accounts
-          .filter(
-            (a) =>
-              a.id !== exclude &&
-              (!spendingOnly ||
-                a.kind === "spending" ||
-                (includeCredit && a.kind === "credit")) &&
-              (!savingsOnly || a.kind === "savings") &&
-              (!currency || (a.currency ?? "RUB") === currency),
-          )
-          .map((a) => (
-            <Chip
-              label={`${a.name}${a.kind === "credit" ? " · кредитная" : ""}${a.currency && a.currency !== "RUB" ? ` · ${a.currency}` : ""}`}
-              icon={a.icon}
-              key={a.id}
-              active={selected === a.id}
-              onPress={() => onChange(a.id)}
-            />
-          ))}
-      </ScrollView>
-    </View>
+    <ChoiceGroup
+      label={label}
+      value={selected}
+      onChange={onChange}
+      horizontal
+      options={state.accounts
+        .filter(
+          (a) =>
+            a.id !== exclude &&
+            (!spendingOnly ||
+              a.kind === "spending" ||
+              (includeCredit && a.kind === "credit")) &&
+            (!savingsOnly || a.kind === "savings") &&
+            (!currency || (a.currency ?? "RUB") === currency),
+        )
+        .map((a) => ({
+          value: a.id,
+          label: `${a.name}${a.kind === "credit" ? " · кредитная" : ""}${a.currency && a.currency !== "RUB" ? ` · ${a.currency}` : ""}`,
+          icon: a.icon,
+        }))}
+    />
   );
 }
