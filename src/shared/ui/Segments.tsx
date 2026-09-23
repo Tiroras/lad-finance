@@ -1,4 +1,9 @@
-import { Pressable, StyleSheet } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import { C, font } from "./theme";
 import { Txt } from "./Txt";
 import { Row } from "./Row";
@@ -7,13 +12,15 @@ export function Segments<T extends string>({
   options,
   value,
   onChange,
+  style,
 }: {
   options: { value: T; label: string }[];
   value: T;
   onChange: (value: T) => void;
+  style?: StyleProp<ViewStyle>;
 }) {
   return (
-    <Row style={s.segments}>
+    <Row style={[s.segments, style]}>
       {options.map((option) => (
         <Pressable
           key={option.value}

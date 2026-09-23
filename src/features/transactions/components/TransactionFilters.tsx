@@ -1,7 +1,7 @@
 import { categoryLabel, orderedCategories } from "../../../domain/categories";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useFinance } from "../../../state/finance";
-import { Chip, Segments, Field } from "../../../shared/ui";
+import { C, Chip, Segments, Field } from "../../../shared/ui";
 
 export function TransactionFilters({
   query,
@@ -31,17 +31,27 @@ export function TransactionFilters({
         value={query}
         onChangeText={setQuery}
       />
-      <Segments
-        value={type}
-        onChange={setType}
-        options={[
-          { value: "all", label: "Все" },
-          { value: "expense", label: "Расходы" },
-          { value: "income", label: "Доходы" },
-          { value: "transfer", label: "Переводы" },
-          { value: "debt", label: "Долги" },
-        ]}
-      />
+      <View style={s.typeFilters}>
+        <Segments
+          style={s.typeFilterRow}
+          value={type}
+          onChange={setType}
+          options={[
+            { value: "all", label: "Все" },
+            { value: "expense", label: "Расходы" },
+            { value: "income", label: "Доходы" },
+          ]}
+        />
+        <Segments
+          style={s.typeFilterRow}
+          value={type}
+          onChange={setType}
+          options={[
+            { value: "transfer", label: "Переводы" },
+            { value: "debt", label: "Долги" },
+          ]}
+        />
+      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -84,3 +94,16 @@ export function TransactionFilters({
     </>
   );
 }
+
+const s = StyleSheet.create({
+  typeFilters: {
+    gap: 3,
+    padding: 4,
+    backgroundColor: C.soft,
+    borderRadius: 13,
+  },
+  typeFilterRow: {
+    padding: 0,
+    backgroundColor: "transparent",
+  },
+});

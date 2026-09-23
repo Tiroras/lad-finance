@@ -91,10 +91,18 @@ test("onboarding keyboard navigation follows each step and Done only ends input"
 
 test("fields inserted after choosing a credit account join the keyboard order", async ({
   page,
-}) => {
+}, testInfo) => {
   await startApp(page, TODAY, fixture());
   await button(page, "Открыть мои счета").click();
   await button(page, "Добавить счёт").click();
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.screenshot({
+      path: testInfo.outputPath(`account-types-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await page.setViewportSize({ width: 320, height: 844 });
   await page.getByRole("tab", { name: "Кредитная карта", exact: true }).click();
   await field(page, "Остаток на счёте").pressSequentially("-100");
   await field(page, "Остаток на счёте").press("Enter");
@@ -117,6 +125,63 @@ test("fields inserted after choosing a credit account join the keyboard order", 
   );
   await field(page, "Остаток на счёте").press("Enter");
   await expect(field(page, "Остаток на счёте")).not.toBeFocused();
+});
+
+test("goal monthly contribution stays visible when the available form height changes", async ({
+  page,
+}, testInfo) => {
+  await startApp(page, TODAY, fixture());
+  await page.getByRole("tab", { name: "План", exact: true }).click();
+  await page.getByRole("tab", { name: "Цели", exact: true }).click();
+  await button(page, "Новая цель").click();
+  await field(page, "Название цели").fill("Отпуск");
+  const monthly = field(page, "Ежемесячный взнос");
+  const expectVisibleInput = async () => {
+    await expect(monthly).toBeFocused();
+    await expect
+      .poll(async () => {
+        const input = await monthly.boundingBox();
+        const header = await page
+          .getByRole("heading", { name: "Новая мечта", exact: true })
+          .boundingBox();
+        return (
+          !!input &&
+          !!header &&
+          input.y >= header.y + header.height &&
+          input.y + input.height <= page.viewportSize()!.height - 20
+        );
+      })
+      .toBe(true);
+  };
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await field(page, "Сумма цели").focus();
+    await field(page, "Сумма цели").press("Enter");
+    // Simulate the reduced space available above a software keyboard. Avoid
+    // locator.fill/press after the resize: they could scroll the input for us.
+    await page.setViewportSize({ width, height: 460 });
+    await page.clock.runFor(500);
+    await expectVisibleInput();
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.type("12500");
+    await expect(monthly).toHaveValue("12 500");
+    await page.setViewportSize({ width, height: 360 });
+    await page.clock.runFor(500);
+    await expectVisibleInput();
+    await page.screenshot({
+      path: testInfo.outputPath(`goal-monthly-input-${width}.png`),
+      animations: "disabled",
+    });
+    await page.setViewportSize({ width, height: 900 });
+    await page.clock.runFor(500);
+    await expectVisibleInput();
+  }
+  await button(page, "Создать цель").click();
+  await expect
+    .poll(async () =>
+      (await readState(page)).goals.find((goal) => goal.name === "Отпуск"),
+    )
+    .toMatchObject({ monthly: 1_250_000 });
 });
 
 test("typed dates reject impossible and incomplete values; only the side button opens the calendar", async ({

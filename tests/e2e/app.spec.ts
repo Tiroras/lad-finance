@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
 test("overview, accessible navigation, balance visibility and mobile width", async ({
   page,
-}) => {
+}, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await expect(
@@ -44,6 +44,41 @@ test("overview, accessible navigation, balance visibility and mobile width", asy
   await expect(page.getByText("Понять свои привычки")).toBeVisible();
   await page.getByRole("tab", { name: "Операции", exact: true }).click();
   await expect(page.getByText("Ваши операции")).toBeVisible();
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page
+      .getByRole("tab", { name: "Все", exact: true })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: testInfo.outputPath(`transaction-filters-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await page.setViewportSize({ width: 320, height: 844 });
+  const salary = page.getByRole("button", {
+    name: /^Зарплата,.*открыть операцию$/,
+  });
+  const groceries = page.getByRole("button", {
+    name: /^ВкусВилл,.*открыть операцию$/,
+  });
+  await page.getByRole("tab", { name: "Доходы", exact: true }).click();
+  await expect(salary).toBeVisible();
+  await expect(groceries).toHaveCount(0);
+  await page.getByRole("tab", { name: "Переводы", exact: true }).click();
+  await expect(
+    page.getByText("Здесь пока тихо", { exact: true }),
+  ).toBeVisible();
+  await expect(salary).toHaveCount(0);
+  await page.getByRole("tab", { name: "Долги", exact: true }).click();
+  await expect(
+    page.getByText("Здесь пока тихо", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Расходы", exact: true }).click();
+  await expect(groceries).toBeVisible();
+  await expect(salary).toHaveCount(0);
+  await page.getByRole("tab", { name: "Все", exact: true }).click();
+  await expect(salary).toBeVisible();
+  await expect(groceries).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

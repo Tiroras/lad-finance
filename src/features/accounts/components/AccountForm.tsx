@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { currencySymbol, type CurrencyCode } from "../../../domain/currency";
 import { accountBalance } from "../../../domain/finance";
 import type { Account } from "../../../domain/types";
@@ -11,6 +12,7 @@ import {
   useFinance,
 } from "../../../state/finance";
 import {
+  C,
   Button,
   Field,
   Notice,
@@ -108,15 +110,23 @@ export function AccountForm({
         maxLength={120}
       />
       {!original && (
-        <Segments
-          value={kind}
-          onChange={setKind}
-          options={[
-            { value: "spending", label: "Повседневный" },
-            { value: "savings", label: "Накопительный" },
-            { value: "credit", label: "Кредитная карта" },
-          ]}
-        />
+        <View style={s.accountTypes}>
+          <Segments
+            style={s.accountTypeRow}
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: "spending", label: "Повседневный" },
+              { value: "savings", label: "Накопительный" },
+            ]}
+          />
+          <Segments
+            style={s.accountTypeRow}
+            value={kind}
+            onChange={setKind}
+            options={[{ value: "credit", label: "Кредитная карта" }]}
+          />
+        </View>
       )}
       <CurrencyPicker
         value={currency}
@@ -164,3 +174,16 @@ export function AccountForm({
     </>
   );
 }
+
+const s = StyleSheet.create({
+  accountTypes: {
+    gap: 3,
+    padding: 4,
+    backgroundColor: C.soft,
+    borderRadius: 13,
+  },
+  accountTypeRow: {
+    padding: 0,
+    backgroundColor: "transparent",
+  },
+});

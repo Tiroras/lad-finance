@@ -50,8 +50,12 @@ export function Sheet({
       statusBarTranslucent
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={[s.overlay, width > 700 && { justifyContent: "center" }]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[
+          s.overlay,
+          { paddingTop: Math.max(insets.top, 24) },
+          width > 700 && { justifyContent: "center" },
+        ]}
       >
         <Pressable
           accessibilityLabel="Закрыть окно"
@@ -117,27 +121,30 @@ export function Sheet({
             scrollRef={scrollRef}
             contentRef={contentRef}
           >
-            <ScrollView
-              ref={scrollRef}
-              removeClippedSubviews={false}
-              key={contentKey}
-              style={blockingContent ? { display: "none" } : undefined}
-              aria-hidden={!!blockingContent}
-              importantForAccessibility={
-                blockingContent ? "no-hide-descendants" : "auto"
-              }
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{
-                paddingHorizontal: 24,
-                paddingBottom: 8,
-                gap: 20,
-              }}
-            >
-              <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
-                {children}
-              </View>
-            </ScrollView>
+            {(onViewportLayout) => (
+              <ScrollView
+                ref={scrollRef}
+                removeClippedSubviews={false}
+                key={contentKey}
+                onLayout={onViewportLayout}
+                style={[s.scroll, !!blockingContent && { display: "none" }]}
+                aria-hidden={!!blockingContent}
+                importantForAccessibility={
+                  blockingContent ? "no-hide-descendants" : "auto"
+                }
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: 24,
+                  paddingBottom: 8,
+                  gap: 20,
+                }}
+              >
+                <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
+                  {children}
+                </View>
+              </ScrollView>
+            )}
           </FormFields>
         </View>
       </KeyboardAvoidingView>
@@ -153,12 +160,17 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   sheet: {
+    flexShrink: 1,
     backgroundColor: C.bg,
     width: "100%",
     maxWidth: 560,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingTop: 10,
+  },
+  scroll: {
+    flexShrink: 1,
+    minHeight: 0,
   },
   handle: {
     width: 34,

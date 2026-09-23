@@ -43,7 +43,7 @@ export function FormFields({
   scrollRef,
   contentRef,
 }: {
-  children: ReactNode;
+  children: (onViewportLayout: () => void) => ReactNode;
   disabled: boolean;
   scrollRef: RefObject<ScrollView | null>;
   contentRef: RefObject<View | null>;
@@ -105,7 +105,7 @@ export function FormFields({
   }, [measure]);
 
   const scrollToFocused = useCallback(() => {
-    if (!enabled.current || Platform.OS === "web") return;
+    if (!enabled.current) return;
     const id = focused.current;
     const input = id && inputs.current.get(id);
     const scroll = scrollRef.current;
@@ -118,18 +118,28 @@ export function FormFields({
       content,
       (_left, top, _width, inputHeight) => {
         viewport.measureInWindow((_x, y, _w, height) => {
-          if (!enabled.current || focused.current !== id) return;
-          const bottom = Math.min(
-            y + height,
-            Keyboard.metrics()?.screenY ?? Infinity,
-          );
-          const visibleHeight = Math.max(0, bottom - y - 20);
-          scroll.scrollTo({
-            y: Math.max(
-              0,
-              top + Math.min(inputHeight, visibleHeight) - visibleHeight,
-            ),
-            animated: true,
+          input.measureInWindow((_inputX, inputY) => {
+            if (!enabled.current || focused.current !== id) return;
+            // RN Web has no Keyboard.metrics; its resized viewport supplies
+            // the visible bounds. Native also accounts for the keyboard frame.
+            const bottom = Math.min(
+              y + height,
+              Keyboard.metrics?.()?.screenY ?? Infinity,
+            );
+            const visibleHeight = Math.max(0, bottom - y - 20);
+            if (!visibleHeight) return;
+            // Keep a visible field in place; leave room for its label when
+            // bringing an input back from above the scroll viewport.
+            if (inputY >= y + 28 && inputY + inputHeight <= bottom - 20) return;
+            scroll.scrollTo({
+              y: Math.max(
+                0,
+                inputY < y + 28
+                  ? top - 28
+                  : top + Math.min(inputHeight, visibleHeight) - visibleHeight,
+              ),
+              animated: true,
+            });
           });
         });
       },
@@ -214,7 +224,7 @@ export function FormFields({
 
   return (
     <Context value={navigation}>
-      {children}
+      {children(scrollToFocused)}
       {Platform.OS === "ios" && !disabled && (
         <InputAccessoryView nativeID={accessoryID} backgroundColor={C.surface}>
           <View
