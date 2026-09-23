@@ -1,4 +1,4 @@
-import { startApp, readState } from "./helpers";
+import { startApp, readState, pickDate } from "./helpers";
 import { expect, test } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 
@@ -17,9 +17,7 @@ test("weekly budgets and payment schedules are editable on a narrow screen and p
     .getByRole("button", { name: "Изменить бюджет: Продукты", exact: true })
     .click();
   await page.getByRole("tab", { name: "Неделя", exact: true }).click();
-  await page
-    .getByLabel("Начало бюджетного периода", { exact: true })
-    .fill(TODAY);
+  await pickDate(page, "Начало бюджетного периода", TODAY);
   await page.getByLabel("Переносить остаток бюджета", { exact: true }).click();
   await page.getByLabel("Лимит категории", { exact: true }).fill("100");
   await page
@@ -41,7 +39,7 @@ test("weekly budgets and payment schedules are editable on a narrow screen and p
     .fill("Еженедельный курс");
   await page.getByLabel("Сумма платежа", { exact: true }).fill("50");
   await page.getByRole("tab", { name: "Неделя", exact: true }).click();
-  await page.getByLabel("Дата начала платежа", { exact: true }).fill(TODAY);
+  await pickDate(page, "Дата начала платежа", TODAY);
   await page.screenshot({
     path: testInfo.outputPath("weekly-payment-320.png"),
     fullPage: true,

@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import {
   View,
   Pressable,
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Txt } from "./Txt";
 import { Row } from "./Row";
 import { IconButton } from "./IconButton";
+import { FormFields } from "./FormFields";
 
 export function Sheet({
   title,
@@ -34,6 +35,8 @@ export function Sheet({
 }) {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
+  const contentRef = useRef<View>(null);
   return (
     <Modal
       transparent
@@ -93,23 +96,34 @@ export function Sheet({
               style={{ backgroundColor: C.soft }}
             />
           </Row>
-          <ScrollView
+          <FormFields
             key={contentKey}
-            style={blockingContent ? { display: "none" } : undefined}
-            aria-hidden={!!blockingContent}
-            importantForAccessibility={
-              blockingContent ? "no-hide-descendants" : "auto"
-            }
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingHorizontal: 24,
-              paddingBottom: 8,
-              gap: 20,
-            }}
+            disabled={!!blockingContent}
+            scrollRef={scrollRef}
+            contentRef={contentRef}
           >
-            {children}
-          </ScrollView>
+            <ScrollView
+              ref={scrollRef}
+              removeClippedSubviews={false}
+              key={contentKey}
+              style={blockingContent ? { display: "none" } : undefined}
+              aria-hidden={!!blockingContent}
+              importantForAccessibility={
+                blockingContent ? "no-hide-descendants" : "auto"
+              }
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingHorizontal: 24,
+                paddingBottom: 8,
+                gap: 20,
+              }}
+            >
+              <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
+                {children}
+              </View>
+            </ScrollView>
+          </FormFields>
         </View>
       </KeyboardAvoidingView>
     </Modal>

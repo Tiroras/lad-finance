@@ -1,4 +1,4 @@
-import { readState, setState, startApp } from "./helpers";
+import { readState, setState, startApp, pickDate } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { accountBalance, money } from "../../src/domain/finance";
 import { createInitialState } from "../../src/domain/seed";
@@ -34,9 +34,7 @@ test("planned income and daily assumptions change all horizons, persist and neve
   await page
     .getByLabel("Сумма планируемого дохода", { exact: true })
     .fill("10000");
-  await page
-    .getByLabel("Дата планируемого дохода", { exact: true })
-    .fill("2026-09-15");
+  await pickDate(page, "Дата планируемого дохода", "2026-09-15");
   await page
     .getByRole("button", { name: "Сохранить план дохода", exact: true })
     .click();
@@ -260,7 +258,7 @@ test("a purchase on a chosen future day shifts the shortfall while leaving all f
     .getByRole("button", { name: "Проверить покупку", exact: true })
     .click();
   await page.getByLabel("Стоимость покупки", { exact: true }).fill("5000,01");
-  await page.getByLabel("Дата покупки", { exact: true }).fill("2026-09-20");
+  await pickDate(page, "Дата покупки", "2026-09-20");
   await expect(page.getByTestId("forecast-status")).toHaveText(
     "Нехватка с 20 сентября",
   );
@@ -273,7 +271,7 @@ test("a purchase on a chosen future day shifts the shortfall while leaving all f
     "Покупка в сценарии",
   );
   await expect(page.getByTestId("forecast-day")).toContainText(money(-1, true));
-  await page.getByLabel("Дата покупки", { exact: true }).fill("2026-10-20");
+  await pickDate(page, "Дата покупки", "2026-10-20");
   await expect(page.getByText(/или увеличьте период/)).toBeVisible();
   await page.getByRole("tab", { name: "60 дней", exact: true }).click();
   await expect(page.getByTestId("forecast-status")).toHaveText(

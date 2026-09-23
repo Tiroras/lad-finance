@@ -10,6 +10,7 @@ import {
   Notice,
   Segments,
   AmountField,
+  DateField,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -90,12 +91,8 @@ export function IncomePlanForm({
           locked={!!original}
         />
       )}
-      <Field
-        label={
-          repeat === "monthly"
-            ? "Первое поступление · ГГГГ-ММ-ДД"
-            : "Дата поступления · ГГГГ-ММ-ДД"
-        }
+      <DateField
+        label={repeat === "monthly" ? "Первое поступление" : "Дата поступления"}
         accessibilityLabel="Дата планируемого дохода"
         value={date}
         onChangeText={(value) => {
@@ -103,8 +100,6 @@ export function IncomePlanForm({
           if (schedule && !original)
             setSchedule({ ...schedule, anchor: value });
         }}
-        placeholder="2026-09-25"
-        maxLength={10}
       />
       {repeat === "monthly" && !schedule && (
         <Notice>

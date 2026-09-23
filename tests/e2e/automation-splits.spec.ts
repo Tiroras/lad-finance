@@ -62,7 +62,7 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
     "250",
   );
   await expect(page.getByLabel("Дата операции", { exact: true })).toHaveValue(
-    TODAY,
+    "10.09.2026",
   );
   await button(page, "Закрыть").click();
   await openImport(page);

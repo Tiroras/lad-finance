@@ -100,13 +100,13 @@ export function DebtForm({ id, close }: { id?: string; close: () => void }) {
           />
         </>
       )}
-      <Field
-        label="Вернуть до · ГГГГ-ММ-ДД, необязательно"
+      <DateField
+        label="Вернуть до, необязательно"
         accessibilityLabel="Срок возврата долга"
         value={dueDate}
         onChangeText={setDueDate}
         placeholder="Без срока"
-        maxLength={10}
+        allowClear
       />
       <Field
         label="Заметка"

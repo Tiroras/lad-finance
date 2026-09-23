@@ -84,7 +84,7 @@ export function saveRecurring(
       validDate(input.startsOn) &&
       input.startsOn >= "2000-01-01" &&
       input.startsOn <= "2100-12-31",
-    "Укажите дату начала учёта от 2000 до 2100 года: ГГГГ-ММ-ДД.",
+    "Укажите корректную дату начала учёта от 2000 до 2100 года.",
   );
   ensure(
     state.accounts.some(

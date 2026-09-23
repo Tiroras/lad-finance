@@ -110,7 +110,7 @@ test("repeated-spending suggestions prefill a future plan and forecast estimates
   );
   await expect(
     page.getByLabel("Дата начала платежа", { exact: true }),
-  ).toHaveValue("2026-09-21");
+  ).toHaveValue("21.09.2026");
   await expect(page.getByLabel("День списания", { exact: true })).toHaveValue(
     "15",
   );

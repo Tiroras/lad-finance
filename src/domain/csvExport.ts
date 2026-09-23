@@ -49,7 +49,7 @@ export function exportTransactionsCsv(
     (options.from && options.through && options.from > options.through)
   )
     throw new Error(
-      "Проверьте период экспорта: ГГГГ-ММ-ДД, начало не позже конца.",
+      "Проверьте даты периода экспорта: начало должно быть не позже конца.",
     );
   const transactions = state.transactions
     .filter(

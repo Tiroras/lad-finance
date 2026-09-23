@@ -11,10 +11,10 @@ import {
   Button,
   Card,
   ErrorText,
-  Field,
   Notice,
   Section,
   Txt,
+  AmountField,
 } from "../../../shared/ui";
 import { OnboardingBalanceStep } from "./OnboardingBalanceStep";
 import { OnboardingPlanStep } from "./OnboardingPlanStep";
@@ -27,18 +27,18 @@ export function OnboardingFlow({ close }: { close: () => void }) {
   const [name, setName] = useState(state.settings.name);
   const [accountName, setAccountName] = useState("Основная карта");
   const [currency, setCurrency] = useState<CurrencyCode>("RUB");
-  const [balance, setBalance] = useState("0");
-  const [savings, setSavings] = useState("0");
-  const [buffer, setBuffer] = useState("0");
+  const [balance, setBalance] = useState("");
+  const [savings, setSavings] = useState("");
+  const [buffer, setBuffer] = useState("");
   const [incomeName, setIncomeName] = useState("Зарплата");
-  const [incomeAmount, setIncomeAmount] = useState("0");
+  const [incomeAmount, setIncomeAmount] = useState("");
   const [incomeDate, setIncomeDate] = useState(shiftDate(today, 7));
   const [billName, setBillName] = useState("Жильё");
-  const [billAmount, setBillAmount] = useState("0");
+  const [billAmount, setBillAmount] = useState("");
   const [billDate, setBillDate] = useState(shiftDate(today, 10));
   const { error, setError, run } = useActionError();
   const parse = (v: string) => {
-    const value = parseMoney(v, currency);
+    const value = parseMoney(v.trim() || "0", currency);
     if (value === null)
       throw new Error(
         "Проверьте суммы: используйте неотрицательные числа в выбранной валюте.",
@@ -123,13 +123,11 @@ export function OnboardingFlow({ close }: { close: () => void }) {
       )}
       {step === 4 && (
         <>
-          <Field
+          <AmountField
             label={`Неприкосновенный остаток, ${currency}`}
             accessibilityLabel="Резерв при настройке"
             value={buffer}
             onChangeText={setBuffer}
-            keyboardType="decimal-pad"
-            maxLength={16}
           />
           <Card>
             <Txt>

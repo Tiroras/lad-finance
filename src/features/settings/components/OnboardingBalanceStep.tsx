@@ -1,6 +1,6 @@
 import type { CurrencyCode } from "../../../domain/currency";
 import { CurrencyPicker } from "../../currencies";
-import { Field, Notice } from "../../../shared/ui";
+import { Field, Notice, AmountField } from "../../../shared/ui";
 
 export function OnboardingBalanceStep({
   name,
@@ -42,21 +42,17 @@ export function OnboardingBalanceStep({
         maxLength={120}
       />
       <CurrencyPicker value={currency} onChange={setCurrency} />
-      <Field
+      <AmountField
         label={`Сейчас на основном счёте, ${currency}`}
         accessibilityLabel="Начальный остаток"
         value={balance}
         onChangeText={setBalance}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
-      <Field
+      <AmountField
         label={`Уже отложено на накопления, ${currency}`}
         accessibilityLabel="Начальные накопления"
         value={savings}
         onChangeText={setSavings}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Notice>
         Это текущие остатки. Они не появятся в доходах. Накопления будут

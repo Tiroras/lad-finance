@@ -290,8 +290,6 @@ export function TransactionForm({
         accessibilityLabel="Дата операции"
         value={date}
         onChangeText={(date) => patch({ date })}
-        placeholder={today}
-        autoCapitalize="none"
       />
       <Field
         label="Заметка · необязательно"

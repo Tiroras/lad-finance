@@ -32,6 +32,7 @@ export function CreditCardFields({
         value={dueDate}
         onChangeText={onDueDateChange}
         placeholder="Без срока"
+        allowClear
       />
       <AmountField
         label={`Осталось внести по выписке, ${currencySymbol(currency)}`}

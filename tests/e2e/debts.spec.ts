@@ -1,4 +1,4 @@
-import { readState, startApp } from "./helpers";
+import { readState, startApp, pickDate } from "./helpers";
 import { expect, test } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { accountBalance } from "../../src/domain/accountBalances";
@@ -24,9 +24,7 @@ test("borrowed money and partial repayment remain separate from consumption and 
     .click();
   await page.getByLabel("Название долга", { exact: true }).fill("Алексей");
   await page.getByLabel("Сумма долга", { exact: true }).fill("500");
-  await page
-    .getByLabel("Срок возврата долга", { exact: true })
-    .fill("2026-09-25");
+  await pickDate(page, "Срок возврата долга", "2026-09-25");
   await page
     .getByRole("button", { name: "Сохранить долг", exact: true })
     .click();
@@ -78,9 +76,7 @@ test("credit card setup and repayments reduce the required payment without dupli
     .fill("Кредитная карта для покупок");
   await page.getByLabel("Остаток на счёте", { exact: true }).fill("-1000");
   await page.getByLabel("Кредитный лимит", { exact: true }).fill("5000");
-  await page
-    .getByLabel("Срок платежа по карте", { exact: true })
-    .fill("2026-09-25");
+  await pickDate(page, "Срок платежа по карте", "2026-09-25");
   await page
     .getByLabel("Обязательный платёж по карте", { exact: true })
     .fill("500");

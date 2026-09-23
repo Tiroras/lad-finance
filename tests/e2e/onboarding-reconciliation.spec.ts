@@ -1,4 +1,4 @@
-import { readState as read, startApp } from "./helpers";
+import { readState as read, startApp, pickDate } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { saveTransaction } from "../../src/domain/actions/transactions";
@@ -31,20 +31,34 @@ test("four-step onboarding replaces demo only after confirmation and persists ba
   await page
     .getByLabel("Название основного счёта", { exact: true })
     .fill("Моя карта");
-  await page.getByLabel("Начальный остаток", { exact: true }).fill("10000");
-  await page.getByLabel("Начальные накопления", { exact: true }).fill("2000");
+  const balance = page.getByLabel("Начальный остаток", { exact: true });
+  const savings = page.getByLabel("Начальные накопления", { exact: true });
+  await expect(balance).toHaveValue("");
+  await expect(savings).toHaveValue("");
+  await savings.scrollIntoViewIfNeeded();
+  await page.clock.runFor(500);
+  await page.screenshot({
+    path: "test-results/onboarding-empty-320.png",
+    animations: "disabled",
+  });
+  await balance.pressSequentially("10000");
+  await savings.pressSequentially("2000");
+  await expect(balance).toHaveValue("10 000");
+  await expect(savings).toHaveValue("2 000");
   await button(page, "Продолжить").click();
-  await page.getByLabel("Доход при настройке", { exact: true }).fill("5000");
-  await page
-    .getByLabel("Дата первого дохода", { exact: true })
-    .fill("2026-09-15");
+  const income = page.getByLabel("Доход при настройке", { exact: true });
+  await expect(income).toHaveValue("");
+  await income.pressSequentially("5000");
+  await pickDate(page, "Дата первого дохода", "2026-09-15");
   await button(page, "Продолжить").click();
-  await page.getByLabel("Платёж при настройке", { exact: true }).fill("2500");
-  await page
-    .getByLabel("Дата первого платежа", { exact: true })
-    .fill("2026-09-18");
+  const bill = page.getByLabel("Платёж при настройке", { exact: true });
+  await expect(bill).toHaveValue("");
+  await bill.pressSequentially("2500");
+  await pickDate(page, "Дата первого платежа", "2026-09-18");
   await button(page, "Продолжить").click();
-  await page.getByLabel("Резерв при настройке", { exact: true }).fill("1000");
+  const buffer = page.getByLabel("Резерв при настройке", { exact: true });
+  await expect(buffer).toHaveValue("");
+  await buffer.pressSequentially("1000");
   expect((await read(page)).demo).toBe(true);
   expect((await read(page)).transactions.length).toBe(demo.transactions.length);
   await page.screenshot({
@@ -68,6 +82,46 @@ test("four-step onboarding replaces demo only after confirmation and persists ba
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+});
+
+test("onboarding accepts untouched empty amounts as zero and skips optional plans", async ({
+  page,
+}) => {
+  const demo = createInitialState(true, TODAY);
+  demo.settings.onboardingCompleted = false;
+  await start(page, demo);
+  await button(page, "Настроить свой учёт").click();
+  await button(page, "Настроить свой учёт").click();
+  await expect(
+    page.getByLabel("Начальный остаток", { exact: true }),
+  ).toHaveValue("");
+  await expect(
+    page.getByLabel("Начальные накопления", { exact: true }),
+  ).toHaveValue("");
+  await button(page, "Продолжить").click();
+  await expect(
+    page.getByLabel("Доход при настройке", { exact: true }),
+  ).toHaveValue("");
+  await button(page, "Продолжить").click();
+  await expect(
+    page.getByLabel("Платёж при настройке", { exact: true }),
+  ).toHaveValue("");
+  await button(page, "Продолжить").click();
+  await expect(
+    page.getByLabel("Резерв при настройке", { exact: true }),
+  ).toHaveValue("");
+  await button(page, "Начать учёт с этими данными").click();
+  await expect.poll(async () => (await read(page)).demo).toBe(false);
+  const state = await read(page);
+  expect(state.accounts.every((account) => account.openingBalance === 0)).toBe(
+    true,
+  );
+  expect(state.settings.buffer).toBe(0);
+  expect(state.transactions).toHaveLength(0);
+  expect(state.plannedIncomes ?? []).toHaveLength(0);
+  expect(state.recurring).toHaveLength(0);
+  await page.reload();
+  expect((await read(page)).settings.onboardingCompleted).toBe(true);
 });
 
 test("bank reconciliation preserves dated correction and flags edited history after reload", async ({

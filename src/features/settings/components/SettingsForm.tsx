@@ -19,6 +19,7 @@ import {
   Txt,
   ErrorText,
   Chip,
+  AmountField,
 } from "../../../shared/ui";
 import { ReminderSettings } from "../../payments";
 import { SecuritySettings } from "../../security";
@@ -114,13 +115,11 @@ export function SettingsForm({
         Выберите надёжное поступление. Ожидаемые деньги остаются в прогнозе и не
         увеличивают текущий остаток.
       </Txt>
-      <Field
+      <AmountField
         label={`Неприкосновенный остаток, ${baseSymbol}`}
         accessibilityLabel="Неприкосновенный остаток"
         value={buffer}
         onChangeText={setBuffer}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
       <Txt style={{ fontSize: 11, color: C.muted, lineHeight: 19 }}>
         Остаток — деньги на повседневных счетах, которые вы не хотите тратить.

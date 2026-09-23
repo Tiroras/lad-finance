@@ -19,6 +19,7 @@ import {
   Section,
   Txt,
   DateField,
+  AmountField,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import type { OpenSheet } from "../../../application/navigation/types";
@@ -89,7 +90,7 @@ export function ReconciliationForm({
           setAdjust(false);
         }}
       />
-      <Field
+      <AmountField
         label={`Остаток по банку, ${code}`}
         accessibilityLabel="Остаток по банку"
         value={balance}
@@ -98,7 +99,6 @@ export function ReconciliationForm({
           setAdjust(false);
         }}
         keyboardType="numbers-and-punctuation"
-        maxLength={17}
       />
       <Card>
         <Txt>В Ладе: {money(current, true, code)}</Txt>

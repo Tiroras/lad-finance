@@ -10,13 +10,13 @@ import {
   C,
   Card,
   Chip,
-  Field,
   font,
   Icon,
   Notice,
   Row,
   Segments,
   Txt,
+  AmountField,
 } from "../../../shared/ui";
 
 export function CsvRowItem({
@@ -130,15 +130,13 @@ export function CsvRowItem({
               {override.otherAccountId &&
                 accountCurrency(state, accountId) !==
                   accountCurrency(state, override.otherAccountId) && (
-                  <Field
+                  <AmountField
                     label={`Сумма на втором счёте, ${accountCurrency(state, override.otherAccountId)}`}
                     accessibilityLabel={`Сумма второго счёта строки ${row.line}`}
                     value={override.otherAmount ?? ""}
                     onChangeText={(otherAmount) =>
                       onOverride({ ...override, otherAmount })
                     }
-                    keyboardType="decimal-pad"
-                    maxLength={16}
                   />
                 )}
               <Txt style={{ fontSize: 11, color: C.muted }}>

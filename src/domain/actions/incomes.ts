@@ -53,7 +53,7 @@ export function savePlannedIncome(
     validDate(input.date) &&
       input.date >= "2000-01-01" &&
       input.date <= "2100-12-31",
-    "Укажите дату дохода от 2000 до 2100 года: ГГГГ-ММ-ДД.",
+    "Укажите корректную дату дохода от 2000 до 2100 года.",
   );
   ensure(
     state.accounts.some(

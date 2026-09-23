@@ -9,11 +9,11 @@ import {
   ErrorText,
   Button,
   Chip,
-  Field,
   Notice,
   Row,
   Segments,
   Txt,
+  DateField,
 } from "../../../shared/ui";
 import { shareFile } from "../../../infrastructure/files/shareFile";
 import { useFinance } from "../../../state/finance";
@@ -72,21 +72,21 @@ export function CsvExportSheet() {
       {accountId && (
         <AccountPicker selected={accountId} onChange={setAccount} />
       )}
-      <Field
-        label="С даты · пусто — вся история"
+      <DateField
+        label="С даты"
         accessibilityLabel="Начало экспорта"
         value={from}
         onChangeText={setFrom}
-        placeholder="ГГГГ-ММ-ДД"
-        maxLength={10}
+        placeholder="Вся история"
+        allowClear
       />
-      <Field
+      <DateField
         label="По дату включительно"
         accessibilityLabel="Конец экспорта"
         value={through}
         onChangeText={setThrough}
-        placeholder="ГГГГ-ММ-ДД"
-        maxLength={10}
+        placeholder="Без ограничения"
+        allowClear
       />
       <Notice>
         {format === "ynab"

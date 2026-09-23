@@ -1,4 +1,4 @@
-import { Field, Notice } from "../../../shared/ui";
+import { Field, Notice, AmountField, DateField } from "../../../shared/ui";
 
 export function OnboardingPlanStep({
   kind,
@@ -33,31 +33,28 @@ export function OnboardingPlanStep({
         onChangeText={setName}
         maxLength={120}
       />
-      <Field
+      <AmountField
         label={`Сумма, ${currency}`}
         accessibilityLabel={
           income ? "Доход при настройке" : "Платёж при настройке"
         }
         value={amount}
         onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        maxLength={16}
       />
-      <Field
-        label="Первая дата · ГГГГ-ММ-ДД"
+      <DateField
+        label="Первая дата"
         accessibilityLabel={
           income ? "Дата первого дохода" : "Дата первого платежа"
         }
         value={date}
         onChangeText={setDate}
-        maxLength={10}
       />
       <Notice>
         {income
           ? "Добавим ежемесячный план дохода. Баланс увеличится только после записи фактического поступления."
           : "Добавим ежемесячное обязательство. Фактическую оплату вы отметите отдельно."}{" "}
-        Нулевая сумма пропустит этот шаг; остальные планы можно добавить
-        позднее.
+        Пустая или нулевая сумма пропустит этот шаг; остальные планы можно
+        добавить позднее.
       </Notice>
     </>
   );

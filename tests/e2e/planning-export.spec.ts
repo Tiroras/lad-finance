@@ -133,7 +133,7 @@ test("purchase planner selects the first affordable date and the exact maximum w
   );
   await button(page, "Выбрать ближайшую дату").click();
   await expect(page.getByLabel("Дата покупки", { exact: true })).toHaveValue(
-    "2026-09-15",
+    "15.09.2026",
   );
   await expect(page.getByTestId("purchase-maximum")).toContainText(
     money(3500000, true),
@@ -141,7 +141,7 @@ test("purchase planner selects the first affordable date and the exact maximum w
   await button(page, "Подставить доступную сумму").click();
   await expect(
     page.getByLabel("Стоимость покупки", { exact: true }),
-  ).toHaveValue("35000");
+  ).toHaveValue("35 000");
   await expect(page.getByTestId("forecast-status")).toHaveText(
     "Без нехватки по этому плану",
   );

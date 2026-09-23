@@ -10,7 +10,14 @@ import {
   useMoney,
   useFinance,
 } from "../../../state/finance";
-import { Button, Field, Notice, Segments, ErrorText } from "../../../shared/ui";
+import {
+  Button,
+  Field,
+  Notice,
+  Segments,
+  ErrorText,
+  AmountField,
+} from "../../../shared/ui";
 import { CreditCardFields } from "./CreditCardFields";
 
 export function AccountForm({
@@ -41,24 +48,24 @@ export function AccountForm({
           accountBalance(state, original.id, today),
           original.currency ?? "RUB",
         )
-      : "0",
+      : "",
   );
   const [limit, setLimit] = useState(
-    moneyInput(original?.creditLimit ?? 0, currency),
+    original ? moneyInput(original.creditLimit ?? 0, currency) : "",
   );
   const [dueDate, setDueDate] = useState(original?.paymentDueDate ?? "");
   const [dueAmount, setDueAmount] = useState(
-    moneyInput(
-      original ? creditPaymentRemaining(state, original, today) : 0,
-      currency,
-    ),
+    original
+      ? moneyInput(creditPaymentRemaining(state, original, today), currency)
+      : "",
   );
   const { error, setError, run } = useActionError();
   const save = () =>
     run(() => {
-      const negative = amount.trim().startsWith("-");
+      const balanceInput = amount.trim() || "0";
+      const negative = balanceInput.startsWith("-");
       const magnitude = parseMoney(
-        /^[+-]/.test(amount.trim()) ? amount.trim().slice(1) : amount,
+        /^[+-]/.test(balanceInput) ? balanceInput.slice(1) : balanceInput,
         currency,
       );
       const parsed =
@@ -68,9 +75,13 @@ export function AccountForm({
           "Укажите корректный остаток в валюте счёта. Задолженность по кредитной карте — со знаком минус.",
         );
       const creditLimit =
-        kind === "credit" ? parseMoney(limit, currency) : undefined;
+        kind === "credit"
+          ? parseMoney(limit.trim() || "0", currency)
+          : undefined;
       const paymentDueAmount =
-        kind === "credit" ? parseMoney(dueAmount, currency) : undefined;
+        kind === "credit"
+          ? parseMoney(dueAmount.trim() || "0", currency)
+          : undefined;
       if (creditLimit === null || paymentDueAmount === null)
         return setError("Проверьте кредитный лимит и обязательный платёж.");
       actions.saveAccount({
@@ -112,7 +123,7 @@ export function AccountForm({
         onChange={setCurrency}
         disabled={!!original}
       />
-      <Field
+      <AmountField
         label={`Текущий остаток, ${currencySymbol(currency)}`}
         accessibilityLabel="Остаток на счёте"
         value={amount}
@@ -122,7 +133,6 @@ export function AccountForm({
             ? "numbers-and-punctuation"
             : "decimal-pad"
         }
-        maxLength={16}
       />
       {kind === "credit" && (
         <>

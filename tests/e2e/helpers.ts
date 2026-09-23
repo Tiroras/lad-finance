@@ -3,6 +3,54 @@ import type { FinanceState } from "../../src/domain/types";
 
 export const STORAGE_KEY = "lad-finance-v1";
 
+export async function pickDate(page: Page, label: string, date: string) {
+  await page
+    .getByRole("button", { name: `Открыть календарь: ${label}`, exact: true })
+    .click();
+  const calendar = page.getByTestId(`date-picker-${label}`);
+  const parsed = new Date(`${date}T12:00:00`);
+  const year = parsed.getFullYear();
+  await calendar
+    .getByRole("button", { name: "Выбрать год", exact: true })
+    .click();
+  const yearButton = calendar.getByRole("button", {
+    name: `${year} год`,
+    exact: true,
+  });
+  while (!(await yearButton.count())) {
+    const firstYear = Number(
+      await calendar
+        .getByRole("button", { name: /^\d+ год$/ })
+        .first()
+        .innerText(),
+    );
+    await calendar
+      .getByRole("button", {
+        name: year < firstYear ? "Предыдущие годы" : "Следующие годы",
+        exact: true,
+      })
+      .click();
+  }
+  await yearButton.click();
+  const month = parsed.toLocaleDateString("ru-RU", { month: "long" });
+  await calendar
+    .getByRole("button", {
+      name: month[0].toUpperCase() + month.slice(1),
+      exact: true,
+    })
+    .click();
+  await calendar
+    .getByRole("button", {
+      name: parsed.toLocaleDateString("ru-RU", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      exact: true,
+    })
+    .click();
+}
+
 export async function readState(page: Page): Promise<FinanceState> {
   return page.evaluate((key) => {
     const value = localStorage.getItem(key);
