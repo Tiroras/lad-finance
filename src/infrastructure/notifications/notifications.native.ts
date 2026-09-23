@@ -1,5 +1,27 @@
 import { Platform } from "react-native";
-import * as Notifications from "expo-notifications";
+import type * as Notifications from "expo-notifications";
+// SDK 57's entrypoint starts push-token registration, which crashes Android Expo Go.
+// Load only the modules needed for local reminders.
+import { cancelScheduledNotificationAsync } from "expo-notifications/build/cancelScheduledNotificationAsync";
+import { getAllScheduledNotificationsAsync } from "expo-notifications/build/getAllScheduledNotificationsAsync";
+import {
+  getPermissionsAsync,
+  requestPermissionsAsync,
+} from "expo-notifications/build/NotificationPermissions";
+import { IosAuthorizationStatus } from "expo-notifications/build/NotificationPermissions.types";
+import {
+  AndroidImportance,
+  AndroidNotificationVisibility,
+} from "expo-notifications/build/NotificationChannelManager.types";
+import {
+  addNotificationResponseReceivedListener,
+  clearLastNotificationResponseAsync,
+  getLastNotificationResponse,
+} from "expo-notifications/build/NotificationsEmitter";
+import { setNotificationHandler } from "expo-notifications/build/NotificationsHandler";
+import { SchedulableTriggerInputTypes } from "expo-notifications/build/Notifications.types";
+import { scheduleNotificationAsync } from "expo-notifications/build/scheduleNotificationAsync";
+import { setNotificationChannelAsync } from "expo-notifications/build/setNotificationChannelAsync";
 import { reminderPlan } from "../../domain/reminders";
 import type { FinanceState } from "../../domain/types";
 import type {
@@ -8,7 +30,7 @@ import type {
 } from "./notifications.types";
 
 const CHANNEL = "lad-payments";
-Notifications.setNotificationHandler({
+setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: false,
     shouldSetBadge: false,
@@ -18,25 +40,21 @@ Notifications.setNotificationHandler({
 });
 async function prepareChannel() {
   if (Platform.OS === "android")
-    await Notifications.setNotificationChannelAsync(CHANNEL, {
+    await setNotificationChannelAsync(CHANNEL, {
       name: "Напоминания о платежах",
-      importance: Notifications.AndroidImportance.DEFAULT,
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PRIVATE,
+      importance: AndroidImportance.DEFAULT,
+      lockscreenVisibility: AndroidNotificationVisibility.PRIVATE,
     });
 }
 function permitted(value: Notifications.NotificationPermissionsStatus) {
   return (
-    value.granted ||
-    value.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    value.granted || value.ios?.status === IosAuthorizationStatus.PROVISIONAL
   );
 }
 export async function requestReminderPermission() {
   await prepareChannel();
-  const existing = await Notifications.getPermissionsAsync();
-  return (
-    permitted(existing) ||
-    permitted(await Notifications.requestPermissionsAsync())
-  );
+  const existing = await getPermissionsAsync();
+  return permitted(existing) || permitted(await requestPermissionsAsync());
 }
 
 let queue: Promise<unknown> = Promise.resolve();
@@ -48,22 +66,21 @@ export function synchronizeReminders(
     .then(async (): Promise<ReminderStatus> => {
       await prepareChannel();
       const enabled = state.settings.reminders?.enabled ?? false;
-      const allowed =
-        enabled && permitted(await Notifications.getPermissionsAsync());
+      const allowed = enabled && permitted(await getPermissionsAsync());
       const plan = allowed
         ? reminderPlan(state)
         : { items: [], truncated: false };
-      const existing = (
-        await Notifications.getAllScheduledNotificationsAsync()
-      ).filter((item) => item.identifier.startsWith("lad."));
+      const existing = (await getAllScheduledNotificationsAsync()).filter(
+        (item) => item.identifier.startsWith("lad."),
+      );
       const wanted = new Map(plan.items.map((item) => [item.id, item]));
       for (const item of existing) {
         if (wanted.get(item.identifier)?.at !== item.content.data?.at) {
-          await Notifications.cancelScheduledNotificationAsync(item.identifier);
+          await cancelScheduledNotificationAsync(item.identifier);
         } else wanted.delete(item.identifier);
       }
       for (const item of wanted.values()) {
-        await Notifications.scheduleNotificationAsync({
+        await scheduleNotificationAsync({
           identifier: item.id,
           content: {
             title: "Лад · проверьте план",
@@ -78,7 +95,7 @@ export function synchronizeReminders(
             },
           },
           trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            type: SchedulableTriggerInputTypes.DATE,
             date: new Date(item.at),
             channelId: CHANNEL,
           },
@@ -105,13 +122,10 @@ export function observePaymentNotifications(
         typeof data.paymentId === "string" ? data.paymentId : undefined,
       date: typeof data.date === "string" ? data.date : undefined,
     });
-    void Notifications.clearLastNotificationResponseAsync().catch(
-      () => undefined,
-    );
+    void clearLastNotificationResponseAsync().catch(() => undefined);
   };
-  const last = Notifications.getLastNotificationResponse();
+  const last = getLastNotificationResponse();
   if (last) handle(last);
-  const listener =
-    Notifications.addNotificationResponseReceivedListener(handle);
+  const listener = addNotificationResponseReceivedListener(handle);
   return () => listener.remove();
 }
