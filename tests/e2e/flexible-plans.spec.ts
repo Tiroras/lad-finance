@@ -19,6 +19,14 @@ test("weekly budgets and payment schedules are editable on a narrow screen and p
   await page.getByRole("tab", { name: "Неделя", exact: true }).click();
   await pickDate(page, "Начало бюджетного периода", TODAY);
   await page.getByLabel("Переносить остаток бюджета", { exact: true }).click();
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.screenshot({
+      path: testInfo.outputPath(`budget-toggles-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await page.setViewportSize({ width: 320, height: 844 });
   await page.getByLabel("Лимит категории", { exact: true }).fill("100");
   await page
     .getByRole("tab", { name: "Только этот период", exact: true })

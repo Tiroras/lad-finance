@@ -45,7 +45,11 @@ export function CategoryRuleEditor({
           { value: "contains", label: "Содержит" },
         ]}
       />
-      <CategoryPicker value={category} onChange={setCategory} />
+      <CategoryPicker
+        value={category}
+        onChange={setCategory}
+        variant="select"
+      />
       <ErrorText error={error} />
       <Button
         label="Сохранить правило"

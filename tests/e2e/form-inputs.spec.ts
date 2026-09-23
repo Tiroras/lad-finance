@@ -152,6 +152,7 @@ test("a saved zero is replaced by the first typed digit without clearing the inp
   state.settings.buffer = 0;
   await startApp(page, TODAY, state);
   await button(page, "Профиль и настройки").click();
+  await button(page, "Профиль и планирование").click();
   const buffer = page.getByLabel("Неприкосновенный остаток", { exact: true });
   await expect(buffer).toHaveValue("0");
   await buffer.click();

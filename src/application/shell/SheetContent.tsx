@@ -6,7 +6,11 @@ import {
   CreditRepaymentForm,
   DebtsPanel,
 } from "../../features/debts";
-import { CsvExportSheet, CsvImportSheet } from "../../features/data-transfer";
+import {
+  CsvExportSheet,
+  CsvImportSheet,
+  DataSettings,
+} from "../../features/data-transfer";
 import {
   ForecastPanel,
   ForecastSettingsForm,
@@ -22,8 +26,18 @@ import {
 } from "../../features/accounts";
 import { BudgetForm } from "../../features/budgets";
 import { FundGoalForm, GoalForm } from "../../features/goals";
-import { PaymentContent, RecurringForm } from "../../features/payments";
-import { SettingsForm, OnboardingFlow } from "../../features/settings";
+import {
+  PaymentContent,
+  RecurringForm,
+  ReminderSettings,
+} from "../../features/payments";
+import {
+  SettingsForm,
+  SettingsMenu,
+  AboutSettings,
+  OnboardingFlow,
+} from "../../features/settings";
+import { SecuritySettings } from "../../features/security";
 import {
   TransactionForm,
   AutomationSettings,
@@ -113,7 +127,17 @@ export function SheetContent({
         />
       );
     case "settings":
-      return <SettingsForm close={close} open={open} />;
+      return <SettingsMenu open={open} />;
+    case "profileSettings":
+      return <SettingsForm close={() => open({ type: "settings" })} />;
+    case "reminderSettings":
+      return <ReminderSettings />;
+    case "securitySettings":
+      return <SecuritySettings />;
+    case "dataSettings":
+      return <DataSettings close={close} open={open} />;
+    case "about":
+      return <AboutSettings />;
     case "csv":
       return <CsvImportSheet close={close} />;
     case "forecast":

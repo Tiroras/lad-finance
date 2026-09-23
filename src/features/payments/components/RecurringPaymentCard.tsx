@@ -1,4 +1,4 @@
-import { Pressable, Switch, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
 import type { Recurring } from "../../../domain/types";
 import { scheduleLabel } from "../../../domain/recurrence";
@@ -12,6 +12,7 @@ import {
   IconTile,
   Row,
   Txt,
+  Toggle,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -63,7 +64,7 @@ export function RecurringPaymentCard({
           <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
             {money(p.amount, false, accountCurrency(state, p.accountId))}
           </Txt>
-          <Switch
+          <Toggle
             accessibilityLabel={`Учитывать ${p.name} в плане`}
             value={p.active}
             onValueChange={(active) =>
@@ -76,8 +77,6 @@ export function RecurringPaymentCard({
                 );
               })
             }
-            trackColor={{ false: "#DADDDA", true: "#73986C" }}
-            thumbColor="#fff"
           />
         </View>
       </Row>

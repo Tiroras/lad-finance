@@ -5,31 +5,40 @@ import { categoryLabel } from "../../../domain/categories";
 import {
   ErrorText,
   Button,
-  Chip,
+  C,
+  Card,
   Field,
+  IconTile,
   Notice,
   Row,
+  Segments,
+  SelectField,
   Txt,
+  font,
 } from "../../../shared/ui";
 import { useActionError } from "../../../shared/lib/useActionError";
 import { useFinanceActions, useFinance } from "../../../state/finance";
+import { CategoryColorPicker, categoryColors } from "./CategoryColorPicker";
 
 const icons: [IconName, string][] = [
   ["leaf-outline", "Продукты"],
   ["cafe-outline", "Кафе"],
   ["car-outline", "Транспорт"],
   ["bag-handle-outline", "Покупки"],
+  ["sparkles-outline", "Впечатления"],
   ["heart-outline", "Здоровье"],
   ["home-outline", "Дом"],
   ["barbell-outline", "Спорт"],
   ["airplane-outline", "Поездки"],
+  ["shield-checkmark-outline", "Защита"],
+  ["wallet-outline", "Кошелёк"],
+  ["card-outline", "Карта"],
+  ["cash-outline", "Наличные"],
+  ["musical-notes-outline", "Музыка"],
+  ["cloud-outline", "Облако"],
+  ["paper-plane-outline", "Посылки"],
+  ["wifi-outline", "Связь"],
   ["grid-outline", "Другое"],
-];
-const colors = [
-  ["Зелёный", "#365A46", "#EAF0E8"],
-  ["Сиреневый", "#81729C", "#EEEBF5"],
-  ["Терракотовый", "#A2684C", "#F8EDE4"],
-  ["Синий", "#52768A", "#E8F0F5"],
 ];
 
 export function CategoryForm({
@@ -44,12 +53,18 @@ export function CategoryForm({
   const actions = useFinanceActions();
   const { error, run } = useActionError();
   const [name, setName] = useState(original?.name ?? "");
-  const [parentId, setParent] = useState(original?.parentId);
-  const [icon, setIcon] = useState<IconName>(original?.icon ?? "grid-outline");
-  const [color, setColor] = useState(original?.color ?? colors[0][1]);
-  const [background, setBackground] = useState(
-    original?.background ?? colors[0][2],
+  const [level, setLevel] = useState<"main" | "sub">(
+    original?.parentId ? "sub" : "main",
   );
+  const [parentId, setParent] = useState(original?.parentId ?? "");
+  const [icon, setIcon] = useState<IconName>(original?.icon ?? "grid-outline");
+  const [color, setColor] = useState<string>(
+    original?.color ?? categoryColors[0][1],
+  );
+  const [background, setBackground] = useState<string>(
+    original?.background ?? categoryColors[0][2],
+  );
+  const parent = state.categories.find((c) => c.id === parentId);
   return (
     <View style={{ gap: 18 }}>
       <Field
@@ -61,24 +76,42 @@ export function CategoryForm({
       />
       {!original ? (
         <>
-          <Txt>Уровень категории</Txt>
-          <Row style={{ flexWrap: "wrap" }}>
-            <Chip
-              label="Основная категория"
-              active={!parentId}
-              onPress={() => setParent(undefined)}
+          <View style={{ gap: 8 }}>
+            <Txt
+              style={{
+                fontSize: 12,
+                fontFamily: font.semibold,
+                color: C.muted,
+              }}
+            >
+              Уровень категории
+            </Txt>
+            <Segments
+              value={level}
+              onChange={setLevel}
+              options={[
+                { value: "main", label: "Основная категория" },
+                { value: "sub", label: "Подкатегория" },
+              ]}
             />
-            {state.categories
-              .filter((c) => !c.parentId && !c.archived)
-              .map((c) => (
-                <Chip
-                  key={c.id}
-                  label={`Внутри: ${c.name}`}
-                  active={parentId === c.id}
-                  onPress={() => setParent(c.id)}
-                />
-              ))}
-          </Row>
+          </View>
+          {level === "sub" && (
+            <SelectField
+              label="Основная категория"
+              placeholder="Выберите основную категорию"
+              value={parentId}
+              onChange={setParent}
+              options={state.categories
+                .filter((c) => !c.parentId && !c.archived)
+                .map((c) => ({
+                  value: c.id,
+                  label: c.name,
+                  icon: c.icon,
+                  color: c.color,
+                  background: c.background,
+                }))}
+            />
+          )}
         </>
       ) : (
         <Notice>
@@ -89,32 +122,46 @@ export function CategoryForm({
           расходов.
         </Notice>
       )}
-      <Txt>Значок</Txt>
-      <Row style={{ flexWrap: "wrap" }}>
-        {icons.map(([value, label]) => (
-          <Chip
-            key={value}
-            label={label}
-            icon={value}
-            active={icon === value}
-            onPress={() => setIcon(value)}
-          />
-        ))}
-      </Row>
-      <Txt>Цвет</Txt>
-      <Row style={{ flexWrap: "wrap" }}>
-        {colors.map(([label, value, bg]) => (
-          <Chip
-            key={value}
-            label={label}
-            active={color === value}
-            onPress={() => {
-              setColor(value);
-              setBackground(bg);
-            }}
-          />
-        ))}
-      </Row>
+      <SelectField
+        label="Значок"
+        value={icon}
+        onChange={setIcon}
+        options={icons.map(([value, label]) => ({
+          value,
+          label,
+          icon: value,
+          color,
+          background,
+        }))}
+      />
+      <CategoryColorPicker
+        color={color}
+        background={background}
+        onChange={(value, bg) => {
+          setColor(value);
+          setBackground(bg);
+        }}
+      />
+      <Card style={{ gap: 10 }}>
+        <Txt style={{ color: C.muted, fontSize: 12 }}>
+          Так будет выглядеть категория
+        </Txt>
+        <Row>
+          <IconTile name={icon} color={color} background={background} />
+          <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
+            <Txt style={{ fontFamily: font.semibold }}>
+              {name.trim() || "Новая категория"}
+            </Txt>
+            <Txt style={{ color: C.muted, fontSize: 12 }}>
+              {level === "sub"
+                ? parent
+                  ? `Подкатегория · ${parent.name}`
+                  : "Подкатегория"
+                : "Основная категория"}
+            </Txt>
+          </View>
+        </Row>
+      </Card>
       <ErrorText error={error} />
       <Button
         label="Сохранить категорию"
@@ -123,7 +170,7 @@ export function CategoryForm({
             actions.saveCategory({
               id,
               name,
-              parentId,
+              parentId: level === "sub" ? parentId : undefined,
               icon,
               color,
               background,

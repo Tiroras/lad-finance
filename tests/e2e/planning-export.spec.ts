@@ -76,7 +76,9 @@ test("custom subcategory can record expenses, share a budget, survive reload and
   await button(page, "Категории и подкатегории").click();
   await button(page, "Создать категорию").click();
   await page.getByLabel("Название категории", { exact: true }).fill("Ремонт");
-  await button(page, "Внутри: Дом").click();
+  await page.getByRole("tab", { name: "Подкатегория", exact: true }).click();
+  await button(page, "Основная категория").click();
+  await page.getByRole("radio", { name: "Дом", exact: true }).click();
   await button(page, "Сохранить категорию").click();
   await expect(button(page, "Настроить: Дом / Ремонт")).toBeVisible();
   await expect.poll(async () => (await read(page)).categories.length).toBe(9);
@@ -225,6 +227,7 @@ test("CSV export downloads universal rows and account-specific YNAB transfers", 
   ];
   await setState(page, state);
   await button(page, "Профиль и настройки").click();
+  await button(page, "Данные и копии").click();
   await button(page, "Экспортировать операции в CSV").click();
   await expect(page.getByTestId("csv-export-count")).toContainText("1");
   let downloadPromise = page.waitForEvent("download");
@@ -263,6 +266,7 @@ test("password backup is portable, wrong password is harmless, and replacement r
   ];
   await setState(page, original);
   await button(page, "Профиль и настройки").click();
+  await button(page, "Данные и копии").click();
   await button(page, "Создать копию с паролем").click();
   await page.getByLabel("Новый пароль копии", { exact: true }).fill(password);
   await page
@@ -289,6 +293,7 @@ test("password backup is portable, wrong password is harmless, and replacement r
   ).toBe(false);
   await setState(page, createInitialState(false, TODAY));
   await button(page, "Профиль и настройки").click();
+  await button(page, "Данные и копии").click();
   await pick(page, "Восстановить из файла", raw);
   await page
     .getByLabel("Пароль для восстановления", { exact: true })

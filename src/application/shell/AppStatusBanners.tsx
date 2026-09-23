@@ -13,7 +13,7 @@ export function AppStatusBanners({ open }: { open: OpenSheet }) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Проверить напоминания"
-          onPress={() => open({ type: "settings" })}
+          onPress={() => open({ type: "reminderSettings" })}
           style={{ padding: 12, backgroundColor: "#F8E8DA" }}
         >
           <Txt style={{ color: C.red, fontSize: 12, textAlign: "center" }}>

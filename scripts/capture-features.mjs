@@ -39,6 +39,9 @@ try {
   });
   await page.getByRole("button", { name: "Профиль и настройки" }).click();
   await page
+    .getByRole("button", { name: "Данные и копии", exact: true })
+    .click();
+  await page
     .getByRole("button", { name: "Импортировать банковский CSV" })
     .click();
   const chooser = page.waitForEvent("filechooser");

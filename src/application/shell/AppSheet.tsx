@@ -9,10 +9,12 @@ export function AppSheet({
   sheet,
   close,
   open,
+  back,
 }: {
   sheet: SheetState | null;
   close: () => void;
   open: OpenSheet;
+  back?: () => void;
 }) {
   const security = useSecurity();
   const id = sheet && "id" in sheet ? sheet.id : undefined;
@@ -29,6 +31,11 @@ export function AppSheet({
     accounts: "Мои счета",
     account: id ? "Настроить счёт" : "Новый счёт",
     settings: "Ваш Лад",
+    profileSettings: "Профиль и планирование",
+    reminderSettings: "Напоминания",
+    securitySettings: "Защита данных",
+    dataSettings: "Данные и копии",
+    about: "О приложении",
     currencies: "Валюты и курсы",
     goal: id ? "Настроить цель" : "Новая мечта",
     fund: "Ближе к цели",
@@ -53,6 +60,7 @@ export function AppSheet({
       blockingContent={security.locked ? <LockScreen compact /> : undefined}
       title={sheet ? titles[sheet.type] : ""}
       onClose={close}
+      onBack={back}
     >
       {/* Keep drafts mounted while the lock screen covers the form. */}
       <View key={`${sheet?.type}-${id ?? "new"}`} style={{ gap: 20 }}>

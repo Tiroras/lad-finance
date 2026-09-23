@@ -4,6 +4,7 @@ import { useFinance, useFinanceStatus } from "../../state/finance";
 import { observePaymentNotifications } from "../../infrastructure/notifications/notifications";
 import { useSecurity } from "../../features/security";
 import type { Tab, SheetState } from "./types";
+import { openSheet, previousSheet, type SheetNavigation } from "./sheets";
 
 export function useAppNavigation() {
   const { state } = useFinance();
@@ -12,14 +13,25 @@ export function useAppNavigation() {
   const stateRef = useRef(state);
   stateRef.current = state;
   const [tab, setTab] = useState<Tab>("home");
-  const [sheet, setSheet] = useState<SheetState | null>(null);
+  const [sheets, setSheets] = useState<SheetNavigation>({
+    current: null,
+    parents: [],
+  });
+  const sheet = sheets.current;
   const scroll = useRef<ScrollView>(null);
   const navigate = useCallback((value: Tab) => {
     setTab(value);
     scroll.current?.scrollTo({ y: 0, animated: false });
   }, []);
-  const open = useCallback((value: SheetState) => setSheet(value), []);
-  const close = useCallback(() => setSheet(null), []);
+  const open = useCallback(
+    (value: SheetState) => setSheets((current) => openSheet(current, value)),
+    [],
+  );
+  const close = useCallback(
+    () => setSheets({ current: null, parents: [] }),
+    [],
+  );
+  const back = useCallback(() => setSheets(previousSheet), []);
   useEffect(() => {
     if (locked) Keyboard.dismiss();
   }, [locked]);
@@ -42,7 +54,7 @@ export function useAppNavigation() {
       () => {
         if (locked) return true;
         if (sheet) {
-          close();
+          back();
           return true;
         }
         if (tab !== "home") {
@@ -53,6 +65,14 @@ export function useAppNavigation() {
       },
     );
     return () => subscription.remove();
-  }, [tab, sheet, locked, close, navigate]);
-  return { tab, sheet, scroll, navigate, open, close };
+  }, [tab, sheet, locked, back, navigate]);
+  return {
+    tab,
+    sheet,
+    scroll,
+    navigate,
+    open,
+    close,
+    back: sheets.parents.length ? back : undefined,
+  };
 }

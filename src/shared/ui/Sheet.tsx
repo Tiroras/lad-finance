@@ -21,6 +21,7 @@ export function Sheet({
   subtitle,
   children,
   onClose,
+  onBack,
   visible,
   blockingContent,
   contentKey,
@@ -29,6 +30,7 @@ export function Sheet({
   subtitle?: string;
   children: ReactNode;
   onClose: () => void;
+  onBack?: () => void;
   visible: boolean;
   blockingContent?: ReactNode;
   contentKey?: string;
@@ -43,7 +45,7 @@ export function Sheet({
       visible={visible}
       animationType="fade"
       onRequestClose={() => {
-        if (!blockingContent) onClose();
+        if (!blockingContent) (onBack ?? onClose)();
       }}
       statusBarTranslucent
     >
@@ -83,8 +85,21 @@ export function Sheet({
               display: blockingContent ? "none" : "flex",
             }}
           >
-            <View style={{ flex: 1, gap: 5 }}>
-              <Txt style={{ fontFamily: font.bold, fontSize: 23 }}>{title}</Txt>
+            {onBack && (
+              <IconButton
+                name="arrow-back"
+                label="Назад"
+                onPress={onBack}
+                style={{ backgroundColor: C.soft }}
+              />
+            )}
+            <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
+              <Txt
+                accessibilityRole="header"
+                style={{ fontFamily: font.bold, fontSize: 23 }}
+              >
+                {title}
+              </Txt>
               {subtitle && (
                 <Txt style={{ fontSize: 12, color: C.muted }}>{subtitle}</Txt>
               )}

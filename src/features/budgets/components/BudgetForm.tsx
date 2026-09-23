@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Switch } from "react-native";
 import {
   budgetPeriod,
   categoryBudget,
@@ -23,6 +22,7 @@ import {
   Segments,
   AmountField,
   DateField,
+  Toggle,
 } from "../../../shared/ui";
 
 export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
@@ -86,7 +86,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
           )}
           <Row style={{ justifyContent: "space-between" }}>
             <Txt style={{ flex: 1 }}>Переносить неиспользованный остаток</Txt>
-            <Switch
+            <Toggle
               accessibilityLabel="Переносить остаток бюджета"
               value={surplus}
               onValueChange={setSurplus}
@@ -94,7 +94,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
           </Row>
           <Row style={{ justifyContent: "space-between" }}>
             <Txt style={{ flex: 1 }}>Переносить перерасход</Txt>
-            <Switch
+            <Toggle
               accessibilityLabel="Переносить перерасход бюджета"
               value={deficit}
               onValueChange={setDeficit}

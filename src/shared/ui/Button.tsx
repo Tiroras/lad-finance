@@ -11,6 +11,7 @@ import { Txt } from "./Txt";
 
 export function Button({
   label,
+  accessibilityLabel = label,
   onPress,
   icon,
   variant = "primary",
@@ -18,6 +19,7 @@ export function Button({
   style,
 }: {
   label: string;
+  accessibilityLabel?: string;
   onPress: () => void;
   icon?: IName;
   variant?: "primary" | "secondary" | "danger";
@@ -29,7 +31,7 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}

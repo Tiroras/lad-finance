@@ -58,18 +58,24 @@ export function CategoriesPanel({ open }: { open: OpenSheet }) {
               {categoryLabel(state, c.id)}
             </Txt>
           </Row>
-          <Button
-            label={`Настроить: ${categoryLabel(state, c.id)}`}
-            variant="secondary"
-            onPress={() => open({ type: "category", id: c.id })}
-          />
-          {!c.parentId && !c.archived && (
+          <Row style={{ alignItems: "stretch" }}>
             <Button
-              label={`Бюджет: ${c.name}`}
+              label="Настроить"
+              accessibilityLabel={`Настроить: ${categoryLabel(state, c.id)}`}
               variant="secondary"
-              onPress={() => open({ type: "budget", id: c.id })}
+              style={{ flex: 1, minWidth: 0, paddingHorizontal: 8 }}
+              onPress={() => open({ type: "category", id: c.id })}
             />
-          )}
+            {!c.parentId && !c.archived && (
+              <Button
+                label="Бюджет"
+                accessibilityLabel={`Бюджет: ${c.name}`}
+                variant="secondary"
+                style={{ flex: 1, minWidth: 0, paddingHorizontal: 8 }}
+                onPress={() => open({ type: "budget", id: c.id })}
+              />
+            )}
+          </Row>
         </Card>
       ))}
     </View>

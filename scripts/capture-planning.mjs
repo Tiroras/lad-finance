@@ -129,10 +129,12 @@ try {
     await shot("saved-scenario");
     await click("Закрыть");
     await click("Профиль и настройки");
+    await click("Данные и копии");
     await click("Экспортировать операции в CSV");
     await shot("csv-export");
     await click("Закрыть");
     await click("Профиль и настройки");
+    await click("Данные и копии");
     await click("Создать копию с паролем");
     await page
       .getByLabel("Новый пароль копии", { exact: true })

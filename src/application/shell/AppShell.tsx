@@ -24,7 +24,8 @@ import { WelcomeBanner } from "../../features/settings";
 export function AppShell() {
   const { ready } = useFinanceStatus();
   const security = useSecurity();
-  const { tab, sheet, scroll, navigate, open, close } = useAppNavigation();
+  const { tab, sheet, scroll, navigate, open, close, back } =
+    useAppNavigation();
   const [hidden, setHidden] = useState(false);
   const { width } = useWindowDimensions();
   const wide = width >= 900;
@@ -75,7 +76,7 @@ export function AppShell() {
         {!sheet && <AppToast wide={wide} />}
       </View>
       {security.locked && !sheet && <LockScreen />}
-      <AppSheet sheet={sheet} close={close} open={open} />
+      <AppSheet sheet={sheet} close={close} open={open} back={back} />
     </SafeAreaView>
   );
 }

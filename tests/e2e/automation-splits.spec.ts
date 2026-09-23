@@ -20,6 +20,7 @@ async function importFile(page: Page) {
 }
 async function openImport(page: Page) {
   await button(page, "Профиль и настройки").click();
+  await button(page, "Данные и копии").click();
   await button(page, "Импортировать банковский CSV").click();
 }
 
@@ -33,7 +34,7 @@ test.beforeEach(async ({ page }) => {
 
 test("explicit rule, favorite template and saved CSV profile survive reload and retain duplicate checks", async ({
   page,
-}) => {
+}, testInfo) => {
   await button(page, "Добавить операцию").click();
   await page
     .getByLabel("Название операции", { exact: true })
@@ -55,6 +56,37 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
   expect((await read(page)).transactions).toHaveLength(0);
   await button(page, "Добавить операцию").click();
   await expect.poll(async () => (await read(page)).transactions.length).toBe(1);
+  await button(page, "Профиль и настройки").click();
+  await button(page, "Правила и шаблоны операций").click();
+  await button(page, "Изменить правило 1").click();
+  const category = button(page, "Категория");
+  await expect(category).toContainText("Продукты");
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await category.scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: testInfo.outputPath(`rule-category-${width}.png`),
+      animations: "disabled",
+    });
+    await category.click();
+    await page
+      .getByRole("radio", { name: "Дом", exact: true })
+      .scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: testInfo.outputPath(`rule-category-list-${width}.png`),
+      animations: "disabled",
+    });
+    await category.click();
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await category.click();
+  await page.getByRole("radio", { name: "Дом", exact: true }).click();
+  await button(page, "Сохранить правило").click();
+  await expect
+    .poll(async () => (await read(page)).categoryRules?.[0].category)
+    .toBe("home");
+  expect((await read(page)).transactions[0].category).toBe("groceries");
+  await button(page, "Закрыть").click();
   await button(page, "Добавить операцию").click();
   await button(page, "Избранные шаблоны").click();
   await page.getByRole("button", { name: /^Магазин у дома ·/ }).click();
@@ -76,7 +108,7 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
   await expect.poll(async () => (await read(page)).csvProfiles?.length).toBe(1);
   await button(page, "Проверить операции").click();
   await expect(
-    page.getByText(/Правило «Соседний магазин» → Продукты/),
+    page.getByText(/Правило «Соседний магазин» → Дом/),
   ).toBeVisible();
   await button(page, "Импортировать 1 операций").click();
   await expect.poll(async () => (await read(page)).transactions.length).toBe(2);
@@ -94,6 +126,7 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
   await button(page, "Проверить операции").click();
   await expect(page.getByText(/Новых выбрано: 0 · повторов: 1/)).toBeVisible();
   await expect(button(page, "Импортировать 0 операций")).toBeDisabled();
+  expect((await read(page)).categoryRules?.[0].category).toBe("home");
 });
 
 test("split purchase and partial refund stay one account movement each on narrow screen", async ({

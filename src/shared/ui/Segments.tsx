@@ -20,6 +20,7 @@ export function Segments<T extends string>({
           accessibilityRole="tab"
           accessibilityLabel={option.label}
           accessibilityState={{ selected: value === option.value }}
+          aria-selected={value === option.value}
           onPress={() => onChange(option.value)}
           style={[s.segment, value === option.value && s.activeSegment]}
         >
@@ -28,6 +29,7 @@ export function Segments<T extends string>({
               fontFamily: font.semibold,
               fontSize: 13,
               color: value === option.value ? C.green : C.muted,
+              textAlign: "center",
             }}
           >
             {option.label}
@@ -50,6 +52,8 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     minHeight: 38,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
     borderRadius: 10,
   },
   activeSegment: {

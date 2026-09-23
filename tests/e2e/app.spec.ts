@@ -162,7 +162,9 @@ test("goal contributions are transfers; savings persist after reload", async ({
   );
 });
 
-test("budget editing and subscription toggle persist", async ({ page }) => {
+test("budget editing and subscription toggle persist", async ({
+  page,
+}, testInfo) => {
   await page.getByRole("tab", { name: "План", exact: true }).click();
   await page
     .getByRole("button", { name: "Изменить бюджет: Продукты", exact: true })
@@ -180,6 +182,13 @@ test("budget editing and subscription toggle persist", async ({ page }) => {
   await page.getByRole("tab", { name: "Платежи", exact: true }).click();
   await page
     .getByLabel("Учитывать Яндекс Плюс в плане", { exact: true })
+    .scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("payment-toggle-on.png"),
+    animations: "disabled",
+  });
+  await page
+    .getByLabel("Учитывать Яндекс Плюс в плане", { exact: true })
     .click();
   await expect
     .poll(
@@ -187,6 +196,10 @@ test("budget editing and subscription toggle persist", async ({ page }) => {
         (await getState(page)).recurring.find((p) => p.id === "plus")?.active,
     )
     .toBe(false);
+  await page.screenshot({
+    path: testInfo.outputPath("payment-toggle-off.png"),
+    animations: "disabled",
+  });
   await page.reload();
   await expect(page.getByText("Больше ясности.")).toBeVisible();
   expect(
@@ -247,6 +260,9 @@ test("export downloads data; import validates and requires replacement confirmat
   await page
     .getByRole("button", { name: "Профиль и настройки", exact: true })
     .click();
+  await page
+    .getByRole("button", { name: "Данные и копии", exact: true })
+    .click();
   const downloadPromise = page.waitForEvent("download");
   await page
     .getByRole("button", {
@@ -286,6 +302,9 @@ test("reset requires confirmation and leaves a usable empty personal ledger", as
 }) => {
   await page
     .getByRole("button", { name: "Профиль и настройки", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Данные и копии", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Начать свой учёт с нуля", exact: true })

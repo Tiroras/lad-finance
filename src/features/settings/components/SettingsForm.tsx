@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { DataManagement } from "../../data-transfer";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
@@ -10,28 +9,15 @@ import {
 import {
   Button,
   C,
-  Card,
   Field,
-  font,
-  IconTile,
-  Row,
   Section,
   Txt,
   ErrorText,
   Chip,
   AmountField,
 } from "../../../shared/ui";
-import { ReminderSettings } from "../../payments";
-import { SecuritySettings } from "../../security";
-import type { OpenSheet } from "../../../application/navigation/types";
 
-export function SettingsForm({
-  close,
-  open,
-}: {
-  close: () => void;
-  open: OpenSheet;
-}) {
+export function SettingsForm({ close }: { close: () => void }) {
   const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
   const { state, notify } = useFinance();
   const actions = useFinanceActions();
@@ -61,24 +47,6 @@ export function SettingsForm({
     });
   return (
     <>
-      <Card style={{ backgroundColor: C.soft, gap: 12 }}>
-        <Row>
-          <IconTile name="leaf-outline" background="#DCE7CF" size={45} />
-          <View style={{ flex: 1, gap: 5 }}>
-            <Txt style={{ fontFamily: font.bold, fontSize: 17 }}>
-              Лад — ваши личные финансы
-            </Txt>
-            <Txt style={{ color: C.muted, fontSize: 11 }}>
-              Версия 1.0 ·{" "}
-              {state.demo ? "демонстрационный режим" : "ваш личный учёт"}
-            </Txt>
-          </View>
-        </Row>
-        <Txt style={{ fontSize: 11, lineHeight: 19, color: "#728068" }}>
-          Записи хранятся локально на этом устройстве. Регистрация, реклама и
-          передача финансовых данных на сервер отсутствуют.
-        </Txt>
-      </Card>
       <Field
         label="Как к вам обращаться?"
         accessibilityLabel="Ваше имя"
@@ -129,59 +97,6 @@ export function SettingsForm({
       </Txt>
       <ErrorText error={error} />
       <Button label="Сохранить настройки" onPress={save} />
-      <View
-        style={{ height: 1, backgroundColor: C.border, marginVertical: 4 }}
-      />
-      <Button
-        label="Валюты и курсы"
-        icon="swap-horizontal-outline"
-        variant="secondary"
-        onPress={() => open({ type: "currencies" })}
-      />
-      <Section title="Данные под вашим контролем" />
-      {state.demo && (
-        <Button
-          label="Пошаговая настройка своего учёта"
-          variant="secondary"
-          onPress={() => open({ type: "onboarding" })}
-        />
-      )}
-      <Button
-        label="Правила и шаблоны операций"
-        variant="secondary"
-        onPress={() => open({ type: "automation" })}
-      />
-      <ReminderSettings />
-      <SecuritySettings />
-      <Button
-        label="Импортировать банковский CSV"
-        icon="document-text-outline"
-        variant="secondary"
-        onPress={() => open({ type: "csv" })}
-      />
-      <Button
-        label="Категории и подкатегории"
-        icon="grid-outline"
-        variant="secondary"
-        onPress={() => open({ type: "categories" })}
-      />
-      <Button
-        label="Экспортировать операции в CSV"
-        icon="download-outline"
-        variant="secondary"
-        onPress={() => open({ type: "export" })}
-      />
-      <DataManagement close={close} />
-      <Txt
-        style={{
-          color: "#9BA391",
-          fontSize: 10,
-          textAlign: "center",
-          marginVertical: 12,
-        }}
-      >
-        Сделано, чтобы с деньгами было спокойнее.
-      </Txt>
     </>
   );
 }
