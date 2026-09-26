@@ -1,5 +1,6 @@
 import { useRef, type ReactNode } from "react";
 import {
+  Animated,
   View,
   Pressable,
   ScrollView,
@@ -15,6 +16,7 @@ import { Txt } from "./Txt";
 import { Row } from "./Row";
 import { IconButton } from "./IconButton";
 import { FormFields } from "./FormFields";
+import { useSheetDrag } from "./useSheetDrag";
 
 export function Sheet({
   title,
@@ -39,6 +41,13 @@ export function Sheet({
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const contentRef = useRef<View>(null);
+  const { translateY, panHandlers } = useSheetDrag({
+    visible,
+    blocked: !!blockingContent,
+    contentKey,
+    height,
+    onClose,
+  });
   return (
     <Modal
       transparent
@@ -57,21 +66,36 @@ export function Sheet({
           width > 700 && { justifyContent: "center" },
         ]}
       >
-        <Pressable
-          accessibilityLabel="Закрыть окно"
-          accessibilityRole="button"
-          onPress={onClose}
-          disabled={!!blockingContent}
-          aria-hidden={!!blockingContent}
-          style={StyleSheet.absoluteFill}
-        />
-        <View
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              opacity: translateY.interpolate({
+                inputRange: [0, height],
+                outputRange: [1, 0],
+                extrapolate: "clamp",
+              }),
+            },
+          ]}
+        >
+          <Pressable
+            accessibilityLabel="Закрыть окно"
+            accessibilityRole="button"
+            onPress={onClose}
+            disabled={!!blockingContent}
+            aria-hidden={!!blockingContent}
+            style={[StyleSheet.absoluteFill, s.backdrop]}
+          />
+        </Animated.View>
+        <Animated.View
+          testID="sheet"
           accessibilityViewIsModal
           style={[
             s.sheet,
             {
               maxHeight: height - Math.max(insets.top, 24),
               paddingBottom: Math.max(insets.bottom, 20),
+              transform: [{ translateY }],
             },
             width > 700 && {
               borderRadius: 28,
@@ -80,41 +104,46 @@ export function Sheet({
           ]}
         >
           {!!blockingContent && blockingContent}
-          <View style={[s.handle, !!blockingContent && { display: "none" }]} />
-          <Row
-            style={{
-              justifyContent: "space-between",
-              paddingHorizontal: 24,
-              marginBottom: 20,
-              display: blockingContent ? "none" : "flex",
-            }}
+          <View
+            {...panHandlers}
+            testID="sheet-drag-area"
+            style={[s.header, !!blockingContent && { display: "none" }]}
           >
-            {onBack && (
+            <View style={s.handle} />
+            <Row
+              style={{
+                justifyContent: "space-between",
+                paddingHorizontal: 24,
+                marginBottom: 20,
+              }}
+            >
+              {onBack && (
+                <IconButton
+                  name="arrow-back"
+                  label="Назад"
+                  onPress={onBack}
+                  style={{ backgroundColor: C.soft }}
+                />
+              )}
+              <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
+                <Txt
+                  accessibilityRole="header"
+                  style={{ fontFamily: font.bold, fontSize: 23 }}
+                >
+                  {title}
+                </Txt>
+                {subtitle && (
+                  <Txt style={{ fontSize: 12, color: C.muted }}>{subtitle}</Txt>
+                )}
+              </View>
               <IconButton
-                name="arrow-back"
-                label="Назад"
-                onPress={onBack}
+                name="close"
+                label="Закрыть"
+                onPress={onClose}
                 style={{ backgroundColor: C.soft }}
               />
-            )}
-            <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
-              <Txt
-                accessibilityRole="header"
-                style={{ fontFamily: font.bold, fontSize: 23 }}
-              >
-                {title}
-              </Txt>
-              {subtitle && (
-                <Txt style={{ fontSize: 12, color: C.muted }}>{subtitle}</Txt>
-              )}
-            </View>
-            <IconButton
-              name="close"
-              label="Закрыть"
-              onPress={onClose}
-              style={{ backgroundColor: C.soft }}
-            />
-          </Row>
+            </Row>
+          </View>
           <FormFields
             key={contentKey}
             disabled={!!blockingContent}
@@ -124,6 +153,7 @@ export function Sheet({
             {(onViewportLayout) => (
               <ScrollView
                 ref={scrollRef}
+                testID="sheet-scroll"
                 removeClippedSubviews={false}
                 key={contentKey}
                 onLayout={onViewportLayout}
@@ -146,7 +176,7 @@ export function Sheet({
               </ScrollView>
             )}
           </FormFields>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -155,9 +185,11 @@ export function Sheet({
 const s = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(20, 35, 27, 0.4)",
     justifyContent: "flex-end",
     alignItems: "center",
+  },
+  backdrop: {
+    backgroundColor: "rgba(20, 35, 27, 0.4)",
   },
   sheet: {
     flexShrink: 1,
@@ -166,7 +198,14 @@ const s = StyleSheet.create({
     maxWidth: 560,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
+  },
+  header: {
     paddingTop: 10,
+    flexShrink: 0,
+    // Let PanResponder own touch drags in the web preview as well.
+    ...(Platform.OS === "web"
+      ? { touchAction: "none", userSelect: "none" }
+      : {}),
   },
   scroll: {
     flexShrink: 1,

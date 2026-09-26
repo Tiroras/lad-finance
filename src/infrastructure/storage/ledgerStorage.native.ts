@@ -41,8 +41,12 @@ export const ledgerStorage = createVault({
     },
     async open(sealed, secret, context) {
       const key = await AESEncryptionKey.import(secret, "hex");
+      // SDK 57 Android requires bytes here despite the JS API accepting base64.
+      const sealedBytes = Uint8Array.from(atob(sealed), (byte) =>
+        byte.charCodeAt(0),
+      );
       const bytes = await aesDecryptAsync(
-        AESSealedData.fromCombined(sealed),
+        AESSealedData.fromCombined(sealedBytes),
         key,
         { additionalData: new TextEncoder().encode(context) },
       );
