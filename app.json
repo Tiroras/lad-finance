@@ -20,7 +20,11 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "app.lad.finance"
+      "package": "app.lad.finance",
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -46,6 +50,11 @@
       ]
     ],
     "scheme": "lad",
-    "description": "Личные финансы в вашем ритме: расходы, цели и понятный план."
+    "description": "Личные финансы в вашем ритме: расходы, цели и понятный план.",
+    "extra": {
+      "eas": {
+        "projectId": "a099cf58-ba46-4662-9c8e-020af1053aad"
+      }
+    }
   }
 }
