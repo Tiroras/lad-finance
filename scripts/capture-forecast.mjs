@@ -1,3 +1,4 @@
+import { openDemoForCapture } from "./capture-profile.mjs";
 import { chromium, expect } from "@playwright/test";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -24,12 +25,19 @@ const capture = (name) =>
 try {
   await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
   await page.goto("http://localhost:8087");
+  await openDemoForCapture(page);
   await expect(page.getByText("Больше ясности.")).toBeVisible();
   await expect
-    .poll(() => page.evaluate(() => !!localStorage.getItem("lad-finance-v1")))
+    .poll(() =>
+      page.evaluate(
+        () => !!localStorage.getItem("lad-profile-demo:lad-finance-v1"),
+      ),
+    )
     .toBe(true);
   await page.evaluate(() => {
-    const state = JSON.parse(localStorage.getItem("lad-finance-v1"));
+    const state = JSON.parse(
+      localStorage.getItem("lad-profile-demo:lad-finance-v1"),
+    );
     state.plannedIncomes = [
       {
         id: "salary-plan",
@@ -41,7 +49,10 @@ try {
       },
     ];
     state.settings.forecast = { dailySpending: 150000, goalDay: 26 };
-    localStorage.setItem("lad-finance-v1", JSON.stringify(state));
+    localStorage.setItem(
+      "lad-profile-demo:lad-finance-v1",
+      JSON.stringify(state),
+    );
   });
   await page.reload();
   await page.getByRole("tab", { name: "План", exact: true }).click();

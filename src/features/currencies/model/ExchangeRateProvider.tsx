@@ -19,8 +19,8 @@ const Context = createContext<{
   refresh: () => Promise<void>;
 } | null>(null);
 export function ExchangeRateProvider({ children }: { children: ReactNode }) {
-  const { state, today, update } = useFinance();
-  const { ready, loadError } = useFinanceStatus();
+  const { state, today, update, profile } = useFinance();
+  const { ready, loadError, switching } = useFinanceStatus();
   const { locked } = useSecurity();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -28,7 +28,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
   const attempted = useRef("");
   const automatic = state.settings.exchange?.automatic ?? true;
   const refresh = useCallback(async () => {
-    if (request.current || !ready || loadError || locked) return;
+    if (request.current || !ready || loadError || locked || switching) return;
     const controller = new AbortController();
     request.current = controller;
     attempted.current = today;
@@ -48,10 +48,16 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       request.current = null;
       setBusy(false);
     }
-  }, [today, ready, loadError, locked, update]);
+  }, [today, ready, loadError, locked, switching, update]);
+  useEffect(() => {
+    attempted.current = "";
+    setError("");
+    return () => request.current?.abort();
+  }, [profile]);
   useEffect(() => {
     if (
       ready &&
+      !switching &&
       !loadError &&
       !locked &&
       !busy &&
@@ -63,6 +69,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
     }
   }, [
     ready,
+    switching,
     loadError,
     locked,
     busy,
@@ -72,8 +79,8 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
     refresh,
   ]);
   useEffect(() => {
-    if (locked || !automatic) request.current?.abort();
-  }, [locked, automatic]);
+    if (locked || !automatic || switching) request.current?.abort();
+  }, [locked, automatic, switching]);
   useEffect(
     () => () => {
       request.current?.abort();

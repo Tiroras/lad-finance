@@ -1,4 +1,4 @@
-import { readState as read, startApp, pickDate } from "./helpers";
+import { readState as read, startApp, pickDate, PROFILE_KEYS } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { saveTransaction } from "../../src/domain/actions/transactions";
@@ -18,7 +18,7 @@ async function openReconciliation(page: Page) {
   await button(page, "Сверить: Основная карта").click();
 }
 
-test("four-step onboarding replaces demo only after confirmation and persists balances and future plans", async ({
+test("four-step onboarding preserves demo and commits balances and future plans to the personal profile", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 740 });
@@ -59,8 +59,14 @@ test("four-step onboarding replaces demo only after confirmation and persists ba
   const buffer = page.getByLabel("Резерв при настройке", { exact: true });
   await expect(buffer).toHaveValue("");
   await buffer.pressSequentially("1000");
-  expect((await read(page)).demo).toBe(true);
-  expect((await read(page)).transactions.length).toBe(demo.transactions.length);
+  expect((await read(page)).demo).toBe(false);
+  expect((await read(page)).transactions).toEqual([]);
+  expect(
+    (await read(page)).accounts.every(
+      (account) => account.openingBalance === 0,
+    ),
+  ).toBe(true);
+  expect(await read(page, "demo")).toEqual(demo);
   await page.screenshot({
     path: "test-results/onboarding-confirmation-320.png",
     fullPage: true,
@@ -73,6 +79,7 @@ test("four-step onboarding replaces demo only after confirmation and persists ba
   expect(accountBalance(state, "savings", TODAY)).toBe(200000);
   expect(state.plannedIncomes).toHaveLength(1);
   expect(state.recurring).toHaveLength(1);
+  expect(await read(page, "demo")).toEqual(demo);
   await page.reload();
   await expect(page.getByText("Тест, всё на виду.")).toBeVisible();
   expect((await read(page)).settings.onboardingCompleted).toBe(true);
@@ -82,6 +89,41 @@ test("four-step onboarding replaces demo only after confirmation and persists ba
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+});
+
+test("starting setup from demo opens an existing personal profile without replacing its records", async ({
+  page,
+}) => {
+  const demo = createInitialState(true, TODAY);
+  demo.settings.onboardingCompleted = false;
+  await start(page, demo);
+  const personal = saveTransaction(
+    createInitialState(false, TODAY),
+    {
+      type: "income",
+      title: "Сохранённый личный доход",
+      category: "other",
+      amount: 98765,
+      date: TODAY,
+      accountId: "card",
+    },
+    TODAY,
+  );
+  personal.settings.exchange = { automatic: false, rates: {} };
+  personal.settings.name = "Личный профиль";
+  await page.evaluate(
+    ({ key, value }) => localStorage.setItem(key, JSON.stringify(value)),
+    { key: PROFILE_KEYS.personal, value: personal },
+  );
+  await button(page, "Настроить свой учёт").click();
+  await button(page, "Настроить свой учёт").click();
+  await expect(page.getByText("Личный профиль, всё на виду.")).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(await read(page)).toEqual(personal);
+  expect(await read(page, "demo")).toEqual(demo);
+  await page.reload();
+  await expect(page.getByText("Личный профиль, всё на виду.")).toBeVisible();
+  expect(await read(page)).toEqual(personal);
 });
 
 test("onboarding accepts untouched empty amounts as zero and skips optional plans", async ({

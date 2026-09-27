@@ -1,5 +1,6 @@
 export {
   FinanceProvider,
+  ProfileReadError,
   useFinance,
   useFinanceStatus,
   useFinanceToast,

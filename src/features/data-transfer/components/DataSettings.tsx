@@ -1,5 +1,6 @@
 import type { OpenSheet } from "../../../application/navigation/types";
-import { useFinance } from "../../../state/finance";
+import { canStartOnboarding } from "../../../domain/onboarding";
+import { useFinance, useFinanceStatus } from "../../../state/finance";
 import { Button, Section } from "../../../shared/ui";
 import { DataManagement } from "./DataManagement";
 
@@ -11,6 +12,7 @@ export function DataSettings({
   close: () => void;
 }) {
   const { state } = useFinance();
+  const { switching } = useFinanceStatus();
   return (
     <>
       <Section title="Импорт и экспорт" style={{ marginBottom: 0 }} />
@@ -18,21 +20,24 @@ export function DataSettings({
         label="Импортировать банковский CSV"
         icon="document-text-outline"
         variant="secondary"
+        disabled={switching}
         onPress={() => open({ type: "csv" })}
       />
       <Button
         label="Экспортировать операции в CSV"
         icon="download-outline"
         variant="secondary"
+        disabled={switching}
         onPress={() => open({ type: "export" })}
       />
       <Section title="Резервные копии" style={{ marginBottom: 0 }} />
       <DataManagement close={close} />
-      {state.demo && (
+      {canStartOnboarding(state) && (
         <Button
           label="Пошаговая настройка своего учёта"
           icon="leaf-outline"
           variant="secondary"
+          disabled={switching}
           onPress={() => open({ type: "onboarding" })}
         />
       )}

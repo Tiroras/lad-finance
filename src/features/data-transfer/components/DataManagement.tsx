@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { View } from "react-native";
 import type { FinanceState } from "../../../domain/types";
-import { useFinance, useFinanceActions } from "../../../state/finance";
+import {
+  useFinance,
+  useFinanceActions,
+  useFinanceStatus,
+} from "../../../state/finance";
 import { useActionError } from "../../../shared/lib/useActionError";
-import { Button, C, ErrorText, Row } from "../../../shared/ui";
+import { Button, C, ErrorText } from "../../../shared/ui";
 import { BackupSettings } from "./BackupSettings";
 import { DataConfirmation } from "./DataConfirmation";
 
@@ -14,6 +18,7 @@ type Confirmation =
 
 export function DataManagement({ close }: { close: () => void }) {
   const { state, notify } = useFinance();
+  const { switching } = useFinanceStatus();
   const actions = useFinanceActions();
   const { error, setError, run } = useActionError();
   const [confirmation, setConfirmation] = useState<Confirmation>(null);
@@ -28,6 +33,7 @@ export function DataManagement({ close }: { close: () => void }) {
   return (
     <>
       <BackupSettings
+        disabled={switching}
         onStart={cancel}
         onReady={(value) => setConfirmation({ type: "restore", state: value })}
       />
@@ -36,6 +42,7 @@ export function DataManagement({ close }: { close: () => void }) {
           title="Копия проверена"
           confirmLabel="Заменить данные этой копией"
           cancelLabel="Отмена восстановления"
+          busy={switching}
           onCancel={cancel}
           onConfirm={() =>
             run(() => {
@@ -49,47 +56,31 @@ export function DataManagement({ close }: { close: () => void }) {
           {confirmation.state.accounts.length} счетов,{" "}
           {confirmation.state.goals.length} целей и{" "}
           {confirmation.state.scenarios?.length ?? 0} сценариев. Восстановление
-          заменит все текущие данные. Сначала экспортируйте их, если хотите
+          заменит данные текущего профиля. Сначала экспортируйте их, если хотите
           сохранить.
         </DataConfirmation>
       )}
       <View
         style={{ height: 1, backgroundColor: C.border, marginVertical: 4 }}
       />
-      {state.demo ? (
-        <Button
-          label="Начать свой учёт с нуля"
-          icon="leaf-outline"
-          variant="secondary"
-          onPress={() => requestReset(false)}
-        />
-      ) : (
-        <Row>
-          <Button
-            label="Очистить учёт"
-            variant="danger"
-            style={{ flex: 1 }}
-            onPress={() => requestReset(false)}
-          />
-          <Button
-            label="Загрузить демо"
-            variant="secondary"
-            style={{ flex: 1 }}
-            onPress={() => requestReset(true)}
-          />
-        </Row>
-      )}
+      <Button
+        label={state.demo ? "Обновить пример" : "Очистить учёт"}
+        variant="danger"
+        disabled={switching}
+        onPress={() => requestReset(state.demo)}
+      />
       {confirmation?.type === "reset" && (
         <DataConfirmation
           title={
-            confirmation.demo ? "Загрузить пример?" : "Начать с чистого листа?"
+            confirmation.demo ? "Обновить пример?" : "Начать с чистого листа?"
           }
           confirmLabel={
             confirmation.demo
-              ? "Да, заменить демоданными"
+              ? "Да, обновить пример"
               : "Да, начать с пустых счетов"
           }
           onCancel={cancel}
+          busy={switching}
           onConfirm={() =>
             run(() => {
               actions.reset(confirmation.demo);
@@ -102,8 +93,9 @@ export function DataManagement({ close }: { close: () => void }) {
             })
           }
         >
-          Текущие операции, категории, цели, платежи, сценарии и остатки будут
-          заменены. При необходимости сначала экспортируйте резервную копию.
+          Операции, категории, цели, платежи, сценарии и остатки текущего
+          профиля будут заменены. При необходимости сначала экспортируйте
+          резервную копию.
         </DataConfirmation>
       )}
       <ErrorText error={error} />

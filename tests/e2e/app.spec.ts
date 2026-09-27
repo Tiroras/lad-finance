@@ -1,4 +1,4 @@
-import { readState as getState, startApp } from "./helpers";
+import { readState as getState, startDemoApp } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { categoryBudget } from "../../src/domain/budgets";
@@ -19,7 +19,7 @@ const spendable = (state: FinanceState) => actualSpendable(state, TODAY);
 const closeSheet = (page: Page) =>
   page.getByRole("button", { name: "Закрыть", exact: true }).click();
 test.beforeEach(async ({ page }) => {
-  await startApp(page, TODAY);
+  await startDemoApp(page, TODAY);
 });
 
 test("overview, accessible navigation, balance visibility and mobile width", async ({
@@ -338,14 +338,22 @@ test("reset requires confirmation and leaves a usable empty personal ledger", as
   await page
     .getByRole("button", { name: "Профиль и настройки", exact: true })
     .click();
+  await page.getByRole("button", { name: "Профили", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Открыть профиль: Личный", exact: true })
+    .click();
+  await expect.poll(async () => (await getState(page)).demo).toBe(false);
+  await page
+    .getByRole("button", { name: "Профиль и настройки", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Данные и копии", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Начать свой учёт с нуля", exact: true })
+    .getByRole("button", { name: "Очистить учёт", exact: true })
     .click();
   await expect(page.getByText("Начать с чистого листа?")).toBeVisible();
-  expect((await getState(page)).demo).toBe(true);
+  expect((await getState(page)).demo).toBe(false);
   await page
     .getByRole("button", { name: "Да, начать с пустых счетов", exact: true })
     .click();

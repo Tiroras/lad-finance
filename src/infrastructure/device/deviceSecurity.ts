@@ -2,6 +2,7 @@ export const deviceSecurityAvailable = false;
 export async function readAppLock() {
   return false;
 }
+export async function clearAppLock() {}
 export async function writeAppLock(_enabled: boolean) {
   throw new Error("Блокировка доступна в приложении для iOS и Android.");
 }

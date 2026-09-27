@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { useFinanceStatus } from "../../../state/finance";
+import { useFinance, useFinanceStatus } from "../../../state/finance";
 import { BackupPicker } from "./BackupPicker";
 import type { FinanceState } from "../../../domain/types";
+import type { LedgerProfile } from "../../../domain/profiles";
 import { Notice } from "../../../shared/ui";
 import { DataConfirmation } from "./DataConfirmation";
 
-export function RecoveryControls() {
-  const { recover } = useFinanceStatus();
+export function RecoveryControls({
+  target,
+  onRecovered,
+}: {
+  target?: LedgerProfile;
+  onRecovered?: () => void;
+}) {
+  const { activeProfile } = useFinance();
+  const { recover, switching } = useFinanceStatus();
+  const destination = target ?? activeProfile;
   const [pending, setPending] = useState<FinanceState | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
@@ -28,21 +37,29 @@ export function RecoveryControls() {
     <View style={{ gap: 15, marginTop: 20, maxWidth: 380 }}>
       <BackupPicker
         label="Выбрать копию для восстановления"
-        disabled={busy}
+        disabled={busy || switching}
         onReady={setPending}
         onStart={() => setPending(null)}
       />
       {pending && (
         <DataConfirmation
+          title={`Восстановить профиль «${destination.name}»?`}
           confirmLabel="Подтвердить восстановление хранилища"
           cancelLabel="Отмена восстановления"
-          busy={busy}
-          onConfirm={() => void run(async () => recover(pending))}
+          busy={busy || switching}
+          onConfirm={() =>
+            void run(async () => {
+              await recover(pending, target?.id);
+              setPending(null);
+              onRecovered?.();
+            })
+          }
           onCancel={() => setPending(null)}
         >
           Копия проверена: {pending.transactions.length} операций.
-          Восстановление заменит недоступное хранилище этой копией и создаст
-          новый ключ шифрования на телефоне.
+          Восстановление заменит данные профиля «{destination.name}» этой копией
+          и создаст новый ключ шифрования на телефоне. Другие профили сохранят
+          свои записи.
         </DataConfirmation>
       )}
       {!!error && <Notice tone="warning">{error}</Notice>}

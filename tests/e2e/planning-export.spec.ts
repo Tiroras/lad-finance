@@ -2,7 +2,7 @@ import {
   readState as read,
   setState,
   startApp,
-  STORAGE_KEY as KEY,
+  activeStorageKey,
 } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
@@ -319,6 +319,7 @@ test("password backup is portable, wrong password is harmless, and replacement r
 test("encrypted backup can recover a corrupt local store without the original device key", async ({
   page,
 }) => {
+  const KEY = await activeStorageKey(page);
   const state = fixture(),
     password = "Пароль восстановления";
   state.settings.name = "Восстановлено";

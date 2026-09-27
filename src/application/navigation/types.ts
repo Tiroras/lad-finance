@@ -4,12 +4,13 @@ import type { CurrencyCode } from "../../domain/currency";
 export type Tab = "home" | "transactions" | "plan" | "analytics";
 type SimpleSheetName =
   | "automation"
-  | "onboarding"
+  | "guide"
   | "simulate"
   | "formula"
   | "accounts"
   | "currencies"
   | "settings"
+  | "profiles"
   | "profileSettings"
   | "reminderSettings"
   | "securitySettings"
@@ -23,6 +24,7 @@ type SimpleSheetName =
   | "export";
 export type SheetState =
   | { type: SimpleSheetName }
+  | { type: "onboarding"; startWithAccounts?: boolean }
   | { type: "debt" | "goal" | "category" | "scenario"; id?: string }
   | {
       type: "reconcile" | "repayDebt" | "repayCredit" | "fund" | "budget";

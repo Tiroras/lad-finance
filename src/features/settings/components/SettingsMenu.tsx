@@ -58,6 +58,12 @@ const groups: { title: string; items: SettingsItem[] }[] = [
     title: "Приложение",
     items: [
       {
+        title: "Профили",
+        description: "Отдельный учёт для разных бюджетов",
+        icon: "people-outline",
+        sheet: { type: "profiles" },
+      },
+      {
         title: "Напоминания",
         description: "Уведомления о предстоящих платежах",
         icon: "notifications-outline",
@@ -74,6 +80,12 @@ const groups: { title: string; items: SettingsItem[] }[] = [
         description: "Импорт, экспорт и резервные копии",
         icon: "folder-open-outline",
         sheet: { type: "dataSettings" },
+      },
+      {
+        title: "Знакомство с Ладом",
+        description: "Счета, операции и планы за три шага",
+        icon: "compass-outline",
+        sheet: { type: "guide" },
       },
       {
         title: "О приложении",
@@ -129,18 +141,18 @@ function SettingsLink({
 }
 
 export function SettingsMenu({ open }: { open: OpenSheet }) {
-  const { state } = useFinance();
+  const { state, activeProfile } = useFinance();
   return (
     <>
       <Card style={{ backgroundColor: C.soft, padding: 16 }}>
         <Row style={{ gap: 14 }}>
           <IconTile name="leaf-outline" background={C.lime} size={42} />
-          <View style={{ flex: 1, gap: 4 }}>
+          <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
             <Txt style={{ fontFamily: font.bold, fontSize: 18 }}>
               {state.settings.name || "Мой учёт"}
             </Txt>
             <Txt style={{ color: C.muted, fontSize: 12 }}>
-              {state.demo ? "Демонстрационный режим" : "Ваш личный учёт"}
+              Профиль: {activeProfile.name}
             </Txt>
           </View>
         </Row>

@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  testIgnore: ["**/demo-disabled.spec.ts", "**/fresh-start.spec.ts"],
   timeout: 45000,
   expect: { timeout: 10000 },
   fullyParallel: false,
@@ -19,7 +20,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "EXPO_OFFLINE=1 CI=1 npx expo start --web --host localhost --port 8087",
+      "EXPO_PUBLIC_ENABLE_DEMO=true EXPO_PUBLIC_RESET_ON_START=false EXPO_OFFLINE=1 CI=1 npx expo start --web --host localhost --port 8087",
     url: "http://localhost:8087",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

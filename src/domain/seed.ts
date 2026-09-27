@@ -69,7 +69,7 @@ export const CATEGORIES: Category[] = [
 ];
 
 export function createInitialState(
-  demo = true,
+  demo = false,
   today = localDate(),
 ): FinanceState {
   const state: FinanceState = {
@@ -103,7 +103,7 @@ export function createInitialState(
       },
     ],
     transactions: [],
-    categories: CATEGORIES.map((c) => ({ ...c })),
+    categories: CATEGORIES.map((c) => ({ ...c, budget: demo ? c.budget : 0 })),
     goals: [],
     recurring: [],
     scenarios: [],

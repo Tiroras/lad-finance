@@ -34,8 +34,10 @@ import {
 import {
   SettingsForm,
   SettingsMenu,
+  ProfilesSettings,
   AboutSettings,
   OnboardingFlow,
+  AppGuide,
 } from "../../features/settings";
 import { SecuritySettings } from "../../features/security";
 import {
@@ -74,7 +76,14 @@ export function SheetContent({
         />
       );
     case "onboarding":
-      return <OnboardingFlow close={close} />;
+      return (
+        <OnboardingFlow
+          close={close}
+          startWithAccounts={sheet.startWithAccounts}
+        />
+      );
+    case "guide":
+      return <AppGuide close={close} />;
     case "automation":
       return <AutomationSettings />;
     case "reconcile":
@@ -128,6 +137,8 @@ export function SheetContent({
       );
     case "settings":
       return <SettingsMenu open={open} />;
+    case "profiles":
+      return <ProfilesSettings close={close} />;
     case "profileSettings":
       return <SettingsForm close={() => open({ type: "settings" })} />;
     case "reminderSettings":

@@ -38,13 +38,21 @@
   },
   "scripts": {
     "start": "expo start",
+    "start:fresh": "EXPO_PUBLIC_RESET_ON_START=true expo start",
+    "start:demo": "EXPO_PUBLIC_ENABLE_DEMO=true expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "web:fresh": "EXPO_PUBLIC_RESET_ON_START=true expo start --web",
+    "web:demo": "EXPO_PUBLIC_ENABLE_DEMO=true expo start --web",
     "test": "node --import tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run test:e2e:demo && npm run test:e2e:personal && npm run test:e2e:fresh",
+    "test:e2e:demo": "playwright test",
+    "test:e2e:personal": "playwright test --config playwright.personal.config.ts",
+    "test:e2e:fresh": "playwright test --config playwright.fresh.config.ts",
     "build": "expo export --platform all",
+    "build:demo": "EXPO_PUBLIC_ENABLE_DEMO=true expo export --platform all",
     "format": "prettier --write App.tsx src tests scripts *.json *.ts docs/*.md README.md"
   },
   "private": true

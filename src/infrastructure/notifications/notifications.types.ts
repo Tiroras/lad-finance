@@ -4,6 +4,8 @@ export interface ReminderStatus {
   truncated: boolean;
 }
 export interface PaymentNotification {
+  profile: FinanceProfile;
   paymentId?: string;
   date?: string;
 }
+import type { FinanceProfile } from "../../domain/profiles";

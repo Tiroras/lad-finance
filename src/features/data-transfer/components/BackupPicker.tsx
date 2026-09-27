@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { pickBackup, unlockBackup } from "../lib/backup";
 import type { FinanceState } from "../../../domain/types";
+import { DEMO_ENABLED } from "../../../shared/lib/buildOptions";
 import { ErrorText, Button, Card, Field, Notice } from "../../../shared/ui";
 
 export function BackupPicker({
@@ -19,6 +20,13 @@ export function BackupPicker({
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const acceptBackup = (state: FinanceState) => {
+    if (state.demo && !DEMO_ENABLED)
+      throw new Error(
+        "В этой копии сохранён демонстрационный учёт. Эта версия приложения поддерживает только личный учёт. Выберите копию своих данных.",
+      );
+    onReady(state);
+  };
   const run = async (task: () => Promise<void>) => {
     setBusy(true);
     setError("");
@@ -43,7 +51,7 @@ export function BackupPicker({
             setRaw(undefined);
             setPassword("");
             const file = await pickBackup();
-            if (file?.kind === "open") onReady(file.state);
+            if (file?.kind === "open") acceptBackup(file.state);
             if (file?.kind === "encrypted") setRaw(file.raw);
           })
         }
@@ -63,24 +71,24 @@ export function BackupPicker({
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={256}
-            editable={!busy}
+            editable={!busy && !disabled}
           />
           <Button
             label={busy ? "Проверка пароля…" : "Открыть защищённую копию"}
-            disabled={busy || !password}
+            disabled={busy || disabled || !password}
             onPress={() =>
               void run(async () => {
                 const state = await unlockBackup(raw, password);
                 setPassword("");
                 setRaw(undefined);
-                onReady(state);
+                acceptBackup(state);
               })
             }
           />
           <Button
             label="Отмена ввода пароля"
             variant="secondary"
-            disabled={busy}
+            disabled={busy || disabled}
             onPress={() => {
               setRaw(undefined);
               setPassword("");

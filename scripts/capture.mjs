@@ -1,3 +1,4 @@
+import { openDemoForCapture } from "./capture-profile.mjs";
 import { chromium } from "@playwright/test";
 import fs from "node:fs/promises";
 
@@ -14,6 +15,7 @@ page.on("console", (message) => {
   if (message.type() === "error") errors.push(message.text());
 });
 await page.goto("http://localhost:8087");
+await openDemoForCapture(page);
 await page.getByText("Больше ясности.").waitFor({ timeout: 60000 });
 await page.evaluate(() => document.fonts.ready);
 await fs.mkdir("docs/screenshots", { recursive: true });

@@ -6,6 +6,8 @@ export type SheetNavigation = {
 };
 
 const settingsSections: SheetName[] = [
+  "profiles",
+  "guide",
   "profileSettings",
   "reminderSettings",
   "securitySettings",

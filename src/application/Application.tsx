@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { C } from "../shared/ui";
+import { Button, C, Txt } from "../shared/ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { Manrope_400Regular } from "@expo-google-fonts/manrope/400Regular";
@@ -9,8 +10,27 @@ import { Manrope_700Bold } from "@expo-google-fonts/manrope/700Bold";
 import { Manrope_800ExtraBold } from "@expo-google-fonts/manrope/800ExtraBold";
 import { AppProviders } from "./providers/AppProviders";
 import { AppShell } from "./shell/AppShell";
+import { FRESH_START_ENABLED } from "../shared/lib/buildOptions";
+import { resetDevelopmentData } from "../infrastructure/storage/developmentReset";
 
 export default function App() {
+  const [startupReady, setStartupReady] = useState(!FRESH_START_ENABLED);
+  const [startupError, setStartupError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    void resetDevelopmentData().then(
+      () => {
+        if (active) setStartupReady(true);
+      },
+      () => {
+        if (active) setStartupError(true);
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [attempt]);
   const [loaded, error] = useFonts({
     Manrope_400Regular,
     Manrope_500Medium,
@@ -20,9 +40,24 @@ export default function App() {
   });
   return (
     <SafeAreaProvider>
-      {!loaded && !error ? (
+      {(!loaded && !error) || !startupReady ? (
         <View style={st.loading}>
-          <ActivityIndicator color={C.green} />
+          {startupError ? (
+            <>
+              <Txt style={{ textAlign: "center" }}>
+                Не удалось очистить данные приложения. Повторите запуск с нуля.
+              </Txt>
+              <Button
+                label="Повторить очистку"
+                onPress={() => {
+                  setStartupError(false);
+                  setAttempt((value) => value + 1);
+                }}
+              />
+            </>
+          ) : (
+            <ActivityIndicator color={C.green} />
+          )}
         </View>
       ) : (
         <AppProviders>
@@ -40,5 +75,6 @@ const st = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
+    gap: 16,
   },
 });

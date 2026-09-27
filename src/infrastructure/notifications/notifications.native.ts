@@ -24,6 +24,8 @@ import { scheduleNotificationAsync } from "expo-notifications/build/scheduleNoti
 import { setNotificationChannelAsync } from "expo-notifications/build/setNotificationChannelAsync";
 import { reminderPlan } from "../../domain/reminders";
 import type { FinanceState } from "../../domain/types";
+import type { FinanceProfile } from "../../domain/profiles";
+import { readPaymentNotification, reminderChanges } from "./notificationPlan";
 import type {
   PaymentNotification,
   ReminderStatus,
@@ -58,8 +60,25 @@ export async function requestReminderPermission() {
 }
 
 let queue: Promise<unknown> = Promise.resolve();
+export async function clearPaymentNotifications() {
+  await queue.catch(() => undefined);
+  const changes = reminderChanges(
+    [],
+    await getAllScheduledNotificationsAsync(),
+    "personal",
+  );
+  for (const identifier of changes.cancel)
+    await cancelScheduledNotificationAsync(identifier);
+  if (
+    getLastNotificationResponse()?.notification.request.content.data?.source ===
+    "lad"
+  )
+    await clearLastNotificationResponseAsync();
+}
+
 export function synchronizeReminders(
   state: FinanceState,
+  profile: FinanceProfile,
 ): Promise<ReminderStatus> {
   const task = queue
     .catch(() => undefined)
@@ -70,16 +89,15 @@ export function synchronizeReminders(
       const plan = allowed
         ? reminderPlan(state)
         : { items: [], truncated: false };
-      const existing = (await getAllScheduledNotificationsAsync()).filter(
-        (item) => item.identifier.startsWith("lad."),
+      const changes = reminderChanges(
+        plan.items,
+        await getAllScheduledNotificationsAsync(),
+        profile,
       );
-      const wanted = new Map(plan.items.map((item) => [item.id, item]));
-      for (const item of existing) {
-        if (wanted.get(item.identifier)?.at !== item.content.data?.at) {
-          await cancelScheduledNotificationAsync(item.identifier);
-        } else wanted.delete(item.identifier);
+      for (const identifier of changes.cancel) {
+        await cancelScheduledNotificationAsync(identifier);
       }
-      for (const item of wanted.values()) {
+      for (const item of changes.schedule) {
         await scheduleNotificationAsync({
           identifier: item.id,
           content: {
@@ -89,6 +107,7 @@ export function synchronizeReminders(
               : "В плане остались неоплаченные платежи. Отметьте оплату или пропустите ненужные.",
             data: {
               source: "lad",
+              profile,
               at: item.at,
               paymentId: item.paymentId ?? null,
               date: item.date ?? null,
@@ -117,11 +136,8 @@ export function observePaymentNotifications(
   const handle = (response: Notifications.NotificationResponse) => {
     const data = response.notification.request.content.data;
     if (data?.source !== "lad") return;
-    callback({
-      paymentId:
-        typeof data.paymentId === "string" ? data.paymentId : undefined,
-      date: typeof data.date === "string" ? data.date : undefined,
-    });
+    const notification = readPaymentNotification(data);
+    if (notification) callback(notification);
     void clearLastNotificationResponseAsync().catch(() => undefined);
   };
   const last = getLastNotificationResponse();

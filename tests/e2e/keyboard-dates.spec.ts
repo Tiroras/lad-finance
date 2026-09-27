@@ -80,7 +80,8 @@ test("onboarding keyboard navigation follows each step and Done only ends input"
   await field(page, labels[3]).press("Enter");
   await expect(field(page, labels[3])).not.toBeFocused();
   await expect(page.getByText("Шаг 1 из 4", { exact: true })).toBeVisible();
-  expect((await readState(page)).demo).toBe(true);
+  expect((await readState(page)).demo).toBe(false);
+  expect(await readState(page, "demo")).toEqual(state);
   await button(page, "Продолжить").click();
   await field(page, "Название ожидаемого дохода").click();
   await field(page, "Название ожидаемого дохода").press("Enter");

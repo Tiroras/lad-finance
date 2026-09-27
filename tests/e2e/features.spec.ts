@@ -1,4 +1,4 @@
-import { readState, setState, startApp, STORAGE_KEY as KEY } from "./helpers";
+import { readState, setState, startApp, activeStorageKey } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { accountBalance, spendable } from "../../src/domain/finance";
@@ -186,6 +186,7 @@ test("a previously imported expense can settle a planned payment without adding 
 test("a corrupt store remains untouched until a validated recovery is confirmed", async ({
   page,
 }) => {
+  const KEY = await activeStorageKey(page);
   await page.evaluate(
     (key) => localStorage.setItem(key, "corrupted-state"),
     KEY,

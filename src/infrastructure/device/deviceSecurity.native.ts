@@ -18,6 +18,10 @@ export async function readAppLock() {
 export async function writeAppLock(enabled: boolean) {
   await SecureStore.setItemAsync(LOCK_KEY, enabled ? "on" : "off", options);
 }
+export async function clearAppLock() {
+  await SecureStore.deleteItemAsync(LOCK_KEY, options);
+  await protectScreen(false);
+}
 export async function authenticateDevice() {
   const level = await LocalAuthentication.getEnrolledLevelAsync();
   if (level === LocalAuthentication.SecurityLevel.NONE)

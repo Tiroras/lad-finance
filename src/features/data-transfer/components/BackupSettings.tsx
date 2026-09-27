@@ -27,11 +27,13 @@ import { BackupPicker } from "./BackupPicker";
 export function BackupSettings({
   onReady,
   onStart,
+  disabled = false,
 }: {
   onReady: (state: FinanceState) => void;
   onStart: () => void;
+  disabled?: boolean;
 }) {
-  const { state, notify, today } = useFinance();
+  const { state, notify, today, profile } = useFinance();
   const [password, setPassword] = useState(""),
     [confirmation, setConfirmation] = useState("");
   const [protect, setProtect] = useState(false),
@@ -40,7 +42,8 @@ export function BackupSettings({
   const [last, setLast] = useState<string>();
   useEffect(() => {
     let active = true;
-    void readLastBackupDate()
+    setLast(undefined);
+    void readLastBackupDate(profile)
       .then((value) => {
         if (active && value && validDate(value)) setLast(value);
       })
@@ -48,7 +51,7 @@ export function BackupSettings({
     return () => {
       active = false;
     };
-  }, []);
+  }, [profile]);
   const save = async (encrypted: boolean) => {
     setBusy(true);
     setError("");
@@ -63,7 +66,7 @@ export function BackupSettings({
       setProtect(false);
       const date = localDate();
       setLast(date);
-      await writeLastBackupDate(date).catch(() => {});
+      await writeLastBackupDate(profile, date).catch(() => {});
       notify("Резервная копия подготовлена. Сохраните файл в выбранном месте.");
     } catch (e) {
       setError(
@@ -94,7 +97,7 @@ export function BackupSettings({
         label="Создать копию с паролем"
         icon="lock-closed-outline"
         variant="secondary"
-        disabled={busy}
+        disabled={busy || disabled}
         onPress={() => setProtect(!protect)}
       />
       {protect && (
@@ -113,7 +116,7 @@ export function BackupSettings({
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={256}
-            editable={!busy}
+            editable={!busy && !disabled}
           />
           <Field
             label="Повторите пароль"
@@ -124,11 +127,11 @@ export function BackupSettings({
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={256}
-            editable={!busy}
+            editable={!busy && !disabled}
           />
           <Button
             label={busy ? "Защищаем копию…" : "Сохранить защищённую копию"}
-            disabled={busy}
+            disabled={busy || disabled}
             onPress={() => void save(true)}
           />
         </Card>
@@ -141,13 +144,13 @@ export function BackupSettings({
         label="Экспортировать резервную копию"
         icon="download-outline"
         variant="secondary"
-        disabled={busy}
+        disabled={busy || disabled}
         onPress={() => void save(false)}
       />
       <ErrorText error={error} />
       <BackupPicker
         label="Восстановить из файла"
-        disabled={busy}
+        disabled={busy || disabled}
         onStart={onStart}
         onReady={onReady}
       />

@@ -8,6 +8,7 @@ const browser = await chromium.launch({
 });
 const errors = [];
 const state = createInitialState(false, "2026-09-10");
+state.demo = true;
 state.accounts[0].openingBalance = 2000000;
 state.settings.buffer = 500000;
 state.categories.push({
@@ -86,10 +87,13 @@ try {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.clock.install({ time: new Date("2026-09-10T12:00:00+04:00") });
-    await page.addInitScript(
-      (data) => localStorage.setItem("lad-finance-v1", JSON.stringify(data)),
-      state,
-    );
+    await page.addInitScript((data) => {
+      localStorage.setItem(
+        "lad-profile-demo:lad-finance-v1",
+        JSON.stringify(data),
+      );
+      localStorage.setItem("lad-active-profile-v1", "demo");
+    }, state);
     await page.goto("http://localhost:8087");
     const click = (name) =>
       page.getByRole("button", { name, exact: true }).click();

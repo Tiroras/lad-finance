@@ -1,6 +1,14 @@
 import { View, Pressable, StyleSheet } from "react-native";
 import { useFinance } from "../../state/finance";
-import { C, font, Txt, Row, IconButton } from "../../shared/ui";
+import {
+  C,
+  font,
+  Txt,
+  Row,
+  Icon,
+  IconButton,
+  interactionStyles,
+} from "../../shared/ui";
 import type { OpenSheet } from "../navigation/types";
 import { Brand } from "./Brand";
 
@@ -15,7 +23,7 @@ export function AppHeader({
   onToggleBalance: () => void;
   open: OpenSheet;
 }) {
-  const { state } = useFinance();
+  const { state, profiles, activeProfile } = useFinance();
   return (
     <Row style={[st.header, wide && { paddingHorizontal: 38, height: 80 }]}>
       {wide ? (
@@ -36,23 +44,28 @@ export function AppHeader({
         <Brand small />
       )}
       <View style={{ flex: 1 }} />
-      {state.demo && (
+      {profiles.length > 1 && (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Деморежим, открыть настройки"
-          onPress={() => open({ type: "settings" })}
-          style={st.demoBadge}
+          accessibilityLabel={`Текущий профиль: ${activeProfile.name}. Открыть профили`}
+          onPress={() => open({ type: "profiles" })}
+          style={({ pressed }) => [
+            st.profileBadge,
+            pressed && interactionStyles.pressed,
+          ]}
         >
           <Txt
+            numberOfLines={1}
             style={{
-              color: "#7E8E6A",
-              fontSize: 9,
-              fontFamily: font.bold,
-              letterSpacing: 0.7,
+              color: C.green,
+              fontSize: 11,
+              fontFamily: font.semibold,
+              flexShrink: 1,
             }}
           >
-            ДЕМО
+            {activeProfile.name}
           </Txt>
+          <Icon name="chevron-down" size={12} color={C.green} />
         </Pressable>
       )}
       <IconButton
@@ -86,13 +99,20 @@ const st = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#EEF0E9",
   },
-  demoBadge: {
-    borderRadius: 7,
+  profileBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minWidth: 0,
+    maxWidth: 148,
+    flexShrink: 1,
+    minHeight: 38,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#DAE2CF",
+    borderColor: C.border,
     paddingHorizontal: 8,
     paddingVertical: 5,
-    backgroundColor: "#F2F5EB",
+    backgroundColor: C.soft,
   },
   avatar: {
     width: 37,

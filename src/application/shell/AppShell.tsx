@@ -20,15 +20,22 @@ import { ActiveScreen } from "./ActiveScreen";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 import { AppToast } from "./AppToast";
 import { WelcomeBanner } from "../../features/settings";
+import { FirstRunScreen } from "./FirstRunScreen";
 
 export function AppShell() {
-  const { ready } = useFinanceStatus();
+  const { ready, needsIntroduction } = useFinanceStatus();
   const security = useSecurity();
   const { tab, sheet, scroll, navigate, open, close, back } =
     useAppNavigation();
   const [hidden, setHidden] = useState(false);
   const { width } = useWindowDimensions();
   const wide = width >= 900;
+  if (needsIntroduction)
+    return (
+      <FirstRunScreen
+        onSetup={() => open({ type: "onboarding", startWithAccounts: true })}
+      />
+    );
   if (!ready) return <AppLoadingScreen />;
 
   return (

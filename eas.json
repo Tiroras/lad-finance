@@ -5,6 +5,10 @@
       "distribution": "internal",
       "android": { "buildType": "apk" }
     },
+    "demo": {
+      "extends": "preview",
+      "env": { "EXPO_PUBLIC_ENABLE_DEMO": "true" }
+    },
     "production": { "autoIncrement": true }
   }
 }

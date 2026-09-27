@@ -13,6 +13,7 @@ import type {
   ReminderPreferences,
 } from "../../domain/types";
 import { useFinance } from "./FinanceProvider";
+import { assertDemoAllowed } from "./demoMode";
 
 export function useFinanceActions() {
   const { update, today } = useFinance();
@@ -124,8 +125,12 @@ export function useFinanceActions() {
         update((s) =>
           applyCsvImport(s, table, options, excluded, overrides, today),
         ),
-      restore: (backup: FinanceState) =>
-        update((s) => actions.restoreFinance(s, backup)),
+      restore: (backup: FinanceState) => {
+        assertDemoAllowed(backup);
+        return update((s) =>
+          actions.restoreFinance(s, { ...backup, demo: s.demo }),
+        );
+      },
       reset: (demo: boolean) =>
         update((s) => actions.resetFinance(s, demo, today)),
     }),

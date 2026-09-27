@@ -1,6 +1,7 @@
 import type { CurrencyCode } from "../currency";
 import { currencyRate } from "../currency";
 import { createInitialState } from "../seed";
+import { canStartOnboarding } from "../onboarding";
 import type { FinanceState } from "../types";
 import { localDate, validDate } from "../../shared/lib/dates";
 import { savePlannedIncome } from "./incomes";
@@ -29,6 +30,7 @@ export interface OnboardingInput {
 }
 
 export function acceptDemo(state: FinanceState): FinanceState {
+  ensure(state.demo, "Демонстрационный учёт не открыт.");
   return {
     ...state,
     settings: { ...state.settings, onboardingCompleted: true },
@@ -41,7 +43,7 @@ export function completeOnboarding(
   today = localDate(),
 ): FinanceState {
   ensure(
-    state.demo,
+    canStartOnboarding(state),
     "Собственный учёт уже начат. Измените счета и планы в соответствующих разделах.",
   );
   ensure(

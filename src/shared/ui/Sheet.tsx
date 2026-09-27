@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from "react";
+import { useCallback, useRef, type ReactNode } from "react";
 import {
   Animated,
   View,
@@ -17,6 +17,7 @@ import { Row } from "./Row";
 import { IconButton } from "./IconButton";
 import { FormFields } from "./FormFields";
 import { useSheetDrag } from "./useSheetDrag";
+import { SheetScrollProvider } from "./SheetScroll";
 
 export function Sheet({
   title,
@@ -40,6 +41,9 @@ export function Sheet({
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
+  const scrollToStart = useCallback(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, []);
   const contentRef = useRef<View>(null);
   const { translateY, panHandlers } = useSheetDrag({
     visible,
@@ -171,7 +175,9 @@ export function Sheet({
                 }}
               >
                 <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
-                  {children}
+                  <SheetScrollProvider scrollToStart={scrollToStart}>
+                    {children}
+                  </SheetScrollProvider>
                 </View>
               </ScrollView>
             )}

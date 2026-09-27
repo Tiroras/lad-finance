@@ -5,13 +5,15 @@ import { observePaymentNotifications } from "../../infrastructure/notifications/
 import { useSecurity } from "../../features/security";
 import type { Tab, SheetState } from "./types";
 import { openSheet, previousSheet, type SheetNavigation } from "./sheets";
+import { notificationTarget } from "./notificationTarget";
 
 export function useAppNavigation() {
-  const { state } = useFinance();
-  const { ready } = useFinanceStatus();
+  const { state, profile } = useFinance();
+  const previousProfile = useRef(profile);
+  const { ready, switching } = useFinanceStatus();
   const { locked } = useSecurity();
-  const stateRef = useRef(state);
-  stateRef.current = state;
+  const currentRef = useRef({ state, profile, switching });
+  currentRef.current = { state, profile, switching };
   const [tab, setTab] = useState<Tab>("home");
   const [sheets, setSheets] = useState<SheetNavigation>({
     current: null,
@@ -36,17 +38,33 @@ export function useAppNavigation() {
     if (locked) Keyboard.dismiss();
   }, [locked]);
   useEffect(() => {
-    if (!ready) return;
-    return observePaymentNotifications(({ paymentId, date }) => {
-      navigate("plan");
-      if (
-        paymentId &&
-        date &&
-        stateRef.current.recurring.some((p) => p.id === paymentId)
-      )
-        open({ type: "payment", id: paymentId, date });
+    const continueSetup =
+      previousProfile.current === "demo" && profile === "personal";
+    previousProfile.current = profile;
+    navigate("home");
+    Keyboard.dismiss();
+    // The setup wizard intentionally continues after opening the personal profile.
+    setSheets((current) =>
+      continueSetup && current.current?.type === "onboarding"
+        ? current
+        : { current: null, parents: [] },
+    );
+  }, [profile, navigate]);
+  useEffect(() => {
+    if (!ready || switching) return;
+    return observePaymentNotifications((notification) => {
+      const current = currentRef.current;
+      if (current.switching) return;
+      const target = notificationTarget(
+        notification,
+        current.profile,
+        current.state,
+      );
+      if (!target) return;
+      navigate(target.tab);
+      if (target.sheet) open(target.sheet);
     });
-  }, [ready, navigate, open]);
+  }, [ready, switching, navigate, open]);
   useEffect(() => {
     if (Platform.OS !== "android") return;
     const subscription = BackHandler.addEventListener(
