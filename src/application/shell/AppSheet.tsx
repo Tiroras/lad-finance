@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { View } from "react-native";
 import { Sheet } from "../../shared/ui";
 import { useSecurity, LockScreen } from "../../features/security";
@@ -10,20 +11,30 @@ export function AppSheet({
   close,
   open,
   back,
+  returnToGuide,
+  tourCoach,
+  startTour,
 }: {
   sheet: SheetState | null;
   close: () => void;
   open: OpenSheet;
   back?: () => void;
+  returnToGuide?: () => void;
+  tourCoach?: ReactNode;
+  startTour: (id?: string) => void;
 }) {
   const security = useSecurity();
   const id = sheet && "id" in sheet ? sheet.id : undefined;
+  const contentKey =
+    sheet?.type === "guide"
+      ? `guide-${sheet.journey ? "journey" : (sheet.lesson ?? "catalog")}`
+      : `${sheet?.type}-${id ?? "new"}`;
   const titles: Record<SheetState["type"], string> = {
     transaction: id ? "Детали операции" : "Новая операция",
     automation: "Правила и шаблоны",
     reconcile: "Сверка счёта",
     onboarding: "Начнём ваш учёт",
-    guide: "Знакомство с Ладом",
+    guide: "Обучение",
     debt: id ? "Условия долга" : "Новый долг",
     repayDebt: "Возврат долга",
     repayCredit: "Погашение кредитной карты",
@@ -58,15 +69,22 @@ export function AppSheet({
   return (
     <Sheet
       visible={!!sheet}
-      contentKey={`${sheet?.type}-${id ?? "new"}`}
+      contentKey={contentKey}
       blockingContent={security.locked ? <LockScreen compact /> : undefined}
       title={sheet ? titles[sheet.type] : ""}
       onClose={close}
       onBack={back}
+      headerAccessory={tourCoach}
     >
       {/* Keep drafts mounted while the lock screen covers the form. */}
-      <View key={`${sheet?.type}-${id ?? "new"}`} style={{ gap: 20 }}>
-        <SheetContent sheet={sheet} close={close} open={open} />
+      <View key={contentKey} style={{ gap: 20 }}>
+        <SheetContent
+          sheet={sheet}
+          close={close}
+          open={open}
+          returnToGuide={returnToGuide}
+          startTour={startTour}
+        />
         <SheetToast />
       </View>
     </Sheet>

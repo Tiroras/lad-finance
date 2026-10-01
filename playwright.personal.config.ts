@@ -7,6 +7,7 @@ export default defineConfig({
     "**/demo-disabled.spec.ts",
     "**/profiles.spec.ts",
     "**/first-run.spec.ts",
+    "**/learning.spec.ts",
   ],
   testIgnore: [],
   outputDir: "test-results/personal",

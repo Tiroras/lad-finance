@@ -1,10 +1,10 @@
 import type { Transaction } from "../../domain/types";
 import type { CurrencyCode } from "../../domain/currency";
+import type { LessonId } from "../../features/settings";
 
 export type Tab = "home" | "transactions" | "plan" | "analytics";
 type SimpleSheetName =
   | "automation"
-  | "guide"
   | "simulate"
   | "formula"
   | "accounts"
@@ -24,6 +24,7 @@ type SimpleSheetName =
   | "export";
 export type SheetState =
   | { type: SimpleSheetName }
+  | { type: "guide"; journey?: boolean; lesson?: LessonId }
   | { type: "onboarding"; startWithAccounts?: boolean }
   | { type: "debt" | "goal" | "category" | "scenario"; id?: string }
   | {
@@ -37,7 +38,12 @@ export type SheetState =
       currency?: CurrencyCode;
       accountKind?: "spending" | "savings" | "credit";
     }
-  | { type: "recurring"; id?: string; sourceTransactionId?: string }
+  | {
+      type: "recurring";
+      id?: string;
+      sourceTransactionId?: string;
+      kind?: "bill" | "subscription";
+    }
   | { type: "income"; id?: string; date?: string }
   | { type: "payment"; id: string; date: string };
 export type SheetName = SheetState["type"];

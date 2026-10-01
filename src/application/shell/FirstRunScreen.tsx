@@ -7,7 +7,13 @@ import { useFinanceStatus } from "../../state/finance";
 import { C } from "../../shared/ui";
 import { Brand } from "./Brand";
 
-export function FirstRunScreen({ onSetup }: { onSetup: () => void }) {
+export function FirstRunScreen({
+  onSetup,
+  onLearn,
+}: {
+  onSetup: () => void;
+  onLearn: () => void;
+}) {
   const { finishIntroduction } = useFinanceStatus();
   const { locked } = useSecurity();
   return (
@@ -20,9 +26,10 @@ export function FirstRunScreen({ onSetup }: { onSetup: () => void }) {
       >
         <FirstRunFlow
           brand={<Brand />}
-          onFinish={async (setup) => {
+          onFinish={async (mode) => {
             await finishIntroduction();
-            if (setup) onSetup();
+            if (mode === "setup") onSetup();
+            if (mode === "learn") onLearn();
           }}
         />
       </View>

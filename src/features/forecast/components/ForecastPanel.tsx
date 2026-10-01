@@ -25,7 +25,11 @@ export function ForecastPanel({ open }: { open: OpenSheet }) {
   return (
     <View style={{ gap: 20 }}>
       <CurrencyNotice />
-      <ForecastRange value={horizon} onChange={setHorizon} />
+      <ForecastRange
+        value={horizon}
+        onChange={setHorizon}
+        tourId="forecast.60"
+      />
       <Button
         label="Настроить прогноз"
         icon="options-outline"
@@ -34,6 +38,7 @@ export function ForecastPanel({ open }: { open: OpenSheet }) {
       />
       <ForecastResultView result={result} open={open} />
       <Button
+        tourId="forecast.scenarios"
         label="Мои сценарии"
         icon="git-compare-outline"
         variant="secondary"

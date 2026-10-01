@@ -15,7 +15,7 @@ export * from "./Progress";
 export * from "./Empty";
 export * from "./Notice";
 export * from "./Sheet";
-export { useSheetScrollToStart } from "./SheetScroll";
+export { useSheetScrollToStart, useSheetReveal } from "./SheetScroll";
 export * from "./Donut";
 export * from "./BarChart";
 export * from "./HeroArt";
@@ -28,3 +28,9 @@ export { AmountField } from "./AmountField";
 export { DateField } from "./DateField";
 export { SelectField } from "./SelectField";
 export { Toggle } from "./Toggle";
+export {
+  TourProvider,
+  TourTarget,
+  TourScrollProvider,
+  useTourAction,
+} from "./Tour";

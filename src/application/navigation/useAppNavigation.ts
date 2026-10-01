@@ -4,7 +4,12 @@ import { useFinance, useFinanceStatus } from "../../state/finance";
 import { observePaymentNotifications } from "../../infrastructure/notifications/notifications";
 import { useSecurity } from "../../features/security";
 import type { Tab, SheetState } from "./types";
-import { openSheet, previousSheet, type SheetNavigation } from "./sheets";
+import {
+  openSheet,
+  previousSheet,
+  returnToLearning,
+  type SheetNavigation,
+} from "./sheets";
 import { notificationTarget } from "./notificationTarget";
 
 export function useAppNavigation() {
@@ -21,6 +26,10 @@ export function useAppNavigation() {
   });
   const sheet = sheets.current;
   const scroll = useRef<ScrollView>(null);
+  const backOverride = useRef<(() => boolean) | null>(null);
+  const setBackOverride = useCallback((handler: (() => boolean) | null) => {
+    backOverride.current = handler;
+  }, []);
   const navigate = useCallback((value: Tab) => {
     setTab(value);
     scroll.current?.scrollTo({ y: 0, animated: false });
@@ -33,7 +42,16 @@ export function useAppNavigation() {
     () => setSheets({ current: null, parents: [] }),
     [],
   );
+  const restoreLocation = useCallback(
+    (value: Tab, route: readonly SheetState[]) => {
+      setTab(value);
+      setSheets({ current: route.at(-1) ?? null, parents: route.slice(0, -1) });
+      scroll.current?.scrollTo({ y: 0, animated: false });
+    },
+    [],
+  );
   const back = useCallback(() => setSheets(previousSheet), []);
+  const finishLearningForm = useCallback(() => setSheets(returnToLearning), []);
   useEffect(() => {
     if (locked) Keyboard.dismiss();
   }, [locked]);
@@ -71,6 +89,7 @@ export function useAppNavigation() {
       "hardwareBackPress",
       () => {
         if (locked) return true;
+        if (backOverride.current?.()) return true;
         if (sheet) {
           back();
           return true;
@@ -87,10 +106,16 @@ export function useAppNavigation() {
   return {
     tab,
     sheet,
+    sheets,
     scroll,
     navigate,
     open,
     close,
+    restoreLocation,
+    setBackOverride,
     back: sheets.parents.length ? back : undefined,
+    returnToGuide: sheets.parents.some((parent) => parent.type === "guide")
+      ? finishLearningForm
+      : undefined,
   };
 }

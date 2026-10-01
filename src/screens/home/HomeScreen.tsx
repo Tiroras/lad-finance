@@ -22,7 +22,7 @@ export function HomeScreen({
   const { width } = useWindowDimensions();
   const wide = width >= 1120;
   return (
-    <View style={{ gap: 25 }}>
+    <View testID="screen-home" style={{ gap: 25 }}>
       <HomeHeader />
       <View style={{ flexDirection: wide ? "row" : "column", gap: 24 }}>
         <View style={{ flex: wide ? 1 : undefined, gap: 22 }}>

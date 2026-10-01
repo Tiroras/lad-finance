@@ -11,6 +11,7 @@ import {
 } from "../../shared/ui";
 import type { OpenSheet } from "../navigation/types";
 import { Brand } from "./Brand";
+import { TourTarget, useTourAction } from "../../shared/ui/Tour";
 
 export function AppHeader({
   wide,
@@ -24,6 +25,7 @@ export function AppHeader({
   open: OpenSheet;
 }) {
   const { state, profiles, activeProfile } = useFinance();
+  const tourAction = useTourAction();
   return (
     <Row style={[st.header, wide && { paddingHorizontal: 38, height: 80 }]}>
       {wide ? (
@@ -75,18 +77,23 @@ export function AppHeader({
         color="#8A9383"
         style={{ width: 34, height: 38 }}
       />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Профиль и настройки"
-        onPress={() => open({ type: "settings" })}
-        style={st.avatar}
-      >
-        <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
-          {state.settings.name
-            ? state.settings.name[0].toLocaleUpperCase("ru-RU")
-            : "Я"}
-        </Txt>
-      </Pressable>
+      <TourTarget id="header.settings">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Профиль и настройки"
+          onPress={() => {
+            open({ type: "settings" });
+            tourAction("header.settings");
+          }}
+          style={st.avatar}
+        >
+          <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
+            {state.settings.name
+              ? state.settings.name[0].toLocaleUpperCase("ru-RU")
+              : "Я"}
+          </Txt>
+        </Pressable>
+      </TourTarget>
     </Row>
   );
 }

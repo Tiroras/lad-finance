@@ -34,15 +34,30 @@ export function openSheet(
     return { current: next, parents: parents.slice(0, parentIndex) };
   return {
     current: next,
-    // Settings form a hierarchy. Other entry points retain their existing
-    // replacement behavior, including account and transaction workflows.
+    // Settings and learning retain their place when opening a child form.
     parents:
-      current && (current.type === "settings" || parents.length > 0)
+      current &&
+      (current.type === "settings" ||
+        current.type === "guide" ||
+        parents.length > 0)
         ? [...parents, current]
-        : settingsSections.includes(next.type)
+        : settingsSections.includes(next.type) &&
+            !(next.type === "guide" && next.journey)
           ? [{ type: "settings" }]
           : [],
   };
+}
+
+export function returnToLearning(navigation: SheetNavigation): SheetNavigation {
+  const index = navigation.parents.findLastIndex(
+    (parent) => parent.type === "guide",
+  );
+  return index < 0
+    ? navigation
+    : {
+        current: navigation.parents[index],
+        parents: navigation.parents.slice(0, index),
+      };
 }
 
 export function previousSheet(navigation: SheetNavigation): SheetNavigation {

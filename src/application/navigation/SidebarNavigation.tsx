@@ -11,6 +11,7 @@ import {
 import type { Tab, OpenSheet, Navigate } from "./types";
 import { Brand } from "../shell/Brand";
 import { tabs } from "./tabs";
+import { TourTarget, useTourAction } from "../../shared/ui/Tour";
 
 export function SidebarNavigation({
   tab,
@@ -21,6 +22,7 @@ export function SidebarNavigation({
   navigate: Navigate;
   open: OpenSheet;
 }) {
+  const tourAction = useTourAction();
   return (
     <View style={st.sidebar}>
       <View style={{ paddingHorizontal: 22, paddingTop: 14 }}>
@@ -31,44 +33,49 @@ export function SidebarNavigation({
       </View>
       <View style={{ marginTop: 56, gap: 8 }}>
         {tabs.map((item) => (
-          <Pressable
-            key={item.id}
-            accessibilityRole="tab"
-            accessibilityLabel={item.label}
-            accessibilityState={{ selected: tab === item.id }}
-            onPress={() => navigate(item.id)}
-            style={({ pressed }) => [
-              st.sideItem,
-              tab === item.id && { backgroundColor: "#E8EFDF" },
-              pressed && interactionStyles.pressed,
-            ]}
-          >
-            <Icon
-              name={tab === item.id ? item.active : item.icon}
-              size={20}
-              color={tab === item.id ? C.green : "#92998C"}
-            />
-            <Txt
-              style={{
-                fontFamily: tab === item.id ? font.bold : font.medium,
-                fontSize: 13,
-                color: tab === item.id ? C.green : C.muted,
+          <TourTarget key={item.id} id={`nav.${item.id}`}>
+            <Pressable
+              accessibilityRole="tab"
+              accessibilityLabel={item.label}
+              accessibilityState={{ selected: tab === item.id }}
+              aria-selected={tab === item.id}
+              onPress={() => {
+                navigate(item.id);
+                tourAction(`nav.${item.id}`);
               }}
+              style={({ pressed }) => [
+                st.sideItem,
+                tab === item.id && { backgroundColor: "#E8EFDF" },
+                pressed && interactionStyles.pressed,
+              ]}
             >
-              {item.label}
-            </Txt>
-            {tab === item.id && (
-              <View
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: 3,
-                  marginLeft: "auto",
-                  backgroundColor: "#6F8B56",
-                }}
+              <Icon
+                name={tab === item.id ? item.active : item.icon}
+                size={20}
+                color={tab === item.id ? C.green : "#92998C"}
               />
-            )}
-          </Pressable>
+              <Txt
+                style={{
+                  fontFamily: tab === item.id ? font.bold : font.medium,
+                  fontSize: 13,
+                  color: tab === item.id ? C.green : C.muted,
+                }}
+              >
+                {item.label}
+              </Txt>
+              {tab === item.id && (
+                <View
+                  style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: 3,
+                    marginLeft: "auto",
+                    backgroundColor: "#6F8B56",
+                  }}
+                />
+              )}
+            </Pressable>
+          </TourTarget>
         ))}
       </View>
       <Button

@@ -49,7 +49,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("https://api.frankfurter.dev/**", (route) => route.abort());
 });
 
-test("welcome and the three-step guide do not create a profile until the final choice, including reload and back", async ({
+test("welcome creates no profile until an explicit choice and can be skipped after reload", async ({
   page,
 }, testInfo) => {
   await startFresh(page);
@@ -68,56 +68,17 @@ test("welcome and the three-step guide do not create a profile until the final c
       animations: "disabled",
     });
   }
-  await button(page, "Начать знакомство").click();
-  await expect(
-    page.getByText("Начните со счетов", { exact: true }),
-  ).toBeVisible();
-  await expect(page.getByText("Шаг 1 из 3", { exact: true })).toBeVisible();
-  for (const width of [320, 390, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    await button(page, "Далее").scrollIntoViewIfNeeded();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBe(true);
-    await page.screenshot({
-      path: testInfo.outputPath(`first-guide-${width}.png`),
-      animations: "disabled",
-    });
-  }
-  await button(page, "Далее").click();
-  await expect(
-    page.getByText("Записывайте операции", { exact: true }),
-  ).toBeVisible();
-  await expect(page.getByText("Шаг 2 из 3", { exact: true })).toBeVisible();
-  await button(page, "Назад").click();
-  await expect(page.getByText("Шаг 1 из 3", { exact: true })).toBeVisible();
-  await button(page, "Далее").click();
-  await button(page, "Далее").click();
-  await expect(
-    page.getByText("Планируйте наперёд", { exact: true }),
-  ).toBeVisible();
-  await expect(page.getByText("Шаг 3 из 3", { exact: true })).toBeVisible();
-  await expectNoProfile(page);
-  await button(page, "Далее").click();
-  await expect(
-    page.getByText("Ваш личный профиль", { exact: true }),
-  ).toBeVisible();
-  await expectNoProfile(page);
-  await page.setViewportSize({ width: 320, height: 740 });
-  await page.screenshot({
-    path: testInfo.outputPath("first-profile-choice-320.png"),
-    animations: "disabled",
-  });
-  await page.reload();
-  await expect(welcome(page)).toBeVisible();
-  await expectNoProfile(page);
   await button(page, "Пропустить знакомство").click();
   await expect(
     page.getByText("Ваш личный профиль", { exact: true }),
   ).toBeVisible();
   await expectNoProfile(page);
+  await button(page, "Назад").click();
+  await expect(welcome(page)).toBeVisible();
+  await page.reload();
+  await expect(welcome(page)).toBeVisible();
+  await expectNoProfile(page);
+  await button(page, "Пропустить знакомство").click();
   await button(page, "Начать с пустым профилем").click();
   await expectOverview(page);
   const state = await readState(page);
@@ -141,14 +102,11 @@ test("welcome and the three-step guide do not create a profile until the final c
   await expect(button(page, "Начать знакомство")).toHaveCount(0);
 });
 
-test("skipping from a guide step and choosing setup creates personal and opens the first form step directly", async ({
+test("skipping learning and choosing setup opens the first form step directly", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 740 });
   await startFresh(page);
-  await button(page, "Начать знакомство").click();
-  await button(page, "Далее").click();
-  await expect(page.getByText("Шаг 2 из 3", { exact: true })).toBeVisible();
   await button(page, "Пропустить знакомство").click();
   await expectNoProfile(page);
   await button(page, "Настроить свой учёт").click();
@@ -185,7 +143,7 @@ test("skipping from a guide step and choosing setup creates personal and opens t
   expect(await readState(page)).toEqual(state);
 });
 
-test("an existing ledger can replay or close the guide from settings without changing its money or profile", async ({
+test("an existing ledger can tour the real screens and resume without changing its money or profile", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 640 });
@@ -210,57 +168,52 @@ test("an existing ledger can replay or close the guide from settings without cha
     (key) => localStorage.getItem(key),
     PROFILE_REGISTRY_KEY,
   );
-  const openGuide = async () => {
-    await button(page, "Профиль и настройки").click();
-    await button(page, "Знакомство с Ладом").click();
-    await expect(page.getByText("Шаг 1 из 3", { exact: true })).toBeVisible();
-    await expect(button(page, "Начать с пустым профилем")).toHaveCount(0);
-  };
-  await openGuide();
-  const scroll = page.getByTestId("sheet-scroll");
-  const expectStepAtTop = async (title: string) => {
-    const heading = page.getByRole("heading", { name: title, exact: true });
-    await expect(heading).toBeVisible();
-    await expect
-      .poll(() => scroll.evaluate((element) => element.scrollTop))
-      .toBe(0);
-    const headingBox = await heading.boundingBox();
-    const viewportBox = await scroll.boundingBox();
-    expect(headingBox).not.toBeNull();
-    expect(viewportBox).not.toBeNull();
-    expect(headingBox!.y).toBeGreaterThanOrEqual(viewportBox!.y);
-    expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(
-      viewportBox!.y + viewportBox!.height,
-    );
-  };
-  // Each action is below the fold on this viewport. Its new step must start
-  // at the top instead of retaining the previous step's scroll offset.
-  for (const [step, title] of [
-    [2, "Записывайте операции"],
-    [3, "Планируйте наперёд"],
-  ] as const) {
-    await button(page, "Далее").scrollIntoViewIfNeeded();
-    expect(
-      await scroll.evaluate((element) => element.scrollTop),
-    ).toBeGreaterThan(0);
-    await button(page, "Далее").click();
-    await expectStepAtTop(title);
-    await page.screenshot({
-      path: testInfo.outputPath(`repeat-guide-step-${step}-320.png`),
-      animations: "disabled",
-    });
-  }
-  await button(page, "Предыдущий шаг знакомства").scrollIntoViewIfNeeded();
-  await button(page, "Предыдущий шаг знакомства").click();
-  await expectStepAtTop("Записывайте операции");
-  await button(page, "Далее").click();
-  await expectStepAtTop("Планируйте наперёд");
-  await button(page, "Готово").click();
+  await button(page, "Профиль и настройки").click();
+  await button(page, "Обучение").click();
+  await button(page, "Операции").click();
+  const coach = page.getByTestId("tour-coach");
   await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(coach).toHaveCount(1);
+  await expect(
+    coach.getByRole("heading", {
+      name: "Поиск и фильтры операций",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page
+      .getByTestId("screen-transactions")
+      .getByText("Ваши операции", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByTestId("screen-transactions")
+      .getByText("Сохранённая покупка", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByTestId("tour-target-transactions.expense"),
+  ).toBeInViewport({ ratio: 1 });
+  await page.screenshot({
+    path: testInfo.outputPath("existing-ledger-tour-320.png"),
+    animations: "disabled",
+  });
+  await page.getByRole("tab", { name: "Расходы", exact: true }).click();
+  await expect(
+    coach.getByRole("heading", { name: "Выгрузка истории", exact: true }),
+  ).toBeVisible();
+  await button(page, "Продолжить позже").click();
+  await expect(coach).toHaveCount(0);
   expect(await readState(page)).toEqual(state);
-  await openGuide();
-  await button(page, "Закрыть знакомство").click();
+  await page.reload();
+  await expectOverview(page);
+  await button(page, "Продолжить обучение").click();
+  await expect(
+    coach.getByRole("heading", { name: "Выгрузка истории", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByTestId("screen-transactions")).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
+  await button(page, "Продолжить позже").click();
   expect(await readState(page)).toEqual(state);
   expect(await activeProfile(page)).toBe("personal");
   expect(
@@ -269,9 +222,6 @@ test("an existing ledger can replay or close the guide from settings without cha
       PROFILE_REGISTRY_KEY,
     ),
   ).toBe(registry);
-  await page.reload();
-  await expectOverview(page);
-  expect(await readState(page)).toEqual(state);
 });
 
 test("an existing valid empty ledger opens directly and is never mistaken for a first launch", async ({

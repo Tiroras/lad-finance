@@ -2,11 +2,27 @@ import type { OpenSheet } from "../../../application/navigation/types";
 import { canStartOnboarding } from "../../../domain/onboarding";
 import { DEMO_ENABLED } from "../../../shared/lib/buildOptions";
 import { useFinance, useFinanceActions } from "../../../state/finance";
-import { Button, Card, Txt } from "../../../shared/ui";
+import { Button, Card, ErrorText, Txt } from "../../../shared/ui";
+import { useLearningProgress } from "../model/useLearningProgress";
+import { tourSteps, tourStepIndex } from "../lib/tourSteps";
 
 export function WelcomeBanner({ open }: { open: OpenSheet }) {
   const { state } = useFinance();
   const actions = useFinanceActions();
+  const learning = useLearningProgress();
+  if (learning.ready && learning.progress.status === "started") {
+    return (
+      <Card style={{ gap: 12 }}>
+        <Txt>Экскурсия по приложению</Txt>
+        <Txt>{tourSteps[tourStepIndex(learning.progress.step)].title}</Txt>
+        <ErrorText error={learning.error} />
+        <Button
+          label="Продолжить обучение"
+          onPress={() => open({ type: "guide", journey: true })}
+        />
+      </Card>
+    );
+  }
   if (
     !canStartOnboarding(state) ||
     state.settings.onboardingCompleted !== false

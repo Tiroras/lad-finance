@@ -41,6 +41,18 @@ test("fresh command removes saved profiles, shows welcome and resets again on fu
       );
       localStorage.setItem("lad-finance-v1", "old shared data");
       localStorage.setItem(
+        "lad-learning-progress-v1",
+        JSON.stringify({
+          version: 1,
+          status: "completed",
+          step: 4,
+          completed: ["accounts", "operations"],
+          pages: {},
+          overviewActive: false,
+          overviewSpot: 2,
+        }),
+      );
+      localStorage.setItem(
         "lad-profile-personal:lad-last-backup-prepared",
         "2026-09-10",
       );

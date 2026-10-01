@@ -11,11 +11,13 @@ export function ActiveScreen({
   open,
   navigate,
   hidden,
+  planSection,
 }: {
   tab: Tab;
   open: OpenSheet;
   navigate: Navigate;
   hidden: boolean;
+  planSection?: string;
 }) {
   return (
     <>
@@ -23,7 +25,7 @@ export function ActiveScreen({
         <HomeScreen open={open} navigate={navigate} hidden={hidden} />
       )}
       {tab === "transactions" && <TransactionsScreen open={open} />}
-      {tab === "plan" && <PlanScreen open={open} />}
+      {tab === "plan" && <PlanScreen open={open} section={planSection} />}
       {tab === "analytics" && <AnalyticsScreen open={open} />}
     </>
   );

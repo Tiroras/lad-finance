@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { C, font, Txt, Icon, interactionStyles } from "../../shared/ui";
+import { TourTarget, useTourAction } from "../../shared/ui/Tour";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Tab, OpenSheet, Navigate } from "./types";
 import { tabs } from "./tabs";
@@ -15,6 +16,7 @@ export function BottomNavigation({
   open: OpenSheet;
 }) {
   const insets = useSafeAreaInsets();
+  const tourAction = useTourAction();
   return (
     <View
       style={[st.bottomNav, { paddingBottom: Math.max(12, insets.bottom) }]}
@@ -34,36 +36,42 @@ export function BottomNavigation({
               <Icon name="add" size={29} color="#fff" />
             </Pressable>
           )}
-          <Pressable
-            accessibilityRole="tab"
-            accessibilityLabel={item.label}
-            accessibilityState={{ selected: tab === item.id }}
-            onPress={() => navigate(item.id)}
-            style={st.navItem}
-          >
-            <Icon
-              name={tab === item.id ? item.active : item.icon}
-              size={21}
-              color={tab === item.id ? C.green : "#A2AA9B"}
-            />
-            <Txt
-              style={{
-                fontFamily: tab === item.id ? font.bold : font.medium,
-                fontSize: 9,
-                color: tab === item.id ? C.green : "#A2AA9B",
+          <TourTarget id={`nav.${item.id}`} style={{ flex: 1 }}>
+            <Pressable
+              accessibilityRole="tab"
+              accessibilityLabel={item.label}
+              accessibilityState={{ selected: tab === item.id }}
+              aria-selected={tab === item.id}
+              onPress={() => {
+                navigate(item.id);
+                tourAction(`nav.${item.id}`);
               }}
+              style={st.navItem}
             >
-              {item.label}
-            </Txt>
-            <View
-              style={{
-                height: 3,
-                width: 3,
-                borderRadius: 2,
-                backgroundColor: tab === item.id ? "#7B9464" : "transparent",
-              }}
-            />
-          </Pressable>
+              <Icon
+                name={tab === item.id ? item.active : item.icon}
+                size={21}
+                color={tab === item.id ? C.green : "#A2AA9B"}
+              />
+              <Txt
+                style={{
+                  fontFamily: tab === item.id ? font.bold : font.medium,
+                  fontSize: 9,
+                  color: tab === item.id ? C.green : "#A2AA9B",
+                }}
+              >
+                {item.label}
+              </Txt>
+              <View
+                style={{
+                  height: 3,
+                  width: 3,
+                  borderRadius: 2,
+                  backgroundColor: tab === item.id ? "#7B9464" : "transparent",
+                }}
+              />
+            </Pressable>
+          </TourTarget>
         </React.Fragment>
       ))}
     </View>

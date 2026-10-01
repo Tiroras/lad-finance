@@ -7,6 +7,8 @@ import {
 import { C } from "./theme";
 import { interactionStyles } from "./interactionStyles";
 import { Icon, type IName } from "./Icon";
+import { TourTarget, useTourAction } from "./Tour";
+import { tourControlStyle } from "./tourControlStyle";
 
 export function IconButton({
   name,
@@ -14,26 +16,42 @@ export function IconButton({
   onPress,
   style,
   color = C.ink,
+  tourId,
 }: {
   name: IName;
   label: string;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   color?: string;
+  tourId?: string;
 }) {
-  return (
+  const tourAction = useTourAction();
+  const tourStyle = tourId
+    ? tourControlStyle([s.iconButton, style])
+    : undefined;
+  const control = (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      onPress={onPress}
+      onPress={() => {
+        onPress();
+        if (tourId) tourAction(tourId);
+      }}
       style={({ pressed }) => [
-        s.iconButton,
-        style,
+        tourStyle ? tourStyle.control : s.iconButton,
+        !tourStyle && style,
         pressed && interactionStyles.pressed,
       ]}
     >
       <Icon name={name} color={color} />
     </Pressable>
+  );
+  return tourId && tourStyle ? (
+    <TourTarget id={tourId} style={tourStyle.target}>
+      {control}
+    </TourTarget>
+  ) : (
+    control
   );
 }
 

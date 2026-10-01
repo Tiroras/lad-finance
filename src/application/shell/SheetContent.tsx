@@ -50,10 +50,14 @@ export function SheetContent({
   sheet,
   close,
   open,
+  returnToGuide,
+  startTour,
 }: {
   sheet: SheetState | null;
   close: () => void;
   open: OpenSheet;
+  returnToGuide?: () => void;
+  startTour: (id?: string) => void;
 }) {
   if (!sheet) return null;
   switch (sheet.type) {
@@ -83,7 +87,7 @@ export function SheetContent({
         />
       );
     case "guide":
-      return <AppGuide close={close} />;
+      return <AppGuide close={close} onStart={startTour} />;
     case "automation":
       return <AutomationSettings />;
     case "reconcile":
@@ -114,7 +118,7 @@ export function SheetContent({
         <ScenarioForm id={sheet.id} close={() => open({ type: "scenarios" })} />
       );
     case "transaction":
-      return <TransactionForm sheet={sheet} close={close} />;
+      return <TransactionForm sheet={sheet} close={returnToGuide ?? close} />;
     case "formula":
       return <FormulaContent />;
     case "simulate":
@@ -130,7 +134,7 @@ export function SheetContent({
       return (
         <AccountForm
           id={sheet.id}
-          close={close}
+          close={returnToGuide ?? close}
           defaultCurrency={sheet.currency}
           defaultKind={sheet.accountKind}
         />
@@ -140,7 +144,11 @@ export function SheetContent({
     case "profiles":
       return <ProfilesSettings close={close} />;
     case "profileSettings":
-      return <SettingsForm close={() => open({ type: "settings" })} />;
+      return (
+        <SettingsForm
+          close={returnToGuide ?? (() => open({ type: "settings" }))}
+        />
+      );
     case "reminderSettings":
       return <ReminderSettings />;
     case "securitySettings":
@@ -159,7 +167,7 @@ export function SheetContent({
       return (
         <IncomePlanForm
           sheet={sheet}
-          close={() => open({ type: "forecast" })}
+          close={returnToGuide ?? (() => open({ type: "forecast" }))}
           open={open}
         />
       );
@@ -172,7 +180,8 @@ export function SheetContent({
         <RecurringForm
           id={sheet.id}
           sourceTransactionId={sheet.sourceTransactionId}
-          close={close}
+          defaultKind={sheet.kind}
+          close={returnToGuide ?? close}
         />
       );
     case "budget":

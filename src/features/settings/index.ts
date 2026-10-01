@@ -6,3 +6,8 @@ export { OnboardingFlow } from "./components/OnboardingFlow";
 export { WelcomeBanner } from "./components/WelcomeBanner";
 export { FirstRunFlow } from "./components/FirstRunFlow";
 export { AppGuide } from "./components/AppGuide";
+export type { LessonId } from "./model/learningProgress";
+
+export { TourCoach } from "./components/TourCoach";
+export { useLearningProgress } from "./model/useLearningProgress";
+export { tourSteps, tourStepIndex } from "./lib/tourSteps";

@@ -10,20 +10,22 @@ import {
   Row,
   Txt,
 } from "../../../shared/ui";
-import { QuickTour } from "./QuickTour";
+import { useLearningProgress } from "../model/useLearningProgress";
+import { tourSteps } from "../lib/tourSteps";
 
-type IntroPage = "welcome" | "tour" | "finish";
+type IntroPage = "welcome" | "finish";
 
 export function FirstRunFlow({
   brand,
   onFinish,
 }: {
   brand: ReactNode;
-  onFinish: (setup: boolean) => Promise<void>;
+  onFinish: (mode: "learn" | "setup" | "empty") => Promise<void>;
 }) {
   const [page, setPage] = useState<IntroPage>("welcome");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const learning = useLearningProgress();
   const saving = useRef(false);
   const scroll = useRef<ScrollView>(null);
   const scrollToStart = () =>
@@ -33,13 +35,19 @@ export function FirstRunFlow({
     setError("");
     scrollToStart();
   };
-  const finish = async (setup: boolean) => {
+  const finish = async (mode: "learn" | "setup" | "empty") => {
     if (saving.current) return;
     saving.current = true;
     setBusy(true);
     setError("");
     try {
-      await onFinish(setup);
+      if (mode === "learn")
+        await learning.update((value) => ({
+          ...value,
+          status: "started",
+          step: tourSteps[0].id,
+        }));
+      await onFinish(mode);
     } catch (failure) {
       setError(
         failure instanceof Error
@@ -69,7 +77,9 @@ export function FirstRunFlow({
               </Txt>
               <Txt style={styles.description}>
                 Соберите деньги, повседневные расходы и планы в одном месте.
-                Начните с короткого знакомства — всего три шага.
+                Экскурсия проведёт вас по настоящим экранам: обзору, операциям,
+                плану, аналитике и настройкам. Нажимайте выделенные кнопки и
+                знакомьтесь с приложением. Можно продолжить позже.
               </Txt>
             </View>
             <Card style={{ gap: 18, backgroundColor: C.soft }}>
@@ -100,10 +110,16 @@ export function FirstRunFlow({
               ))}
             </Card>
             <View style={{ gap: 10 }}>
-              <Button label="Начать знакомство" onPress={() => show("tour")} />
+              <ErrorText error={error} />
+              <Button
+                label={busy ? "Открываем знакомство…" : "Начать знакомство"}
+                disabled={busy}
+                onPress={() => void finish("learn")}
+              />
               <Button
                 label="Пропустить знакомство"
                 variant="secondary"
+                disabled={busy}
                 onPress={() => show("finish")}
               />
             </View>
@@ -112,14 +128,6 @@ export function FirstRunFlow({
               устройстве.
             </Txt>
           </>
-        )}
-        {page === "tour" && (
-          <QuickTour
-            onComplete={() => show("finish")}
-            onSkip={() => show("finish")}
-            onBack={() => show("welcome")}
-            onStepChange={scrollToStart}
-          />
         )}
         {page === "finish" && (
           <>
@@ -155,13 +163,13 @@ export function FirstRunFlow({
               <Button
                 label="Настроить свой учёт"
                 disabled={busy}
-                onPress={() => void finish(true)}
+                onPress={() => void finish("setup")}
               />
               <Button
                 label="Начать с пустым профилем"
                 variant="secondary"
                 disabled={busy}
-                onPress={() => void finish(false)}
+                onPress={() => void finish("empty")}
               />
               <Button
                 label="Назад"

@@ -38,7 +38,11 @@ export function TransactionFilters({
           onChange={setType}
           options={[
             { value: "all", label: "Все" },
-            { value: "expense", label: "Расходы" },
+            {
+              value: "expense",
+              label: "Расходы",
+              tourId: "transactions.expense",
+            },
             { value: "income", label: "Доходы" },
           ]}
         />

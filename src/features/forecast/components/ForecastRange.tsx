@@ -4,9 +4,11 @@ import { Segments } from "../../../shared/ui";
 export function ForecastRange({
   value,
   onChange,
+  tourId,
 }: {
   value: ForecastHorizon;
   onChange: (value: ForecastHorizon) => void;
+  tourId?: string;
 }) {
   return (
     <Segments
@@ -15,6 +17,7 @@ export function ForecastRange({
       options={[30, 60, 90].map((days) => ({
         value: String(days),
         label: `${days} дней`,
+        tourId: days === 60 ? tourId : undefined,
       }))}
     />
   );

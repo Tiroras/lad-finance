@@ -17,6 +17,8 @@ import {
   Txt,
   MonthPicker,
   ScreenHeading,
+  TourTarget,
+  useTourAction,
 } from "../../shared/ui";
 import { CategoryBreakdown } from "./CategoryBreakdown";
 import { MonthlyTotals } from "./MonthlyTotals";
@@ -30,6 +32,7 @@ import {
 } from "../../features/insights";
 
 export function AnalyticsScreen({ open }: { open: OpenSheet }) {
+  const tourAction = useTourAction();
   const { money } = useMoney();
   const { state, today } = useFinance();
   const [month, setMonth] = useState(monthKey(today));
@@ -53,7 +56,7 @@ export function AnalyticsScreen({ open }: { open: OpenSheet }) {
   );
   const daily = monthTotals.expense / Math.max(1, Number(end.slice(-2)));
   return (
-    <View style={{ gap: 24 }}>
+    <View testID="screen-analytics" style={{ gap: 24 }}>
       <ScreenHeading
         eyebrow="ЦИФРЫ, КОТОРЫЕ ПОМОГАЮТ"
         title="Понять свои привычки"
@@ -61,7 +64,15 @@ export function AnalyticsScreen({ open }: { open: OpenSheet }) {
       />
       <Row style={{ justifyContent: "space-between" }}>
         <Txt style={{ fontFamily: font.bold, fontSize: 14 }}>Ваш месяц</Txt>
-        <MonthPicker month={month} onChange={setMonth} />
+        <TourTarget id="analytics.month">
+          <MonthPicker
+            month={month}
+            onChange={(value) => {
+              setMonth(value);
+              tourAction("analytics.month");
+            }}
+          />
+        </TourTarget>
       </Row>
       <MonthlyTotals
         income={monthTotals.income}

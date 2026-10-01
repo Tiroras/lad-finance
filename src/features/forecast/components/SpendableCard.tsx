@@ -3,7 +3,16 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { dateLabel, spendable } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
 import type { OpenSheet } from "../../../application/navigation/types";
-import { C, font, HeroArt, Icon, Row, Txt } from "../../../shared/ui";
+import {
+  C,
+  font,
+  HeroArt,
+  Icon,
+  Row,
+  TourTarget,
+  Txt,
+  useTourAction,
+} from "../../../shared/ui";
 
 export function SpendableCard({
   open,
@@ -12,6 +21,7 @@ export function SpendableCard({
   open: OpenSheet;
   hidden: boolean;
 }) {
+  const tourAction = useTourAction();
   const { money, symbol: baseSymbol } = useMoney();
   const { state, today } = useFinance();
   const safe = useMemo(() => spendable(state, today), [state, today]);
@@ -23,14 +33,19 @@ export function SpendableCard({
           <View style={st.heroDot} />
           <Txt style={{ color: "#D7E4D8", fontSize: 12 }}>Можно потратить</Txt>
         </Row>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Как рассчитана доступная сумма"
-          onPress={() => open({ type: "formula" })}
-          style={st.heroInfo}
-        >
-          <Icon name="information" color="#D7E4D8" size={16} />
-        </Pressable>
+        <TourTarget id="home.formula">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Как рассчитана доступная сумма"
+            onPress={() => {
+              open({ type: "formula" });
+              tourAction("home.formula");
+            }}
+            style={st.heroInfo}
+          >
+            <Icon name="information" color="#D7E4D8" size={16} />
+          </Pressable>
+        </TourTarget>
       </Row>
       <Txt adjustsFontSizeToFit numberOfLines={1} style={st.heroAmount}>
         {hidden ? `••• ••• ${baseSymbol}` : money(safe.available)}

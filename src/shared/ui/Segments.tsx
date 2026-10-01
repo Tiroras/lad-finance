@@ -7,6 +7,7 @@ import {
 import { C, font } from "./theme";
 import { Txt } from "./Txt";
 import { Row } from "./Row";
+import { TourTarget, useTourAction } from "./Tour";
 
 export function Segments<T extends string>({
   options,
@@ -14,35 +15,48 @@ export function Segments<T extends string>({
   onChange,
   style,
 }: {
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; tourId?: string }[];
   value: T;
   onChange: (value: T) => void;
   style?: StyleProp<ViewStyle>;
 }) {
+  const tourAction = useTourAction();
   return (
     <Row style={[s.segments, style]}>
-      {options.map((option) => (
-        <Pressable
-          key={option.value}
-          accessibilityRole="tab"
-          accessibilityLabel={option.label}
-          accessibilityState={{ selected: value === option.value }}
-          aria-selected={value === option.value}
-          onPress={() => onChange(option.value)}
-          style={[s.segment, value === option.value && s.activeSegment]}
-        >
-          <Txt
-            style={{
-              fontFamily: font.semibold,
-              fontSize: 13,
-              color: value === option.value ? C.green : C.muted,
-              textAlign: "center",
+      {options.map((option) => {
+        const control = (
+          <Pressable
+            key={option.value}
+            accessibilityRole="tab"
+            accessibilityLabel={option.label}
+            accessibilityState={{ selected: value === option.value }}
+            aria-selected={value === option.value}
+            onPress={() => {
+              onChange(option.value);
+              if (option.tourId) tourAction(option.tourId);
             }}
+            style={[s.segment, value === option.value && s.activeSegment]}
           >
-            {option.label}
-          </Txt>
-        </Pressable>
-      ))}
+            <Txt
+              style={{
+                fontFamily: font.semibold,
+                fontSize: 13,
+                color: value === option.value ? C.green : C.muted,
+                textAlign: "center",
+              }}
+            >
+              {option.label}
+            </Txt>
+          </Pressable>
+        );
+        return option.tourId ? (
+          <TourTarget key={option.value} id={option.tourId} style={{ flex: 1 }}>
+            {control}
+          </TourTarget>
+        ) : (
+          control
+        );
+      })}
     </Row>
   );
 }

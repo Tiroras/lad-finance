@@ -28,6 +28,7 @@ export function Sheet({
   visible,
   blockingContent,
   contentKey,
+  headerAccessory,
 }: {
   title: string;
   subtitle?: string;
@@ -37,6 +38,7 @@ export function Sheet({
   visible: boolean;
   blockingContent?: ReactNode;
   contentKey?: string;
+  headerAccessory?: ReactNode;
 }) {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -45,6 +47,28 @@ export function Sheet({
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, []);
   const contentRef = useRef<View>(null);
+  const reveal = useCallback((target: View) => {
+    target.measureInWindow((_x, targetY, _width, targetHeight) => {
+      if (!targetHeight) return;
+      scrollRef.current
+        ?.getNativeScrollRef()
+        ?.measureInWindow((_sx, viewportY, _sw, viewportHeight) => {
+          if (
+            !viewportHeight ||
+            (targetY >= viewportY &&
+              targetY + targetHeight <= viewportY + viewportHeight)
+          )
+            return;
+          if (!contentRef.current) return;
+          target.measureLayout(contentRef.current, (_left, top) => {
+            scrollRef.current?.scrollTo({
+              y: Math.max(0, top - 12),
+              animated: false,
+            });
+          });
+        });
+    });
+  }, []);
   const { translateY, panHandlers } = useSheetDrag({
     visible,
     blocked: !!blockingContent,
@@ -125,6 +149,7 @@ export function Sheet({
                 <IconButton
                   name="arrow-back"
                   label="Назад"
+                  tourId="sheet.back"
                   onPress={onBack}
                   style={{ backgroundColor: C.soft }}
                 />
@@ -143,11 +168,17 @@ export function Sheet({
               <IconButton
                 name="close"
                 label="Закрыть"
+                tourId="sheet.close"
                 onPress={onClose}
                 style={{ backgroundColor: C.soft }}
               />
             </Row>
           </View>
+          {!!headerAccessory && !blockingContent && (
+            <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+              {headerAccessory}
+            </View>
+          )}
           <FormFields
             key={contentKey}
             disabled={!!blockingContent}
@@ -175,7 +206,10 @@ export function Sheet({
                 }}
               >
                 <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
-                  <SheetScrollProvider scrollToStart={scrollToStart}>
+                  <SheetScrollProvider
+                    scrollToStart={scrollToStart}
+                    reveal={reveal}
+                  >
                     {children}
                   </SheetScrollProvider>
                 </View>

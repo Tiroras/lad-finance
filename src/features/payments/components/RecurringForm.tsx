@@ -27,10 +27,12 @@ import { CategoryPicker } from "../../categories";
 export function RecurringForm({
   id,
   sourceTransactionId,
+  defaultKind,
   close,
 }: {
   id?: string;
   sourceTransactionId?: string;
+  defaultKind?: "bill" | "subscription";
   close: () => void;
 }) {
   const { moneyInput, parseMoney } = useMoney();
@@ -52,7 +54,7 @@ export function RecurringForm({
     String(original?.day ?? (source ? Number(source.date.slice(-2)) : 15)),
   );
   const [kind, setKind] = useState<"bill" | "subscription">(
-    original?.kind ?? "subscription",
+    original?.kind ?? defaultKind ?? "subscription",
   );
   const [category, setCategory] = useState<CategoryId>(
     original?.category ??

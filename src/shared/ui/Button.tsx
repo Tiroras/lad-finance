@@ -8,6 +8,8 @@ import { C, font } from "./theme";
 import { interactionStyles } from "./interactionStyles";
 import { Icon, type IName } from "./Icon";
 import { Txt } from "./Txt";
+import { TourTarget, useTourAction } from "./Tour";
+import { tourControlStyle } from "./tourControlStyle";
 
 export function Button({
   label,
@@ -17,6 +19,7 @@ export function Button({
   variant = "primary",
   disabled = false,
   style,
+  tourId,
 }: {
   label: string;
   accessibilityLabel?: string;
@@ -25,27 +28,30 @@ export function Button({
   variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  tourId?: string;
 }) {
+  const tourAction = useTourAction();
   const textColor =
     variant === "primary" ? "#fff" : variant === "danger" ? C.red : C.green;
-  return (
+  const backgroundColor =
+    variant === "primary" ? C.green : variant === "danger" ? "#FAECE9" : C.soft;
+  const tourStyle = tourId
+    ? tourControlStyle([s.button, { backgroundColor }, style])
+    : undefined;
+  const control = (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPress={onPress}
+      onPress={() => {
+        onPress();
+        if (tourId) tourAction(tourId);
+      }}
       style={({ pressed }) => [
-        s.button,
-        {
-          backgroundColor:
-            variant === "primary"
-              ? C.green
-              : variant === "danger"
-                ? "#FAECE9"
-                : C.soft,
-        },
-        style,
+        tourStyle ? tourStyle.control : s.button,
+        !tourStyle && { backgroundColor },
+        !tourStyle && style,
         disabled && { opacity: 0.45 },
         pressed && interactionStyles.pressed,
       ]}
@@ -63,6 +69,13 @@ export function Button({
         {label}
       </Txt>
     </Pressable>
+  );
+  return tourId && tourStyle ? (
+    <TourTarget id={tourId} style={tourStyle.target}>
+      {control}
+    </TourTarget>
+  ) : (
+    control
   );
 }
 

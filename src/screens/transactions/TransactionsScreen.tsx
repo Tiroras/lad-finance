@@ -84,7 +84,7 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
     .slice(0, limit)
     .forEach((t) => groups.set(t.date, [...(groups.get(t.date) ?? []), t]));
   return (
-    <View style={{ gap: 22 }}>
+    <View testID="screen-transactions" style={{ gap: 22 }}>
       <ScreenHeading
         eyebrow="НИЧЕГО НЕ ТЕРЯЕТСЯ"
         title="Ваши операции"
@@ -117,6 +117,7 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
         setCategory={setCategory}
       />
       <Button
+        tourId="transactions.export"
         label="Экспортировать операции в CSV"
         icon="download-outline"
         variant="secondary"

@@ -4,6 +4,7 @@ import type {
   SheetState,
 } from "../../../application/navigation/types";
 import { useFinance } from "../../../state/finance";
+import { TourTarget, useTourAction } from "../../../shared/ui/Tour";
 import {
   C,
   Card,
@@ -82,8 +83,8 @@ const groups: { title: string; items: SettingsItem[] }[] = [
         sheet: { type: "dataSettings" },
       },
       {
-        title: "Знакомство с Ладом",
-        description: "Счета, операции и планы за три шага",
+        title: "Обучение",
+        description: "Пошаговый маршрут по экранам приложения",
         icon: "compass-outline",
         sheet: { type: "guide" },
       },
@@ -106,37 +107,44 @@ function SettingsLink({
   last: boolean;
   open: OpenSheet;
 }) {
+  const tourAction = useTourAction();
+  const tourId = `settings.${item.sheet.type}`;
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={item.title}
-      accessibilityHint={item.description}
-      onPress={() => open(item.sheet)}
-      style={({ pressed }) => [
-        {
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 12,
-          paddingHorizontal: 14,
-          paddingVertical: 12,
-          minHeight: 68,
-          borderBottomWidth: last ? 0 : 1,
-          borderColor: C.border,
-        },
-        pressed && interactionStyles.pressed,
-      ]}
-    >
-      <IconTile name={item.icon} size={36} />
-      <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
-        <Txt style={{ fontFamily: font.semibold, fontSize: 14 }}>
-          {item.title}
-        </Txt>
-        <Txt style={{ color: C.muted, fontSize: 11, lineHeight: 17 }}>
-          {item.description}
-        </Txt>
-      </View>
-      <Icon name="chevron-forward" size={17} color={C.muted} />
-    </Pressable>
+    <TourTarget id={tourId}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={item.title}
+        accessibilityHint={item.description}
+        onPress={() => {
+          open(item.sheet);
+          tourAction(tourId);
+        }}
+        style={({ pressed }) => [
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            minHeight: 68,
+            borderBottomWidth: last ? 0 : 1,
+            borderColor: C.border,
+          },
+          pressed && interactionStyles.pressed,
+        ]}
+      >
+        <IconTile name={item.icon} size={36} />
+        <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+          <Txt style={{ fontFamily: font.semibold, fontSize: 14 }}>
+            {item.title}
+          </Txt>
+          <Txt style={{ color: C.muted, fontSize: 11, lineHeight: 17 }}>
+            {item.description}
+          </Txt>
+        </View>
+        <Icon name="chevron-forward" size={17} color={C.muted} />
+      </Pressable>
+    </TourTarget>
   );
 }
 

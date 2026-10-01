@@ -17,6 +17,7 @@ export function DataSettings({
     <>
       <Section title="Импорт и экспорт" style={{ marginBottom: 0 }} />
       <Button
+        tourId="data.csv"
         label="Импортировать банковский CSV"
         icon="document-text-outline"
         variant="secondary"
