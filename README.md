@@ -88,6 +88,8 @@ codex mcp get maestro
 
 Инструкции: [Maestro MCP](https://docs.maestro.dev/get-started/maestro-mcp), [подключение MCP к Codex](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
+Для работы по схеме Playwright-агентов добавлены проектные роли **maestro_planner → maestro_generator → maestro_healer**: исследование приложения, создание YAML и разбор падений. Они используют Maestro MCP и учитывают три режима сборки. Примеры поручений и правила запуска: [агенты мобильных проверок](docs/MAESTRO_AGENTS.md).
+
 ### Запуск с нуля
 
 Для повторной проверки первого входа остановите текущий Metro (`Ctrl+C`) и запустите:
