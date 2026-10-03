@@ -1,0 +1,10 @@
+// Expo inlines these variables into JavaScript. A mode switch must invalidate
+// the JS bundle even when none of its source files changed.
+gradle.beforeProject { project ->
+    project.tasks.configureEach { task ->
+        if (task.name.startsWith('createBundle') && task.name.endsWith('JsAndAssets')) {
+            task.inputs.property('ladDemoEnabled', System.getenv('EXPO_PUBLIC_ENABLE_DEMO') ?: 'false')
+            task.inputs.property('ladResetOnStart', System.getenv('EXPO_PUBLIC_RESET_ON_START') ?: 'false')
+        }
+    }
+}

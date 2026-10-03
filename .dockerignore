@@ -1,0 +1,7 @@
+**
+!Dockerfile
+!.nvmrc
+!package.json
+!package-lock.json
+!docker/
+!docker/**

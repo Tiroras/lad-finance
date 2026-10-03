@@ -1,0 +1,3 @@
+docker/*.sh text eol=lf
+docker/bin/adb text eol=lf
+.nvmrc text eol=lf

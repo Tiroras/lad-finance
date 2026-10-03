@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+adb="${ANDROID_HOME}/platform-tools/adb"
+
+# Maestro asks for the AVD name through the emulator console. That console
+# belongs to the host; the same name is available through the ADB shell.
+if [ "$#" -eq 5 ] && [ "$1" = '-s' ] && [ "$3" = 'emu' ] && [ "$4" = 'avd' ] && [ "$5" = 'name' ]; then
+  avd_name=$("$adb" -s "$2" shell getprop ro.boot.qemu.avd_name)
+  if [ -z "$avd_name" ]; then
+    avd_name=$("$adb" -s "$2" shell getprop ro.kernel.qemu.avd_name)
+  fi
+  [ -n "$avd_name" ] || exit 1
+  printf '%s\nOK\n' "$avd_name"
+  exit 0
+fi
+
+exec "$adb" "$@"

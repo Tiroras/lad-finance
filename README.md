@@ -18,8 +18,8 @@ npm start
 Для проверки Face ID нужна собственная development/preview-сборка: Face ID недоступен в Expo Go. Локальные напоминания не требуют сервера push-уведомлений. После добавления нативных модулей пересоберите установленное приложение. [Ограничение Expo Go](https://docs.expo.dev/versions/v57.0.0/sdk/local-authentication/) и [локальные уведомления](https://docs.expo.dev/versions/v57.0.0/sdk/notifications/).
 
 ```sh
-npm run ios       # установленный Xcode и iOS Simulator
-npm run android   # настроенный Android SDK и эмулятор
+npm run ios       # нативная сборка; установленный Xcode и iOS Simulator
+npm run android   # нативная сборка; настроенный Android SDK и эмулятор
 npm run web       # предпросмотр в браузере
 ```
 
@@ -31,6 +31,62 @@ npx eas-cli build --platform ios --profile preview
 ```
 
 EAS потребует ваш аккаунт Expo; для установки iOS-сборки на устройство нужны соответствующие Apple credentials и регистрация устройства. Идентификаторы `app.lad.finance` перед публикацией замените своими. Облачные сборки и публикация в магазины в рамках этой работы не выполнялись. [Документация Expo по созданию проекта](https://docs.expo.dev/get-started/create-a-project/) и [совместимости SDK](https://docs.expo.dev/versions/latest/).
+
+### Мобильные тесты из терминала IDE
+
+Для переноса окружения на другой компьютер подготовлен [запуск через Docker](docs/DOCKER.md): Node.js, Playwright, Java, Android SDK и Maestro устанавливаются в образы. Android-эмулятор работает на компьютере. Контейнерные команды поддерживают дефолтный, демо- и Fresh-режимы.
+
+Для Android на macOS или Linux достаточно одной команды из корня проекта:
+
+```sh
+npm run test:mobile
+```
+
+Она найдёт Android SDK, Java и Maestro CLI, запустит виртуальный телефон или подключится к уже работающему, дождётся загрузки Android, соберёт и установит актуальный release-APK и выполнит сценарии из `tests/mobile/`. Сервер Metro для этих тестов не нужен. После проверки эмулятор остаётся открытым.
+
+Нужны установленный Android SDK с Platform-Tools и Android Emulator, созданное устройство в Device Manager, Java 17+ и **Maestro CLI**. Приложение Maestro Studio можно использовать дополнительно. Установка CLI на macOS через Homebrew:
+
+```sh
+brew tap mobile-dev-inc/tap
+brew trust --formula mobile-dev-inc/tap/maestro
+brew install mobile-dev-inc/tap/maestro
+```
+
+Другие команды:
+
+```sh
+npm run emulator                              # только запустить телефон
+npm run test:mobile -- --no-build              # повторить тест готовой сборки
+npm run test:mobile -- tests/mobile/smoke.yaml  # один сценарий
+npm run test:mobile -- --avd Pixel_8            # выбрать виртуальное устройство
+```
+
+Если устройство одно, оно выбирается автоматически. При нескольких укажите `--avd ИМЯ` или переменную `LAD_ANDROID_AVD`. Подключённые физические телефоны не выбираются. SDK определяется через `ANDROID_HOME` / `ANDROID_SDK_ROOT` или стандартную папку установки; вручную дописывать `adb` и `emulator` в `PATH` не требуется.
+
+`--no-build` проверяет уже установленное приложение. Если его нет, команда установит существующий `android/app/build/outputs/apk/release/app-release.apk`. После изменений исходников запускайте обычный `npm run test:mobile`, чтобы проверить новый код. Скрипт не очищает данные и не удаляет приложение при ошибке установки.
+
+Стартовый `smoke.yaml` проверяет запуск и переходы между четырьмя вкладками. При первом входе он проходит через «Пропустить знакомство» → «Начать с пустым профилем»; существующий учёт сохраняется. Используйте виртуальный телефон с тестовыми данными. Сценарий не проверяет финансовые расчёты и системную биометрию.
+
+Артефакты Maestro сохраняются в `test-results/mobile/maestro/`, журнал запуска эмулятора — в `test-results/mobile/emulator.log`. Этот каталог исключён из Git; сами YAML-сценарии хранятся вместе с проектом. Ошибка сборки или теста возвращает ненулевой код завершения.
+
+Документация: [запуск Android Emulator](https://developer.android.com/studio/run/emulator-commandline), [нативная сборка Expo](https://docs.expo.dev/guides/local-app-development/), [Maestro CLI](https://docs.maestro.dev/maestro-cli/maestro-cli-commands-and-options).
+
+### Maestro MCP для Codex
+
+Maestro MCP позволяет агенту осматривать нативный экран, выполнять действия и запускать мобильные сценарии. Сервер входит в Maestro CLI и запускается командой `maestro mcp`; Codex управляет этим процессом сам.
+
+Подключение на компьютере с установленными Codex CLI и Maestro:
+
+```sh
+codex mcp add maestro -- maestro mcp
+codex mcp get maestro
+```
+
+Настройки хранятся локально в `~/.codex/config.toml` и используются также расширением Codex в VS Code. Для запуска из IDE укажите полный путь к Maestro в `command`, а в `env` — `JAVA_HOME`, `ANDROID_HOME` и `PATH` с каталогами `platform-tools` и `emulator`. Для долгих мобильных операций можно задать `startup_timeout_sec = 60` и `tool_timeout_sec = 180` в секции `[mcp_servers.maestro]`. После изменения подключения перезапустите расширение Codex или окно VS Code.
+
+Подготовьте актуальную release-сборку командой `npm run test:mobile`; если нужная сборка уже установлена, достаточно `npm run emulator`. Затем можно попросить агента: «Через Maestro MCP найди Android-эмулятор Pixel_8 и проверь переходы между вкладками Лада». Агент сначала получает список устройств и выбирает эмулятор. Воспроизводимые сценарии сохраняются в `tests/mobile/`; режим приложения выбирается при запуске или сборке, как описано ниже. Fresh проверяется в режиме разработки.
+
+Инструкции: [Maestro MCP](https://docs.maestro.dev/get-started/maestro-mcp), [подключение MCP к Codex](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 ### Запуск с нуля
 

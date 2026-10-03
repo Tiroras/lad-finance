@@ -1,0 +1,94 @@
+x-common: &common
+  init: true
+  working_dir: /workspace
+  environment: &environment
+    EXPO_PUBLIC_ENABLE_DEMO: "false"
+    EXPO_PUBLIC_RESET_ON_START: "false"
+  volumes: &web-volumes
+    - .:/workspace
+    - web-dependencies:/workspace/node_modules
+    - web-expo:/workspace/.expo
+    - npm-cache:/root/.npm
+
+x-web: &web
+  <<: *common
+  image: lad-tools:web
+  build:
+    context: .
+    target: web
+  shm_size: 1gb
+
+x-android: &android
+  <<: *common
+  environment:
+    <<: *environment
+    ADB_SERVER_SOCKET: tcp:127.0.0.1:5037
+  image: lad-tools:android
+  platform: linux/amd64
+  build:
+    context: .
+    target: android
+    platforms: [linux/amd64]
+  network_mode: host
+  entrypoint: ["sh", "/workspace/docker/android-entrypoint.sh"]
+  profiles: [mobile]
+  volumes:
+    - .:/workspace
+    - android-dependencies:/workspace/node_modules
+    - android-expo:/workspace/.expo
+    - android-project:/workspace/android
+    - gradle-cache:/root/.gradle
+    - maestro-cache:/root/.maestro
+    - npm-cache:/root/.npm
+
+services:
+  web:
+    <<: *web
+    ports: ["127.0.0.1:8081:8081"]
+
+  demo:
+    <<: *web
+    profiles: [demo]
+    environment:
+      <<: *environment
+      EXPO_PUBLIC_ENABLE_DEMO: "true"
+    ports: ["127.0.0.1:8082:8081"]
+
+  fresh:
+    <<: *web
+    profiles: [fresh]
+    environment:
+      <<: *environment
+      EXPO_PUBLIC_RESET_ON_START: "true"
+    ports: ["127.0.0.1:8083:8081"]
+
+  tools:
+    <<: *web
+    profiles: [tools]
+    command: ["npm", "run", "typecheck"]
+
+  android:
+    <<: *android
+    entrypoint:
+      [
+        "sh",
+        "/workspace/docker/android-entrypoint.sh",
+        "node",
+        "docker/android.mjs",
+      ]
+    command: ["test"]
+
+  maestro-mcp:
+    <<: *android
+    stdin_open: true
+    command: ["maestro", "mcp", "--working-dir", "/workspace"]
+
+volumes:
+  web-dependencies:
+  web-expo:
+  android-dependencies:
+  android-expo:
+  android-project:
+  npm-cache:
+  gradle-cache:
+  maestro-cache:
