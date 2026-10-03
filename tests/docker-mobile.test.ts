@@ -116,3 +116,26 @@ test("Docker не обещает смену режима без сборки и 
   assert.equal(missing.status, 1);
   assert.match(missing.stderr, /Сценарий не найден/);
 });
+
+test("Docker требует явный сценарий даже при наличии вложенных flow, до Android и сборки", (t) => {
+  const fixture = setup(t);
+  const directory = join(fixture.root, "tests/mobile/demo");
+  mkdirSync(directory, { recursive: true });
+  writeFileSync(
+    join(directory, "example.yaml"),
+    "appId: app.lad.finance\n---\n- launchApp\n",
+  );
+  for (const args of [
+    [],
+    ["test"],
+    ["test", "--no-build"],
+    ["test", "--mode", "demo"],
+    ["test", "--mode", "fresh"],
+  ]) {
+    const result = fixture.run(...args);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Укажите файл сценария или папку/);
+    assert.equal(existsSync(join(fixture.root, "test-results")), false);
+    assert.equal(existsSync(join(fixture.root, "android/app")), false);
+  }
+});

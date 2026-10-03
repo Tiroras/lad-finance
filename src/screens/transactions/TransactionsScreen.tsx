@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 import { View } from "react-native";
-import { categoryMatches } from "../../domain/categories";
 import {
-  expenseContributions,
-  transactionIncomeAmount,
-} from "../../domain/transactionAmounts";
+  selectTransactionList,
+  type TransactionFilterType,
+} from "../../domain/transactionList";
 import { monthKey } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
 import type { OpenSheet } from "../../application/navigation/types";
@@ -28,61 +27,32 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
   const { state, today } = useFinance();
   const [month, setMonth] = useState(monthKey(today));
   const [query, setQuery] = useState("");
-  const [type, setType] = useState("all");
+  const [type, setType] = useState<TransactionFilterType>("all");
   const [account, setAccount] = useState("all");
   const [category, setCategory] = useState("all");
   const [limit, setLimit] = useState(60);
-  const filtered = useMemo(
+  const {
+    transactions: filtered,
+    income,
+    expense,
+  } = useMemo(
     () =>
-      state.transactions
-        .filter(
-          (t) =>
-            monthKey(t.date) === month &&
-            t.date <= today &&
-            (type === "all" ||
-              (type === "debt"
-                ? !!t.debtId
-                : type === "expense"
-                  ? expenseContributions(state, t).length > 0
-                  : type === "income"
-                    ? t.type === "income" && !t.refundOf && !t.debtId
-                    : t.type === type)) &&
-            (account === "all" ||
-              t.accountId === account ||
-              t.toAccountId === account) &&
-            (category === "all" ||
-              (t.type === "expense" || t.refundOf
-                ? expenseContributions(state, t).some((part) =>
-                    categoryMatches(state, part.category, category),
-                  )
-                : !t.debtId && categoryMatches(state, t.category, category))) &&
-            `${t.title} ${t.note ?? ""}`
-              .toLocaleLowerCase("ru-RU")
-              .includes(query.trim().toLocaleLowerCase("ru-RU")),
-        )
-        .sort((a, b) => b.date.localeCompare(a.date)),
+      selectTransactionList(
+        state,
+        { month, type, query, account, category },
+        today,
+      ),
     [state, today, month, type, query, account, category],
   );
-  const income = filtered.reduce(
-      (sum, transaction) => sum + transactionIncomeAmount(state, transaction),
-      0,
-    ),
-    expense = filtered.reduce(
-      (sum, transaction) =>
-        sum +
-        expenseContributions(state, transaction)
-          .filter(
-            (part) =>
-              category === "all" ||
-              categoryMatches(state, part.category, category),
-          )
-          .reduce((value, part) => value + part.amount, 0),
-      0,
-    );
-  const groups = new Map<string, Transaction[]>();
-  filtered
-    .slice(0, limit)
-    .forEach((t) => groups.set(t.date, [...(groups.get(t.date) ?? []), t]));
+  const groups = useMemo(() => {
+    const byDate = new Map<string, Transaction[]>();
+    for (const transaction of filtered.slice(0, limit)) {
+      const group = byDate.get(transaction.date);
+      if (group) group.push(transaction);
+      else byDate.set(transaction.date, [transaction]);
+    }
+    return byDate;
+  }, [filtered, limit]);
   return (
     <View testID="screen-transactions" style={{ gap: 22 }}>
       <ScreenHeading

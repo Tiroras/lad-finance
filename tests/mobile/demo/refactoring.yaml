@@ -1,0 +1,276 @@
+# Режим: demo; EXPO_PUBLIC_ENABLE_DEMO=true, EXPO_PUBLIC_RESET_ON_START=false.
+# План: ../plans/refactoring.md, MREF-01/02 и ограниченная проверка MREF-03.
+# Устройство: Pixel_8 / emulator-5554. Дата: 2026-10-04.
+# Предусловие: завершён первый вход, тестового префикса в Demo нет.
+# Только тестовая запись; clearState и Fresh не используются.
+appId: app.lad.finance
+name: refactoring
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: .* Открыть профили"
+    timeout: 30000
+- runFlow:
+    when:
+      notVisible: "Текущий профиль: Демо. Открыть профили"
+    commands:
+      - tapOn: "Текущий профиль: .* Открыть профили"
+      - tapOn: "Открыть профиль: Демо"
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- tapOn: "Операции"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 6.*"
+- assertVisible: "120 000 ₽"
+- assertVisible: "34 605 ₽"
+- scrollUntilVisible:
+    element:
+      text: "Поиск операций"
+    direction: UP
+- tapOn: "Поиск операций"
+- inputText: "MaestroRefactor-20261004-"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 0.*"
+
+# MREF-01: неверная дата не создаёт запись.
+- tapOn:
+    text: "Добавить операцию"
+    index: 0
+- tapOn: "Доход"
+- tapOn: "Сумма операции"
+- inputText: "1250.50"
+- hideKeyboard
+- assertVisible: "1 250[.]50"
+- tapOn: "Название операции"
+- inputText: "MaestroRefactor-20261004-Income"
+- hideKeyboard
+- assertVisible: "1 250[.]50"
+- scrollUntilVisible:
+    element:
+      text: "Дата операции"
+    direction: DOWN
+- assertVisible: "04[.]10[.]2026"
+- tapOn: "Дата операции"
+- eraseText
+- inputText: "29022025"
+- hideKeyboard
+- assertVisible: "29[.]02[.]2025"
+- assertNotVisible: "Выбрать месяц"
+- scrollUntilVisible:
+    element:
+      text: "Добавить операцию"
+    direction: DOWN
+- tapOn: "Добавить операцию"
+- assertVisible: "Введите существующую дату в формате ДД.ММ.ГГГГ."
+- assertVisible: "Укажите корректную дату, не позднее сегодняшней."
+- tapOn: "Закрыть"
+- assertVisible: "По выбранным фильтрам · операций: 0.*"
+
+# Создание с вводом календарной даты цифрами.
+- tapOn:
+    text: "Добавить операцию"
+    index: 0
+- tapOn: "Доход"
+- tapOn: "Сумма операции"
+- inputText: "1250.50"
+- hideKeyboard
+- tapOn: "Название операции"
+- inputText: "MaestroRefactor-20261004-Income"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Дата операции"
+    direction: DOWN
+- tapOn: "Дата операции"
+- eraseText
+- inputText: "03102026"
+- hideKeyboard
+- assertVisible: "03[.]10[.]2026"
+- tapOn: "Заметка"
+- inputText: "Mask-Note-20261004"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Добавить операцию"
+    direction: DOWN
+- tapOn: "Добавить операцию"
+- scrollUntilVisible:
+    element:
+      text: "MaestroRefactor-20261004-Income, 1 250,50 ₽, открыть операцию"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 1.*"
+- assertVisible: "Вчера"
+- assertVisible: "1 251 ₽"
+- assertVisible: "0 ₽"
+- tapOn: "MaestroRefactor-20261004-Income, 1 250,50 ₽, открыть операцию"
+- assertVisible: "1 250,5"
+- assertVisible: "03[.]10[.]2026"
+- assertVisible: "Mask-Note-20261004"
+
+# MREF-02: полная замена суммы; положение каретки не проверяется.
+- tapOn: "Сумма операции"
+- eraseText
+- inputText: "1250.75"
+- hideKeyboard
+- assertVisible: "1 250[.]75"
+- tapOn: "Открыть календарь: Дата операции"
+- scrollUntilVisible:
+    element:
+      text: "Отмена"
+    direction: DOWN
+- assertVisible:
+    text: "3 октября 2026 г."
+    selected: true
+- tapOn: "Отмена"
+- assertVisible: "03[.]10[.]2026"
+- tapOn: "Открыть календарь: Дата операции"
+- scrollUntilVisible:
+    element:
+      text: "4 октября 2026 г."
+    direction: DOWN
+- tapOn: "4 октября 2026 г."
+- assertVisible: "04[.]10[.]2026"
+- scrollUntilVisible:
+    element:
+      text: "Сохранить изменения"
+    direction: DOWN
+- tapOn: "Сохранить изменения"
+- assertVisible: "По выбранным фильтрам · операций: 1.*"
+- assertVisible: "Сегодня"
+- assertVisible: "MaestroRefactor-20261004-Income, 1 250,75 ₽, открыть операцию"
+
+# MREF-03: ограниченная матрица для одной тестовой записи.
+- scrollUntilVisible:
+    element:
+      text: "Все"
+    direction: UP
+- tapOn:
+    text: "Расходы"
+    index: 0
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 0.*"
+- assertVisible:
+    text: "0 ₽"
+    index: 0
+- assertVisible:
+    text: "0 ₽"
+    index: 1
+- scrollUntilVisible:
+    element:
+      text: "Все"
+    direction: UP
+- tapOn:
+    text: "Доходы"
+    index: 0
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 1.*"
+- assertVisible: "1 251 ₽"
+- assertVisible: "0 ₽"
+- scrollUntilVisible:
+    element:
+      text: "Все"
+    direction: UP
+- tapOn: "Все"
+- tapOn: "Наличные"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 0.*"
+- assertVisible:
+    text: "0 ₽"
+    index: 0
+- assertVisible:
+    text: "0 ₽"
+    index: 1
+- scrollUntilVisible:
+    element:
+      text: "Все счета"
+    direction: UP
+- tapOn: "Все счета"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 1.*"
+- assertVisible: "1 251 ₽"
+- assertVisible: "0 ₽"
+
+# MREF-02/03: перезапуск сохраняет запись и очищает локальный поиск.
+# Новый запрос вводится в пустое поле: eraseText у длинной строки зависит
+# от положения каретки и не гарантирует удаления символов после неё.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- tapOn: "Операции"
+- scrollUntilVisible:
+    element:
+      text: "Поиск операций"
+    direction: DOWN
+- tapOn: "Поиск операций"
+- inputText: "  mask-note-20261004  "
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "MaestroRefactor-20261004-Income, 1 250,75 ₽, открыть операцию"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 1.*"
+- assertVisible: "Сегодня"
+- assertVisible: "1 251 ₽"
+- assertVisible: "0 ₽"
+- tapOn: "MaestroRefactor-20261004-Income, 1 250,75 ₽, открыть операцию"
+- assertVisible: "1 250,75"
+- assertVisible: "04[.]10[.]2026"
+- assertVisible: "Mask-Note-20261004"
+
+# Удаляется только собственная запись с точным именем и суммой.
+- scrollUntilVisible:
+    element:
+      text: "Удалить операцию"
+    direction: DOWN
+- tapOn: "Удалить операцию"
+- scrollUntilVisible:
+    element:
+      text: "Да, удалить"
+    direction: DOWN
+- tapOn: "Да, удалить"
+- assertVisible: "По выбранным фильтрам · операций: 0.*"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- tapOn: "Операции"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 6.*"
+- assertVisible: "120 000 ₽"
+- assertVisible: "34 605 ₽"
+- scrollUntilVisible:
+    element:
+      text: "Поиск операций"
+    direction: UP
+- tapOn: "Поиск операций"
+- inputText: "MaestroRefactor-20261004-"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 0.*"

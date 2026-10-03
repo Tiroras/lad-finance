@@ -1,10 +1,10 @@
-import { useLayoutEffect, useRef, useState, type ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { Field } from "./Field";
+import { useFormattedInput } from "./useFormattedInput";
 import {
   createAmountInputController,
   formatAmountInput,
   isZeroAmountInput,
-  type AmountInputSelection,
 } from "../lib/amountInput";
 
 type AmountFieldProps = Omit<
@@ -26,12 +26,12 @@ export function AmountField({
   onKeyPress,
   ...props
 }: AmountFieldProps) {
-  const formatted = formatAmountInput(value);
-  const input = useRef(createAmountInputController(value));
-  const [selection, setSelection] = useState<AmountInputSelection>();
-  useLayoutEffect(() => {
-    if (input.current.sync(value)) setSelection(undefined);
-  }, [value]);
+  const input = useFormattedInput({
+    value,
+    displayed: formatAmountInput(value),
+    createController: createAmountInputController,
+    onEdit: (edit) => onChangeText(edit.raw),
+  });
   return (
     <Field
       keyboardType="decimal-pad"
@@ -39,39 +39,18 @@ export function AmountField({
       selectTextOnFocus={isZeroAmountInput(value)}
       {...props}
       maxLength={24}
-      value={formatted}
-      selection={selection}
+      {...input.fieldProps}
       onFocus={(event) => {
-        input.current.release();
-        setSelection(undefined);
+        input.release();
         onFocus?.(event);
       }}
       onBlur={(event) => {
-        input.current.release();
-        setSelection(undefined);
+        input.release();
         onBlur?.(event);
       }}
-      onSelectionChange={({ nativeEvent }) => {
-        const event = nativeEvent as typeof nativeEvent & { text?: string };
-        setSelection(input.current.select(event.selection, event.text));
-      }}
       onKeyPress={(event) => {
-        input.current.keyPress(event.nativeEvent.key);
+        input.fieldProps.onKeyPress(event);
         onKeyPress?.(event);
-      }}
-      onChange={({ nativeEvent }) => {
-        // RN 0.86 sends selection with the text on iOS and Android, but its
-        // TypeScript declaration still omits it. Web uses the edit fallback.
-        const event = nativeEvent as typeof nativeEvent & {
-          selection?: AmountInputSelection;
-        };
-        const edit = input.current.change(
-          formatted,
-          event.text,
-          event.selection,
-        );
-        setSelection(edit.selection);
-        onChangeText(edit.raw);
       }}
     />
   );

@@ -1,13 +1,13 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
 import { validDate } from "../lib/dates";
 import { createDateInputController, dateInputText } from "../lib/dateInput";
-import type { InputSelection } from "../lib/formattedInput";
 import { DatePicker } from "./DatePicker";
 import { Field } from "./Field";
 import { Icon } from "./Icon";
 import { C } from "./theme";
 import { interactionStyles } from "./interactionStyles";
+import { useFormattedInput } from "./useFormattedInput";
 
 export function DateField({
   label,
@@ -28,13 +28,14 @@ export function DateField({
 }) {
   const [open, setOpen] = useState(false);
   const [touched, setTouched] = useState(false);
-  const [selection, setSelection] = useState<InputSelection>();
-  const input = useRef(createDateInputController(value));
   const trigger = useRef<View>(null);
   const displayed = dateInputText(value);
-  useLayoutEffect(() => {
-    if (input.current.sync(value)) setSelection(undefined);
-  }, [value]);
+  const input = useFormattedInput({
+    value,
+    displayed,
+    createController: createDateInputController,
+    onEdit: (edit) => onChangeText(edit.value),
+  });
   const invalid = !!value && !validDate(value);
   const close = () => {
     setOpen(false);
@@ -54,37 +55,14 @@ export function DateField({
         keyboardType="number-pad"
         autoCorrect={false}
         autoCapitalize="none"
-        value={displayed}
-        selection={selection}
-        onSelectionChange={({ nativeEvent }) => {
-          const event = nativeEvent as typeof nativeEvent & { text?: string };
-          setSelection(input.current.select(event.selection, event.text));
-        }}
-        onKeyPress={({ nativeEvent }) => {
-          input.current.keyPress(nativeEvent.key);
-        }}
-        onChange={({ nativeEvent }) => {
-          // RN 0.86 supplies a selection with the changed text on both phones.
-          const event = nativeEvent as typeof nativeEvent & {
-            selection?: InputSelection;
-          };
-          const edit = input.current.change(
-            displayed,
-            event.text,
-            event.selection,
-          );
-          setSelection(edit.selection);
-          onChangeText(edit.value);
-        }}
+        {...input.fieldProps}
         onFocus={() => {
           setOpen(false);
-          input.current.release();
-          setSelection(undefined);
+          input.release();
         }}
         onBlur={() => {
           setTouched(true);
-          input.current.release();
-          setSelection(undefined);
+          input.release();
         }}
         error={
           error ||
@@ -125,8 +103,7 @@ export function DateField({
           allowClear={allowClear}
           onClose={close}
           onChange={(date) => {
-            input.current.release();
-            setSelection(undefined);
+            input.release();
             onChangeText(date);
             close();
           }}

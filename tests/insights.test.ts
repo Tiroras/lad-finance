@@ -315,3 +315,104 @@ test("repeat detection rejects daily merchants, changing prices, stale patterns 
   differentAccounts.transactions[0].accountId = "cash";
   assert.deepEqual(recurringSuggestions(differentAccounts, TODAY), []);
 });
+
+test("repeat detection considers refunds across the entire history, including outside its date window", () => {
+  for (const date of ["2026-06-01", "2026-09-18", "2026-09-25"]) {
+    const state = subscriptionFixture();
+    state.transactions.push(
+      transaction("refund", date, 100, { type: "income", refundOf: "08" }),
+    );
+    assert.deepEqual(recurringSuggestions(state, TODAY), [], date);
+  }
+  const unrelated = subscriptionFixture();
+  unrelated.transactions.push(
+    transaction("other-purchase", "2026-06-01", 100),
+    transaction("other-refund", "2026-09-25", 100, {
+      type: "income",
+      refundOf: "other-purchase",
+    }),
+  );
+  assert.equal(recurringSuggestions(unrelated, TODAY).length, 1);
+});
+
+test("only an active plan on the same account suppresses a suggestion, regardless of its amount", () => {
+  for (const [active, accountId, amount, expected] of [
+    [true, "card", 50_000, 0],
+    [true, "card", 100_000, 0],
+    [false, "card", 50_000, 1],
+    [true, "cash", 50_000, 1],
+    [true, "cash", 100_000, 1],
+  ] as const) {
+    const state = subscriptionFixture();
+    state.recurring.push({
+      id: "service",
+      name: "  СЕРВИС!!! ",
+      amount,
+      day: 15,
+      kind: "subscription",
+      active,
+      icon: "cloud-outline",
+      color: "#000",
+      category: "fun",
+      accountId,
+    });
+    assert.equal(
+      recurringSuggestions(state, TODAY).length,
+      expected,
+      JSON.stringify({ active, accountId, amount }),
+    );
+  }
+});
+
+test("repeat detection excludes linked payments, debts, empty titles and non-spending accounts", () => {
+  for (const extra of [
+    { recurringId: "removed-plan" },
+    { debtId: "debt", debtAction: "repay" },
+    { title: " !!! " },
+    { accountId: "savings" },
+    { accountId: "credit" },
+    { accountId: "missing" },
+  ] satisfies Partial<Transaction>[]) {
+    const state = subscriptionFixture();
+    state.accounts.push({
+      ...state.accounts[0],
+      id: "credit",
+      kind: "credit",
+      creditLimit: 100_000,
+    });
+    state.transactions = state.transactions.map((item) => ({
+      ...item,
+      ...extra,
+    }));
+    assert.deepEqual(
+      recurringSuggestions(state, TODAY),
+      [],
+      JSON.stringify(extra),
+    );
+  }
+});
+
+test("repeat suggestions retain stable latest-date ordering, the five-item limit and historical valuations", () => {
+  const state = fixture();
+  state.accounts[0].currency = "USD";
+  for (const [index, day] of [15, 19, 19, 17, 18, 16, 20].entries())
+    for (const month of ["07", "08", "09"])
+      state.transactions.push(
+        transaction(`${index}-${month}`, `2026-${month}-${day}`, 49_900, {
+          title: `Сервис ${index}`,
+          baseAmount: 4_500_000 + Number(month),
+        }),
+      );
+  const before = JSON.stringify(state);
+  const suggestions = recurringSuggestions(state, TODAY);
+  assert.deepEqual(
+    suggestions.map((suggestion) => suggestion.transactionId),
+    ["6-09", "1-09", "2-09", "4-09", "3-09"],
+  );
+  assert.equal(suggestions[0].amount, 49_900);
+  assert.deepEqual(
+    suggestions[0].transactions.map((item) => item.amount),
+    [4_500_007, 4_500_008, 4_500_009],
+  );
+  assert.equal(JSON.stringify(state), before);
+});

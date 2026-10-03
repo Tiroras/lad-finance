@@ -278,25 +278,46 @@ export function recurringSuggestions(
   today: string,
 ): RecurringSuggestion[] {
   const start = shiftMonth(today, -3);
+  // A refund excludes its purchase even when the refund is outside this window.
+  const refundedTransactions = new Set(
+    state.transactions.flatMap((transaction) =>
+      transaction.refundOf ? [transaction.refundOf] : [],
+    ),
+  );
+  const spendingAccounts = new Set(
+    state.accounts
+      .filter((account) => account.kind === "spending")
+      .map((account) => account.id),
+  );
+  const paymentKey = (accountId: string, title: string) =>
+    JSON.stringify([accountId, normalizeTitle(title)]);
+  const activePayments = new Set(
+    state.recurring
+      .filter((payment) => payment.active)
+      .map((payment) => paymentKey(payment.accountId, payment.name)),
+  );
   const groups = new Map<string, Transaction[]>();
   for (const transaction of state.transactions) {
     if (
       transaction.type !== "expense" ||
       !!transaction.debtId ||
-      state.transactions.some((entry) => entry.refundOf === transaction.id) ||
+      refundedTransactions.has(transaction.id) ||
       transaction.date < start ||
       transaction.date > today ||
-      belongsToPayment(state, transaction) ||
-      !normalizeTitle(transaction.title) ||
-      state.accounts.find((account) => account.id === transaction.accountId)
-        ?.kind !== "spending"
+      !spendingAccounts.has(transaction.accountId) ||
+      (transaction.refundOf
+        ? belongsToPayment(state, transaction)
+        : !!transaction.recurringId)
     )
       continue;
-    const key = JSON.stringify([
-      transaction.accountId,
-      normalizeTitle(transaction.title),
-    ]);
-    groups.set(key, [...(groups.get(key) ?? []), transaction]);
+    const title = normalizeTitle(transaction.title);
+    if (!title) continue;
+    const key = JSON.stringify([transaction.accountId, title]);
+    // An existing plan suppresses the whole suggestion, regardless of its amount.
+    if (activePayments.has(key)) continue;
+    const group = groups.get(key);
+    if (group) group.push(transaction);
+    else groups.set(key, [transaction]);
   }
   const suggestions: RecurringSuggestion[] = [];
   for (const transactions of groups.values()) {
@@ -310,16 +331,7 @@ export function recurringSuggestions(
       continue;
     const recent = transactions.slice(-3);
     const latest = recent[2];
-    if (
-      daysBetween(latest.date, today) > 45 ||
-      state.recurring.some(
-        (payment) =>
-          payment.active &&
-          payment.accountId === latest.accountId &&
-          normalizeTitle(payment.name) === normalizeTitle(latest.title),
-      )
-    )
-      continue;
+    if (daysBetween(latest.date, today) > 45) continue;
     if (
       !recent.slice(1).every((transaction, index) => {
         const previous = recent[index];

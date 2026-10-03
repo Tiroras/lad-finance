@@ -1,4 +1,5 @@
 import { categoryLabel, orderedCategories } from "../../../domain/categories";
+import type { TransactionFilterType } from "../../../domain/transactionList";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useFinance } from "../../../state/finance";
 import { C, Chip, Segments, Field } from "../../../shared/ui";
@@ -15,8 +16,8 @@ export function TransactionFilters({
 }: {
   query: string;
   setQuery: (value: string) => void;
-  type: string;
-  setType: (value: string) => void;
+  type: TransactionFilterType;
+  setType: (value: TransactionFilterType) => void;
   account: string;
   setAccount: (value: string) => void;
   category: string;

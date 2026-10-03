@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
+  existsSync,
   mkdtempSync,
   mkdirSync,
   readFileSync,
+  realpathSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -14,6 +16,8 @@ import { test, type TestContext } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const runner = fileURLToPath(new URL("../scripts/mobile.mjs", import.meta.url));
+const flowDirectory = "tests/mobile/demo";
+const flowFile = `${flowDirectory}/example.yaml`;
 type Invocation = { tool: string; args: string[] };
 
 function setup(
@@ -25,14 +29,18 @@ function setup(
     buildFailure?: boolean;
   } = {},
 ) {
-  const root = mkdtempSync(join(tmpdir(), "lad-mobile-runner-"));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), "lad-mobile-runner-")));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const sdk = join(root, "sdk");
   const bin = join(root, "bin");
   const logFile = join(root, "commands.jsonl");
   const fixtureRunner = join(root, "scripts/mobile.mjs");
   mkdirSync(join(root, "scripts"));
-  mkdirSync(join(root, "tests/mobile"), { recursive: true });
+  mkdirSync(join(root, flowDirectory), { recursive: true });
+  writeFileSync(
+    join(root, flowFile),
+    "appId: app.lad.finance\n---\n- launchApp\n",
+  );
   copyFileSync(runner, fixtureRunner);
   writeFileSync(
     join(root, "app.json"),
@@ -77,6 +85,7 @@ if (tool === 'emulator') {
     writeFileSync(path, stub, { mode: 0o755 });
   }
   return {
+    root,
     run: (...args: string[]) =>
       spawnSync(process.execPath, [fixtureRunner, ...args], {
         encoding: "utf8",
@@ -89,16 +98,33 @@ if (tool === 'emulator') {
         },
       }),
     calls: () =>
-      readFileSync(logFile, "utf8")
-        .trim()
-        .split("\n")
-        .map((line) => JSON.parse(line) as Invocation),
+      existsSync(logFile)
+        ? readFileSync(logFile, "utf8")
+            .trim()
+            .split("\n")
+            .map((line) => JSON.parse(line) as Invocation)
+        : [],
   };
 }
 
+test("мобильный запуск требует явный сценарий до обращения к эмулятору и сборки", (t) => {
+  const fixture = setup(t);
+  for (const args of [["test"], ["test", "--no-build"]]) {
+    const result = fixture.run(...args);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Укажите файл сценария или папку/);
+    assert.deepEqual(fixture.calls(), []);
+    assert.equal(existsSync(join(fixture.root, "test-results")), false);
+  }
+  const missing = fixture.run("test", "missing.yaml");
+  assert.equal(missing.status, 1);
+  assert.match(missing.stderr, /Не найден сценарий/);
+  assert.deepEqual(fixture.calls(), []);
+});
+
 test("мобильный запуск выбирает нужный эмулятор и сохраняет установленное приложение", (t) => {
   const fixture = setup(t);
-  const result = fixture.run("test", "--no-build");
+  const result = fixture.run("test", "--no-build", flowFile);
   assert.equal(result.status, 0, result.stderr);
   const calls = fixture.calls();
   assert.equal(
@@ -122,12 +148,12 @@ test("мобильный запуск выбирает нужный эмулят
     "emulator-5556",
     "test",
   ]);
-  assert.match(maestro!.args.at(-1)!, /tests\/mobile$/);
+  assert.equal(maestro!.args.at(-1), join(fixture.root, flowFile));
 });
 
 test("Expo собирает для имени AVD, а Maestro проверяет его через адрес ADB", (t) => {
   const fixture = setup(t);
-  const result = fixture.run("test");
+  const result = fixture.run("test", flowDirectory);
   assert.equal(result.status, 0, result.stderr);
   const calls = fixture.calls();
   const build = calls.findIndex((call) => call.tool === "cli");
@@ -146,11 +172,12 @@ test("Expo собирает для имени AVD, а Maestro проверяет
     "emulator-5556",
     "test",
   ]);
+  assert.equal(calls[maestro].args.at(-1), join(fixture.root, flowDirectory));
 });
 
 test("при ошибке сборки тесты не проверяют старое приложение", (t) => {
   const fixture = setup(t, { buildFailure: true });
-  const result = fixture.run("test");
+  const result = fixture.run("test", flowFile);
   assert.equal(result.status, 8);
   assert.equal(
     fixture.calls().some((call) => call.tool === "maestro"),
@@ -161,7 +188,7 @@ test("при ошибке сборки тесты не проверяют ста
 
 test("холодный запуск ждёт готовности Android перед Maestro", (t) => {
   const fixture = setup(t, { cold: true });
-  const result = fixture.run("test", "--no-build");
+  const result = fixture.run("test", "--no-build", flowFile);
   assert.equal(result.status, 0, result.stderr);
   const calls = fixture.calls();
   assert.deepEqual(
@@ -182,7 +209,7 @@ test("холодный запуск ждёт готовности Android пер
 
 test("ошибка Maestro сохраняет код завершения и не объявляет тест успешным", (t) => {
   const fixture = setup(t, { fail: true });
-  const result = fixture.run("test", "--no-build");
+  const result = fixture.run("test", "--no-build", flowFile);
   assert.equal(result.status, 7);
   assert.doesNotMatch(result.stdout, /Мобильные тесты прошли/);
 });

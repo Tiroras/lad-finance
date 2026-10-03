@@ -275,8 +275,8 @@ async function main() {
     allowPositionals: true,
   });
   if (values.help) {
-    console.log(`docker compose run --rm android [test|build|doctor] [параметры]
-  test                         Собрать, установить и проверить приложение
+    console.log(`docker compose run --rm android [test|build|doctor] [параметры] [ПУТЬ]
+  test ПУТЬ                    Собрать, установить и выполнить выбранный сценарий
   build                        Только собрать APK, без эмулятора
   doctor                       Проверить связь с Android-эмулятором
   --mode default|demo|fresh    Режим приложения (по умолчанию default)
@@ -284,8 +284,9 @@ async function main() {
   --device emulator-5554       Выбрать эмулятор
   --port 8095                  Отдельный порт Metro для Fresh
   --abi arm64-v8a              Архитектура APK при отдельной сборке
-  test tests/mobile/smoke.yaml Запустить один сценарий
 
+Для test обязателен ПУТЬ: YAML или папка со сценариями выбранного режима.
+Подготовка данных должна соответствовать сценарию; см. docs/DOCKER.md.
 Fresh удаляет данные всех профилей Лада на выбранном тестовом эмуляторе.`);
     return;
   }
@@ -312,10 +313,13 @@ Fresh удаляет данные всех профилей Лада на выб
     EXPO_PUBLIC_ENABLE_DEMO: String(mode === "demo"),
     EXPO_PUBLIC_RESET_ON_START: String(mode === "fresh"),
   };
-  const flows = (files.length ? files : ["tests/mobile"]).map((path) =>
-    resolve(root, path),
-  );
+  const flows = files.map((path) => resolve(root, path));
   if (command === "test") {
+    if (!flows.length)
+      throw new Error(
+        "Укажите файл сценария или папку: docker compose run --rm android test ПУТЬ. " +
+          "Режим --mode и данные должны соответствовать выбранному сценарию.",
+      );
     for (const path of flows) {
       if (!existsSync(path)) throw new Error(`Сценарий не найден: ${path}`);
     }

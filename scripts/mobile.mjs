@@ -220,12 +220,13 @@ async function main() {
   });
   if (values.help) {
     console.log(`Запуск из терминала проекта:
-  npm run emulator                          Запустить эмулятор
-  npm run test:mobile                       Собрать приложение и выполнить тесты
-  npm run test:mobile -- --no-build          Проверить установленную сборку
-  npm run test:mobile -- --avd Pixel_8       Выбрать эмулятор
-  npm run test:mobile -- tests/mobile/smoke.yaml
+  npm run emulator                           Запустить эмулятор
+  npm run test:mobile -- ПУТЬ                 Собрать приложение и выполнить сценарий
+  npm run test:mobile -- --no-build ПУТЬ      Проверить установленную сборку
+  npm run test:mobile -- --avd Pixel_8 ПУТЬ   Выбрать эмулятор
 
+ПУТЬ обязателен: укажите YAML или папку со сценариями выбранного режима.
+Режим сборки и подготовка данных должны соответствовать сценарию; см. README → Мобильные тесты.
 SDK, Maestro и Java определяются автоматически. Эмулятор остаётся открытым после тестов.`);
     return;
   }
@@ -238,19 +239,22 @@ SDK, Maestro и Java определяются автоматически. Эму
     );
   if (process.platform === "win32")
     throw new Error("Этот скрипт рассчитан на macOS и Linux.");
-  const tools = environment();
-  const flows = (files.length ? files : ["tests/mobile"]).map((path) =>
-    resolve(projectRoot, path),
-  );
+  const flows = files.map((path) => resolve(projectRoot, path));
   if (mode === "test") {
-    if (!tools.maestro)
+    if (!flows.length)
       throw new Error(
-        "Не найден Maestro CLI. Установите его по инструкции README → Мобильные тесты.",
+        "Укажите файл сценария или папку: npm run test:mobile -- ПУТЬ. " +
+          "Режим сборки и данные должны соответствовать выбранному сценарию.",
       );
     for (const path of flows) {
       if (!existsSync(path)) throw new Error(`Не найден сценарий: ${path}`);
     }
   }
+  const tools = environment();
+  if (mode === "test" && !tools.maestro)
+    throw new Error(
+      "Не найден Maestro CLI. Установите его по инструкции README → Мобильные тесты.",
+    );
   mkdirSync(outputDir, { recursive: true });
   const { serial, avd } = await ensureEmulator(
     values.avd || process.env.LAD_ANDROID_AVD,
@@ -280,7 +284,7 @@ SDK, Maestro и Java определяются автоматически. Эму
       );
       if (!existsSync(apk))
         throw new Error(
-          "Нет установленного приложения и готового APK. Запустите npm run test:mobile без --no-build.",
+          "Нет установленного приложения и готового APK. Повторите команду с тем же сценарием без --no-build.",
         );
       log("Устанавливаю готовый APK с сохранением данных приложения…");
       await run(adb, ["-s", serial, "install", "-r", apk], env);

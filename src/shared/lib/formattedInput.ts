@@ -1,6 +1,6 @@
 export type InputSelection = { start: number; end: number };
 
-type SelectionEdit = {
+export type SelectionEdit = {
   selection: InputSelection;
   inputSelection: InputSelection;
 };

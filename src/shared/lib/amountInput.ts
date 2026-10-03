@@ -6,8 +6,6 @@ import {
 
 export const ungroupAmountInput = (value: string) => value.replace(/\s/g, "");
 
-export type AmountInputSelection = InputSelection;
-
 export const isZeroAmountInput = (value: string) =>
   /^[+-]?0+(?:[.,]0+)?$/.test(ungroupAmountInput(value));
 
@@ -22,8 +20,8 @@ export function formatAmountInput(value: string) {
 export function amountInputEdit(
   previous: string,
   next: string,
-  selection: AmountInputSelection,
-  nativeSelection?: AmountInputSelection,
+  selection: InputSelection,
+  nativeSelection?: InputSelection,
 ) {
   const raw = ungroupAmountInput(next);
   const formatted = formatAmountInput(raw);
