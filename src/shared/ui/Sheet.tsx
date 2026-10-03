@@ -1,4 +1,4 @@
-import { useCallback, useRef, type ReactNode } from "react";
+import { useCallback, useContext, useRef, type ReactNode } from "react";
 import {
   Animated,
   View,
@@ -18,6 +18,8 @@ import { IconButton } from "./IconButton";
 import { FormFields } from "./FormFields";
 import { useSheetDrag } from "./useSheetDrag";
 import { SheetScrollProvider } from "./SheetScroll";
+import { TourFrame, type TourFrameHandle } from "./TourFrame";
+import { TourFrameContext } from "./TourContext";
 
 export function Sheet({
   title,
@@ -41,6 +43,9 @@ export function Sheet({
   headerAccessory?: ReactNode;
 }) {
   const { width, height } = useWindowDimensions();
+  const parentTourFrame = useContext(TourFrameContext);
+  const tourFrame = useRef<TourFrameHandle>(null);
+  const revealTour = useCallback(() => tourFrame.current?.reveal(), []);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const scrollToStart = useCallback(() => {
@@ -81,6 +86,12 @@ export function Sheet({
       transparent
       visible={visible}
       animationType="fade"
+      // Native Modal has its own window and may get its final layout after
+      // child layout effects. Refresh the frame belonging to this window.
+      onShow={revealTour}
+      // Web Modal restores focus to its opener after dismissal and can scroll
+      // the underlying screen. Reveal the current tour target after that.
+      onDismiss={parentTourFrame?.reveal}
       onRequestClose={() => {
         if (!blockingContent) (onBack ?? onClose)();
       }}
@@ -131,91 +142,123 @@ export function Sheet({
             },
           ]}
         >
-          {!!blockingContent && blockingContent}
-          <View
-            {...panHandlers}
-            testID="sheet-drag-area"
-            style={[s.header, !!blockingContent && { display: "none" }]}
+          <TourFrame
+            ref={tourFrame}
+            coach={!blockingContent ? headerAccessory : undefined}
+            extendShade
+            scrollKey={contentKey}
+            // Yoga still resolves a positive `flex` to a zero basis when
+            // flexBasis is auto. Clear the frame's flex: 1 so this sheet can
+            // measure its contents instead of collapsing to bottom padding.
+            style={{ flex: 0, flexGrow: 0, flexShrink: 1, flexBasis: "auto" }}
           >
-            <View style={s.handle} />
-            <Row
-              style={{
-                justifyContent: "space-between",
-                paddingHorizontal: 24,
-                marginBottom: 20,
-              }}
-            >
-              {onBack && (
-                <IconButton
-                  name="arrow-back"
-                  label="Назад"
-                  tourId="sheet.back"
-                  onPress={onBack}
-                  style={{ backgroundColor: C.soft }}
-                />
-              )}
-              <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
-                <Txt
-                  accessibilityRole="header"
-                  style={{ fontFamily: font.bold, fontSize: 23 }}
+            {({ coach, onScroll, onLayout }) => (
+              <>
+                {!!blockingContent && blockingContent}
+                <View
+                  {...panHandlers}
+                  testID="sheet-drag-area"
+                  style={[s.header, !!blockingContent && { display: "none" }]}
                 >
-                  {title}
-                </Txt>
-                {subtitle && (
-                  <Txt style={{ fontSize: 12, color: C.muted }}>{subtitle}</Txt>
-                )}
-              </View>
-              <IconButton
-                name="close"
-                label="Закрыть"
-                tourId="sheet.close"
-                onPress={onClose}
-                style={{ backgroundColor: C.soft }}
-              />
-            </Row>
-          </View>
-          {!!headerAccessory && !blockingContent && (
-            <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
-              {headerAccessory}
-            </View>
-          )}
-          <FormFields
-            key={contentKey}
-            disabled={!!blockingContent}
-            scrollRef={scrollRef}
-            contentRef={contentRef}
-          >
-            {(onViewportLayout) => (
-              <ScrollView
-                ref={scrollRef}
-                testID="sheet-scroll"
-                removeClippedSubviews={false}
-                key={contentKey}
-                onLayout={onViewportLayout}
-                style={[s.scroll, !!blockingContent && { display: "none" }]}
-                aria-hidden={!!blockingContent}
-                importantForAccessibility={
-                  blockingContent ? "no-hide-descendants" : "auto"
-                }
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: 24,
-                  paddingBottom: 8,
-                  gap: 20,
-                }}
-              >
-                <View ref={contentRef} collapsable={false} style={{ gap: 20 }}>
-                  <SheetScrollProvider
-                    scrollToStart={scrollToStart}
-                    reveal={reveal}
+                  <View style={s.handle} />
+                  <Row
+                    style={{
+                      justifyContent: "space-between",
+                      paddingHorizontal: 24,
+                      marginBottom: 20,
+                    }}
                   >
-                    {children}
-                  </SheetScrollProvider>
+                    {onBack && (
+                      <IconButton
+                        name="arrow-back"
+                        label="Назад"
+                        tourId="sheet.back"
+                        onPress={onBack}
+                        style={{ backgroundColor: C.soft }}
+                      />
+                    )}
+                    <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
+                      <Txt
+                        accessibilityRole="header"
+                        style={{ fontFamily: font.bold, fontSize: 23 }}
+                      >
+                        {title}
+                      </Txt>
+                      {subtitle && (
+                        <Txt style={{ fontSize: 12, color: C.muted }}>
+                          {subtitle}
+                        </Txt>
+                      )}
+                    </View>
+                    <IconButton
+                      name="close"
+                      label="Закрыть"
+                      tourId="sheet.close"
+                      onPress={onClose}
+                      style={{ backgroundColor: C.soft }}
+                    />
+                  </Row>
                 </View>
-              </ScrollView>
+                {!!coach && (
+                  <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+                    {coach}
+                  </View>
+                )}
+                <FormFields
+                  key={contentKey}
+                  disabled={!!blockingContent}
+                  scrollRef={scrollRef}
+                  contentRef={contentRef}
+                >
+                  {(onViewportLayout) => (
+                    <Animated.ScrollView
+                      ref={scrollRef}
+                      testID="sheet-scroll"
+                      removeClippedSubviews={false}
+                      key={contentKey}
+                      onLayout={() => {
+                        onViewportLayout();
+                        onLayout();
+                      }}
+                      onScroll={onScroll}
+                      scrollEventThrottle={16}
+                      overScrollMode={headerAccessory ? "never" : "auto"}
+                      style={[
+                        s.scroll,
+                        !!blockingContent && { display: "none" },
+                      ]}
+                      aria-hidden={!!blockingContent}
+                      importantForAccessibility={
+                        blockingContent ? "no-hide-descendants" : "auto"
+                      }
+                      keyboardShouldPersistTaps="handled"
+                      showsVerticalScrollIndicator={false}
+                      contentContainerStyle={{
+                        paddingHorizontal: 24,
+                        paddingBottom: 8,
+                        gap: 20,
+                      }}
+                    >
+                      <View
+                        ref={contentRef}
+                        collapsable={false}
+                        style={{ gap: 20 }}
+                      >
+                        <SheetScrollProvider
+                          scrollToStart={scrollToStart}
+                          reveal={reveal}
+                          scrollRef={scrollRef}
+                          contentRef={contentRef}
+                        >
+                          {children}
+                        </SheetScrollProvider>
+                      </View>
+                    </Animated.ScrollView>
+                  )}
+                </FormFields>
+              </>
             )}
-          </FormFields>
+          </TourFrame>
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>

@@ -1,52 +1,73 @@
 import {
   createContext,
   useContext,
-  useEffect,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
   useRef,
   type ReactNode,
 } from "react";
 import {
-  StyleSheet,
   View,
   useWindowDimensions,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { useSheetReveal } from "./SheetScroll";
-import { C } from "./theme";
+import { useSheetTourScroll } from "./SheetScroll";
+import {
+  TourContext,
+  TourFrameContext,
+  type TourScrollScope,
+} from "./TourContext";
 
-const Context = createContext<{
-  target: string | null;
-  onAction: (id: string) => void;
-}>({ target: null, onAction: () => undefined });
-const ScrollContext = createContext<((target: View) => void) | undefined>(
-  undefined,
-);
+const ScrollContext = createContext<
+  | (TourScrollScope & {
+      reveal: (target: View) => void;
+    })
+  | undefined
+>(undefined);
 
 export function TourProvider({
+  active,
   target,
   onAction,
   children,
 }: {
+  active: boolean;
   target: string | null;
   onAction: (id: string) => void;
   children: ReactNode;
 }) {
-  return <Context value={{ target, onAction }}>{children}</Context>;
+  const context = useMemo(
+    () => ({ active, target, onAction }),
+    [active, target, onAction],
+  );
+  return <TourContext value={context}>{children}</TourContext>;
 }
 
 export function TourScrollProvider({
   reveal,
+  scrollRef,
+  contentRef,
+  contentInsetTop,
   children,
 }: {
   reveal: (target: View) => void;
   children: ReactNode;
-}) {
-  return <ScrollContext value={reveal}>{children}</ScrollContext>;
+} & TourScrollScope) {
+  const context = useMemo(
+    () => ({ reveal, scrollRef, contentRef, contentInsetTop }),
+    [reveal, scrollRef, contentRef, contentInsetTop],
+  );
+  return <ScrollContext value={context}>{children}</ScrollContext>;
 }
 
 export function useTourAction() {
-  return useContext(Context).onAction;
+  return useContext(TourContext).onAction;
+}
+
+export function useTourActive() {
+  return useContext(TourContext).active;
 }
 
 export function TourTarget({
@@ -58,46 +79,55 @@ export function TourTarget({
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
 }) {
-  const { target } = useContext(Context);
+  const { target } = useContext(TourContext);
+  const frame = useContext(TourFrameContext);
   const active = target === id;
   const ref = useRef<View>(null);
-  const sheetReveal = useSheetReveal();
-  const pageReveal = useContext(ScrollContext);
-  const reveal = sheetReveal ?? pageReveal;
+  const sheetScroll = useSheetTourScroll();
+  const pageScroll = useContext(ScrollContext);
+  const scope = sheetScroll ?? pageScroll;
+  const reveal = scope?.reveal;
+  const scrollRef = scope?.scrollRef;
+  const contentRef = scope?.contentRef;
+  const insetTop = scope?.contentInsetTop ?? 0;
   const { width, height } = useWindowDimensions();
-  useEffect(() => {
-    if (!active) return;
-    const frame = requestAnimationFrame(() => {
-      if (ref.current) reveal?.(ref.current);
+  useLayoutEffect(() => {
+    if (!active || !ref.current || !frame) return;
+    const unregister = frame.register({
+      id,
+      node: ref.current,
+      scroll:
+        scrollRef && contentRef
+          ? { scrollRef, contentRef, contentInsetTop: insetTop }
+          : undefined,
+      reveal,
     });
-    return () => cancelAnimationFrame(frame);
-  }, [active, reveal, width, height]);
+    return unregister;
+  }, [
+    active,
+    frame,
+    id,
+    scrollRef,
+    contentRef,
+    insetTop,
+    reveal,
+    width,
+    height,
+  ]);
+  const revealOnLayout = useCallback(() => {
+    if (!active) return;
+    if (ref.current) reveal?.(ref.current);
+    frame?.refresh();
+  }, [active, reveal, frame]);
   return (
     <View
       ref={ref}
       collapsable={false}
       style={style}
       testID={active ? `tour-target-${id}` : undefined}
-      onLayout={() => {
-        if (active && ref.current) reveal?.(ref.current);
-      }}
+      onLayout={revealOnLayout}
     >
       {children}
-      {active && <View pointerEvents="none" style={styles.focus} />}
     </View>
   );
 }
-const styles = StyleSheet.create({
-  focus: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    borderColor: C.lime,
-    borderWidth: 3,
-    borderRadius: 14,
-    boxShadow: "0 0 0 2px #234B3C",
-    backgroundColor: "rgba(213,233,167,0.12)",
-  },
-});

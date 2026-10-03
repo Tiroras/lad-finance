@@ -67,6 +67,7 @@ export function createLearningProgressStore(storage: {
   const listeners = new Set<() => void>();
   let loading: Promise<void> | undefined;
   let queue: Promise<unknown> = Promise.resolve();
+  let savedRaw: string | null | undefined;
   const publish = (patch: Partial<typeof snapshot>) => {
     snapshot = { ...snapshot, ...patch };
     for (const listener of listeners) listener();
@@ -76,6 +77,7 @@ export function createLearningProgressStore(storage: {
     loading ??= storage
       .read()
       .then((raw) => {
+        savedRaw = raw;
         publish({
           ready: true,
           error: "",
@@ -107,20 +109,26 @@ export function createLearningProgressStore(storage: {
         .catch(() => undefined)
         .then(async () => {
           await load();
-          publish({ saving: true, error: "" });
           try {
             const next = decodeLearningProgress(
               JSON.stringify(change(snapshot.progress)),
             );
-            await storage.write(JSON.stringify(next));
-            publish({ progress: next });
+            const raw = JSON.stringify(next);
+            // Compare the stored format too: resuming a migrated v1 cursor
+            // still has to write v2 even when its decoded position is equal.
+            if (raw === savedRaw) {
+              if (snapshot.error) publish({ error: "" });
+              return;
+            }
+            publish({ saving: true, error: "" });
+            await storage.write(raw);
+            savedRaw = raw;
+            publish({ progress: next, saving: false });
           } catch {
             const message =
               "Не удалось сохранить прогресс обучения. Повторите действие.";
-            publish({ error: message });
+            publish({ error: message, saving: false });
             throw new Error(message);
-          } finally {
-            publish({ saving: false });
           }
         });
       queue = task;

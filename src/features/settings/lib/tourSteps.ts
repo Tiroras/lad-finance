@@ -3,6 +3,8 @@ import type { SheetState, Tab } from "../../../application/navigation/types";
 export interface TourStep {
   id: string;
   target: string;
+  /** A read-only highlight may advance through a different control. */
+  action?: string;
   title: string;
   text: string;
   tab: Tab;
@@ -266,9 +268,10 @@ export const tourSteps: readonly TourStep[] = [
     tab: "analytics",
     sheets: [{ type: "settings" }, { type: "dataSettings" }],
     id: "data-back",
-    target: "sheet.back",
+    target: "data.backups",
+    action: "sheet.back",
     title: "Копии вашего профиля",
-    text: "Ниже находятся копии с паролем и восстановление. Экскурсия ничего не экспортирует и не заменяет. Вернитесь в меню настроек.",
+    text: "Здесь находятся резервные копии и восстановление. Во время экскурсии эти действия отключены. Посмотрите блок и вернитесь стрелкой в меню настроек.",
   },
   {
     ...settings,
@@ -288,9 +291,10 @@ export const tourSteps: readonly TourStep[] = [
   {
     ...settings,
     id: "settings-close",
-    target: "sheet.close",
+    target: "settings.guide",
+    action: "sheet.close",
     title: "Экскурсия всегда под рукой",
-    text: "В пункте «Обучение» можно повторить весь маршрут. Сейчас закройте настройки крестиком.",
+    text: "В пункте «Обучение» можно повторить весь маршрут или выбрать раздел. Во время экскурсии он недоступен. Сейчас закройте настройки крестиком.",
   },
   {
     tab: "analytics",

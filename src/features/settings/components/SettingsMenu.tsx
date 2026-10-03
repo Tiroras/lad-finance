@@ -15,6 +15,7 @@ import {
   Row,
   Section,
   Txt,
+  useTourActive,
   type IName,
 } from "../../../shared/ui";
 
@@ -109,12 +110,16 @@ function SettingsLink({
 }) {
   const tourAction = useTourAction();
   const tourId = `settings.${item.sheet.type}`;
+  const touring = useTourActive();
+  const disabled = touring && item.sheet.type === "guide";
   return (
     <TourTarget id={tourId}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={item.title}
         accessibilityHint={item.description}
+        accessibilityState={{ disabled }}
+        disabled={disabled}
         onPress={() => {
           open(item.sheet);
           tourAction(tourId);

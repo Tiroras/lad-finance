@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { CategoriesPanel, CategoryForm } from "../../features/categories";
 import { CurrencySettings } from "../../features/currencies";
 import {
@@ -46,7 +47,7 @@ import {
 } from "../../features/transactions";
 import type { OpenSheet, SheetState } from "../navigation/types";
 
-export function SheetContent({
+export const SheetContent = memo(function SheetContent({
   sheet,
   close,
   open,
@@ -189,4 +190,4 @@ export function SheetContent({
     case "payment":
       return <PaymentContent sheet={sheet} close={close} open={open} />;
   }
-}
+});

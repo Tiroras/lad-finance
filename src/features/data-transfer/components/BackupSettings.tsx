@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { View } from "react-native";
 import { exportBackup } from "../lib/backup";
 import {
   dateLabel,
@@ -15,6 +14,8 @@ import {
   Field,
   Notice,
   Txt,
+  TourTarget,
+  useTourActive,
 } from "../../../shared/ui";
 import { validateBackupPassword } from "../../../infrastructure/crypto/passwordBackup";
 import {
@@ -34,6 +35,8 @@ export function BackupSettings({
   disabled?: boolean;
 }) {
   const { state, notify, today, profile } = useFinance();
+  const touring = useTourActive();
+  const readOnly = disabled || touring;
   const [password, setPassword] = useState(""),
     [confirmation, setConfirmation] = useState("");
   const [protect, setProtect] = useState(false),
@@ -77,7 +80,7 @@ export function BackupSettings({
     }
   };
   return (
-    <View style={{ gap: 16 }}>
+    <TourTarget id="data.backups" style={{ gap: 16 }}>
       <Notice>
         Полная копия включает счета, операции, категории, цели, платежи и
         сценарии. Сохраните её вне приложения перед сменой устройства.
@@ -97,7 +100,7 @@ export function BackupSettings({
         label="Создать копию с паролем"
         icon="lock-closed-outline"
         variant="secondary"
-        disabled={busy || disabled}
+        disabled={busy || readOnly}
         onPress={() => setProtect(!protect)}
       />
       {protect && (
@@ -116,7 +119,7 @@ export function BackupSettings({
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={256}
-            editable={!busy && !disabled}
+            editable={!busy && !readOnly}
           />
           <Field
             label="Повторите пароль"
@@ -127,11 +130,11 @@ export function BackupSettings({
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={256}
-            editable={!busy && !disabled}
+            editable={!busy && !readOnly}
           />
           <Button
             label={busy ? "Защищаем копию…" : "Сохранить защищённую копию"}
-            disabled={busy || disabled}
+            disabled={busy || readOnly}
             onPress={() => void save(true)}
           />
         </Card>
@@ -144,16 +147,16 @@ export function BackupSettings({
         label="Экспортировать резервную копию"
         icon="download-outline"
         variant="secondary"
-        disabled={busy || disabled}
+        disabled={busy || readOnly}
         onPress={() => void save(false)}
       />
       <ErrorText error={error} />
       <BackupPicker
         label="Восстановить из файла"
-        disabled={busy || disabled}
+        disabled={busy || readOnly}
         onStart={onStart}
         onReady={onReady}
       />
-    </View>
+    </TourTarget>
   );
 }

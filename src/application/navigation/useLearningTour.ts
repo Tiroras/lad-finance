@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import {
   tourSteps,
@@ -8,6 +8,13 @@ import {
 import { useSecurity } from "../../features/security";
 import { useFinance } from "../../state/finance";
 import type { useAppNavigation } from "./useAppNavigation";
+
+const stepLocations = tourSteps.map((step) =>
+  JSON.stringify([
+    step.tab,
+    { current: step.sheets.at(-1) ?? null, parents: step.sheets.slice(0, -1) },
+  ]),
+);
 
 export function useLearningTour(
   navigation: ReturnType<typeof useAppNavigation>,
@@ -22,6 +29,7 @@ export function useLearningTour(
   const session = useRef(0);
   const index = tourStepIndex(learning.progress.step);
   const step = tourSteps[index];
+  const action = step.action ?? step.target;
   const {
     restoreLocation,
     setBackOverride,
@@ -31,11 +39,10 @@ export function useLearningTour(
     tab,
     sheets,
   } = navigation;
-  const location = JSON.stringify([tab, sheets]);
-  const wanted = JSON.stringify([
-    step.tab,
-    { current: step.sheets.at(-1) ?? null, parents: step.sheets.slice(0, -1) },
-  ]);
+  const location = useMemo(() => JSON.stringify([tab, sheets]), [tab, sheets]);
+  const currentLocation = useRef({ tab, sheets, location });
+  currentLocation.current = { tab, sheets, location };
+  const wanted = stepLocations[index];
 
   useEffect(() => {
     if (previousProfile.current !== profile) {
@@ -65,8 +72,9 @@ export function useLearningTour(
         if (currentSession !== session.current) return;
         if (next >= tourSteps.length) {
           setActive(false);
-          close();
-          navigate("home");
+          const current = currentLocation.current;
+          if (current.sheets.current || current.sheets.parents.length) close();
+          if (current.tab !== "home") navigate("home");
           notify(
             "Экскурсия завершена. Повторить её можно в разделе «Обучение».",
           );
@@ -91,9 +99,9 @@ export function useLearningTour(
   }, [index, move, pause]);
   const onAction = useCallback(
     (id: string) => {
-      if (active && !locked && id === step.target) void move(index + 1);
+      if (active && !locked && id === action) void move(index + 1);
     },
-    [active, locked, step.target, index, move],
+    [active, locked, action, index, move],
   );
   const start = useCallback(
     async (id?: string) => {
@@ -113,7 +121,8 @@ export function useLearningTour(
           step: tourSteps[next].id,
         }));
         if (currentSession !== session.current) return;
-        restoreLocation(tourSteps[next].tab, tourSteps[next].sheets);
+        if (currentLocation.current.location !== stepLocations[next])
+          restoreLocation(tourSteps[next].tab, tourSteps[next].sheets);
         setActive(true);
       } catch {
         // Launch menu / welcome banner displays the storage error.
@@ -125,21 +134,21 @@ export function useLearningTour(
     [locked, learning.progress.status, learning.update, index, restoreLocation],
   );
   const closeSheet = useCallback(() => {
-    if (!active || step.target !== "sheet.close") pause();
+    if (!active || action !== "sheet.close") pause();
     close();
-    if (active && step.target === "sheet.close") onAction("sheet.close");
-  }, [active, step.target, pause, close, onAction]);
+    if (active && action === "sheet.close") onAction("sheet.close");
+  }, [active, action, pause, close, onAction]);
   const backSheet = useCallback(() => {
     if (!active) {
       pause();
       back?.();
       return;
     }
-    if (step.target === "sheet.back") {
+    if (action === "sheet.back") {
       back?.();
       onAction("sheet.back");
     } else previous();
-  }, [active, step.target, back, previous, onAction, pause]);
+  }, [active, action, back, previous, onAction, pause]);
   useEffect(() => {
     if (!active && !moving) return;
     setBackOverride(() => {
@@ -151,6 +160,7 @@ export function useLearningTour(
     });
     return () => setBackOverride(null);
   }, [active, moving, locked, previous, pause, setBackOverride]);
+  const skip = useCallback(() => void move(index + 1), [index, move]);
   return {
     active,
     visible: active && !locked,
@@ -166,6 +176,6 @@ export function useLearningTour(
     onAction,
     closeSheet,
     backSheet,
-    skip: () => void move(index + 1),
+    skip,
   };
 }

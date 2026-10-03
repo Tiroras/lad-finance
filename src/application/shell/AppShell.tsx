@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-} from "react-native";
+import { View, Animated, StyleSheet, useWindowDimensions } from "react-native";
 import { useFinanceStatus } from "../../state/finance";
-import { C, TourProvider, TourScrollProvider } from "../../shared/ui";
+import {
+  C,
+  TourFrame,
+  TourProvider,
+  TourScrollProvider,
+} from "../../shared/ui";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSecurity, LockScreen } from "../../features/security";
@@ -88,75 +88,94 @@ export function AppShell() {
   if (!ready) return <AppLoadingScreen />;
 
   return (
-    <TourProvider target={tour.target} onAction={tour.onAction}>
-      <SafeAreaView edges={["top", "left", "right"]} style={st.safe}>
-        <StatusBar style="dark" />
-        <View
-          style={[st.appFrame, security.locked && { display: "none" }]}
-          aria-hidden={!!sheet || security.locked}
-          importantForAccessibility={
-            sheet || security.locked ? "no-hide-descendants" : "auto"
-          }
-        >
-          {wide && (
-            <SidebarNavigation tab={tab} navigate={navigate} open={open} />
-          )}
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <AppHeader
-              wide={wide}
-              hidden={hidden}
-              onToggleBalance={() => setHidden((value) => !value)}
-              open={open}
-            />
-            {coach && !sheet && (
-              <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
-                {coach}
-              </View>
-            )}
-            <AppStatusBanners open={open} />
-            <ScrollView
-              ref={scroll}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={[
-                st.content,
-                wide && {
-                  paddingHorizontal: 38,
-                  paddingTop: 28,
-                  maxWidth: 1220,
-                },
-              ]}
+    <TourProvider
+      active={tour.visible}
+      target={tour.target}
+      onAction={tour.onAction}
+    >
+      <TourFrame coach={!sheet ? coach : undefined}>
+        {({ coach: measuredCoach, onScroll, onLayout }) => (
+          <SafeAreaView edges={["top", "left", "right"]} style={st.safe}>
+            <StatusBar style={tour.visible ? "light" : "dark"} />
+            <View
+              style={[st.appFrame, security.locked && { display: "none" }]}
+              aria-hidden={!!sheet || security.locked}
+              importantForAccessibility={
+                sheet || security.locked ? "no-hide-descendants" : "auto"
+              }
             >
-              <TourScrollProvider reveal={reveal}>
-                <View ref={content} collapsable={false}>
-                  {!tour.active && <WelcomeBanner open={open} />}
-                  <ActiveScreen
-                    tab={tab}
-                    open={open}
-                    navigate={navigate}
-                    hidden={hidden}
-                    planSection={tour.active ? tour.step.section : undefined}
-                  />
-                </View>
-              </TourScrollProvider>
-            </ScrollView>
-            {!wide && (
-              <BottomNavigation tab={tab} navigate={navigate} open={open} />
-            )}
-          </View>
-          {!sheet && <AppToast wide={wide} />}
-        </View>
-        {security.locked && !sheet && <LockScreen />}
-        <AppSheet
-          sheet={sheet}
-          close={tour.closeSheet}
-          open={open}
-          back={tour.active || back ? tour.backSheet : undefined}
-          returnToGuide={returnToGuide}
-          tourCoach={sheet ? coach : undefined}
-          startTour={(id) => void tour.start(id)}
-        />
-      </SafeAreaView>
+              {wide && (
+                <SidebarNavigation tab={tab} navigate={navigate} open={open} />
+              )}
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <AppHeader
+                  wide={wide}
+                  hidden={hidden}
+                  onToggleBalance={() => setHidden((value) => !value)}
+                  open={open}
+                />
+                {measuredCoach && (
+                  <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+                    {measuredCoach}
+                  </View>
+                )}
+                <AppStatusBanners open={open} />
+                <Animated.ScrollView
+                  ref={scroll}
+                  onLayout={onLayout}
+                  onScroll={onScroll}
+                  scrollEventThrottle={16}
+                  overScrollMode={tour.active ? "never" : "auto"}
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                  contentContainerStyle={[
+                    st.content,
+                    wide && {
+                      paddingHorizontal: 38,
+                      paddingTop: 28,
+                      maxWidth: 1220,
+                    },
+                  ]}
+                >
+                  <TourScrollProvider
+                    reveal={reveal}
+                    scrollRef={scroll}
+                    contentRef={content}
+                    contentInsetTop={wide ? 28 : 25}
+                  >
+                    <View ref={content} collapsable={false} onLayout={onLayout}>
+                      {!tour.active && <WelcomeBanner open={open} />}
+                      <ActiveScreen
+                        tab={tab}
+                        open={open}
+                        navigate={navigate}
+                        hidden={hidden}
+                        planSection={
+                          tour.active ? tour.step.section : undefined
+                        }
+                      />
+                    </View>
+                  </TourScrollProvider>
+                </Animated.ScrollView>
+                {!wide && (
+                  <BottomNavigation tab={tab} navigate={navigate} open={open} />
+                )}
+              </View>
+              {!sheet && <AppToast wide={wide} />}
+            </View>
+            {security.locked && !sheet && <LockScreen />}
+            <AppSheet
+              sheet={sheet}
+              close={tour.closeSheet}
+              open={open}
+              back={tour.active || back ? tour.backSheet : undefined}
+              returnToGuide={returnToGuide}
+              tourCoach={sheet ? coach : undefined}
+              startTour={tour.start}
+            />
+          </SafeAreaView>
+        )}
+      </TourFrame>
     </TourProvider>
   );
 }

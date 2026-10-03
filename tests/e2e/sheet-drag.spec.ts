@@ -252,8 +252,14 @@ test("touch scrolling a long form leaves the sheet in place and its handle still
   await expectSheetTop(page, top);
   await expect(page.getByRole("dialog")).toBeVisible();
   // Header dismissal also works when the content has not returned to the top.
-  await scroll.hover();
-  await page.mouse.wheel(0, 1000);
+  // Prepare that scrolled position with the same touch input as the rest of the test.
+  const releaseBeforeDismiss = await touchDrag(
+    page,
+    { x, y: viewport.y + viewport.height - 40 },
+    { x: 0, y: -240 },
+    600,
+  );
+  await releaseBeforeDismiss();
   await expect
     .poll(() => scroll.evaluate((element) => element.scrollTop))
     .toBeGreaterThan(100);

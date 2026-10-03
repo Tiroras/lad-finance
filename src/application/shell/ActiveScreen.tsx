@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   HomeScreen,
   TransactionsScreen,
@@ -6,7 +7,7 @@ import {
 } from "../../screens";
 import type { Tab, OpenSheet, Navigate } from "../navigation/types";
 
-export function ActiveScreen({
+export const ActiveScreen = memo(function ActiveScreen({
   tab,
   open,
   navigate,
@@ -29,4 +30,4 @@ export function ActiveScreen({
       {tab === "analytics" && <AnalyticsScreen open={open} />}
     </>
   );
-}
+});
