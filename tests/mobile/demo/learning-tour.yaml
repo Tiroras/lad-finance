@@ -1,0 +1,906 @@
+# Режим: demo; EXPO_PUBLIC_ENABLE_DEMO=true, EXPO_PUBLIC_RESET_ON_START=false.
+# План: ../plans/learning-tour.md. Устройство: Pixel_8 / emulator-5554.
+# Предусловие: завершён первый вход; сборка Demo соответствует исходникам.
+# Выбор Demo и запуск с шага 1 выполняются через обычный интерфейс.
+# Повторный запуск поддерживает новый, прерванный и завершённый маршрут.
+# Финансовые записи не создаются; clearState и Fresh не используются.
+appId: app.lad.finance
+name: learning-tour
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: .* Открыть профили"
+    timeout: 30000
+- runFlow:
+    when:
+      notVisible: "Текущий профиль: Демо. Открыть профили"
+    commands:
+      - tapOn: "Текущий профиль: .* Открыть профили"
+      - tapOn: "Открыть профиль: Демо"
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- assertVisible: "Экскурсия по приложению"
+- scrollUntilVisible:
+    element:
+      text: "Начать экскурсию|Пройти всё приложение заново"
+    direction: DOWN
+- tapOn: "Начать экскурсию|Пройти всё приложение заново"
+
+# 1. Обзор: сколько можно потратить
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "1"
+      TITLE: "Обзор: сколько можно потратить"
+      TARGET: "home.formula"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- assertVisible:
+    text: "Назад по экскурсии"
+    enabled: false
+- tapOn:
+    text: "Как рассчитана доступная сумма"
+    childOf:
+      id: "tour-target-home.formula"
+
+# 2. Из чего складывается сумма
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "2"
+      TITLE: "Из чего складывается сумма"
+      TARGET: "sheet.close"
+- assertVisible:
+    text: "Всё прозрачно"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Закрыть"
+    childOf:
+      id: "tour-target-sheet.close"
+
+# 3. Счета и остатки
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "3"
+      TITLE: "Счета и остатки"
+      TARGET: "home.accounts"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- tapOn:
+    text: "Открыть мои счета"
+    childOf:
+      id: "tour-target-home.accounts"
+
+# 4. Ваши счета и долги
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "4"
+      TITLE: "Ваши счета и долги"
+      TARGET: "sheet.close"
+- assertVisible:
+    text: "Мои счета"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Закрыть"
+    childOf:
+      id: "tour-target-sheet.close"
+
+# 5. Проверка будущей покупки
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "5"
+      TITLE: "Проверка будущей покупки"
+      TARGET: "home.simulate"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- tapOn:
+    text: "Проверить покупку"
+    childOf:
+      id: "tour-target-home.simulate"
+
+# 6. Примерка покупки
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "6"
+      TITLE: "Примерка покупки"
+      TARGET: "sheet.close"
+- assertVisible:
+    text: "Примерка покупки"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Закрыть"
+    childOf:
+      id: "tour-target-sheet.close"
+
+# 7. Перейдите к истории
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "7"
+      TITLE: "Перейдите к истории"
+      TARGET: "nav.transactions"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- tapOn:
+    text: "Операции"
+    childOf:
+      id: "tour-target-nav.transactions"
+
+# 8. Поиск и фильтры операций
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "8"
+      TITLE: "Поиск и фильтры операций"
+      TARGET: "transactions.expense"
+- assertVisible:
+    text: "Операции"
+    selected: true
+- tapOn:
+    text: "Расходы"
+    childOf:
+      id: "tour-target-transactions.expense"
+
+# 9. Выгрузка истории
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "9"
+      TITLE: "Выгрузка истории"
+      TARGET: "transactions.export"
+# Автопрокрутка шага 9 скрывает фильтр. Штатный возврат 9 → 8 показывает
+# его снова и позволяет проверить результат первого нажатия без скролла.
+- tapOn: "Назад по экскурсии"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "8"
+      TITLE: "Поиск и фильтры операций"
+      TARGET: "transactions.expense"
+- assertVisible:
+    text: "Расходы"
+    selected: true
+- tapOn:
+    text: "Расходы"
+    childOf:
+      id: "tour-target-transactions.expense"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "9"
+      TITLE: "Выгрузка истории"
+      TARGET: "transactions.export"
+- assertVisible:
+    text: "Операции"
+    selected: true
+- tapOn:
+    text: "Экспортировать операции в CSV"
+    childOf:
+      id: "tour-target-transactions.export"
+
+# 10. Экспорт операций
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "10"
+      TITLE: "Экспорт операций"
+      TARGET: "sheet.close"
+- assertVisible:
+    text: "Экспорт операций"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Закрыть"
+    childOf:
+      id: "tour-target-sheet.close"
+
+# 11. Переходим к планированию
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "11"
+      TITLE: "Переходим к планированию"
+      TARGET: "nav.plan"
+- assertVisible:
+    text: "Операции"
+    selected: true
+- tapOn:
+    text: "План"
+    childOf:
+      id: "tour-target-nav.plan"
+
+# 12. План: бюджеты
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "12"
+      TITLE: "План: бюджеты"
+      TARGET: "plan.goals"
+- assertVisible:
+    text: "План"
+    selected: true
+- assertVisible:
+    text: "Бюджеты"
+    selected: true
+- tapOn:
+    text: "Цели"
+    childOf:
+      id: "tour-target-plan.goals"
+
+# 13. План: цели
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "13"
+      TITLE: "План: цели"
+      TARGET: "plan.payments"
+- assertVisible:
+    text: "План"
+    selected: true
+- assertVisible:
+    text: "Цели"
+    selected: true
+# Возврат по маршруту восстанавливает раздел «Бюджеты».
+- tapOn: "Назад по экскурсии"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "12"
+      TITLE: "План: бюджеты"
+      TARGET: "plan.goals"
+- assertVisible:
+    text: "Бюджеты"
+    selected: true
+- tapOn: "Цели"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "13"
+      TITLE: "План: цели"
+      TARGET: "plan.payments"
+- assertVisible:
+    text: "Цели"
+    selected: true
+# Пауза сохраняет раздел, убирает слой и позволяет продолжить с 13.
+- tapOn: "Продолжить позже"
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- assertVisible:
+    text: "Цели"
+    selected: true
+- scrollUntilVisible:
+    element:
+      text: "Продолжить обучение"
+    direction: UP
+- tapOn: "Продолжить обучение"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "13"
+      TITLE: "План: цели"
+      TARGET: "plan.payments"
+- assertVisible:
+    text: "Цели"
+    selected: true
+- tapOn:
+    text: "Платежи"
+    childOf:
+      id: "tour-target-plan.payments"
+
+# 14. План: платежи
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "14"
+      TITLE: "План: платежи"
+      TARGET: "plan.forecast"
+- assertVisible:
+    text: "План"
+    selected: true
+- assertVisible:
+    text: "Платежи"
+    selected: true
+- tapOn:
+    text: "Прогноз"
+    childOf:
+      id: "tour-target-plan.forecast"
+
+# 15. Прогноз по дням
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "15"
+      TITLE: "Прогноз по дням"
+      TARGET: "forecast.60"
+- assertVisible:
+    text: "План"
+    selected: true
+- assertVisible:
+    text: "Прогноз"
+    selected: true
+- tapOn:
+    text: "60 дней"
+    childOf:
+      id: "tour-target-forecast.60"
+
+# 16. Проверка вариантов
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "16"
+      TITLE: "Проверка вариантов"
+      TARGET: "forecast.scenarios"
+- assertVisible:
+    text: "План"
+    selected: true
+- tapOn:
+    text: "Мои сценарии"
+    childOf:
+      id: "tour-target-forecast.scenarios"
+
+# 17. Сохранённые сценарии
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "17"
+      TITLE: "Сохранённые сценарии"
+      TARGET: "sheet.close"
+- assertVisible:
+    text: "Мои сценарии"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Закрыть"
+    childOf:
+      id: "tour-target-sheet.close"
+
+# 18. Теперь посмотрим итоги
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "18"
+      TITLE: "Теперь посмотрим итоги"
+      TARGET: "nav.analytics"
+- assertVisible:
+    text: "План"
+    selected: true
+- tapOn:
+    text: "Аналитика"
+    childOf:
+      id: "tour-target-nav.analytics"
+
+# 19. Аналитика за выбранный месяц
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "19"
+      TITLE: "Аналитика за выбранный месяц"
+      TARGET: "analytics.month"
+- assertVisible:
+    text: "Аналитика"
+    selected: true
+- tapOn:
+    text: "Предыдущий месяц"
+    childOf:
+      id: "tour-target-analytics.month"
+
+# 20. Настройки и остальные разделы
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "20"
+      TITLE: "Настройки и остальные разделы"
+      TARGET: "header.settings"
+- assertVisible:
+    text: "Аналитика"
+    selected: true
+- tapOn:
+    text: "Профиль и настройки"
+    childOf:
+      id: "tour-target-header.settings"
+
+# 21. Откройте «Профиль и планирование»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "21"
+      TITLE: "Откройте «Профиль и планирование»"
+      TARGET: "settings.profileSettings"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Профиль и планирование"
+    childOf:
+      id: "tour-target-settings.profileSettings"
+
+# 22. Профиль и планирование
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "22"
+      TITLE: "Профиль и планирование"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Профиль и планирование"
+    childOf:
+      id: "sheet-drag-area"
+# Пауза во вложенном окне и настоящий перезапуск приложения.
+- tapOn: "Продолжить позже"
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- assertVisible:
+    text: "Профиль и планирование"
+    childOf:
+      id: "sheet-drag-area"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- scrollUntilVisible:
+    element:
+      text: "Продолжить обучение"
+    direction: UP
+- tapOn: "Продолжить обучение"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "22"
+      TITLE: "Профиль и планирование"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Профиль и планирование"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 23. Откройте «Валюты и курсы»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "23"
+      TITLE: "Откройте «Валюты и курсы»"
+      TARGET: "settings.currencies"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+# «Назад по экскурсии» возвращает 23 → 22; стрелка окна ведёт 22 → 23.
+- tapOn: "Назад по экскурсии"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "22"
+      TITLE: "Профиль и планирование"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Профиль и планирование"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn: "Назад"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "23"
+      TITLE: "Откройте «Валюты и курсы»"
+      TARGET: "settings.currencies"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Валюты и курсы"
+    childOf:
+      id: "tour-target-settings.currencies"
+
+# 24. Валюты и курсы
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "24"
+      TITLE: "Валюты и курсы"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Валюты и курсы"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 25. Откройте «Категории и подкатегории»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "25"
+      TITLE: "Откройте «Категории и подкатегории»"
+      TARGET: "settings.categories"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Категории и подкатегории"
+    childOf:
+      id: "tour-target-settings.categories"
+
+# 26. Категории и подкатегории
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "26"
+      TITLE: "Категории и подкатегории"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Категории и подкатегории"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 27. Откройте «Правила и шаблоны»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "27"
+      TITLE: "Откройте «Правила и шаблоны»"
+      TARGET: "settings.automation"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Правила и шаблоны операций"
+    childOf:
+      id: "tour-target-settings.automation"
+
+# 28. Правила и шаблоны
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "28"
+      TITLE: "Правила и шаблоны"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Правила и шаблоны"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 29. Откройте «Профили»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "29"
+      TITLE: "Откройте «Профили»"
+      TARGET: "settings.profiles"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Профили"
+    childOf:
+      id: "tour-target-settings.profiles"
+
+# 30. Профили
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "30"
+      TITLE: "Профили"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Профили"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 31. Откройте «Напоминания»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "31"
+      TITLE: "Откройте «Напоминания»"
+      TARGET: "settings.reminderSettings"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Напоминания"
+    childOf:
+      id: "tour-target-settings.reminderSettings"
+
+# 32. Напоминания
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "32"
+      TITLE: "Напоминания"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Напоминания"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 33. Откройте «Защита данных»
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "33"
+      TITLE: "Откройте «Защита данных»"
+      TARGET: "settings.securitySettings"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Защита данных"
+    childOf:
+      id: "tour-target-settings.securitySettings"
+
+# 34. Защита данных
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "34"
+      TITLE: "Защита данных"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Защита данных"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 35. Сохранность и перенос учёта
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "35"
+      TITLE: "Сохранность и перенос учёта"
+      TARGET: "settings.dataSettings"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Данные и копии"
+    childOf:
+      id: "tour-target-settings.dataSettings"
+
+# 36. Импорт и резервные копии
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "36"
+      TITLE: "Импорт и резервные копии"
+      TARGET: "data.csv"
+- assertVisible:
+    text: "Данные и копии"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Импортировать банковский CSV"
+    childOf:
+      id: "tour-target-data.csv"
+
+# 37. Импорт банковской выписки
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "37"
+      TITLE: "Импорт банковской выписки"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "Импорт банковской выписки"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 38. Копии вашего профиля
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "38"
+      TITLE: "Копии вашего профиля"
+      TARGET: "data.backups"
+- assertVisible:
+    text: "Данные и копии"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+
+# 39. О приложении
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "39"
+      TITLE: "О приложении"
+      TARGET: "settings.about"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "О приложении"
+    childOf:
+      id: "tour-target-settings.about"
+
+# 40. Справочная информация
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "40"
+      TITLE: "Справочная информация"
+      TARGET: "sheet.back"
+- assertVisible:
+    text: "О приложении"
+    childOf:
+      id: "sheet-drag-area"
+- tapOn:
+    text: "Назад"
+    childOf:
+      id: "tour-target-sheet.back"
+
+# 41. Экскурсия всегда под рукой
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "41"
+      TITLE: "Экскурсия всегда под рукой"
+      TARGET: "settings.guide"
+- assertVisible:
+    text: "Ваш Лад"
+    childOf:
+      id: "sheet-drag-area"
+- assertVisible:
+    text: "Обучение"
+    enabled: false
+- tapOn:
+    text: "Закрыть"
+
+# 42. Вы прошли все разделы
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "42"
+      TITLE: "Вы прошли все разделы"
+      TARGET: "nav.home"
+- assertVisible:
+    text: "Аналитика"
+    selected: true
+- tapOn:
+    text: "Обзор"
+    childOf:
+      id: "tour-target-nav.home"
+
+# Завершение возвращает на обзор и убирает подсказку.
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- assertNotVisible:
+    id: "sheet"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- assertVisible: "Экскурсия по приложению"
+- assertVisible: "Пройти всё приложение заново"
+- assertNotVisible: "Продолжить экскурсию"
+- assertNotVisible: "Продолжим: .*"
+
+# Завершённый статус сохраняется после перезапуска.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- assertVisible: "Экскурсия по приложению"
+- assertVisible: "Пройти всё приложение заново"
+- assertNotVisible: "Продолжить экскурсию"
+- assertNotVisible: "Продолжим: .*"
+
+# Повтор завершённой экскурсии действительно начинает шаг 1.
+- tapOn: "Пройти всё приложение заново"
+- runFlow:
+    file: ../subflows/learning-tour-step.yaml
+    env:
+      NUMBER: "1"
+      TITLE: "Обзор: сколько можно потратить"
+      TARGET: "home.formula"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- tapOn: "Продолжить позже"
+- assertNotVisible:
+    id: "tour-coach"
+- assertNotVisible:
+    id: "tour-spotlight"
+- assertNotVisible:
+    id: "tour-overlay"
+- assertVisible:
+    text: "Обзор"
+    selected: true
+- assertNotVisible:
+    id: "sheet"

@@ -1,0 +1,17 @@
+# Общая проверка одного шага learning-tour.yaml; режим demo.
+# План: ../plans/learning-tour.md.
+appId: app.lad.finance
+---
+- extendedWaitUntil:
+    visible:
+      text: "ПО ПРИЛОЖЕНИЮ · ${NUMBER} / 42"
+    timeout: 15000
+# Android размещает текст подсказки рядом с её контейнером в accessibility tree.
+- assertVisible:
+    id: "tour-coach"
+- assertVisible:
+    text: "${TITLE}"
+    below:
+      text: "ПО ПРИЛОЖЕНИЮ · ${NUMBER} / 42"
+- assertVisible:
+    id: "tour-target-${TARGET}"
