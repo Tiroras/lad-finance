@@ -5,6 +5,7 @@ import { RecentTransactions } from "../../features/transactions";
 import { HomeHeader } from "./HomeHeader";
 import { SpendableCard, PurchaseInsight } from "../../features/forecast";
 import { QuickActions } from "./QuickActions";
+import { HomeMonthSummary } from "./HomeMonthSummary";
 import { AccountsSummary } from "../../features/accounts";
 import { SpendingSummary } from "./SpendingSummary";
 import { GoalsSummary } from "../../features/goals";
@@ -28,6 +29,7 @@ export function HomeScreen({
         <View style={{ flex: wide ? 1 : undefined, gap: 22 }}>
           <SpendableCard open={open} hidden={hidden} />
           <QuickActions open={open} />
+          <HomeMonthSummary navigate={navigate} hidden={hidden} />
           <AccountsSummary open={open} hidden={hidden} />
           {wide && <RecentTransactions open={open} navigate={navigate} />}
         </View>
