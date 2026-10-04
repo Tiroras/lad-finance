@@ -92,6 +92,11 @@ name: refactoring
 - inputText: "03102026"
 - hideKeyboard
 - assertVisible: "03[.]10[.]2026"
+- scrollUntilVisible:
+    element:
+      text: "Заметка, дополнительные поля операции"
+    direction: DOWN
+- tapOn: "Заметка, дополнительные поля операции"
 - tapOn: "Заметка"
 - inputText: "Mask-Note-20261004"
 - hideKeyboard
@@ -146,6 +151,11 @@ name: refactoring
 - assertVisible: "MaestroRefactor-20261004-Income, 1 250,75 ₽, открыть операцию"
 
 # MREF-03: ограниченная матрица для одной тестовой записи.
+- scrollUntilVisible:
+    element:
+      text: "Фильтры.*"
+    direction: UP
+- tapOn: "Фильтры.*"
 - scrollUntilVisible:
     element:
       text: "Все"

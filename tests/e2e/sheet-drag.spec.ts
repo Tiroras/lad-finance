@@ -88,7 +88,10 @@ test("dragging the sheet header down dismisses it without saving the form", asyn
   const initial = fixture();
   await startApp(page, TODAY, initial);
   await button(page, "Добавить операцию").click();
-  await page.getByLabel("Быстрый ввод", { exact: true }).fill("кофе 350");
+  await page.getByRole("button", { name: "Быстрый ввод", exact: true }).click();
+  await page
+    .getByRole("textbox", { name: "Быстрый ввод", exact: true })
+    .fill("кофе 350");
   const header = page.getByRole("heading", {
     name: "Новая операция",
     exact: true,
@@ -107,9 +110,10 @@ test("dragging the sheet header down dismisses it without saving the form", asyn
   expect(await readState(page)).toEqual(initial);
   await button(page, "Добавить операцию").click();
   await expect(header).toBeVisible();
-  await expect(page.getByLabel("Быстрый ввод", { exact: true })).toHaveValue(
-    "",
-  );
+  await page.getByRole("button", { name: "Быстрый ввод", exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Быстрый ввод", exact: true }),
+  ).toHaveValue("");
   expect((await header.boundingBox())!.y).toBeCloseTo(bounds.y, 0);
 });
 

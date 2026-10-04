@@ -70,6 +70,12 @@ export function useTourActive() {
   return useContext(TourContext).active;
 }
 
+/** Reveal a collapsed section while the tour points to one of its controls. */
+export function useTourTargetActive(id: string) {
+  const { active, target } = useContext(TourContext);
+  return active && target === id;
+}
+
 export function TourTarget({
   id,
   children,

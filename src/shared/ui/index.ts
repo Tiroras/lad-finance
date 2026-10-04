@@ -34,5 +34,6 @@ export {
   TourScrollProvider,
   useTourAction,
   useTourActive,
+  useTourTargetActive,
 } from "./Tour";
 export { TourFrame } from "./TourFrame";

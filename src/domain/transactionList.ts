@@ -7,9 +7,11 @@ import type { FinanceState, Transaction } from "./types";
 import { monthKey } from "../shared/lib/dates";
 
 export type TransactionFilterType = "all" | Transaction["type"] | "debt";
+export type TransactionPeriod = "month" | "all";
 
 export interface TransactionListFilters {
   month: string;
+  period?: TransactionPeriod;
   query: string;
   type: TransactionFilterType;
   account: string;
@@ -22,7 +24,7 @@ export function selectTransactionList(
   filters: TransactionListFilters,
   today: string,
 ) {
-  const { month, type, account, category } = filters;
+  const { month, period = "month", type, account, category } = filters;
   const query = filters.query.trim().toLocaleLowerCase("ru-RU");
   const matchesCategory = (id: string) =>
     category === "all" || categoryMatches(state, id, category);
@@ -32,7 +34,7 @@ export function selectTransactionList(
 
   for (const transaction of state.transactions) {
     if (
-      monthKey(transaction.date) !== month ||
+      (period === "month" && monthKey(transaction.date) !== month) ||
       transaction.date > today ||
       (account !== "all" &&
         transaction.accountId !== account &&

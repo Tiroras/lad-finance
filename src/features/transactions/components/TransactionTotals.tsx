@@ -11,14 +11,14 @@ export function TransactionTotals({
 }) {
   const { money } = useMoney();
   return (
-    <Row style={{ gap: 12 }}>
-      <Card style={{ flex: 1, padding: 16 }}>
+    <Row style={{ gap: 8, flexWrap: "wrap" }}>
+      <Card style={{ flex: 1, minWidth: 110, padding: 12 }}>
         <Txt style={st.metricLabel}>Доходы</Txt>
         <Txt style={[st.metricValue, { color: "#59816A" }]}>
           {money(income)}
         </Txt>
       </Card>
-      <Card style={{ flex: 1, padding: 16 }}>
+      <Card style={{ flex: 1, minWidth: 110, padding: 12 }}>
         <Txt style={st.metricLabel}>Расходы</Txt>
         <Txt style={st.metricValue}>{money(expense)}</Txt>
       </Card>
@@ -27,6 +27,6 @@ export function TransactionTotals({
 }
 
 const st = StyleSheet.create({
-  metricLabel: { color: C.muted, fontSize: 11, marginBottom: 8 },
-  metricValue: { fontFamily: font.bold, fontSize: 21, letterSpacing: -0.5 },
+  metricLabel: { color: C.muted, fontSize: 11, marginBottom: 4 },
+  metricValue: { fontFamily: font.bold, fontSize: 18, letterSpacing: -0.5 },
 });

@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { C, font, Txt, Card, Empty } from "../../../shared/ui";
+import { C, font, Txt, Card } from "../../../shared/ui";
 import { dateLabel, shiftDate } from "../../../domain/finance";
 import type { Transaction } from "../../../domain/types";
 import type { OpenSheet } from "../../../application/navigation/types";
@@ -16,44 +16,41 @@ export function TransactionGroups({
   const { today } = useFinance();
   return (
     <>
-      {groups.size ? (
-        [...groups].map(([date, transactions]) => (
-          <View key={date}>
-            <Txt
-              style={{
-                fontSize: 12,
-                color: C.muted,
-                fontFamily: font.semibold,
-                marginBottom: 12,
-              }}
-            >
-              {date === today
-                ? "Сегодня"
-                : date === shiftDate(today, -1)
-                  ? "Вчера"
-                  : dateLabel(date)}
-            </Txt>
-            <Card style={{ paddingVertical: 0, paddingHorizontal: 16 }}>
-              {transactions.map((t, i) => (
-                <TransactionRow
-                  transaction={t}
-                  key={t.id}
-                  onPress={() => open({ type: "transaction", id: t.id })}
-                  last={i === transactions.length - 1}
-                />
-              ))}
-            </Card>
-          </View>
-        ))
-      ) : (
-        <Empty
-          icon="search-outline"
-          title="Здесь пока тихо"
-          description="Попробуйте другой месяц или фильтр. Новые операции появятся здесь."
-          action="Добавить операцию"
-          onPress={() => open({ type: "transaction" })}
-        />
-      )}
+      {[...groups].map(([date, transactions]) => (
+        <View key={date}>
+          <Txt
+            style={{
+              fontSize: 12,
+              color: C.muted,
+              fontFamily: font.semibold,
+              marginBottom: 12,
+            }}
+          >
+            {date === today
+              ? "Сегодня"
+              : date === shiftDate(today, -1)
+                ? "Вчера"
+                : dateLabel(date, {
+                    day: "numeric",
+                    month: "long",
+                    year:
+                      date.slice(0, 4) !== today.slice(0, 4)
+                        ? "numeric"
+                        : undefined,
+                  })}
+          </Txt>
+          <Card style={{ paddingVertical: 0, paddingHorizontal: 16 }}>
+            {transactions.map((t, i) => (
+              <TransactionRow
+                transaction={t}
+                key={t.id}
+                onPress={() => open({ type: "transaction", id: t.id })}
+                last={i === transactions.length - 1}
+              />
+            ))}
+          </Card>
+        </View>
+      ))}
     </>
   );
 }

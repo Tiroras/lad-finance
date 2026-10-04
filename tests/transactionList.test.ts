@@ -182,3 +182,88 @@ test("totals include all rows beyond the display page and selection recomputes a
   assert.equal(selectTransactionList(updated, filters, TODAY).income, 2000);
   assert.equal(result.income, 0);
 });
+
+test("all-history search crosses months and years while retaining every filter and the date cutoff", () => {
+  const state = fixture();
+  state.transactions.push(
+    entry("last-year", {
+      title: "Покупка за прошлый год",
+      date: "2025-12-31",
+      category: "home-child",
+      amount: 300,
+    }),
+    entry("last-month", {
+      title: "Другая покупка",
+      note: "Чек за август",
+      date: "2026-08-31",
+      category: "home-child",
+      amount: 500,
+    }),
+    entry("other-account", {
+      title: "Покупка на другом счёте",
+      date: "2026-08-30",
+      accountId: "savings",
+      category: "home-child",
+      amount: 700,
+    }),
+  );
+  const before = structuredClone(state);
+  const all = { ...filters, period: "all" as const };
+  const result = selectTransactionList(
+    state,
+    {
+      ...all,
+      query: " ПОКУПКА ",
+      type: "expense",
+      account: "card",
+      category: "home",
+    },
+    TODAY,
+  );
+  assert.deepEqual(
+    result.transactions.map((transaction) => transaction.id),
+    ["purchase", "last-month", "last-year"],
+  );
+  assert.equal(result.expense, 1600);
+  assert.equal(result.income, 0);
+  assert.deepEqual(
+    selectTransactionList(
+      state,
+      { ...all, query: "чек" },
+      TODAY,
+    ).transactions.map((transaction) => transaction.id),
+    ["purchase", "last-month"],
+  );
+  const full = selectTransactionList(state, all, TODAY);
+  assert.equal(full.transactions.length, 9);
+  assert.equal(full.income, 5000);
+  assert.equal(full.expense, 3100);
+  assert.equal(
+    selectTransactionList(state, { ...all, month: "2024-01" }, TODAY).expense,
+    full.expense,
+  );
+  assert.deepEqual(state, before);
+});
+
+test("all-history totals include matches past the first page without changing default monthly selection", () => {
+  const state = fixture();
+  state.transactions = Array.from({ length: 125 }, (_, index) =>
+    entry(String(index), {
+      date: index < 70 ? TODAY : "2026-08-31",
+      amount: index + 1,
+    }),
+  );
+  const before = structuredClone(state);
+  const monthly = selectTransactionList(state, filters, TODAY);
+  const all = selectTransactionList(
+    state,
+    { ...filters, period: "all" },
+    TODAY,
+  );
+  assert.equal(monthly.transactions.length, 70);
+  assert.equal(monthly.expense, (70 * 71) / 2);
+  assert.equal(all.transactions.length, 125);
+  assert.equal(all.transactions.slice(0, 60).length, 60);
+  assert.equal(all.expense, (125 * 126) / 2);
+  assert.deepEqual(state, before);
+});

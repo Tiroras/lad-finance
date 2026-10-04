@@ -24,6 +24,17 @@ for (const width of [320, 390, 1440]) {
       accountId: "card",
       category: "groceries",
     }));
+    state.transactions.push(
+      ...Array.from({ length: 10 }, (_, index) => ({
+        id: `older-${index}`,
+        title: `Покупка прошлого месяца ${index + 1}`,
+        type: "expense" as const,
+        amount: 100,
+        date: "2026-08-31",
+        accountId: "card",
+        category: "groceries",
+      })),
+    );
     await startApp(page, TODAY, state);
     const before = await readState(page);
     await page.getByRole("tab", { name: "Операции", exact: true }).click();
@@ -52,6 +63,25 @@ for (const width of [320, 390, 1440]) {
     await expect(rows.first()).toHaveAccessibleName(/Покупка 125,/);
     await expect(screen.getByText(money(100), { exact: true })).toBeVisible();
     await expect(screen.getByText("Сегодня", { exact: true })).toHaveCount(0);
+    await screen.getByLabel("Поиск операций", { exact: true }).fill("");
+    await expect(rows).toHaveCount(60);
+    await screen.getByRole("tab", { name: "Вся история", exact: true }).click();
+    await expect(rows).toHaveCount(60);
+    await expect(screen.getByText(money(13500), { exact: true })).toBeVisible();
+    await expect(
+      screen.getByTestId("transaction-results-summary"),
+    ).toContainText("За всю историю");
+    await more.click();
+    await expect(rows).toHaveCount(120);
+    await more.click();
+    await expect(rows).toHaveCount(135);
+    await expect(screen.getByText(money(13500), { exact: true })).toHaveCount(
+      1,
+    );
+    await expect(more).toHaveCount(0);
+    await screen.getByRole("tab", { name: "Месяц", exact: true }).click();
+    await expect(rows).toHaveCount(60);
+    await expect(total).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath(`transaction-list-${width}.png`),
     });

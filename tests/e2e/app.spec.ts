@@ -44,6 +44,7 @@ test("overview, accessible navigation, balance visibility and mobile width", asy
   await expect(page.getByText("Понять свои привычки")).toBeVisible();
   await page.getByRole("tab", { name: "Операции", exact: true }).click();
   await expect(page.getByText("Ваши операции")).toBeVisible();
+  await page.getByRole("button", { name: "Фильтры", exact: true }).click();
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page
@@ -66,12 +67,12 @@ test("overview, accessible navigation, balance visibility and mobile width", asy
   await expect(groceries).toHaveCount(0);
   await page.getByRole("tab", { name: "Переводы", exact: true }).click();
   await expect(
-    page.getByText("Здесь пока тихо", { exact: true }),
+    page.getByText("Ничего не найдено", { exact: true }),
   ).toBeVisible();
   await expect(salary).toHaveCount(0);
   await page.getByRole("tab", { name: "Долги", exact: true }).click();
   await expect(
-    page.getByText("Здесь пока тихо", { exact: true }),
+    page.getByText("Ничего не найдено", { exact: true }),
   ).toBeVisible();
   await page.getByRole("tab", { name: "Расходы", exact: true }).click();
   await expect(groceries).toBeVisible();
@@ -95,14 +96,15 @@ test("quick expense, persistence, search, edit and delete update balances", asyn
   await page
     .getByRole("button", { name: "Добавить операцию", exact: true })
     .click();
+  await page.getByRole("button", { name: "Быстрый ввод", exact: true }).click();
   await page
-    .getByLabel("Быстрый ввод", { exact: true })
+    .getByRole("textbox", { name: "Быстрый ввод", exact: true })
     .fill("кофе тест 320,50");
   await page.getByRole("tab", { name: "Перевод", exact: true }).click();
   await page.getByRole("tab", { name: "Расход", exact: true }).click();
-  await expect(page.getByLabel("Быстрый ввод", { exact: true })).toHaveValue(
-    "кофе тест 320,50",
-  );
+  await expect(
+    page.getByRole("textbox", { name: "Быстрый ввод", exact: true }),
+  ).toHaveValue("кофе тест 320,50");
   await page
     .getByRole("button", { name: "Распознать запись", exact: true })
     .click();

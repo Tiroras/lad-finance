@@ -147,6 +147,9 @@ test("an edit exceeding the snapshot limit keeps the previous ledger and the for
     .getByLabel("Название операции", { exact: true })
     .fill("Новая покупка");
   await page.getByLabel("Сумма операции", { exact: true }).fill("1");
+  await page
+    .getByRole("button", { name: /дополнительные поля операции$/i })
+    .click();
   await page.getByLabel("Заметка", { exact: true }).fill("a".repeat(500));
   await page
     .getByRole("button", { name: "Добавить операцию", exact: true })

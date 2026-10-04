@@ -89,13 +89,15 @@ test("custom subcategory can record expenses, share a budget, survive reload and
     .getByLabel("Название операции", { exact: true })
     .fill("Краска для ремонта");
   await page.getByLabel("Сумма операции", { exact: true }).fill("123,45");
-  await button(page, "Дом / Ремонт").click();
+  await button(page, "Категория").click();
+  await page.getByRole("radio", { name: "Дом / Ремонт", exact: true }).click();
   await button(page, "Добавить операцию").click();
   await expect
     .poll(async () => (await read(page)).transactions[0]?.category)
     .toBe(child.id);
   await page.reload();
   await page.getByRole("tab", { name: "Операции", exact: true }).click();
+  await button(page, "Фильтры").click();
   await button(page, "Дом").click();
   await expect(
     page.getByRole("button", { name: /Краска для ремонта,.*открыть операцию/ }),
@@ -116,7 +118,10 @@ test("custom subcategory can record expenses, share a budget, survive reload and
   expect(archived.transactions[0].amount).toBe(12345);
   await close(page);
   await button(page, "Добавить операцию").first().click();
-  await expect(button(page, "Дом / Ремонт")).toHaveCount(0);
+  await button(page, "Категория").click();
+  await expect(
+    page.getByRole("radio", { name: "Дом / Ремонт", exact: true }),
+  ).toHaveCount(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

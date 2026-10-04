@@ -3,6 +3,7 @@ import { View } from "react-native";
 import {
   selectTransactionList,
   type TransactionFilterType,
+  type TransactionPeriod,
 } from "../../domain/transactionList";
 import { monthKey } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
@@ -13,6 +14,7 @@ import {
   C,
   IconButton,
   Row,
+  Segments,
   Txt,
   MonthPicker,
   ScreenHeading,
@@ -21,11 +23,14 @@ import {
   TransactionFilters,
   TransactionGroups,
   TransactionTotals,
+  TransactionListDetails,
+  TransactionListEmpty,
 } from "../../features/transactions";
 
 export function TransactionsScreen({ open }: { open: OpenSheet }) {
   const { state, today } = useFinance();
   const [month, setMonth] = useState(monthKey(today));
+  const [period, setPeriod] = useState<TransactionPeriod>("month");
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TransactionFilterType>("all");
   const [account, setAccount] = useState("all");
@@ -39,10 +44,10 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
     () =>
       selectTransactionList(
         state,
-        { month, type, query, account, category },
+        { month, period, type, query, account, category },
         today,
       ),
-    [state, today, month, type, query, account, category],
+    [state, today, month, period, type, query, account, category],
   );
   const groups = useMemo(() => {
     const byDate = new Map<string, Transaction[]>();
@@ -53,55 +58,111 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
     }
     return byDate;
   }, [filtered, limit]);
+  const hasFilters =
+    !!query.trim() || type !== "all" || account !== "all" || category !== "all";
+  const hasHistory = state.transactions.some(
+    (transaction) => transaction.date <= today,
+  );
+  const resetFilters = () => {
+    setQuery("");
+    setType("all");
+    setAccount("all");
+    setCategory("all");
+    setLimit(60);
+  };
+  const changePeriod = (value: TransactionPeriod) => {
+    setPeriod(value);
+    setLimit(60);
+  };
   return (
-    <View testID="screen-transactions" style={{ gap: 22 }}>
+    <View testID="screen-transactions" style={{ gap: 16 }}>
       <ScreenHeading
         eyebrow="НИЧЕГО НЕ ТЕРЯЕТСЯ"
         title="Ваши операции"
         subtitle="Каждая мелочь складывается в общую картину."
       />
-      <Row style={{ justifyContent: "space-between" }}>
-        <MonthPicker
-          month={month}
-          onChange={(value) => {
-            setMonth(value);
-            setLimit(60);
-          }}
-        />
-        <IconButton
-          name="add"
-          label="Добавить операцию"
-          onPress={() => open({ type: "transaction" })}
-          style={{ backgroundColor: C.green }}
-          color="#fff"
-        />
-      </Row>
+      <View style={{ gap: 8 }}>
+        <Row style={{ gap: 8 }}>
+          <Segments
+            style={{ flex: 1 }}
+            value={period}
+            onChange={changePeriod}
+            options={[
+              { value: "month", label: "Месяц" },
+              { value: "all", label: "Вся история" },
+            ]}
+          />
+          <IconButton
+            name="add"
+            label="Добавить операцию"
+            onPress={() => open({ type: "transaction" })}
+            style={{ backgroundColor: C.green }}
+            color="#fff"
+          />
+        </Row>
+        {period === "month" ? (
+          <MonthPicker
+            month={month}
+            onChange={(value) => {
+              setMonth(value);
+              setLimit(60);
+            }}
+          />
+        ) : (
+          <Txt style={{ color: C.muted, fontSize: 12 }}>
+            С начала учёта по сегодня
+          </Txt>
+        )}
+      </View>
       <TransactionFilters
         query={query}
-        setQuery={setQuery}
+        setQuery={(value) => {
+          setQuery(value);
+          setLimit(60);
+        }}
         type={type}
-        setType={setType}
+        setType={(value) => {
+          setType(value);
+          setLimit(60);
+        }}
         account={account}
-        setAccount={setAccount}
+        setAccount={(value) => {
+          setAccount(value);
+          setLimit(60);
+        }}
         category={category}
-        setCategory={setCategory}
+        setCategory={(value) => {
+          setCategory(value);
+          setLimit(60);
+        }}
+        onReset={resetFilters}
       />
-      <Button
-        tourId="transactions.export"
-        label="Экспортировать операции в CSV"
-        icon="download-outline"
-        variant="secondary"
-        onPress={() => open({ type: "export" })}
-      />
-      <TransactionTotals income={income} expense={expense} />
-      <Txt style={{ color: C.muted, fontSize: 11 }}>
-        По выбранным фильтрам · операций: {filtered.length}. Возвраты уменьшают
-        расходы; переводы и основная сумма долгов исключены из итогов.
-        {category !== "all"
-          ? " В расходах показана только часть выбранной категории."
-          : ""}
-      </Txt>
-      <TransactionGroups groups={groups} open={open} />
+      <View style={{ gap: 8 }}>
+        <TransactionTotals income={income} expense={expense} />
+        <Txt
+          testID="transaction-results-summary"
+          style={{ color: C.muted, fontSize: 11, lineHeight: 17 }}
+        >
+          По выбранным фильтрам · операций: {filtered.length}.{" "}
+          {period === "all" ? "За всю историю" : "За выбранный месяц"}; суммы по
+          всем найденным операциям.
+          {category !== "all"
+            ? " Расходы — только часть выбранной категории."
+            : ""}
+        </Txt>
+      </View>
+      {filtered.length > 0 ? (
+        <TransactionGroups groups={groups} open={open} />
+      ) : (
+        <TransactionListEmpty
+          hasHistory={hasHistory}
+          hasFilters={hasFilters}
+          period={period}
+          onAdd={() => open({ type: "transaction" })}
+          onReset={resetFilters}
+          onAllHistory={() => changePeriod("all")}
+        />
+      )}
       {filtered.length > limit && (
         <Button
           variant="secondary"
@@ -109,6 +170,7 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
           onPress={() => setLimit((n) => n + 60)}
         />
       )}
+      <TransactionListDetails onExport={() => open({ type: "export" })} />
     </View>
   );
 }

@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 
 const TODAY = "2026-09-10";
-const button = (page: Page, name: string) =>
+const button = (page: Page, name: string | RegExp) =>
   page.getByRole("button", { name, exact: true });
 async function importFile(page: Page) {
   const chooser = page.waitForEvent("filechooser");
@@ -40,12 +40,14 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
     .getByLabel("Название операции", { exact: true })
     .fill("Соседний магазин");
   await page.getByLabel("Сумма операции", { exact: true }).fill("250");
-  await button(page, "Продукты").click();
+  await button(page, "Категория").click();
+  await page.getByRole("radio", { name: "Продукты", exact: true }).click();
+  await button(page, /дополнительные поля операции$/i).click();
   await button(page, "Запомнить категорию для «Соседний магазин»").click();
   await expect
     .poll(async () => (await read(page)).categoryRules?.length)
     .toBe(1);
-  await button(page, "Избранные шаблоны").click();
+  await button(page, "Шаблоны").click();
   await page
     .getByLabel("Имя нового шаблона", { exact: true })
     .fill("Магазин у дома");
@@ -88,7 +90,7 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
   expect((await read(page)).transactions[0].category).toBe("groceries");
   await button(page, "Закрыть").click();
   await button(page, "Добавить операцию").click();
-  await button(page, "Избранные шаблоны").click();
+  await button(page, "Шаблоны").click();
   await page.getByRole("button", { name: /^Магазин у дома ·/ }).click();
   await expect(page.getByLabel("Сумма операции", { exact: true })).toHaveValue(
     "250",
@@ -138,6 +140,7 @@ test("split purchase and partial refund stay one account movement each on narrow
     .getByLabel("Название операции", { exact: true })
     .fill("Покупка с частями");
   await page.getByLabel("Сумма операции", { exact: true }).fill("1000");
+  await button(page, /дополнительные поля операции$/i).click();
   await button(page, "Разделить покупку по категориям").click();
   await page.getByLabel("Сумма части 1", { exact: true }).fill("700");
   await button(page, "Продукты").first().click();

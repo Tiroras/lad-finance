@@ -3,7 +3,7 @@ import { createInitialState } from "../../src/domain/seed";
 import { pickDate, readState, startApp } from "./helpers";
 
 const TODAY = "2026-09-10";
-const button = (page: Page, name: string) =>
+const button = (page: Page, name: string | RegExp) =>
   page.getByRole("button", { name, exact: true });
 const field = (page: Page, name: string) =>
   page.getByLabel(name, { exact: true });
@@ -25,6 +25,7 @@ test("Enter moves from amount to title to editable date without saving or openin
   await startApp(page, TODAY, fixture());
   await button(page, "Добавить операцию").click();
   await page.getByRole("tab", { name: "Доход", exact: true }).click();
+  await button(page, /дополнительные поля операции$/i).click();
   const amount = field(page, "Сумма операции");
   await amount.pressSequentially("12500,50");
   await expect(amount).toHaveAttribute("enterkeyhint", "next");
@@ -275,6 +276,7 @@ test("date mask adds dots without moving the caret and supports replacement, del
   await startApp(page, TODAY, fixture());
   await button(page, "Добавить операцию").click();
   await page.getByRole("tab", { name: "Доход", exact: true }).click();
+  await button(page, /дополнительные поля операции$/i).click();
   await field(page, "Сумма операции").fill("100");
   await field(page, "Название операции").fill("Дата с маской");
   const date = field(page, "Дата операции");

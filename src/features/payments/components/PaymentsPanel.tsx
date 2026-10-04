@@ -23,6 +23,7 @@ export function PaymentsPanel({ open }: { open: OpenSheet }) {
       );
   return (
     <>
+      <PaymentAgenda open={open} />
       <SubscriptionSummary monthly={sum(30)} yearly={sum(365)} />
       <Section
         title="Регулярные платежи"
@@ -47,7 +48,6 @@ export function PaymentsPanel({ open }: { open: OpenSheet }) {
           onPress={() => open({ type: "recurring" })}
         />
       )}
-      <PaymentAgenda open={open} />
     </>
   );
 }

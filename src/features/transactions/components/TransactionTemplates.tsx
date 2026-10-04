@@ -8,26 +8,35 @@ export function TransactionTemplates({
   selectedId,
   onApply,
   onSave,
+  embedded = false,
+  name: controlledName,
+  onNameChange,
 }: {
   selectedId?: string;
   onApply: (template: TransactionTemplate) => void;
   onSave: (name: string, id?: string) => void;
+  embedded?: boolean;
+  name?: string;
+  onNameChange?: (name: string) => void;
 }) {
   const { state } = useFinance();
   const { money } = useMoney();
   const [expanded, setExpanded] = useState(false);
-  const [name, setName] = useState("");
+  const [localName, setLocalName] = useState("");
+  const name = controlledName ?? localName;
   const selected = state.transactionTemplates?.find(
     (entry) => entry.id === selectedId,
   );
   return (
     <Card style={{ gap: 10 }}>
-      <Button
-        label={expanded ? "Свернуть шаблоны" : "Избранные шаблоны"}
-        variant="secondary"
-        onPress={() => setExpanded(!expanded)}
-      />
-      {expanded && (
+      {!embedded && (
+        <Button
+          label={expanded ? "Свернуть шаблоны" : "Избранные шаблоны"}
+          variant="secondary"
+          onPress={() => setExpanded(!expanded)}
+        />
+      )}
+      {(embedded || expanded) && (
         <>
           {(state.transactionTemplates ?? []).map((template) => (
             <Button
@@ -48,7 +57,7 @@ export function TransactionTemplates({
             label="Имя нового шаблона"
             accessibilityLabel="Имя нового шаблона"
             value={name}
-            onChangeText={setName}
+            onChangeText={onNameChange ?? setLocalName}
             placeholder="Например, обед на работе"
             maxLength={120}
           />
