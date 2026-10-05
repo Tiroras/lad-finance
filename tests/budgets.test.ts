@@ -3,6 +3,9 @@ import { test } from "node:test";
 import {
   categoryBudget,
   budgetPeriod,
+  budgetActivity,
+  categoryBudgets,
+  type BudgetPlan,
   validateBudgetPlans,
 } from "../src/domain/budgets";
 import {
@@ -12,6 +15,7 @@ import {
 import { createInitialState } from "../src/domain/seed";
 import { decodeBackup, encodeBackup } from "../src/domain/backup";
 import type { FinanceState } from "../src/domain/types";
+import { RATE_SCALE } from "../src/domain/currency";
 
 const TODAY = "2026-09-10";
 function fixture() {
@@ -279,5 +283,245 @@ test("starting a budget must not invent completed periods and rollover before se
         TODAY,
       ),
     /текущего периода/,
+  );
+});
+
+test("budget activity matches exact monthly, weekly, annual and short-month boundaries", () => {
+  const cases: {
+    plan?: Pick<BudgetPlan, "period" | "startDay" | "anchor">;
+    date: string;
+    start: string;
+    end: string;
+  }[] = [
+    { date: "2026-09-10", start: "2026-09-01", end: "2026-10-01" },
+    {
+      plan: { period: "weekly", anchor: "2026-09-10", startDay: 1 },
+      date: "2026-09-10",
+      start: "2026-09-10",
+      end: "2026-09-17",
+    },
+    {
+      plan: { period: "yearly", anchor: "2024-02-29", startDay: 1 },
+      date: "2025-03-01",
+      start: "2025-02-28",
+      end: "2026-02-28",
+    },
+    {
+      plan: { period: "monthly", anchor: "2024-01-31", startDay: 31 },
+      date: "2024-03-01",
+      start: "2024-02-29",
+      end: "2024-03-31",
+    },
+  ];
+  for (const entry of cases) {
+    const state = fixture();
+    if (entry.plan)
+      state.budgetPlans = [
+        {
+          ...entry.plan,
+          categoryId: "groceries",
+          rolloverSurplus: false,
+          rolloverDeficit: false,
+          changes: [{ from: "2000-01-01", amount: 10_000 }],
+          overrides: [],
+        },
+      ];
+    expense(state, entry.start, 123);
+    expense(state, entry.end, 456);
+    const activity = budgetActivity(state, "groceries", entry.date, entry.end);
+    assert.deepEqual([activity.start, activity.end], [entry.start, entry.end]);
+    assert.equal(activity.spent, 123);
+    assert.deepEqual(
+      activity.transactions.map((t) => t.date),
+      [entry.start],
+    );
+    assert.equal(
+      activity.spent,
+      categoryBudget(state, "groceries", entry.date, entry.end).spent,
+    );
+  }
+});
+
+test("budget activity aggregates sibling splits once and values refunds on their credited dates using full history", () => {
+  const state = fixture();
+  for (const id of ["fruit", "vegetables"])
+    state.categories.push({
+      ...state.categories[0],
+      id,
+      name: id,
+      parentId: "groceries",
+      budget: 0,
+    });
+  state.transactions.push(
+    {
+      id: "old-purchase",
+      type: "expense",
+      title: "Прошлый чек",
+      accountId: "card",
+      date: "2026-08-31",
+      category: "groceries",
+      amount: 100,
+      baseAmount: 100,
+      splits: [
+        { category: "fruit", amount: 20 },
+        { category: "vegetables", amount: 50 },
+        { category: "home", amount: 30 },
+      ],
+    },
+    {
+      id: "new-purchase",
+      type: "expense",
+      title: "Новый чек",
+      accountId: "card",
+      date: TODAY,
+      category: "groceries",
+      amount: 100,
+      baseAmount: 100,
+      splits: [
+        { category: "fruit", amount: 20 },
+        { category: "vegetables", amount: 50 },
+        { category: "home", amount: 30 },
+      ],
+    },
+  );
+  for (const [id, date, amount] of [
+    ["prior-refund", "2026-08-31", 10],
+    ["current-refund", TODAY, 50],
+    ["future-refund", "2026-09-11", 40],
+  ] as const)
+    state.transactions.push({
+      id,
+      date,
+      amount,
+      baseAmount: amount,
+      type: "income",
+      title: "Возврат прошлого чека",
+      category: "other",
+      accountId: "card",
+      refundOf: "old-purchase",
+    });
+  const before = structuredClone(state);
+  const activity = budgetActivity(state, "groceries", TODAY, TODAY);
+  assert.deepEqual(
+    activity.transactions.map((t) => [
+      t.transactionId,
+      t.amount,
+      t.totalAmount,
+      t.refund,
+    ]),
+    [
+      ["current-refund", -35, 50, true],
+      ["new-purchase", 70, 100, false],
+    ],
+  );
+  assert.equal(activity.spent, 35);
+  assert.equal(
+    activity.spent,
+    categoryBudget(state, "groceries", TODAY, TODAY).spent,
+  );
+  assert.deepEqual(state, before);
+});
+
+test("budget activity preserves historical currency valuations and excludes future, transfer, income and debt records", () => {
+  const state = fixture();
+  state.accounts.push({ ...state.accounts[0], id: "usd", currency: "USD" });
+  state.settings.exchange = {
+    automatic: false,
+    rates: { USD: { value: 110 * RATE_SCALE, date: TODAY, source: "manual" } },
+  };
+  state.transactions.push({
+    id: "foreign",
+    type: "expense",
+    date: TODAY,
+    title: "Покупка USD",
+    amount: 100,
+    baseAmount: 9_001,
+    accountId: "usd",
+    category: "groceries",
+  });
+  for (const type of ["income", "transfer"] as const)
+    state.transactions.push({
+      id: type,
+      type,
+      date: TODAY,
+      title: type,
+      amount: 500,
+      category: "groceries",
+      accountId: "card",
+      toAccountId: type === "transfer" ? "cash" : undefined,
+    });
+  state.transactions.push({
+    id: "debt",
+    type: "expense",
+    date: TODAY,
+    title: "Основная сумма долга",
+    amount: 500,
+    category: "groceries",
+    accountId: "card",
+    debtId: "debt-1",
+    debtAction: "issue",
+  });
+  expense(state, "2026-09-11", 500);
+  const activity = budgetActivity(state, "groceries", TODAY, TODAY);
+  assert.deepEqual(
+    activity.transactions.map((t) => [t.transactionId, t.amount]),
+    [["foreign", 9_001]],
+  );
+  assert.equal(
+    activity.spent,
+    categoryBudget(state, "groceries", TODAY, TODAY).spent,
+  );
+});
+
+test("archived budgets keep evidence after a full refund, while empty budgets have none", () => {
+  const state = fixture();
+  state.categories.find((c) => c.id === "groceries")!.archived = true;
+  expense(state, TODAY, 101);
+  state.transactions.push({
+    id: "refund",
+    type: "income",
+    title: "Полный возврат",
+    date: TODAY,
+    amount: 101,
+    accountId: "card",
+    category: "other",
+    refundOf: `expense-${TODAY}`,
+  });
+  const activity = budgetActivity(state, "groceries", TODAY, TODAY);
+  assert.equal(activity.spent, 0);
+  assert.equal(activity.transactions.length, 2);
+  assert.equal(
+    categoryBudgets(state, TODAY, TODAY).find((c) => c.id === "groceries")!
+      .hasActivity,
+    true,
+  );
+  assert.deepEqual(
+    budgetActivity(state, "home", TODAY, TODAY).transactions,
+    [],
+  );
+  assert.equal(categoryBudget(state, "home", TODAY, TODAY).hasActivity, false);
+});
+
+test("budget evidence follows edits and removals without losing the selected category period", () => {
+  let state = fixture();
+  expense(state, TODAY, 101);
+  state = saveBudgetPlan(
+    state,
+    input({ period: "weekly", anchor: TODAY }),
+    TODAY,
+  );
+  const current = () => budgetActivity(state, "groceries", TODAY, TODAY);
+  assert.equal(current().spent, 101);
+  state.transactions = state.transactions.map((t) => ({ ...t, amount: 202 }));
+  assert.equal(current().spent, 202);
+  state.transactions = state.transactions.map((t) => ({
+    ...t,
+    category: "home",
+  }));
+  assert.deepEqual(current().transactions, []);
+  state.transactions = [];
+  assert.deepEqual(
+    [current().start, current().end, current().spent],
+    [TODAY, "2026-09-17", 0],
   );
 });

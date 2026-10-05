@@ -7,3 +7,4 @@ export { AutomationSettings } from "./components/AutomationSettings";
 export { CategoryRuleSuggestion } from "./components/CategoryRuleSuggestion";
 export { TransactionListDetails } from "./components/TransactionListDetails";
 export { TransactionListEmpty } from "./components/TransactionListEmpty";
+export { TransactionEvidence } from "./components/TransactionEvidence";

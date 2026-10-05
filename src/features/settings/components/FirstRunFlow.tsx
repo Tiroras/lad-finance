@@ -76,11 +76,34 @@ export function FirstRunFlow({
                 Добро пожаловать в Лад
               </Txt>
               <Txt style={styles.description}>
-                Соберите деньги, повседневные расходы и планы в одном месте.
-                Экскурсия проведёт вас по настоящим экранам: обзору, операциям,
-                плану, аналитике и настройкам. Нажимайте выделенные кнопки и
-                знакомьтесь с приложением. Можно продолжить позже.
+                Начните со своих счетов и планов или пройдите экскурсию по
+                настоящим экранам. Знакомство можно продолжить позже.
               </Txt>
+            </View>
+            <View style={{ gap: 10 }}>
+              <ErrorText error={error} />
+              {busy && (
+                <Txt accessibilityLiveRegion="polite" style={styles.footnote}>
+                  Создаём личный профиль…
+                </Txt>
+              )}
+              <Button
+                label="Настроить свой учёт"
+                disabled={busy}
+                onPress={() => void finish("setup")}
+              />
+              <Button
+                label="Начать знакомство"
+                variant="secondary"
+                disabled={busy}
+                onPress={() => void finish("learn")}
+              />
+              <Button
+                label="Пропустить знакомство"
+                variant="secondary"
+                disabled={busy}
+                onPress={() => show("finish")}
+              />
             </View>
             <Card style={{ gap: 18, backgroundColor: C.soft }}>
               {(
@@ -109,20 +132,6 @@ export function FirstRunFlow({
                 </Row>
               ))}
             </Card>
-            <View style={{ gap: 10 }}>
-              <ErrorText error={error} />
-              <Button
-                label={busy ? "Открываем знакомство…" : "Начать знакомство"}
-                disabled={busy}
-                onPress={() => void finish("learn")}
-              />
-              <Button
-                label="Пропустить знакомство"
-                variant="secondary"
-                disabled={busy}
-                onPress={() => show("finish")}
-              />
-            </View>
             <Txt style={styles.footnote}>
               Без регистрации и подключения к банку. Данные сохраняются на вашем
               устройстве.

@@ -95,6 +95,68 @@ interface DatedExpense {
   amount: number;
 }
 
+export interface BudgetActivityTransaction {
+  transactionId: string;
+  title: string;
+  date: string;
+  /** The contribution to this budget, in historical base-currency minor units. */
+  amount: number;
+  /** The whole purchase or refund in the same historical base currency. */
+  totalAmount: number;
+  refund: boolean;
+}
+
+/** Exact operations behind the selected budget period; reading never changes it. */
+export function budgetActivity(
+  state: FinanceState,
+  categoryId: string,
+  date: string,
+  today: string,
+) {
+  const category = state.categories.find((entry) => entry.id === categoryId);
+  if (!category || category.parentId)
+    throw new Error("Выберите основную категорию бюджета.");
+  const period = budgetPeriod(
+    state.budgetPlans?.find((entry) => entry.categoryId === categoryId),
+    date,
+  );
+  const roots = new Map(
+    state.categories.map((entry) => [entry.id, entry.parentId ?? entry.id]),
+  );
+  const transactions: BudgetActivityTransaction[] = [];
+  for (const transaction of state.transactions) {
+    if (
+      transaction.date < period.start ||
+      transaction.date >= period.end ||
+      transaction.date > today
+    )
+      continue;
+    // Keep the complete state: a refund may refer to a purchase in an older period.
+    const parts = expenseContributions(state, transaction).filter(
+      (entry) => roots.get(entry.category) === categoryId,
+    );
+    if (!parts.length) continue;
+    transactions.push({
+      transactionId: transaction.id,
+      title: transaction.title,
+      date: transaction.date,
+      amount: parts.reduce((sum, entry) => sum + entry.amount, 0),
+      totalAmount: transactionValue(state, transaction),
+      refund: !!transaction.refundOf,
+    });
+  }
+  transactions.sort(
+    (a, b) =>
+      b.date.localeCompare(a.date) ||
+      a.transactionId.localeCompare(b.transactionId),
+  );
+  return {
+    ...period,
+    spent: transactions.reduce((sum, entry) => sum + entry.amount, 0),
+    transactions,
+  };
+}
+
 function spendingByCategory(state: FinanceState, today: string) {
   const roots = new Map(
     state.categories.map((entry) => [entry.id, entry.parentId ?? entry.id]),
@@ -163,6 +225,9 @@ function calculateCategoryBudget(
     carried,
     budget: category.archived ? 0 : Math.max(0, base + carried),
     spent: spending.get(period.start) ?? 0,
+    hasActivity: expenses.some(
+      (expense) => expense.date >= period.start && expense.date < period.end,
+    ),
   };
 }
 

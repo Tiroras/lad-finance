@@ -224,3 +224,160 @@ test("a template reveals its note and split parts and collapsing details cannot 
     .poll(async () => (await readState(page)).transactions[0])
     .toEqual(after.transactions[0]);
 });
+
+test("editing keeps the save action with the main fields and preserves collapsed notes and archived categories", async ({
+  page,
+}, testInfo) => {
+  const state = fixture();
+  state.categories.find((category) => category.id === "groceries")!.archived =
+    true;
+  state.transactions = [
+    {
+      id: "compact-edit",
+      type: "expense",
+      title: "Покупка для всей семьи с длинным названием",
+      amount: 123400,
+      accountId: "card",
+      category: "groceries",
+      date: TODAY,
+      note: "Сохранённая заметка",
+    },
+  ];
+  await startApp(page, TODAY, state);
+  await page
+    .getByRole("button", { name: /^Покупка для всей семьи.*открыть операцию/ })
+    .first()
+    .click();
+  await expect(details(page)).toHaveAttribute("aria-expanded", "true");
+  await expect(input(page, "Заметка")).toHaveValue("Сохранённая заметка");
+  await details(page).click();
+  await expect(input(page, "Заметка")).toHaveCount(0);
+  await expect(button(page, "Категория")).toContainText("Продукты · архив");
+  await button(page, "Категория").click();
+  await expect(
+    page.getByRole("radio", { name: "Продукты · архив", exact: true }),
+  ).toBeChecked();
+  await button(page, "Категория").click();
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    const save = button(page, "Сохранить изменения");
+    await save.scrollIntoViewIfNeeded();
+    const saveBounds = (await save.boundingBox())!;
+    const detailsBounds = (await details(page).boundingBox())!;
+    expect(saveBounds.y + saveBounds.height).toBeLessThanOrEqual(
+      detailsBounds.y,
+    );
+    expect(saveBounds.x).toBeGreaterThanOrEqual(0);
+    expect(saveBounds.x + saveBounds.width).toBeLessThanOrEqual(width);
+    await page.screenshot({
+      path: testInfo.outputPath(`compact-edit-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await input(page, "Сумма операции").fill("1300");
+  await button(page, "Сохранить изменения").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect
+    .poll(async () => (await readState(page)).transactions[0])
+    .toMatchObject({ ...state.transactions[0], amount: 130000 });
+});
+
+test("empty and semantically unchanged drafts close directly, while edited drafts can resume or discard", async ({
+  page,
+}) => {
+  const state = fixture();
+  state.transactions = [
+    {
+      id: "guard-edit",
+      type: "expense",
+      title: "Покупка для проверки",
+      amount: 123400,
+      accountId: "card",
+      category: "groceries",
+      date: TODAY,
+    },
+  ];
+  await startApp(page, TODAY, state);
+  await button(page, "Добавить операцию").click();
+  await button(page, "Категория").click();
+  await expect(
+    page.getByRole("radiogroup", { name: "Категория: варианты" }),
+  ).toBeVisible();
+  await button(page, "Закрыть").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const row = page
+    .getByRole("button", { name: /^Покупка для проверки,.*открыть операцию/ })
+    .first();
+  await row.click();
+  await input(page, "Сумма операции").fill("1 234,00");
+  await button(page, "Закрыть").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await row.click();
+  await input(page, "Сумма операции").fill("");
+  await button(page, "Сохранить изменения").click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Введите корректную сумму",
+  );
+  await button(page, "Открыть календарь: Дата операции").click();
+  await expect(page.getByTestId("date-picker-Дата операции")).toBeVisible();
+  await button(page, "Закрыть").click();
+  await expect(
+    page.getByRole("heading", { name: "Сбросить изменения?", exact: true }),
+  ).toBeVisible();
+  await expect(input(page, "Сумма операции")).toHaveCount(0);
+  await button(page, "Продолжить ввод").click();
+  await expect(page.getByTestId("date-picker-Дата операции")).toBeVisible();
+  await expect(input(page, "Сумма операции")).toHaveValue("");
+  await expect(page.getByRole("alert")).toContainText(
+    "Введите корректную сумму",
+  );
+  await button(page, "Закрыть").click();
+  await button(page, "Сбросить и закрыть").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(await readState(page)).toEqual(state);
+  await row.click();
+  await input(page, "Сумма операции").fill("1500");
+  await button(page, "Сохранить изменения").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect
+    .poll(async () => (await readState(page)).transactions[0].amount)
+    .toBe(150000);
+  await row.click();
+  await input(page, "Название операции").fill("Несохранённое имя");
+  await button(page, "Удалить операцию").click();
+  await button(page, "Да, удалить").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect
+    .poll(async () => (await readState(page)).transactions)
+    .toEqual([]);
+});
+
+test("backdrop and Escape protect quick text and template names before a transaction is filled", async ({
+  page,
+}) => {
+  const state = fixture();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await startApp(page, TODAY, state);
+  await button(page, "Добавить операцию").click();
+  // RN Web routes Escape only once Modal's opening animation activates it.
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await button(page, "Быстрый ввод").click();
+  await input(page, "Быстрый ввод").fill("кофе без суммы");
+  await button(page, "Закрыть окно").click({ position: { x: 5, y: 5 } });
+  await expect(button(page, "Продолжить ввод")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(input(page, "Быстрый ввод")).toHaveValue("кофе без суммы");
+  await input(page, "Быстрый ввод").fill("");
+  await button(page, "Шаблоны").click();
+  await input(page, "Имя нового шаблона").fill("Обед в рабочий день");
+  await page.keyboard.press("Escape");
+  await expect(button(page, "Сбросить и закрыть")).toBeVisible();
+  await button(page, "Продолжить ввод").click();
+  await expect(input(page, "Имя нового шаблона")).toHaveValue(
+    "Обед в рабочий день",
+  );
+  await page.keyboard.press("Escape");
+  await button(page, "Сбросить и закрыть").click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(await readState(page)).toEqual(state);
+});

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import {
   matchCategoryRule,
@@ -29,12 +29,12 @@ import {
 import { AccountPicker } from "../../accounts";
 import { DebtTransactionDetails } from "../../debts";
 import { CategoryPicker } from "../../categories";
-import { CategoryRuleSuggestion } from "./CategoryRuleSuggestion";
 import { RefundFields } from "./RefundFields";
-import { TransactionSplits } from "./TransactionSplits";
 import { TransactionTemplates } from "./TransactionTemplates";
 import { TransactionEntryTools, type EntryTool } from "./TransactionEntryTools";
 import { TransactionDetails } from "./TransactionDetails";
+import { usePreventSheetDismiss } from "../../../shared/ui/SheetDismissal";
+import { transactionDraftSnapshot } from "../model/transactionDraftChanges";
 import {
   applyQuickEntry,
   applyTransactionTemplate,
@@ -62,11 +62,52 @@ export function TransactionForm({
   const scrollToStart = useSheetScrollToStart();
   const sourceOriginal = state.transactions.find((t) => t.id === sheet.id);
   const [quick, setQuick] = useState("");
-  const [draft, setDraft] = useState(() =>
+  const [templateName, setTemplateName] = useState("");
+  const auxiliaryDraft = useRef({
+    quick: "",
+    templateName: "",
+    savedTemplateName: "",
+  });
+  const [draft, setDraftState] = useState(() =>
     createTransactionDraft(state, today, sourceOriginal, sheet.transactionType),
   );
+  const initialDraft = useRef(draft);
+  const currentDraft = useRef(draft);
+  // Keep the guard current in the input event itself, before React commits.
+  const setDraft = (
+    next: TransactionDraft | ((current: TransactionDraft) => TransactionDraft),
+  ) => {
+    currentDraft.current =
+      typeof next === "function" ? next(currentDraft.current) : next;
+    setDraftState(currentDraft.current);
+  };
+  const changeTemplateName = (value: string) => {
+    auxiliaryDraft.current.templateName = value;
+    setTemplateName(value);
+  };
+  usePreventSheetDismiss({
+    hasChanges: () =>
+      !sourceOriginal?.debtId &&
+      (!!auxiliaryDraft.current.quick.trim() ||
+        auxiliaryDraft.current.templateName.trim() !==
+          auxiliaryDraft.current.savedTemplateName ||
+        transactionDraftSnapshot(
+          state,
+          currentDraft.current,
+          sourceOriginal,
+        ) !==
+          transactionDraftSnapshot(
+            state,
+            initialDraft.current,
+            sourceOriginal,
+          )),
+    description:
+      "Введённые данные операции не сохранены. Если закрыть окно, их придётся ввести заново. Сохранённая история не изменится.",
+  });
   const [entryTool, setEntryTool] = useState<EntryTool>(null);
-  const [detailsExpanded, setDetailsExpanded] = useState(!!draft.note);
+  const [detailsExpanded, setDetailsExpanded] = useState(
+    !!draft.note || draft.splitEnabled,
+  );
   const {
     repeating,
     templateId,
@@ -80,9 +121,7 @@ export function TransactionForm({
     received,
     valuation,
     date,
-    note,
     splitEnabled,
-    parts,
     refundOf,
     refundSource,
   } = draft;
@@ -131,6 +170,7 @@ export function TransactionForm({
       actions.saveTransactionTemplate(
         transactionTemplateInput(state, draft, name, id, original),
       );
+      if (!id) auxiliaryDraft.current.savedTemplateName = name.trim();
       notify(id ? "Шаблон обновлён" : "Шаблон сохранён");
     });
   const save = () =>
@@ -186,6 +226,7 @@ export function TransactionForm({
           canQuickEnter={type !== "transfer"}
           quick={quick}
           onQuickChange={(value) => {
+            auxiliaryDraft.current.quick = value;
             setQuick(value);
             setEntryError("");
           }}
@@ -193,6 +234,8 @@ export function TransactionForm({
           templateId={templateId}
           onTemplateApply={applyTemplate}
           onTemplateSave={saveTemplate}
+          templateName={templateName}
+          onTemplateNameChange={changeTemplateName}
           error={entryError}
         />
       )}
@@ -228,33 +271,14 @@ export function TransactionForm({
         }}
         maxLength={120}
       />
-      {type === "expense" && (
-        <>
-          {!!original && (
-            <TransactionSplits
-              enabled={splitEnabled}
-              parts={parts}
-              currency={sourceCurrency}
-              total={parsedAmount}
-              onChange={(parts) => patch({ parts })}
-              onToggle={() => setDraft(toggleTransactionSplits)}
-            />
-          )}
-          {!splitEnabled && (
-            <>
-              <CategoryPicker
-                variant={original ? "chips" : "select"}
-                value={category}
-                onChange={(value) => {
-                  patch({ category: value, manualCategory: true });
-                }}
-              />
-              {!!original && (
-                <CategoryRuleSuggestion title={title} category={category} />
-              )}
-            </>
-          )}
-        </>
+      {type === "expense" && !splitEnabled && (
+        <CategoryPicker
+          variant="select"
+          value={category}
+          onChange={(value) => {
+            patch({ category: value, manualCategory: true });
+          }}
+        />
       )}
       <AccountPicker
         selected={accountId}
@@ -326,27 +350,6 @@ export function TransactionForm({
         value={date}
         onChangeText={(date) => patch({ date })}
       />
-      {original ? (
-        <Field
-          label="Заметка · необязательно"
-          accessibilityLabel="Заметка"
-          placeholder="Что хочется запомнить?"
-          value={note}
-          onChangeText={(note) => patch({ note })}
-          maxLength={500}
-          multiline
-        />
-      ) : (
-        <TransactionDetails
-          draft={draft}
-          currency={sourceCurrency}
-          total={parsedAmount}
-          expanded={detailsExpanded}
-          onExpandedChange={setDetailsExpanded}
-          onChange={patch}
-          onToggleSplits={() => setDraft(toggleTransactionSplits)}
-        />
-      )}
       <ErrorText error={error} />
       <Button
         label={
@@ -358,6 +361,15 @@ export function TransactionForm({
         }
         icon="checkmark"
         onPress={save}
+      />
+      <TransactionDetails
+        draft={draft}
+        currency={sourceCurrency}
+        total={parsedAmount}
+        expanded={detailsExpanded}
+        onExpandedChange={setDetailsExpanded}
+        onChange={patch}
+        onToggleSplits={() => setDraft(toggleTransactionSplits)}
       />
       {original?.type === "expense" &&
         !original.debtId &&
@@ -392,6 +404,8 @@ export function TransactionForm({
           />
           <TransactionTemplates
             selectedId={templateId}
+            name={templateName}
+            onNameChange={changeTemplateName}
             onApply={() =>
               setError(
                 "Сначала нажмите «Повторить операцию» для нового черновика.",

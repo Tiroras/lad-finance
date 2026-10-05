@@ -163,6 +163,7 @@ test("goals fund the selected currency and currency forms fit 320, 390 and 1440 
     .poll(async () => (await read(page)).transactions[0]?.toAmount)
     .toBe(1000);
   expect((await read(page)).transactions[0].amount).toBe(101000);
+  const fundedState = await read(page);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   for (const width of [320, 390, 1440]) {
@@ -205,6 +206,9 @@ test("goals fund the selected currency and currency forms fit 320, 390 and 1440 
       path: test.info().outputPath(`exchange-${width}.png`),
     });
     await close(page);
+    await button(page, "Сбросить и закрыть").click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(await read(page)).toEqual(fundedState);
   }
   expect(errors).toEqual([]);
 });

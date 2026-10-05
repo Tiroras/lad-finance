@@ -82,7 +82,7 @@ async function expectSheetTop(page: Page, top: number) {
     .toBeLessThan(1);
 }
 
-test("dragging the sheet header down dismisses it without saving the form", async ({
+test("dragging a filled transaction asks before discarding and restores the sheet on cancel", async ({
   page,
 }) => {
   const initial = fixture();
@@ -106,6 +106,19 @@ test("dragging the sheet header down dismisses it without saving the form", asyn
     .poll(async () => (await header.boundingBox())!.y)
     .toBeGreaterThan(bounds.y + 120);
   await page.mouse.up();
+  await expect(button(page, "Продолжить ввод")).toBeVisible();
+  await button(page, "Продолжить ввод").click();
+  await expect(header).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "Быстрый ввод", exact: true }),
+  ).toHaveValue("кофе 350");
+  expect((await header.boundingBox())!.y).toBeCloseTo(bounds.y, 0);
+  const release = await touchDrag(page, await handlePosition(page), {
+    x: 0,
+    y: 180,
+  });
+  await release();
+  await button(page, "Сбросить и закрыть").click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(await readState(page)).toEqual(initial);
   await button(page, "Добавить операцию").click();

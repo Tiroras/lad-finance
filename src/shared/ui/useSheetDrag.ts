@@ -14,7 +14,7 @@ export function useSheetDrag({
   blocked: boolean;
   contentKey?: string;
   height: number;
-  onClose: () => void;
+  onClose: () => void | boolean;
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
   const current = useRef({ enabled: visible && !blocked, height, onClose });
@@ -111,7 +111,10 @@ export function useSheetDrag({
         }).start(({ finished }) => {
           if (finished && current.current.enabled) {
             Keyboard.dismiss();
-            current.current.onClose();
+            if (current.current.onClose() === false) {
+              dismissing.current = false;
+              restore();
+            }
           }
         });
       },

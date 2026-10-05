@@ -5,6 +5,7 @@ import { useSecurity, LockScreen } from "../../features/security";
 import type { SheetState, OpenSheet } from "../navigation/types";
 import { SheetContent } from "./SheetContent";
 import { SheetToast } from "./AppToast";
+import type { DismissalController } from "../../shared/lib/dismissal";
 
 export function AppSheet({
   sheet,
@@ -14,6 +15,7 @@ export function AppSheet({
   returnToGuide,
   tourCoach,
   startTour,
+  dismissal,
 }: {
   sheet: SheetState | null;
   close: () => void;
@@ -22,6 +24,7 @@ export function AppSheet({
   returnToGuide?: () => void;
   tourCoach?: ReactNode;
   startTour: (id?: string) => void;
+  dismissal: DismissalController;
 }) {
   const security = useSecurity();
   const id = sheet && "id" in sheet ? sheet.id : undefined;
@@ -68,6 +71,7 @@ export function AppSheet({
 
   return (
     <Sheet
+      dismissal={dismissal}
       visible={!!sheet}
       contentKey={contentKey}
       blockingContent={security.locked ? <LockScreen compact /> : undefined}

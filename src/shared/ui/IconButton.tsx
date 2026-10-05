@@ -20,7 +20,7 @@ export function IconButton({
 }: {
   name: IName;
   label: string;
-  onPress: () => void;
+  onPress: () => void | boolean;
   style?: StyleProp<ViewStyle>;
   color?: string;
   tourId?: string;
@@ -34,8 +34,8 @@ export function IconButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={() => {
-        onPress();
-        if (tourId) tourAction(tourId);
+        const completed = onPress();
+        if (tourId && completed !== false) tourAction(tourId);
       }}
       style={({ pressed }) => [
         tourStyle ? tourStyle.control : s.iconButton,

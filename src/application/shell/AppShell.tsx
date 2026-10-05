@@ -165,6 +165,7 @@ export function AppShell() {
             </View>
             {security.locked && !sheet && <LockScreen />}
             <AppSheet
+              dismissal={navigation.dismissal}
               sheet={sheet}
               close={tour.closeSheet}
               open={open}

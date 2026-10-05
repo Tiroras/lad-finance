@@ -38,6 +38,7 @@ export function useLearningTour(
     back,
     tab,
     sheets,
+    dismissal,
   } = navigation;
   const location = useMemo(() => JSON.stringify([tab, sheets]), [tab, sheets]);
   const currentLocation = useRef({ tab, sheets, location });
@@ -94,9 +95,11 @@ export function useLearningTour(
     setActive(false);
   }, []);
   const previous = useCallback(() => {
-    if (index > 0) void move(index - 1);
-    else pause();
-  }, [index, move, pause]);
+    dismissal.request(() => {
+      if (index > 0) void move(index - 1);
+      else pause();
+    });
+  }, [index, move, pause, dismissal]);
   const onAction = useCallback(
     (id: string) => {
       if (active && !locked && id === action) void move(index + 1);
@@ -160,7 +163,9 @@ export function useLearningTour(
     });
     return () => setBackOverride(null);
   }, [active, moving, locked, previous, pause, setBackOverride]);
-  const skip = useCallback(() => void move(index + 1), [index, move]);
+  const skip = useCallback(() => {
+    dismissal.request(() => void move(index + 1));
+  }, [index, move, dismissal]);
   return {
     active,
     visible: active && !locked,

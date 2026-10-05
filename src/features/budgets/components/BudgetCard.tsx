@@ -8,28 +8,39 @@ import {
   Card,
   font,
   IconTile,
+  Icon,
+  interactionStyles,
   Progress,
   Row,
   Txt,
 } from "../../../shared/ui";
+import { BudgetActivity } from "./BudgetActivity";
 
 export function BudgetCard({
   category: c,
   open,
+  expanded,
+  onToggle,
 }: {
   category: ReturnType<typeof categoryBudgets>[number];
   open: OpenSheet;
+  expanded: boolean;
+  onToggle: () => void;
 }) {
   const { money } = useMoney();
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${c.archived ? "Архивная категория" : "Изменить бюджет"}: ${c.name}`}
-      onPress={() =>
-        open({ type: c.archived ? "category" : "budget", id: c.id })
-      }
-    >
-      <Card style={{ padding: 17 }}>
+    <Card style={{ padding: 0 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${c.archived ? "Архивная категория" : "Изменить бюджет"}: ${c.name}`}
+        onPress={() =>
+          open({ type: c.archived ? "category" : "budget", id: c.id })
+        }
+        style={({ pressed }) => [
+          { padding: 17 },
+          pressed && interactionStyles.pressed,
+        ]}
+      >
         <Row style={{ marginBottom: 16 }}>
           <IconTile
             name={c.icon}
@@ -51,16 +62,31 @@ export function BudgetCard({
               {c.archived
                 ? "Расходы сохранены в истории"
                 : c.spent > c.budget
-                  ? `Сверх плана ${money(c.spent - c.budget)}`
-                  : `Осталось ${money(c.budget - c.spent)}`}
+                  ? `Сверх плана ${money(c.spent - c.budget, true)}`
+                  : `Осталось ${money(c.budget - c.spent, true)}`}
             </Txt>
           </View>
-          <View style={{ alignItems: "flex-end", gap: 5 }}>
-            <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>
-              {money(c.spent)}
+          <View
+            style={{
+              alignItems: "flex-end",
+              gap: 5,
+              flexShrink: 1,
+              maxWidth: "50%",
+            }}
+          >
+            <Txt
+              style={{
+                fontFamily: font.bold,
+                fontSize: 13,
+                textAlign: "right",
+              }}
+            >
+              {money(c.spent, true)}
             </Txt>
-            <Txt style={{ color: C.muted, fontSize: 10 }}>
-              {c.archived ? "Лимит не действует" : `из ${money(c.budget)}`}
+            <Txt style={{ color: C.muted, fontSize: 10, textAlign: "right" }}>
+              {c.archived
+                ? "Лимит не действует"
+                : `из ${money(c.budget, true)}`}
             </Txt>
           </View>
         </Row>
@@ -70,9 +96,46 @@ export function BudgetCard({
         />
         <Txt style={{ color: C.muted, fontSize: 10, marginTop: 10 }}>
           {dateLabel(c.start)} — {dateLabel(shiftDate(c.end, -1))}
-          {c.carried ? ` · перенос ${money(c.carried)}` : ""}
+          {c.carried ? ` · перенос ${money(c.carried, true)}` : ""}
         </Txt>
-      </Card>
-    </Pressable>
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Расходы за период: ${c.name}`}
+        accessibilityState={{ expanded }}
+        aria-expanded={expanded}
+        onPress={onToggle}
+        style={({ pressed }) => [
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            minHeight: 48,
+            paddingHorizontal: 17,
+            paddingVertical: 12,
+            borderTopWidth: 1,
+            borderTopColor: C.border,
+          },
+          pressed && interactionStyles.pressed,
+        ]}
+      >
+        <Txt
+          style={{
+            flex: 1,
+            color: C.green,
+            fontFamily: font.semibold,
+            fontSize: 13,
+          }}
+        >
+          Расходы за период
+        </Txt>
+        <Icon
+          name={expanded ? "chevron-up" : "chevron-down"}
+          size={18}
+          color={C.green}
+        />
+      </Pressable>
+      {expanded && <BudgetActivity categoryId={c.id} open={open} />}
+    </Card>
   );
 }

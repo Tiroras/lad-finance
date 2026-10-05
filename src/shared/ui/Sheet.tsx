@@ -1,4 +1,10 @@
-import { useCallback, useContext, useRef, type ReactNode } from "react";
+import {
+  useCallback,
+  useContext,
+  useRef,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import {
   Animated,
   View,
@@ -7,6 +13,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
@@ -20,6 +27,11 @@ import { useSheetDrag } from "./useSheetDrag";
 import { SheetScrollProvider } from "./SheetScroll";
 import { TourFrame, type TourFrameHandle } from "./TourFrame";
 import { TourFrameContext } from "./TourContext";
+import type { DismissalController } from "../lib/dismissal";
+import {
+  SheetDismissalConfirmation,
+  SheetDismissalProvider,
+} from "./SheetDismissal";
 
 export function Sheet({
   title,
@@ -31,6 +43,7 @@ export function Sheet({
   blockingContent,
   contentKey,
   headerAccessory,
+  dismissal,
 }: {
   title: string;
   subtitle?: string;
@@ -41,7 +54,26 @@ export function Sheet({
   blockingContent?: ReactNode;
   contentKey?: string;
   headerAccessory?: ReactNode;
+  dismissal: DismissalController;
 }) {
+  const pending = useSyncExternalStore(
+    dismissal.subscribe,
+    dismissal.getSnapshot,
+  );
+  const requestClose = useCallback(() => {
+    Keyboard.dismiss();
+    return dismissal.request(onClose);
+  }, [dismissal, onClose]);
+  const requestBack = useCallback(() => {
+    Keyboard.dismiss();
+    return dismissal.request(onBack ?? onClose);
+  }, [dismissal, onBack, onClose]);
+  const blocked = !!blockingContent || !!pending;
+  const cover =
+    blockingContent ??
+    (pending ? (
+      <SheetDismissalConfirmation pending={pending} controller={dismissal} />
+    ) : undefined);
   const { width, height } = useWindowDimensions();
   const parentTourFrame = useContext(TourFrameContext);
   const tourFrame = useRef<TourFrameHandle>(null);
@@ -76,10 +108,10 @@ export function Sheet({
   }, []);
   const { translateY, panHandlers } = useSheetDrag({
     visible,
-    blocked: !!blockingContent,
+    blocked,
     contentKey,
     height,
-    onClose,
+    onClose: requestClose,
   });
   return (
     <Modal
@@ -93,7 +125,9 @@ export function Sheet({
       // the underlying screen. Reveal the current tour target after that.
       onDismiss={parentTourFrame?.reveal}
       onRequestClose={() => {
-        if (!blockingContent) (onBack ?? onClose)();
+        if (blockingContent) return;
+        if (pending) dismissal.cancel();
+        else requestBack();
       }}
       statusBarTranslucent
     >
@@ -120,9 +154,9 @@ export function Sheet({
           <Pressable
             accessibilityLabel="Закрыть окно"
             accessibilityRole="button"
-            onPress={onClose}
-            disabled={!!blockingContent}
-            aria-hidden={!!blockingContent}
+            onPress={requestClose}
+            disabled={blocked}
+            aria-hidden={blocked}
             style={[StyleSheet.absoluteFill, s.backdrop]}
           />
         </Animated.View>
@@ -144,7 +178,7 @@ export function Sheet({
         >
           <TourFrame
             ref={tourFrame}
-            coach={!blockingContent ? headerAccessory : undefined}
+            coach={!blocked ? headerAccessory : undefined}
             extendShade
             scrollKey={contentKey}
             // Yoga still resolves a positive `flex` to a zero basis when
@@ -154,11 +188,15 @@ export function Sheet({
           >
             {({ coach, onScroll, onLayout }) => (
               <>
-                {!!blockingContent && blockingContent}
+                {!!cover && cover}
                 <View
                   {...panHandlers}
                   testID="sheet-drag-area"
-                  style={[s.header, !!blockingContent && { display: "none" }]}
+                  style={[s.header, blocked && { display: "none" }]}
+                  aria-hidden={blocked}
+                  importantForAccessibility={
+                    blocked ? "no-hide-descendants" : "auto"
+                  }
                 >
                   <View style={s.handle} />
                   <Row
@@ -173,7 +211,7 @@ export function Sheet({
                         name="arrow-back"
                         label="Назад"
                         tourId="sheet.back"
-                        onPress={onBack}
+                        onPress={requestBack}
                         style={{ backgroundColor: C.soft }}
                       />
                     )}
@@ -194,7 +232,7 @@ export function Sheet({
                       name="close"
                       label="Закрыть"
                       tourId="sheet.close"
-                      onPress={onClose}
+                      onPress={requestClose}
                       style={{ backgroundColor: C.soft }}
                     />
                   </Row>
@@ -206,7 +244,7 @@ export function Sheet({
                 )}
                 <FormFields
                   key={contentKey}
-                  disabled={!!blockingContent}
+                  disabled={blocked}
                   scrollRef={scrollRef}
                   contentRef={contentRef}
                 >
@@ -223,13 +261,10 @@ export function Sheet({
                       onScroll={onScroll}
                       scrollEventThrottle={16}
                       overScrollMode={headerAccessory ? "never" : "auto"}
-                      style={[
-                        s.scroll,
-                        !!blockingContent && { display: "none" },
-                      ]}
-                      aria-hidden={!!blockingContent}
+                      style={[s.scroll, blocked && { display: "none" }]}
+                      aria-hidden={blocked}
                       importantForAccessibility={
-                        blockingContent ? "no-hide-descendants" : "auto"
+                        blocked ? "no-hide-descendants" : "auto"
                       }
                       keyboardShouldPersistTaps="handled"
                       showsVerticalScrollIndicator={false}
@@ -250,7 +285,9 @@ export function Sheet({
                           scrollRef={scrollRef}
                           contentRef={contentRef}
                         >
-                          {children}
+                          <SheetDismissalProvider controller={dismissal}>
+                            {children}
+                          </SheetDismissalProvider>
                         </SheetScrollProvider>
                       </View>
                     </Animated.ScrollView>

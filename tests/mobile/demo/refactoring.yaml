@@ -70,6 +70,8 @@ name: refactoring
 - assertVisible: "Введите существующую дату в формате ДД.ММ.ГГГГ."
 - assertVisible: "Укажите корректную дату, не позднее сегодняшней."
 - tapOn: "Закрыть"
+- assertVisible: "Сбросить изменения?"
+- tapOn: "Сбросить и закрыть"
 - assertVisible: "По выбранным фильтрам · операций: 0.*"
 
 # Создание с вводом календарной даты цифрами.
@@ -103,7 +105,7 @@ name: refactoring
 - scrollUntilVisible:
     element:
       text: "Добавить операцию"
-    direction: DOWN
+    direction: UP
 - tapOn: "Добавить операцию"
 - scrollUntilVisible:
     element:
@@ -116,9 +118,17 @@ name: refactoring
 - tapOn: "MaestroRefactor-20261004-Income, 1 250,50 ₽, открыть операцию"
 - assertVisible: "1 250,5"
 - assertVisible: "03[.]10[.]2026"
+- scrollUntilVisible:
+    element:
+      text: "Mask-Note-20261004"
+    direction: DOWN
 - assertVisible: "Mask-Note-20261004"
 
 # MREF-02: полная замена суммы; положение каретки не проверяется.
+- scrollUntilVisible:
+    element:
+      text: "Сумма операции"
+    direction: UP
 - tapOn: "Сумма операции"
 - eraseText
 - inputText: "1250.75"
@@ -245,6 +255,10 @@ name: refactoring
 - tapOn: "MaestroRefactor-20261004-Income, 1 250,75 ₽, открыть операцию"
 - assertVisible: "1 250,75"
 - assertVisible: "04[.]10[.]2026"
+- scrollUntilVisible:
+    element:
+      text: "Mask-Note-20261004"
+    direction: DOWN
 - assertVisible: "Mask-Note-20261004"
 
 # Удаляется только собственная запись с точным именем и суммой.

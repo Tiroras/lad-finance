@@ -99,6 +99,7 @@ test("explicit rule, favorite template and saved CSV profile survive reload and 
     "10.09.2026",
   );
   await button(page, "Закрыть").click();
+  await button(page, "Сбросить и закрыть").click();
   await openImport(page);
   await importFile(page);
   await button(page, "Распознать колонки").click();

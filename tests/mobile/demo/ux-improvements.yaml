@@ -1,0 +1,186 @@
+# Режим: Demo; полная сборка EXPO_PUBLIC_ENABLE_DEMO=true, Fresh выключен.
+# План: ../plans/ux-improvements.md; основание ux-budget-discovery.md.
+# Pixel_8 / emulator-5554, дата 2026-10-04, профиль Демо уже выбран.
+# Полная установленная Demo APK должна соответствовать исходникам.
+# Собственная запись UX-Improve-Expense исходно отсутствует. Без clearState.
+appId: app.lad.finance
+name: ux-improvements
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- tapOn: "Текущий профиль: Демо. Открыть профили"
+- tapOn: "Открыть профиль: Демо"
+- tapOn: "Закрыть"
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- assertVisible: "54 012 ₽"
+- tapOn: "Операции"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 6.*"
+- assertVisible: "120 000 ₽"
+- assertVisible: "34 605 ₽"
+
+# MUX-01: точные составляющие текущего бюджета, сохранённый контекст.
+- tapOn: "План"
+- tapOn: "Бюджеты"
+- scrollUntilVisible:
+    element:
+      text: "Расходы за период: Продукты"
+    direction: DOWN
+- tapOn: "Расходы за период: Продукты"
+- scrollUntilVisible:
+    element:
+      id: "budget-activity-groceries"
+    direction: DOWN
+    centerElement: true
+- assertVisible: "Итого за период: 3 825,00 ₽"
+- assertVisible: "1 октября 2026 г[.] — 31 октября 2026 г[.]"
+- assertVisible: "Открыть операцию ВкусВилл, 4 октября, 1 485,00 ₽"
+- assertVisible: "Открыть операцию Перекрёсток, 1 октября, 2 340,00 ₽"
+- takeScreenshot: test-results/mobile/ux-improvements/full-01-budget
+- tapOn: "Открыть операцию ВкусВилл, 4 октября, 1 485,00 ₽"
+- assertVisible: "Категория, Продукты"
+- assertVisible: "Сохранить изменения"
+- assertVisible: "Заметка и разделение покупки, дополнительные поля операции"
+- takeScreenshot: test-results/mobile/ux-improvements/full-02-edit-compact
+- tapOn: "Закрыть"
+- assertNotVisible: "Сбросить изменения[?]"
+- assertVisible: "Итого за период: 3 825,00 ₽"
+- scrollUntilVisible:
+    element:
+      text: "Изменить бюджет: Продукты"
+    direction: UP
+- tapOn: "Изменить бюджет: Продукты"
+- assertVisible: "Бюджет категории"
+- tapOn: "Закрыть"
+- assertNotVisible: "Сбросить изменения[?]"
+
+# MUX-02: неизменённая форма закрывается сразу; ввод защищён.
+- tapOn: "Обзор"
+- tapOn: "Расход"
+- tapOn: "Закрыть"
+- assertVisible: "54 012 ₽"
+- tapOn: "Расход"
+- tapOn: "Сумма операции"
+- inputText: "320"
+- assertVisible: "320"
+- takeScreenshot: test-results/mobile/ux-improvements/full-03-keyboard
+- hideKeyboard
+- tapOn: "Название операции"
+- inputText: "UX-Improve-Expense"
+- hideKeyboard
+- tapOn: "Закрыть"
+- assertVisible: "Сбросить изменения[?]"
+- takeScreenshot: test-results/mobile/ux-improvements/full-04-confirm
+- tapOn: "Продолжить ввод"
+- assertVisible: "320"
+- assertVisible: "UX-Improve-Expense"
+- back
+- assertVisible: "Сбросить изменения[?]"
+- back
+- assertVisible: "320"
+- assertVisible: "UX-Improve-Expense"
+- swipe:
+    from:
+      id: "sheet-drag-area"
+    direction: DOWN
+    duration: 600
+- assertVisible: "Сбросить изменения[?]"
+- tapOn: "Сбросить и закрыть"
+- assertVisible: "54 012 ₽"
+
+# MUX-03: сценарий сам создаёт и затем адресно удаляет свою запись.
+- tapOn: "Расход"
+- assertNotVisible: "UX-Improve-Expense"
+- assertNotVisible: "320"
+- tapOn: "Сумма операции"
+- inputText: "320"
+- hideKeyboard
+- tapOn: "Название операции"
+- inputText: "UX-Improve-Expense"
+- hideKeyboard
+- tapOn: "Категория, Другое"
+- tapOn: "Продукты"
+- assertVisible: "Категория, Продукты"
+- assertVisible:
+    text: "Основная карта"
+    selected: true
+- scrollUntilVisible:
+    element:
+      text: "Добавить операцию"
+    direction: DOWN
+- assertVisible: "04[.]10[.]2026"
+- tapOn: "Добавить операцию"
+- assertNotVisible: "Сбросить изменения[?]"
+- tapOn: "План"
+- scrollUntilVisible:
+    element:
+      text: "Расходы за период: Продукты"
+    direction: DOWN
+- tapOn: "Расходы за период: Продукты"
+- scrollUntilVisible:
+    element:
+      id: "budget-activity-groceries"
+    direction: DOWN
+    centerElement: true
+- assertVisible: "Итого за период: 4 145,00 ₽"
+- tapOn: "Открыть операцию UX-Improve-Expense, 4 октября, 320,00 ₽"
+- assertVisible: "Категория, Продукты"
+- assertVisible: "Сохранить изменения"
+- tapOn: "Сумма операции"
+- eraseText
+- inputText: "321"
+- hideKeyboard
+- tapOn: "Закрыть"
+- assertVisible: "Сбросить изменения[?]"
+- tapOn: "Продолжить ввод"
+- assertVisible: "321"
+- tapOn: "Сохранить изменения"
+- assertNotVisible: "Сбросить изменения[?]"
+- assertVisible: "Итого за период: 4 146,00 ₽"
+- assertVisible: "Открыть операцию UX-Improve-Expense, 4 октября, 321,00 ₽"
+- takeScreenshot: test-results/mobile/ux-improvements/full-05-edited-budget
+
+# Отмена исправления сохраняет записанные 321 RUB.
+- tapOn: "Открыть операцию UX-Improve-Expense, 4 октября, 321,00 ₽"
+- tapOn: "Сумма операции"
+- eraseText
+- inputText: "999"
+- hideKeyboard
+- tapOn: "Закрыть"
+- tapOn: "Сбросить и закрыть"
+- assertVisible: "Итого за период: 4 146,00 ₽"
+- tapOn: "Открыть операцию UX-Improve-Expense, 4 октября, 321,00 ₽"
+- assertVisible: "321"
+- scrollUntilVisible:
+    element:
+      text: "Удалить операцию"
+    direction: DOWN
+- tapOn: "Удалить операцию"
+- scrollUntilVisible:
+    element:
+      text: "Да, удалить"
+    direction: DOWN
+    timeout: 15000
+- tapOn: "Да, удалить"
+- assertNotVisible: "Сбросить изменения[?]"
+- assertVisible: "Итого за период: 3 825,00 ₽"
+- assertNotVisible: "Открыть операцию UX-Improve-Expense, 4 октября, 321,00 ₽"
+
+# Исходные суммы восстановлены после адресного удаления.
+- tapOn: "Операции"
+- scrollUntilVisible:
+    element:
+      text: "По выбранным фильтрам.*"
+    direction: DOWN
+- assertVisible: "По выбранным фильтрам · операций: 6.*"
+- assertVisible: "120 000 ₽"
+- assertVisible: "34 605 ₽"
+- takeScreenshot: test-results/mobile/ux-improvements/full-06-restored-history
+- tapOn: "Обзор"
+- assertVisible: "54 012 ₽"
+- takeScreenshot: test-results/mobile/ux-improvements/full-07-restored-home

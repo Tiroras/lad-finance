@@ -11,8 +11,10 @@ import {
   type SheetNavigation,
 } from "./sheets";
 import { notificationTarget } from "./notificationTarget";
+import { createDismissalController } from "../../shared/lib/dismissal";
 
 export function useAppNavigation() {
+  const [dismissal] = useState(createDismissalController);
   const { state, profile } = useFinance();
   const previousProfile = useRef(profile);
   const { ready, switching } = useFinanceStatus();
@@ -79,19 +81,34 @@ export function useAppNavigation() {
         current.state,
       );
       if (!target) return;
-      navigate(target.tab);
-      if (target.sheet) open(target.sheet);
+      dismissal.request(() => {
+        // A confirmation can outlive a profile switch or a plan update.
+        const latest = currentRef.current;
+        if (latest.switching) return;
+        const destination = notificationTarget(
+          notification,
+          latest.profile,
+          latest.state,
+        );
+        if (!destination) return;
+        navigate(destination.tab);
+        if (destination.sheet) open(destination.sheet);
+        else close();
+      });
     });
-  }, [ready, switching, navigate, open]);
+  }, [ready, switching, navigate, open, close, dismissal]);
   useEffect(() => {
     if (Platform.OS !== "android") return;
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
         if (locked) return true;
-        if (backOverride.current?.()) return true;
+        if (backOverride.current) {
+          dismissal.request(() => backOverride.current?.());
+          return true;
+        }
         if (sheet) {
-          back();
+          dismissal.request(back);
           return true;
         }
         if (tab !== "home") {
@@ -102,8 +119,9 @@ export function useAppNavigation() {
       },
     );
     return () => subscription.remove();
-  }, [tab, sheet, locked, back, navigate]);
+  }, [tab, sheet, locked, back, navigate, dismissal]);
   return {
+    dismissal,
     tab,
     sheet,
     sheets,

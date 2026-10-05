@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 import type { TransactionTemplate } from "../../../domain/automation";
 import {
@@ -25,6 +24,8 @@ export function TransactionEntryTools({
   onTemplateApply,
   onTemplateSave,
   error,
+  templateName,
+  onTemplateNameChange,
 }: {
   active: EntryTool;
   onChange: (tool: EntryTool) => void;
@@ -36,8 +37,9 @@ export function TransactionEntryTools({
   onTemplateApply: (template: TransactionTemplate) => void;
   onTemplateSave: (name: string, id?: string) => void;
   error: string;
+  templateName: string;
+  onTemplateNameChange: (value: string) => void;
 }) {
-  const [templateName, setTemplateName] = useState("");
   return (
     <View style={{ gap: 12 }}>
       <View style={s.tools}>
@@ -87,7 +89,7 @@ export function TransactionEntryTools({
           onApply={onTemplateApply}
           onSave={onTemplateSave}
           name={templateName}
-          onNameChange={setTemplateName}
+          onNameChange={onTemplateNameChange}
         />
       )}
       {(active !== "quick" || canQuickEnter) && <ErrorText error={error} />}

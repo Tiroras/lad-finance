@@ -7,6 +7,8 @@ import {
   reminderChanges,
 } from "../src/infrastructure/notifications/notificationPlan";
 import type { PaymentNotification } from "../src/infrastructure/notifications/notifications.types";
+import { createDismissalController } from "../src/shared/lib/dismissal";
+import type { FinanceProfile } from "../src/infrastructure/storage/profileStorage";
 
 const date = "2026-09-28";
 const workProfile = "profile-11111111-1111-4111-8111-111111111111";
@@ -24,6 +26,39 @@ function fixture(demo: boolean) {
   state.recurring[0].id = "shared-payment";
   return state;
 }
+
+test("deferred reminder navigation can be cancelled and resolves against the profile and plans at acceptance", () => {
+  const state = fixture(false);
+  let profile: FinanceProfile = "personal";
+  const notification: PaymentNotification = {
+    profile: "personal",
+    paymentId: reminder.paymentId,
+    date,
+  };
+  const controller = createDismissalController();
+  controller.register({
+    hasChanges: () => true,
+    description: "Черновик операции",
+  });
+  const visited: ReturnType<typeof notificationTarget>[] = [];
+  const transition = () => {
+    const target = notificationTarget(notification, profile, state);
+    if (target) visited.push(target);
+  };
+  controller.request(transition);
+  assert.deepEqual(visited, []);
+  controller.cancel();
+  assert.deepEqual(visited, []);
+  controller.request(transition);
+  profile = "demo";
+  controller.discard();
+  assert.deepEqual(visited, []);
+  profile = "personal";
+  controller.request(transition);
+  state.recurring = [];
+  controller.discard();
+  assert.deepEqual(visited, [{ tab: "plan", sheet: null }]);
+});
 
 test("payment notifications only open the profile that scheduled them even when payment IDs match", () => {
   const personal = fixture(false);

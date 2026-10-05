@@ -15,7 +15,7 @@ import {
   Section,
   Txt,
 } from "../../../shared/ui";
-import { TransactionEvidence } from "./TransactionEvidence";
+import { TransactionEvidence } from "../../transactions";
 
 function CategoryChange({
   change,

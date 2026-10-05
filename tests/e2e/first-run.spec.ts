@@ -12,6 +12,7 @@ import {
 } from "./helpers";
 
 const TODAY = "2026-09-10";
+const LEARNING_PROGRESS_KEY = "lad-learning-progress-v1";
 const button = (page: Page, name: string) =>
   page.getByRole("button", { name, exact: true });
 const welcome = (page: Page) =>
@@ -56,8 +57,13 @@ test("welcome creates no profile until an explicit choice and can be skipped aft
   await expectNoProfile(page);
   await expect(button(page, "Профиль и настройки")).toHaveCount(0);
   for (const width of [320, 390, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    await expect(button(page, "Начать знакомство")).toBeVisible();
+    await page.setViewportSize({ width, height: 640 });
+    await expect(button(page, "Настроить свой учёт")).toBeInViewport({
+      ratio: 1,
+    });
+    await expect(button(page, "Начать знакомство")).toBeInViewport({
+      ratio: 1,
+    });
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -102,46 +108,62 @@ test("welcome creates no profile until an explicit choice and can be skipped aft
   await expect(button(page, "Начать знакомство")).toHaveCount(0);
 });
 
-test("skipping learning and choosing setup opens the first form step directly", async ({
-  page,
-}, testInfo) => {
-  await page.setViewportSize({ width: 320, height: 740 });
-  await startFresh(page);
-  await button(page, "Пропустить знакомство").click();
-  await expectNoProfile(page);
-  await button(page, "Настроить свой учёт").click();
-  await expect(page.getByLabel("Ваше имя", { exact: true })).toBeVisible();
-  await expect(welcome(page)).toHaveCount(0);
-  expect(await activeProfile(page)).toBe("personal");
-  const before = await readState(page);
-  expect(before.demo).toBe(false);
-  expect(before.settings.onboardingCompleted).toBe(false);
-  expect(before.transactions).toEqual([]);
-  await page.getByLabel("Ваше имя", { exact: true }).fill("Анна");
-  await page.getByLabel("Начальный остаток", { exact: true }).fill("2500");
-  await page.getByLabel("Начальные накопления", { exact: true }).fill("100");
-  await button(page, "Продолжить").scrollIntoViewIfNeeded();
-  await page.screenshot({
-    path: testInfo.outputPath("first-setup-320.png"),
-    animations: "disabled",
+for (const route of ["welcome", "skip"] as const) {
+  test(`setup from ${route} opens the existing wizard without starting learning and commits only after confirmation`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await startFresh(page);
+    if (route === "skip") await button(page, "Пропустить знакомство").click();
+    await expectNoProfile(page);
+    await button(page, "Настроить свой учёт").click();
+    await expect(page.getByLabel("Ваше имя", { exact: true })).toBeVisible();
+    await expect(page.getByText("Шаг 1 из 4", { exact: true })).toBeVisible();
+    await expect(page.getByTestId("tour-coach")).toHaveCount(0);
+    await expect(welcome(page)).toHaveCount(0);
+    expect(await activeProfile(page)).toBe("personal");
+    expect(
+      await page.evaluate(
+        (key) => localStorage.getItem(key),
+        LEARNING_PROGRESS_KEY,
+      ),
+    ).toBeNull();
+    const before = await readState(page);
+    expect(before.demo).toBe(false);
+    expect(before.settings.onboardingCompleted).toBe(false);
+    expect(before.transactions).toEqual([]);
+    await page.getByLabel("Ваше имя", { exact: true }).fill("Анна");
+    await page.getByLabel("Начальный остаток", { exact: true }).fill("2500");
+    await page.getByLabel("Начальные накопления", { exact: true }).fill("100");
+    await button(page, "Продолжить").scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: testInfo.outputPath(`first-setup-${route}-320.png`),
+      animations: "disabled",
+    });
+    await button(page, "Продолжить").click();
+    await button(page, "Продолжить").click();
+    await button(page, "Продолжить").click();
+    expect(await readState(page)).toEqual(before);
+    await button(page, "Начать учёт с этими данными").click();
+    await expect
+      .poll(async () => (await readState(page)).settings.onboardingCompleted)
+      .toBe(true);
+    const state = await readState(page);
+    expect(accountBalance(state, "card", TODAY)).toBe(250000);
+    expect(accountBalance(state, "savings", TODAY)).toBe(10000);
+    expect(state.transactions).toEqual([]);
+    await page.reload();
+    await expectOverview(page);
+    await expect(page.getByText("Анна, всё на виду.")).toBeVisible();
+    expect(await readState(page)).toEqual(state);
+    expect(
+      await page.evaluate(
+        (key) => localStorage.getItem(key),
+        LEARNING_PROGRESS_KEY,
+      ),
+    ).toBeNull();
   });
-  await button(page, "Продолжить").click();
-  await button(page, "Продолжить").click();
-  await button(page, "Продолжить").click();
-  expect(await readState(page)).toEqual(before);
-  await button(page, "Начать учёт с этими данными").click();
-  await expect
-    .poll(async () => (await readState(page)).settings.onboardingCompleted)
-    .toBe(true);
-  const state = await readState(page);
-  expect(accountBalance(state, "card", TODAY)).toBe(250000);
-  expect(accountBalance(state, "savings", TODAY)).toBe(10000);
-  expect(state.transactions).toEqual([]);
-  await page.reload();
-  await expectOverview(page);
-  await expect(page.getByText("Анна, всё на виду.")).toBeVisible();
-  expect(await readState(page)).toEqual(state);
-});
+}
 
 test("an existing ledger can tour the real screens and resume without changing its money or profile", async ({
   page,
@@ -268,46 +290,63 @@ for (const [name, raw] of [
   });
 }
 
-test("a failed first save keeps the welcome choice open and creates no profile until a successful retry", async ({
-  page,
-}) => {
-  await page.addInitScript((key) => {
-    const setItem = Storage.prototype.setItem;
-    Storage.prototype.setItem = function (name, value) {
-      if (
-        this === localStorage &&
-        name === key &&
-        sessionStorage.getItem("first-profile-save-allowed") !== "yes"
-      ) {
-        throw new DOMException(
-          "Недостаточно места для сохранения",
-          "QuotaExceededError",
-        );
-      }
-      return setItem.call(this, name, value);
-    };
-  }, PROFILE_KEYS.personal);
-  await startFresh(page);
-  await button(page, "Пропустить знакомство").click();
-  await button(page, "Начать с пустым профилем").click();
-  await expect(page.getByRole("alert")).toBeVisible();
-  await expect(
-    page.getByText("Ваш личный профиль", { exact: true }),
-  ).toBeVisible();
-  await expect(button(page, "Профиль и настройки")).toHaveCount(0);
-  await expectNoProfile(page);
-  await page.evaluate(() =>
-    sessionStorage.setItem("first-profile-save-allowed", "yes"),
-  );
-  await button(page, "Начать с пустым профилем").click();
-  await expectOverview(page);
-  const state = await readState(page);
-  expect(state.demo).toBe(false);
-  expect(state.transactions).toEqual([]);
-  await page.reload();
-  await expectOverview(page);
-  expect(await readState(page)).toEqual(state);
-});
+for (const choice of ["Настроить свой учёт", "Начать с пустым профилем"]) {
+  test(`a failed first save keeps ${choice} open and retries without starting learning`, async ({
+    page,
+  }) => {
+    await page.addInitScript((key) => {
+      const setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (name, value) {
+        if (
+          this === localStorage &&
+          name === key &&
+          sessionStorage.getItem("first-profile-save-allowed") !== "yes"
+        ) {
+          throw new DOMException(
+            "Недостаточно места для сохранения",
+            "QuotaExceededError",
+          );
+        }
+        return setItem.call(this, name, value);
+      };
+    }, PROFILE_KEYS.personal);
+    await startFresh(page);
+    const setup = choice === "Настроить свой учёт";
+    if (!setup) await button(page, "Пропустить знакомство").click();
+    await button(page, choice).click();
+    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(
+      page.getByText(setup ? "Добро пожаловать в Лад" : "Ваш личный профиль", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(button(page, "Профиль и настройки")).toHaveCount(0);
+    await expectNoProfile(page);
+    await page.evaluate(() =>
+      sessionStorage.setItem("first-profile-save-allowed", "yes"),
+    );
+    await button(page, choice).click();
+    if (setup) {
+      await expect(page.getByLabel("Ваше имя", { exact: true })).toBeVisible();
+      await expect(page.getByRole("dialog")).toHaveCount(1);
+    } else {
+      await expectOverview(page);
+    }
+    await expect(page.getByTestId("tour-coach")).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        (key) => localStorage.getItem(key),
+        LEARNING_PROGRESS_KEY,
+      ),
+    ).toBeNull();
+    const state = await readState(page);
+    expect(state.demo).toBe(false);
+    expect(state.transactions).toEqual([]);
+    await page.reload();
+    await expectOverview(page);
+    expect(await readState(page)).toEqual(state);
+  });
+}
 
 test("old shared storage and an orphan preference do not bypass welcome or get overwritten", async ({
   page,
