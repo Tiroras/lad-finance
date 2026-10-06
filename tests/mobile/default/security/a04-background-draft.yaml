@@ -1,0 +1,22 @@
+# Both platforms. Start at unlocked home with app lock enabled.
+# System authentication is deliberately a separate manual step.
+appId: app.lad.finance
+name: a04-background-draft
+---
+- assertVisible: "Профиль и настройки"
+- tapOn: "Добавить операцию"
+- tapOn: "Сумма операции"
+- inputText: "37"
+- tapOn: "Название операции"
+- inputText: "A04 unsaved draft"
+- hideKeyboard
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Лад под защитой"
+    timeout: 30000
+- assertNotVisible: "Название операции"
+- assertNotVisible: "Сумма операции"
+- assertNotVisible: "A04 unsaved draft"
+- assertNotVisible: "Профиль и настройки"

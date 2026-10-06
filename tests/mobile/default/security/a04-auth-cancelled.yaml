@@ -1,0 +1,10 @@
+# Both platforms. Run after cancelling the real authentication dialog.
+appId: app.lad.finance
+name: a04-auth-cancelled
+---
+- assertVisible: "Лад под защитой"
+- assertVisible: "Вход не подтверждён. Повторите проверку, когда будете готовы."
+- assertVisible: "Разблокировать Лад"
+- assertNotVisible: "Профиль и настройки"
+- assertNotVisible: "Название операции"
+- assertNotVisible: "A04 unsaved draft"

@@ -1,0 +1,9 @@
+# Both platforms. Run immediately after manually unlocking the background flow.
+appId: app.lad.finance
+name: a04-draft-after-unlock
+---
+- assertNotVisible: "Лад под защитой"
+- assertVisible: "Название операции"
+- assertVisible: "A04 unsaved draft"
+- assertVisible: "37"
+# Do not submit: this amount must never change the reference snapshot.

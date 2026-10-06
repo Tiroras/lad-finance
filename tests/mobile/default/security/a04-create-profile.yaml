@@ -1,0 +1,31 @@
+# Default, isolated device only. Start with an unlocked, initialized test app.
+# PROFILE_NAME must be new; this flow never clears existing storage.
+appId: app.lad.finance
+name: a04-create-profile
+---
+- assertVisible: "Профиль и настройки"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Профили"
+    direction: DOWN
+- tapOn: "Профили"
+- tapOn: "Добавить профиль"
+- tapOn: "Название профиля"
+- inputText: ${PROFILE_NAME}
+- hideKeyboard
+- tapOn: "Создать профиль"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${PROFILE_NAME}. Открыть профили"
+    timeout: 30000
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Данные и копии"
+    direction: DOWN
+- tapOn: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: "Восстановить из файла"
+    direction: DOWN
+- tapOn: "Восстановить из файла"

@@ -1,0 +1,19 @@
+# Both platforms. Precondition: A04 fixture restored, app lock enabled.
+# This checks the settled lock screen. Record launch separately to check flashes.
+appId: app.lad.finance
+name: a04-cold-lock
+---
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Лад под защитой"
+    timeout: 30000
+- assertVisible: "Разблокировать Лад"
+- assertNotVisible: "Профиль и настройки"
+- assertNotVisible: "Добавить операцию"
+- assertNotVisible: "A04 Synthetic"
+- assertNotVisible: "A04 Expense"
+- assertNotVisible:
+    id: screen-home
+- assertNotVisible:
+    id: home-month-summary
