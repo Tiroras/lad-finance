@@ -15,8 +15,10 @@ export type LessonId =
 
 export interface LearningProgress {
   version: 2;
-  status: "new" | "started" | "completed";
+  status: "new" | "started" | "completed" | "skipped";
   step: string;
+  // Present only while a newly created profile is going through first launch.
+  firstRun?: "setup";
 }
 
 export const initialLearningProgress = (): LearningProgress => ({
@@ -38,7 +40,7 @@ export function decodeLearningProgress(raw: string | null): LearningProgress {
     }
     if (
       value?.version !== 2 ||
-      !["new", "started", "completed"].includes(value.status)
+      !["new", "started", "completed", "skipped"].includes(value.status)
     )
       return empty;
     return {
@@ -47,6 +49,7 @@ export function decodeLearningProgress(raw: string | null): LearningProgress {
       step: tourSteps.some((step) => step.id === value.step)
         ? value.step
         : empty.step,
+      ...(value.firstRun === "setup" ? { firstRun: "setup" as const } : {}),
     };
   } catch {
     return empty;

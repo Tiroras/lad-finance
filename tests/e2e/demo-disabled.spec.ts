@@ -80,7 +80,7 @@ test("without the flag a clean launch creates empty personal accounts and hides 
   await startApp(page, TODAY);
   const state = await readState(page);
   expect(state.demo).toBe(false);
-  expect(state.settings.onboardingCompleted).toBe(false);
+  expect(state.settings.onboardingCompleted).toBe(true);
   expect(state.transactions).toEqual([]);
   expect(state.goals).toEqual([]);
   expect(state.recurring).toEqual([]);
@@ -93,7 +93,7 @@ test("without the flag a clean launch creates empty personal accounts and hides 
     true,
   );
   expect(state.settings.buffer).toBe(0);
-  await expect(button(page, "Настроить свой учёт")).toBeVisible();
+  await expect(button(page, "Настроить свой учёт")).toHaveCount(0);
   await expect(button(page, "Посмотреть пример")).toHaveCount(0);
   await expect(
     button(page, "Текущий профиль: Демо. Открыть профили"),
@@ -111,10 +111,6 @@ test("without the flag a clean launch creates empty personal accounts and hides 
     });
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await button(page, "Настроить свой учёт").click();
-  await expect(button(page, "Настроить свой учёт")).toBeVisible();
-  await expect(button(page, "Посмотреть пример")).toHaveCount(0);
-  await button(page, "Закрыть").click();
   await button(page, "Профиль и настройки").click();
   await button(page, "Данные и копии").click();
   await expect(button(page, "Очистить учёт")).toBeVisible();
@@ -129,9 +125,11 @@ test("personal onboarding commits only after the fourth step and preserves the e
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 740 });
-  await startApp(page, TODAY);
+  const initial = createInitialState(false, TODAY);
+  initial.settings.onboardingCompleted = false;
+  initial.settings.exchange = { automatic: false, rates: {} };
+  await startApp(page, TODAY, initial);
   const before = await readState(page);
-  await button(page, "Настроить свой учёт").click();
   await button(page, "Настроить свой учёт").click();
   await page.getByLabel("Ваше имя", { exact: true }).fill("Анна");
   await page

@@ -21,11 +21,16 @@ import { AppStatusBanners } from "./AppStatusBanners";
 import { ActiveScreen } from "./ActiveScreen";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 import { AppToast } from "./AppToast";
-import { WelcomeBanner, TourCoach } from "../../features/settings";
+import {
+  WelcomeBanner,
+  TourCoach,
+  useLearningProgress,
+} from "../../features/settings";
 import { FirstRunScreen } from "./FirstRunScreen";
 
 export function AppShell() {
   const { ready, needsIntroduction } = useFinanceStatus();
+  const learning = useLearningProgress();
   const security = useSecurity();
   const navigation = useAppNavigation();
   const { tab, sheet, scroll, navigate, back, returnToGuide } = navigation;
@@ -75,17 +80,22 @@ export function AppShell() {
       onBack={tour.previous}
       onSkip={tour.skip}
       onPause={tour.pause}
+      onSkipTour={() => void tour.skipTour()}
     />
   ) : undefined;
   const [hidden, setHidden] = useState(false);
-  if (needsIntroduction)
+  if (needsIntroduction || (ready && learning.progress.firstRun === "setup"))
+    return <FirstRunScreen onLearn={() => void tour.start()} />;
+  if (!ready) return <AppLoadingScreen />;
+  if (!learning.ready)
     return (
-      <FirstRunScreen
-        onSetup={() => open({ type: "onboarding", startWithAccounts: true })}
-        onLearn={() => void tour.start()}
+      <AppLoadingScreen
+        pending={{
+          error: learning.error,
+          retry: () => void learning.retry().catch(() => undefined),
+        }}
       />
     );
-  if (!ready) return <AppLoadingScreen />;
 
   return (
     <TourProvider

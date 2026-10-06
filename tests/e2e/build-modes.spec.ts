@@ -189,19 +189,13 @@ test("production exports switch personal → demo → personal without clearing 
               exact: true,
             }),
           ).toHaveCount(0);
-          await page
-            .getByRole("button", { name: "Настроить свой учёт", exact: true })
-            .click();
-          await page
-            .getByRole("button", { name: "Настроить свой учёт", exact: true })
-            .click();
+          expect(state.settings.onboardingCompleted).toBe(true);
           await expect(
-            page.getByLabel("Ваше имя", { exact: true }),
-          ).toBeVisible();
-          expect((await readState(page)).demo).toBe(false);
-          await page
-            .getByRole("button", { name: "Закрыть", exact: true })
-            .click();
+            page.getByRole("button", {
+              name: "Настроить свой учёт",
+              exact: true,
+            }),
+          ).toHaveCount(0);
           // Even a release built with the development reset flag must retain
           // profiles and open the saved ledger after a complete reload.
           state.settings.name = "Проверка сохранённого профиля";

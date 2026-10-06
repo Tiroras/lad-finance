@@ -3,18 +3,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { FirstRunFlow } from "../../features/settings";
 import { LockScreen, useSecurity } from "../../features/security";
-import { useFinanceStatus } from "../../state/finance";
 import { C } from "../../shared/ui";
 import { Brand } from "./Brand";
 
-export function FirstRunScreen({
-  onSetup,
-  onLearn,
-}: {
-  onSetup: () => void;
-  onLearn: () => void;
-}) {
-  const { finishIntroduction } = useFinanceStatus();
+export function FirstRunScreen({ onLearn }: { onLearn: () => void }) {
   const { locked } = useSecurity();
   return (
     <SafeAreaView style={st.screen}>
@@ -24,14 +16,7 @@ export function FirstRunScreen({
         importantForAccessibility={locked ? "no-hide-descendants" : "auto"}
         aria-hidden={locked}
       >
-        <FirstRunFlow
-          brand={<Brand />}
-          onFinish={async (mode) => {
-            await finishIntroduction();
-            if (mode === "setup") onSetup();
-            if (mode === "learn") onLearn();
-          }}
-        />
+        <FirstRunFlow brand={<Brand />} onLearn={onLearn} active={!locked} />
       </View>
       {locked && <LockScreen />}
     </SafeAreaView>

@@ -11,6 +11,7 @@ export function TourCoach({
   onBack,
   onSkip,
   onPause,
+  onSkipTour,
 }: {
   step: TourStep;
   index: number;
@@ -20,6 +21,7 @@ export function TourCoach({
   onBack: () => void;
   onSkip: () => void;
   onPause: () => void;
+  onSkipTour: () => void;
 }) {
   return (
     <View testID="tour-coach" style={s.coach}>
@@ -74,6 +76,17 @@ export function TourCoach({
           <Txt style={s.link}>{busy ? "Сохраняем…" : "Пропустить шаг →"}</Txt>
         </Pressable>
       </Row>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Пропустить экскурсию"
+        accessibilityHint="Убрать подсказки и предложение продолжить. Начать заново можно в разделе Обучение."
+        disabled={busy}
+        accessibilityState={{ disabled: busy }}
+        onPress={onSkipTour}
+        style={[s.action, { minHeight: 44 }, busy && { opacity: 0.35 }]}
+      >
+        <Txt style={s.link}>Пропустить экскурсию</Txt>
+      </Pressable>
     </View>
   );
 }

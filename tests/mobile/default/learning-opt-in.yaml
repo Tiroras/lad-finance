@@ -1,0 +1,271 @@
+# Режим: default; Demo и Fresh выключены.
+# План: ../plans/learning-opt-in.md (FR-01–FR-05).
+# Только Lad_FirstRun_Test / emulator-5556: clearState удаляет его тестовый учёт.
+# Pixel_8 / emulator-5554 с сохранёнными профилями не использовать.
+# Между проверяемыми перезапусками данные не очищаются.
+appId: app.lad.finance
+name: learning-opt-in
+---
+# FR-01. Приветствие содержит единственное действие, обучение не запускается.
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Добро пожаловать в Лад"
+    timeout: 30000
+- assertVisible: "Настроить свой учёт"
+- assertNotVisible: "Пройти обучение"
+- assertNotVisible: "Начать без обучения"
+- assertNotVisible: "Хотите пройти обучение?"
+- assertNotVisible:
+    id: tour-coach
+- assertNotVisible: "Продолжить обучение"
+- takeScreenshot: test-results/mobile/first-run-sequence/01-welcome
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Добро пожаловать в Лад"
+    timeout: 30000
+- assertVisible: "Настроить свой учёт"
+
+# FR-02. Полноэкранная настройка и черновик при возврате внутри приложения.
+- tapOn: "Настроить свой учёт"
+- assertVisible: "Начнём ваш учёт"
+- assertVisible: "Шаг 1 из 4"
+- assertVisible:
+    id: first-run-setup
+- assertNotVisible:
+    id: sheet
+- assertNotVisible: "Закрыть"
+- assertNotVisible: "Профиль и настройки"
+- assertNotVisible: "Хотите пройти обучение?"
+- tapOn: "Начальный остаток"
+- inputText: "12500"
+- assertVisible: "12 500"
+- scrollUntilVisible:
+    element:
+      text: "Начальные накопления"
+    direction: DOWN
+- tapOn: "Начальные накопления"
+- inputText: "5000"
+- assertVisible: "5 000"
+- takeScreenshot: test-results/mobile/first-run-sequence/02-setup-keyboard
+# Первый Back закрывает клавиатуру; второй возвращает к приветствию.
+- back
+- assertVisible:
+    id: first-run-setup
+- back
+- assertVisible: "Добро пожаловать в Лад"
+- tapOn: "Настроить свой учёт"
+- assertVisible: "Шаг 1 из 4"
+- assertVisible: "12 500"
+- assertVisible: "5 000"
+- scrollUntilVisible:
+    element:
+      text: "Продолжить"
+    direction: DOWN
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 2 из 4"
+- back
+- assertVisible: "Шаг 1 из 4"
+- scrollUntilVisible:
+    element:
+      text: "Назад"
+    direction: DOWN
+- tapOn: "Назад"
+- assertVisible: "Добро пожаловать в Лад"
+- tapOn: "Настроить свой учёт"
+- assertVisible: "Шаг 1 из 4"
+- assertVisible: "12 500"
+- assertVisible: "5 000"
+- assertNotVisible:
+    id: tour-coach
+
+# FR-03. Новый независимый случай: маршрут сохраняется, денежный черновик — нет.
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Добро пожаловать в Лад"
+    timeout: 30000
+- tapOn: "Настроить свой учёт"
+- tapOn: "Начальный остаток"
+- inputText: "12500"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Продолжить"
+    direction: DOWN
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 2 из 4"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Шаг 1 из 4"
+    timeout: 30000
+- assertVisible:
+    id: first-run-setup
+- assertNotVisible: "Добро пожаловать в Лад"
+- assertNotVisible: "Хотите пройти обучение?"
+- assertNotVisible: "12 500"
+- assertNotVisible:
+    id: tour-coach
+
+# FR-04. Остатки и резерв подтверждаются до предложения обучения.
+- tapOn: "Начальный остаток"
+- inputText: "12500"
+- scrollUntilVisible:
+    element:
+      text: "Начальные накопления"
+    direction: DOWN
+- tapOn: "Начальные накопления"
+- inputText: "5000"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Продолжить"
+    direction: DOWN
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 2 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 3 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 4 из 4"
+- tapOn: "Резерв при настройке"
+- inputText: "1000"
+- hideKeyboard
+- assertVisible: "1 000"
+- assertVisible: "Основная карта: 12 500,00 ₽"
+- assertVisible: "Накопления: 5 000,00 ₽"
+- assertVisible: "Доходы добавите позже"
+- assertVisible: "Платежи добавите позже"
+- takeScreenshot: test-results/mobile/first-run-sequence/03-summary
+- scrollUntilVisible:
+    element:
+      text: "Начать учёт с этими данными"
+    direction: DOWN
+- tapOn: "Начать учёт с этими данными"
+- extendedWaitUntil:
+    visible: "Хотите пройти обучение?"
+    timeout: 30000
+- assertVisible: "Пройти обучение"
+- assertVisible: "Начать без обучения"
+- assertNotVisible: "Настроить свой учёт"
+- assertNotVisible:
+    id: tour-coach
+- takeScreenshot: test-results/mobile/first-run-sequence/04-offer
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Хотите пройти обучение?"
+    timeout: 30000
+- assertNotVisible:
+    id: tour-coach
+- tapOn: "Начать без обучения"
+- assertVisible: "Профиль и настройки"
+- assertNotVisible: "Хотите пройти обучение?"
+- assertNotVisible: "Продолжить обучение"
+- assertNotVisible:
+    id: tour-coach
+- takeScreenshot: test-results/mobile/first-run-sequence/05-declined
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Профиль и настройки"
+    timeout: 30000
+- assertNotVisible: "Хотите пройти обучение?"
+- assertNotVisible: "Продолжить обучение"
+- assertNotVisible:
+    id: tour-coach
+
+# Суммы сохранились после перезапуска, начальные остатки не стали операциями.
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 12 500,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 5 000,00 ₽"
+- takeScreenshot: test-results/mobile/first-run-sequence/06-saved-accounts
+- tapOn: "Закрыть"
+- tapOn: "Профиль и настройки"
+- tapOn: "Профиль и планирование"
+- assertVisible: "Неприкосновенный остаток"
+- assertVisible: "1 000"
+- takeScreenshot: test-results/mobile/first-run-sequence/07-saved-reserve
+- tapOn: "Закрыть"
+- tapOn: "Операции"
+- tapOn: "Вся история"
+- assertVisible: "Пока нет операций"
+
+# После отказа обучение доступно по явному выбору из профиля.
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- assertNotVisible: "Продолжить экскурсию"
+- tapOn: "Начать экскурсию"
+- assertVisible: "ПО ПРИЛОЖЕНИЮ · 1 / 42"
+- assertVisible: "Обзор: сколько можно потратить"
+- tapOn: "Пропустить экскурсию"
+- assertNotVisible:
+    id: tour-coach
+- assertNotVisible: "Продолжить обучение"
+
+# FR-05. Новый независимый случай: согласие только после нулевой настройки.
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Добро пожаловать в Лад"
+    timeout: 30000
+- tapOn: "Настроить свой учёт"
+- assertVisible: "Шаг 1 из 4"
+- scrollUntilVisible:
+    element:
+      text: "Продолжить"
+    direction: DOWN
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 2 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 3 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 4 из 4"
+- assertVisible: "Основная карта: 0,00 ₽"
+- assertVisible: "Накопления: 0,00 ₽"
+- scrollUntilVisible:
+    element:
+      text: "Начать учёт с этими данными"
+    direction: DOWN
+- tapOn: "Начать учёт с этими данными"
+- extendedWaitUntil:
+    visible: "Хотите пройти обучение?"
+    timeout: 30000
+- assertNotVisible: "Настроить свой учёт"
+- assertNotVisible:
+    id: tour-coach
+- tapOn: "Пройти обучение"
+- assertVisible: "ПО ПРИЛОЖЕНИЮ · 1 / 42"
+- assertVisible: "Обзор: сколько можно потратить"
+- takeScreenshot: test-results/mobile/first-run-sequence/08-accepted
+- tapOn: "Пропустить экскурсию"
+- assertNotVisible:
+    id: tour-coach
+- assertNotVisible: "Продолжить обучение"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Профиль и настройки"
+    timeout: 30000
+- assertNotVisible: "Хотите пройти обучение?"
+- assertNotVisible: "Продолжить обучение"
+- assertNotVisible:
+    id: tour-coach
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 0,00 ₽"
+- takeScreenshot: test-results/mobile/first-run-sequence/09-zero-accounts

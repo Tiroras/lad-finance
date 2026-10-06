@@ -39,7 +39,8 @@ export function AppGuide({
       </Txt>
       <Txt style={{ color: C.muted, lineHeight: 21 }}>
         Экскурсия сама не создаёт операций и не меняет настройки. Её можно
-        поставить на паузу и продолжить с того же места.
+        поставить на паузу и продолжить с того же места или пропустить
+        полностью, чтобы больше не видеть предложение продолжить.
       </Txt>
       {learning.progress.status === "started" && (
         <>
@@ -49,11 +50,23 @@ export function AppGuide({
             disabled={learning.saving}
             onPress={() => onStart()}
           />
+          <Button
+            label="Пропустить экскурсию"
+            variant="secondary"
+            disabled={learning.saving}
+            onPress={() => void learning.skip().catch(() => undefined)}
+          />
         </>
+      )}
+      {learning.progress.status === "skipped" && (
+        <Txt style={{ color: C.muted, lineHeight: 21 }}>
+          Экскурсия пропущена. Её можно начать заново в любой момент.
+        </Txt>
       )}
       <Button
         label={
-          learning.progress.status === "new"
+          learning.progress.status === "new" ||
+          learning.progress.status === "skipped"
             ? "Начать экскурсию"
             : "Пройти всё приложение заново"
         }

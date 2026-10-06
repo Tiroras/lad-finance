@@ -65,6 +65,85 @@ test("a saved screen cursor roundtrips independently of old lesson positions", (
   assert.deepEqual(decodeLearningProgress(JSON.stringify(saved)), saved);
 });
 
+test("first launch route survives reload without adding fields to old progress", async () => {
+  let raw: string | null = null;
+  const storage = {
+    async read() {
+      return raw;
+    },
+    async write(value: string) {
+      raw = value;
+    },
+  };
+  const store = createLearningProgressStore(storage);
+  await store.update((value) => ({ ...value, firstRun: "setup" }));
+  const reopened = createLearningProgressStore(storage);
+  await reopened.load();
+  assert.deepEqual(reopened.getSnapshot().progress, {
+    ...initialLearningProgress(),
+    firstRun: "setup",
+  });
+  await reopened.update((value) => ({
+    ...value,
+    firstRun: undefined,
+    status: "skipped",
+  }));
+  assert.deepEqual(decodeLearningProgress(raw), {
+    ...initialLearningProgress(),
+    status: "skipped",
+  });
+  assert.equal(Object.hasOwn(decodeLearningProgress(raw), "firstRun"), false);
+  assert.deepEqual(
+    decodeLearningProgress(
+      JSON.stringify({
+        ...initialLearningProgress(),
+        firstRun: "unknown",
+      }),
+    ),
+    initialLearningProgress(),
+  );
+});
+
+test("an explicit skip persists separately from completion and survives a removed step", async () => {
+  const started = {
+    version: 2 as const,
+    status: "started" as const,
+    step: "plan-goals",
+  };
+  let raw = JSON.stringify(started);
+  let fail = true;
+  const storage = {
+    async read() {
+      return raw;
+    },
+    async write(value: string) {
+      if (fail) throw new Error("disk full");
+      raw = value;
+    },
+  };
+  const store = createLearningProgressStore(storage);
+  await assert.rejects(
+    store.update((value) => ({ ...value, status: "skipped" })),
+    /сохранить прогресс/,
+  );
+  assert.deepEqual(store.getSnapshot().progress, started);
+  assert.deepEqual(JSON.parse(raw), started);
+  fail = false;
+  await store.update((value) => ({ ...value, status: "skipped" }));
+  const reopened = createLearningProgressStore(storage);
+  await reopened.load();
+  assert.deepEqual(reopened.getSnapshot().progress, {
+    ...started,
+    status: "skipped",
+  });
+  assert.deepEqual(
+    decodeLearningProgress(
+      JSON.stringify({ ...started, status: "skipped", step: "removed-screen" }),
+    ),
+    { ...initialLearningProgress(), status: "skipped" },
+  );
+});
+
 test("tour writes are ordered, publish only after saving and survive reload", async () => {
   let raw: string | null = null;
   let reads = 0;

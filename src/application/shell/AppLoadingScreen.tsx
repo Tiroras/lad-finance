@@ -8,10 +8,21 @@ import { useSecurity, LockScreen } from "../../features/security";
 import { RecoveryControls } from "../../features/data-transfer";
 import { Brand } from "./Brand";
 
-export function AppLoadingScreen() {
+export function AppLoadingScreen({
+  pending,
+}: {
+  pending?: { error: string; retry: () => void };
+}) {
   const { profile, profiles, activeProfile } = useFinance();
-  const { loadError, reload, canRecover, switchProfile, switching } =
-    useFinanceStatus();
+  const {
+    loadError: financeError,
+    reload,
+    canRecover: financeCanRecover,
+    switchProfile,
+    switching,
+  } = useFinanceStatus();
+  const loadError = pending?.error ?? financeError;
+  const canRecover = !pending && financeCanRecover;
   const [switchError, setSwitchError] = useState("");
   const security = useSecurity();
   const openProfile = async (target: FinanceProfile) => {
@@ -63,7 +74,8 @@ export function AppLoadingScreen() {
               label="Повторить загрузку"
               onPress={() => {
                 setSwitchError("");
-                reload();
+                if (pending) pending.retry();
+                else reload();
               }}
               disabled={switching}
               style={{ marginTop: 22 }}

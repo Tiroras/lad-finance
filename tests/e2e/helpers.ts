@@ -173,22 +173,51 @@ export async function switchProfile(page: Page, name: string) {
   await waitForApp(page);
 }
 
+// Confirm the actual four-step form, keeping all optional amounts empty.
+export async function finishAccountSetup(page: Page) {
+  for (let step = 1; step < 4; step++) {
+    await expect(
+      page.getByText(`Шаг ${step} из 4`, { exact: true }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Продолжить", exact: true }).click();
+  }
+  await expect(page.getByText("Шаг 4 из 4", { exact: true })).toBeVisible();
+  await page
+    .getByRole("button", {
+      name: "Начать учёт с этими данными",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Хотите пройти обучение?",
+      exact: true,
+    }),
+  ).toBeVisible();
+}
+
 // Enter through the same first-run controls as a person; no completion flag is seeded.
 export async function finishFirstRun(page: Page) {
+  const welcome = page.getByText("Добро пожаловать в Лад", { exact: true });
   const skip = page.getByRole("button", {
-    name: "Пропустить знакомство",
+    name: "Начать без обучения",
     exact: true,
   });
   const profile = page.getByRole("button", {
     name: "Профиль и настройки",
     exact: true,
   });
-  await expect(skip.or(profile).first()).toBeVisible();
-  if (await skip.isVisible()) {
-    await skip.click();
+  const setup = page.getByText("Шаг 1 из 4", { exact: true });
+  await expect(welcome.or(setup).or(skip).or(profile).first()).toBeVisible();
+  if (await welcome.isVisible()) {
     await page
-      .getByRole("button", { name: "Начать с пустым профилем", exact: true })
+      .getByRole("button", {
+        name: "Настроить свой учёт",
+        exact: true,
+      })
       .click();
-  }
+    await finishAccountSetup(page);
+  } else if (await setup.isVisible()) await finishAccountSetup(page);
+  if (await skip.isVisible()) await skip.click();
   await waitForApp(page);
 }

@@ -94,6 +94,24 @@ export function useLearningTour(
     Keyboard.dismiss();
     setActive(false);
   }, []);
+  const skipTour = useCallback(async () => {
+    if (pending.current || locked) return;
+    pending.current = true;
+    const currentSession = session.current;
+    setMoving(true);
+    Keyboard.dismiss();
+    try {
+      await learning.skip();
+      if (currentSession !== session.current) return;
+      setActive(false);
+      notify("Экскурсия пропущена. Начать её можно в разделе «Обучение».");
+    } catch {
+      // Keep the tour visible so the storage error can be retried.
+    } finally {
+      pending.current = false;
+      setMoving(false);
+    }
+  }, [learning.skip, locked, notify]);
   const previous = useCallback(() => {
     dismissal.request(() => {
       if (index > 0) void move(index - 1);
@@ -177,6 +195,7 @@ export function useLearningTour(
     target: active && !locked && !moving ? step.target : null,
     start,
     pause,
+    skipTour,
     previous,
     onAction,
     closeSheet,

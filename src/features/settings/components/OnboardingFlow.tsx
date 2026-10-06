@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { BackHandler } from "react-native";
 import type { CurrencyCode } from "../../../domain/currency";
 import { canStartOnboarding } from "../../../domain/onboarding";
 import { DEMO_ENABLED } from "../../../shared/lib/buildOptions";
@@ -25,9 +26,15 @@ import { OnboardingPlanStep } from "./OnboardingPlanStep";
 export function OnboardingFlow({
   close,
   startWithAccounts = false,
+  onBack,
+  onStepChange,
+  active = true,
 }: {
   close: () => void;
   startWithAccounts?: boolean;
+  onBack?: () => void;
+  onStepChange?: () => void;
+  active?: boolean;
 }) {
   const { state, today, notify } = useFinance();
   const { switching, switchProfile } = useFinanceStatus();
@@ -47,17 +54,37 @@ export function OnboardingFlow({
   const [billAmount, setBillAmount] = useState("");
   const [billDate, setBillDate] = useState(shiftDate(today, 10));
   const { error, setError, run } = useActionError();
+  const changeStep = (next: number) => {
+    setError("");
+    onStepChange?.();
+    setStep(next);
+  };
+  const goBack = () => {
+    if (step === 1 && onBack) onBack();
+    else changeStep(step - 1);
+  };
+  useEffect(() => {
+    if (!onBack || !active) return;
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (!switching) goBack();
+        return true;
+      },
+    );
+    return () => subscription.remove();
+  });
   const startPersonal = async () => {
     setError("");
     if (!state.demo) {
-      setStep(1);
+      changeStep(1);
       return;
     }
     try {
       const personal = await switchProfile("personal");
       if (canStartOnboarding(personal)) {
         setName(personal.settings.name);
-        setStep(1);
+        changeStep(1);
       } else {
         close();
       }
@@ -236,7 +263,7 @@ export function OnboardingFlow({
                 );
             }
             if (step < 4) {
-              setStep(step + 1);
+              changeStep(step + 1);
               return;
             }
             actions.completeOnboarding({
@@ -264,10 +291,7 @@ export function OnboardingFlow({
         label="Назад"
         variant="secondary"
         disabled={switching}
-        onPress={() => {
-          setError("");
-          setStep(step - 1);
-        }}
+        onPress={goBack}
       />
     </>
   );

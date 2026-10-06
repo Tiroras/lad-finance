@@ -1,0 +1,83 @@
+# Режим: demo; EXPO_PUBLIC_ENABLE_DEMO=true, EXPO_PUBLIC_RESET_ON_START=false.
+# План: ../plans/tour-skip.md. Устройство: Pixel_8 / emulator-5554.
+# Нужны завершённое приветствие и актуальная Demo-сборка.
+# Финансовые записи не изменяются; clearState и Fresh не используются.
+appId: app.lad.finance
+name: tour-skip
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: .* Открыть профили"
+    timeout: 30000
+- runFlow:
+    when:
+      notVisible: "Текущий профиль: Демо. Открыть профили"
+    commands:
+      - tapOn: "Текущий профиль: .* Открыть профили"
+      - tapOn: "Открыть профиль: Демо"
+- assertVisible: "Текущий профиль: Демо. Открыть профили"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- scrollUntilVisible:
+    element:
+      text: "Начать экскурсию|Пройти всё приложение заново"
+    direction: DOWN
+- tapOn: "Начать экскурсию|Пройти всё приложение заново"
+- assertVisible: "ПО ПРИЛОЖЕНИЮ · 1 / 42"
+- assertVisible: "Пропустить экскурсию"
+- takeScreenshot: test-results/mobile/tour-skip/01-coach
+
+# Полный пропуск внутри окна оставляет реальный экран доступным.
+- tapOn: "Как рассчитана доступная сумма"
+- assertVisible: "ПО ПРИЛОЖЕНИЮ · 2 / 42"
+- assertVisible: "Всё прозрачно"
+- tapOn: "Пропустить экскурсию"
+- assertNotVisible:
+    id: tour-coach
+- assertNotVisible:
+    id: tour-overlay
+- assertVisible: "Всё прозрачно"
+- takeScreenshot: test-results/mobile/tour-skip/02-sheet-after-skip
+- tapOn: "Закрыть"
+- assertNotVisible: "Продолжить обучение"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- assertNotVisible: "Продолжить обучение"
+
+# После перезапуска экскурсия доступна только по явному выбору.
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Обучение"
+    direction: DOWN
+- tapOn: "Обучение"
+- assertVisible: "Экскурсия пропущена. Её можно начать заново в любой момент."
+- assertNotVisible: "Продолжить экскурсию"
+- tapOn: "Начать экскурсию"
+- assertVisible: "ПО ПРИЛОЖЕНИЮ · 1 / 42"
+
+# Пауза сохраняет продолжение; полный пропуск из карточки его убирает.
+- tapOn: "Продолжить позже"
+- assertVisible: "Продолжить обучение"
+- assertVisible: "Пропустить экскурсию"
+- takeScreenshot: test-results/mobile/tour-skip/03-paused-banner
+- tapOn: "Пропустить экскурсию"
+- assertNotVisible: "Продолжить обучение"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: Демо. Открыть профили"
+    timeout: 30000
+- assertNotVisible: "Продолжить обучение"
+- assertNotVisible:
+    id: tour-coach
+- assertNotVisible:
+    id: tour-overlay
+- takeScreenshot: test-results/mobile/tour-skip/04-reopened-home

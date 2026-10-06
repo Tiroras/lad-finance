@@ -18,7 +18,14 @@ export function WelcomeBanner({ open }: { open: OpenSheet }) {
         <ErrorText error={learning.error} />
         <Button
           label="Продолжить обучение"
+          disabled={learning.saving}
           onPress={() => open({ type: "guide", journey: true })}
+        />
+        <Button
+          label="Пропустить экскурсию"
+          variant="secondary"
+          disabled={learning.saving}
+          onPress={() => void learning.skip().catch(() => undefined)}
         />
       </Card>
     );
@@ -37,7 +44,9 @@ export function WelcomeBanner({ open }: { open: OpenSheet }) {
       </Txt>
       <Button
         label="Настроить свой учёт"
-        onPress={() => open({ type: "onboarding" })}
+        onPress={() =>
+          open({ type: "onboarding", startWithAccounts: !state.demo })
+        }
       />
       {DEMO_ENABLED && state.demo && (
         <Button

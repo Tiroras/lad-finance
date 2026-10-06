@@ -8,6 +8,7 @@ export default defineConfig({
     "**/profiles.spec.ts",
     "**/first-run.spec.ts",
     "**/learning.spec.ts",
+    "**/onboarding-reopen.spec.ts",
   ],
   testIgnore: [],
   outputDir: "test-results/personal",

@@ -1,8 +1,10 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { createInitialState } from "../../src/domain/seed";
 import { tourSteps } from "../../src/features/settings/lib/tourSteps";
 import type { LearningProgress } from "../../src/features/settings/model/learningProgress";
 import {
   activeProfile,
+  finishAccountSetup,
   openProfiles,
   readState,
   startApp,
@@ -113,7 +115,9 @@ async function expectSpotlightFollowsScroll(page: Page, target: Locator) {
 async function beginLearning(page: Page) {
   await page.clock.install({ time: new Date(`${TODAY}T12:00:00+04:00`) });
   await page.goto("/");
-  await button(page, "Начать знакомство").click();
+  await button(page, "Настроить свой учёт").click();
+  await finishAccountSetup(page);
+  await button(page, "Пройти обучение").click();
   await expectStep(page, "home-formula");
 }
 
@@ -252,7 +256,11 @@ test("tour geometry stays idle and scrolling moves the spotlight without remeasu
   await expectStep(page, "home-formula");
 
   async function observe(target: string, content: string) {
-    // Let mounting, resize observation and deferred RN Web measurements settle.
+    // The Modal fade follows real browser time, independently of the test clock.
+    // Finish opening before measuring work caused by scrolling.
+    await expect
+      .poll(() => page.evaluate(() => document.getAnimations().length))
+      .toBe(0);
     await page.clock.runFor(500);
     await page.evaluate(
       ({ target, content }) =>
@@ -923,7 +931,9 @@ test("old lesson progress resumes at the real overview instead of the removed pr
       }),
     );
   }, KEY);
-  await startApp(page, TODAY);
+  // Migration belongs to an existing profile; an explicit first-run decline
+  // intentionally replaces any leftover learning choice with a full skip.
+  await startApp(page, TODAY, createInitialState(false, TODAY));
   const state = await readState(page);
   await button(page, "Продолжить обучение").click();
   await expectStep(page, "home-formula");
@@ -1008,3 +1018,119 @@ test("a failed progress save keeps the same stop and permits retrying the real c
   await expect(page.getByRole("dialog")).toHaveCount(1);
   expect(await readState(page)).toEqual(state);
 });
+
+test("the whole tour can be skipped immediately and manually restarted after reload", async ({
+  page,
+}, testInfo) => {
+  await beginLearning(page);
+  const state = await readState(page);
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 640 });
+    await expectStep(page, "home-formula");
+    await expect(button(page, "Пропустить экскурсию")).toBeInViewport({
+      ratio: 1,
+    });
+    await page.screenshot({
+      path: testInfo.outputPath(`skip-tour-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await button(page, "Пропустить экскурсию").click();
+  await expect(coach(page)).toHaveCount(0);
+  await expect(overlay(page)).toHaveCount(0);
+  await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+  expect((await readProgress(page)).status).toBe("skipped");
+  expect(await readState(page)).toEqual(state);
+  await page.reload();
+  await expect(button(page, "Профиль и настройки")).toBeVisible();
+  await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+  await openCatalog(page);
+  await expect(button(page, "Продолжить экскурсию")).toHaveCount(0);
+  await expect(
+    page.getByText(
+      "Экскурсия пропущена. Её можно начать заново в любой момент.",
+    ),
+  ).toBeVisible();
+  await button(page, "Начать экскурсию").click();
+  await expectStep(page, "home-formula");
+  // Skipping from a nested sheet removes only the tour, preserving the real screen.
+  await activate(await expectStep(page, "home-formula"));
+  await expectStep(page, "formula");
+  await button(page, "Пропустить экскурсию").click();
+  await expect(coach(page)).toHaveCount(0);
+  await expect(overlay(page)).toHaveCount(0);
+  await expect(page.getByRole("dialog")).toHaveCount(1);
+  await expect(
+    page.getByRole("heading", { name: "Всё прозрачно", exact: true }),
+  ).toBeVisible();
+  await button(page, "Закрыть").click();
+  await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+  expect(await readState(page)).toEqual(state);
+});
+
+for (const entry of ["coach", "banner", "catalog"] as const) {
+  test(`skip from ${entry} retains progress on storage failure and hides continuation across profiles after retry`, async ({
+    page,
+  }, testInfo) => {
+    await page.addInitScript((key) => {
+      const setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (name, value) {
+        if (
+          this === localStorage &&
+          name === key &&
+          sessionStorage.getItem("fail-skip-write") === "yes"
+        )
+          throw new DOMException("Full", "QuotaExceededError");
+        return setItem.call(this, name, value);
+      };
+    }, KEY);
+    await page.setViewportSize({ width: 320, height: 640 });
+    await startApp(page, TODAY);
+    const state = await readState(page);
+    await openCatalog(page);
+    await button(page, "План: бюджеты, цели, платежи и прогноз").click();
+    await expectStep(page, "plan-budgets");
+    if (entry !== "coach") {
+      await button(page, "Продолжить позже").click();
+      await expect(button(page, "Продолжить обучение")).toBeVisible();
+      if (entry === "catalog") await openCatalog(page);
+    }
+    const started = await readProgress(page);
+    await page.evaluate(() => sessionStorage.setItem("fail-skip-write", "yes"));
+    await button(page, "Пропустить экскурсию").click();
+    await expect(
+      page.getByRole("alert").filter({
+        hasText: "Не удалось сохранить прогресс обучения",
+      }),
+    ).toBeVisible();
+    expect(await readProgress(page)).toEqual(started);
+    expect(await readState(page)).toEqual(state);
+    await page.screenshot({
+      path: testInfo.outputPath(`skip-${entry}-retry-320.png`),
+      animations: "disabled",
+    });
+    await page.evaluate(() => sessionStorage.removeItem("fail-skip-write"));
+    await button(page, "Пропустить экскурсию").click();
+    await expect
+      .poll(async () => (await readProgress(page)).status)
+      .toBe("skipped");
+    await expect(coach(page)).toHaveCount(0);
+    await expect(overlay(page)).toHaveCount(0);
+    if (entry === "catalog") await button(page, "Закрыть").click();
+    await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+    await page.reload();
+    await expect(button(page, "Профиль и настройки")).toBeVisible();
+    await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+    expect(await readState(page)).toEqual(state);
+    await openProfiles(page);
+    await button(page, "Добавить профиль").click();
+    await page.getByLabel("Название профиля", { exact: true }).fill("Семейный");
+    await button(page, "Создать профиль").click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+    expect((await readProgress(page)).status).toBe("skipped");
+    await switchProfile(page, "Личный");
+    await expect(button(page, "Продолжить обучение")).toHaveCount(0);
+    expect(await readState(page)).toEqual(state);
+  });
+}

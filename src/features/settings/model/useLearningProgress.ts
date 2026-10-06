@@ -9,6 +9,7 @@ const store = createLearningProgressStore({
   read: readLearningProgress,
   write: writeLearningProgress,
 });
+const skip = () => store.update((value) => ({ ...value, status: "skipped" }));
 
 export function useLearningProgress() {
   const snapshot = useSyncExternalStore(
@@ -19,5 +20,5 @@ export function useLearningProgress() {
   useEffect(() => {
     void store.load().catch(() => undefined);
   }, []);
-  return { ...snapshot, update: store.update, retry: store.load };
+  return { ...snapshot, update: store.update, retry: store.load, skip };
 }

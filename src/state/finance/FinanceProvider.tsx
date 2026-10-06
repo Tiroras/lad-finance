@@ -51,6 +51,7 @@ interface StatusValue {
   ready: boolean;
   needsIntroduction: boolean;
   finishIntroduction: () => Promise<FinanceState>;
+  saveCurrentProfile: () => Promise<void>;
   switching: boolean;
   switchProfile: (profile: FinanceProfile) => Promise<FinanceState>;
   createProfile: (name: string) => Promise<FinanceState>;
@@ -189,7 +190,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     await queue.flush();
     if (lastSaved.current.get(currentProfile) !== currentState)
       throw new Error(
-        "Не удалось сохранить текущий профиль. Повторите попытку перед переключением.",
+        "Не удалось сохранить текущий профиль. Повторите попытку.",
       );
   }, [queue]);
   const recover = useCallback(
@@ -405,6 +406,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       ready,
       needsIntroduction,
       finishIntroduction,
+      saveCurrentProfile: flushCurrentProfile,
       switching,
       switchProfile,
       createProfile,
@@ -420,6 +422,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       ready,
       needsIntroduction,
       finishIntroduction,
+      flushCurrentProfile,
       switching,
       switchProfile,
       createProfile,

@@ -11,6 +11,7 @@ export * from "./Section";
 export * from "./Chip";
 export * from "./Segments";
 export * from "./Field";
+export { FormFields } from "./FormFields";
 export * from "./Progress";
 export * from "./Empty";
 export * from "./Notice";
