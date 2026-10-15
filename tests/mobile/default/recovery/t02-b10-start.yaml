@@ -1,0 +1,10 @@
+# Default release, recovery-t02.md. A04 synthetic source and separate control exist.
+# Run on the isolated T02 AVD only. Ends at fresh receiver SUCCESS; pull/oracle next.
+appId: app.lad.finance
+name: t02-b10-start
+---
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: A04-20261015-Android
+- runFlow: t02-export-json.yaml

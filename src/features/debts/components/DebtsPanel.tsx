@@ -49,7 +49,7 @@ export function DebtsPanel({ open }: { open: OpenSheet }) {
         onPress={() => open({ type: "account", accountKind: "credit" })}
       />
       {state.accounts
-        .filter((account) => account.kind === "credit")
+        .filter((account) => !account.archived && account.kind === "credit")
         .map((account) => (
           <CreditCardOverview key={account.id} account={account} open={open} />
         ))}

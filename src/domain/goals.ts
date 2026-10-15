@@ -1,6 +1,7 @@
 import { localDate, monthKey } from "../shared/lib/dates";
 import { receivedAmount, toBase } from "./currency";
 import type { FinanceState, Goal } from "./types";
+import { isPosted } from "./transactionStatus";
 
 export function goalContributions(state: FinanceState, today = localDate()) {
   const contributions = new Map<string, { total: number; month: number }>();
@@ -8,6 +9,7 @@ export function goalContributions(state: FinanceState, today = localDate()) {
   for (const transaction of state.transactions) {
     if (
       transaction.type !== "transfer" ||
+      !isPosted(transaction) ||
       !transaction.goalId ||
       transaction.date > today
     )

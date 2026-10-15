@@ -1,0 +1,46 @@
+# A new independent synthetic target AVD only. Does not clear existing storage.
+# Starts from first-run welcome, default release; keeps initial balances at zero.
+appId: app.lad.finance
+name: a04-transfer-target-setup
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Добро пожаловать в Лад"
+    timeout: 60000
+- tapOn: "Настроить свой учёт"
+- assertVisible: "Шаг 1 из 4"
+- scrollUntilVisible:
+    element:
+      text: "Продолжить"
+    direction: DOWN
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 2 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 3 из 4"
+- tapOn: "Продолжить"
+- assertVisible: "Шаг 4 из 4"
+- scrollUntilVisible:
+    element:
+      text: "Начать учёт с этими данными"
+    direction: DOWN
+- tapOn: "Начать учёт с этими данными"
+- extendedWaitUntil:
+    visible: "Хотите пройти обучение?"
+    timeout: 30000
+- tapOn: "Начать без обучения"
+- assertVisible: "Профиль и настройки"
+# A single profile intentionally has no profile badge in AppHeader.
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 0,00 ₽"
+- tapOn: "Закрыть"
+- tapOn: "Операции"
+- tapOn: "Вся история"
+- scrollUntilVisible:
+    element:
+      text: "Пока нет операций"
+    direction: DOWN
+- assertVisible: "Пока нет операций"

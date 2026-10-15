@@ -33,6 +33,13 @@ import { currencySchema, exchangeSchema } from "./currencySchema";
 import { localDate, MAX_MONEY, validDate } from "./finance";
 import { scenarioSchema } from "./scenarios";
 import { ICON_NAMES, type FinanceState } from "./types";
+import {
+  assertFinanceVersion,
+  transactionStatus,
+  transactionStatusError,
+} from "./transactionStatus";
+import { validateAccountArchives } from "./accountArchive";
+import { pendingLinkError } from "./pendingLinks";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const positiveAmount = amount.min(1);
@@ -181,7 +188,7 @@ const schema = z.object({
         type: z.enum(["expense", "income", "transfer"]),
         title: name,
         amount: positiveAmount,
-        date: date.refine((d) => d <= localDate()),
+        date,
         category,
         accountId: id,
         toAccountId: id.optional(),
@@ -208,15 +215,63 @@ const schema = z.object({
     .max(20000),
 });
 
-export function decodeBackup(raw: string): FinanceState {
+// Preserve the exact legacy normalization (including unknown-field stripping,
+// field order and absent optional values) used by existing recovery anchors.
+const schemaV5 = schema.extend({
+  version: z.literal(5),
+  accounts: z
+    .array(
+      schema.shape.accounts.element.extend({
+        archived: z.boolean().optional(),
+      }),
+    )
+    .min(1)
+    .max(30),
+  transactions: z
+    .array(
+      schema.shape.transactions.element.extend({
+        status: z.enum(["posted", "pending", "cancelled"]).optional(),
+        expectedDate: date.optional(),
+      }),
+    )
+    .max(20000),
+});
+
+export function decodeBackup(raw: string, today = localDate()): FinanceState {
   // Keep reading older snapshots whose limit was measured in UTF-16 characters.
   // Portable files and new ledgers use the UTF-8 byte limit below. Existing
   // oversized local ledgers remain readable while they are gradually reduced.
   if (raw.length > MAX_BACKUP_BYTES)
     throw new Error("Файл слишком большой. Максимальный размер — 5 МБ.");
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error(
+      "Не удалось прочитать файл. Выберите резервную копию Лада в формате JSON.",
+    );
+  }
+  return validateBackupValue(value, today);
+}
+
+/** Validate a bounded, already parsed value; callers own the input-size boundary. */
+export function validateBackupValue(
+  value: unknown,
+  today: string,
+): FinanceState {
   let state: FinanceState;
   try {
-    state = schema.parse(JSON.parse(raw));
+    if (!validDate(today)) throw new Error("Invalid validation date");
+    state = (
+      value &&
+      typeof value === "object" &&
+      "version" in value &&
+      value.version === 5
+        ? schemaV5
+        : schema
+    ).parse(value);
+    if (state.transactions.some((entry) => entry.date > today))
+      throw new Error("Future transaction");
   } catch {
     throw new Error(
       "Не удалось прочитать файл. Выберите резервную копию Лада в формате JSON.",
@@ -228,7 +283,7 @@ export function decodeBackup(raw: string): FinanceState {
     ...state,
     recurring: state.recurring.map((payment) => ({
       ...payment,
-      startsOn: payment.startsOn ?? `${localDate().slice(0, 7)}-01`,
+      startsOn: payment.startsOn ?? `${today.slice(0, 7)}-01`,
     })),
   };
   const unique = (items: { id: string }[]) =>
@@ -247,7 +302,7 @@ export function decodeBackup(raw: string): FinanceState {
     throw new Error("В файле есть повторяющиеся записи. Импорт отменён.");
   validateCategories(state.categories);
   validateAutomation(state);
-  validateReconciliations(state, localDate());
+  validateReconciliations(state, today);
   validateSchedules(state);
   validateTransactionAmountsState(state);
   validateBudgetPlans(state);
@@ -298,6 +353,10 @@ export function decodeBackup(raw: string): FinanceState {
   )
     throw new Error("В истории платежа повторяется месяц изменения условий.");
   for (const t of state.transactions) {
+    const statusError = transactionStatusError(t);
+    if (statusError) throw new Error(statusError);
+    const linkError = pendingLinkError(state, t);
+    if (linkError) throw new Error(linkError);
     if (t.plannedIncomeId) {
       const plan = state.plannedIncomes?.find(
         (p) => p.id === t.plannedIncomeId,
@@ -312,9 +371,9 @@ export function decodeBackup(raw: string): FinanceState {
       )
         throw new Error("Неверная связь планируемого дохода.");
       const key = `${plan.id}:${incomeOccurrenceKey(plan, t.incomeOccurrenceDate)}`;
-      if (incomeOccurrences.has(key))
+      if (transactionStatus(t) !== "cancelled" && incomeOccurrences.has(key))
         throw new Error("В файле одно поступление отмечено дважды.");
-      incomeOccurrences.add(key);
+      if (transactionStatus(t) !== "cancelled") incomeOccurrences.add(key);
     }
     if (!account(t.accountId))
       throw new Error("Операция ссылается на неизвестный счёт.");
@@ -366,9 +425,9 @@ export function decodeBackup(raw: string): FinanceState {
       )
         throw new Error("Дата оплаты не соответствует графику.");
       const key = `${t.recurringId}:${paymentOccurrenceKey(payment, t.occurrenceDate)}`;
-      if (occurrences.has(key))
+      if (transactionStatus(t) !== "cancelled" && occurrences.has(key))
         throw new Error("В файле один платёж отмечен дважды.");
-      occurrences.add(key);
+      if (transactionStatus(t) !== "cancelled") occurrences.add(key);
     }
   }
   for (const currency of CURRENCY_CODES) {
@@ -383,12 +442,16 @@ export function decodeBackup(raw: string): FinanceState {
         "Начальные накопления по целям превышают баланс накопительных счетов.",
       );
   }
-  checkSavings(state, localDate());
-  checkCurrencyAmounts(state, localDate());
+  checkSavings(state, today);
+  validateAccountArchives(state, today);
+  checkCurrencyAmounts(state, today);
   return state;
 }
 
-export const encodeBackup = (state: FinanceState) => JSON.stringify(state);
+export const encodeBackup = (state: FinanceState) => {
+  assertFinanceVersion(state);
+  return JSON.stringify(state);
+};
 
 export const backupByteLength = (content: string) =>
   new TextEncoder().encode(content).length;

@@ -1,8 +1,8 @@
 import { validateScenarioCurrencies } from "./scenarios";
-import { accountToBase, MAX_MONEY, toBase } from "./currency";
+import { accountToBase, MAX_MONEY, receivedAmount, toBase } from "./currency";
 import { accountBalances } from "./accountBalances";
 import { goalContributions } from "./goals";
-import { overduePayments, upcoming } from "./payments";
+import { overduePayments, paymentPending, upcoming } from "./payments";
 import {
   dateInMonth,
   localDate,
@@ -12,8 +12,13 @@ import {
   validDate,
 } from "../shared/lib/dates";
 import { incomeOccurrences } from "./incomes";
-import { debtObligations } from "./debts";
+import { projectedDebtObligations } from "./debts";
 import type { FinanceState, ForecastPreferences, SavedScenario } from "./types";
+import {
+  pendingProjection,
+  spendingHeld,
+  transactionStatus,
+} from "./transactionStatus";
 
 export type ForecastHorizon = 30 | 60 | 90;
 export const DEFAULT_FORECAST: ForecastPreferences = {
@@ -41,17 +46,25 @@ export interface ForecastEvent {
   sourceId?: string;
   occurrenceDate: string;
   overdue?: boolean;
+  pendingId?: string;
+  releaseHeld?: number;
 }
 export interface ForecastDay {
   date: string;
   openingBalance: number;
   balance: number;
+  projectedBalance: number;
+  held: number;
+  available: number;
   events: ForecastEvent[];
 }
 export interface ForecastResult {
   days: ForecastDay[];
   openingBalance: number;
   closingBalance: number;
+  openingHeld: number;
+  openingAvailable: number;
+  closingAvailable: number;
   minimum: ForecastDay;
   firstShortfall?: ForecastDay;
   firstBelowBuffer?: ForecastDay;
@@ -100,12 +113,13 @@ export function forecast(
     }
   };
   // Keep original occurrence identity when shifting dates, including early receipts.
-  for (const { plan, date } of incomeOccurrences(
+  for (const { plan, date, pending } of incomeOccurrences(
     state,
     scenario ? shiftDate(today, -90) : today,
     scenario ? shiftDate(end, 90) : end,
     today,
   )) {
+    if (pending) continue;
     const override = change("income", plan.id);
     const amount = override?.amount ?? plan.amount;
     if (amount === 0) continue;
@@ -122,7 +136,7 @@ export function forecast(
     ...overduePayments(state, today),
     ...upcoming(state, today, end),
   ]) {
-    if (paid || skipped) continue;
+    if (paid || skipped || paymentPending(state, payment, date)) continue;
     const overdue = date < today;
     // A future price change must not rewrite existing arrears.
     const amount = overdue
@@ -140,7 +154,66 @@ export function forecast(
     });
   }
 
-  for (const obligation of debtObligations(state, today, shiftDate(end, -1))) {
+  // Linked intentions replace the original plan event, including an undated
+  // or late income that must not reappear as a reliable planned receipt.
+  const spending = new Set(
+    state.accounts
+      .filter((account) => account.kind === "spending")
+      .map((account) => account.id),
+  );
+  for (const transaction of state.transactions) {
+    if (transactionStatus(transaction) !== "pending") continue;
+    const date = pendingProjection(transaction, today);
+    if (!date) continue;
+    const outgoing =
+      transaction.type !== "income" && spending.has(transaction.accountId)
+        ? accountToBase(state, transaction.amount, transaction.accountId)
+        : 0;
+    const incoming =
+      transaction.type === "income" && spending.has(transaction.accountId)
+        ? accountToBase(state, transaction.amount, transaction.accountId)
+        : transaction.type === "transfer" &&
+            transaction.toAccountId &&
+            spending.has(transaction.toAccountId)
+          ? accountToBase(
+              state,
+              receivedAmount(transaction),
+              transaction.toAccountId,
+            )
+          : 0;
+    // An overdue incoming transfer is not reliable spending money. Keep the
+    // source reservation and both legs together until a new date or a fact.
+    if (
+      transaction.type === "transfer" &&
+      transaction.expectedDate! < today &&
+      outgoing === 0 &&
+      incoming > 0
+    )
+      continue;
+    add(date, {
+      id: `pending:${transaction.id}`,
+      pendingId: transaction.id,
+      type:
+        transaction.type === "income" || incoming > outgoing
+          ? "income"
+          : "expense",
+      name: transaction.title,
+      amount: incoming - outgoing,
+      releaseHeld: outgoing,
+      sourceId: transaction.id,
+      occurrenceDate:
+        transaction.occurrenceDate ??
+        transaction.incomeOccurrenceDate ??
+        transaction.expectedDate!,
+      overdue: transaction.expectedDate! < today,
+    });
+  }
+
+  for (const obligation of projectedDebtObligations(
+    state,
+    today,
+    shiftDate(end, -1),
+  )) {
     add(obligation.date < today ? today : obligation.date, {
       id: `${obligation.kind}:${obligation.id}`,
       type: obligation.kind,
@@ -223,7 +296,9 @@ export function forecast(
       0,
     );
   const days: ForecastDay[] = [];
+  const openingHeld = spendingHeld(state);
   let balance = openingBalance,
+    held = openingHeld,
     income = 0,
     outflow = 0;
   for (let date = today; date < end; date = shiftDate(date, 1)) {
@@ -231,18 +306,32 @@ export function forecast(
     const opening = balance;
     for (const event of events) {
       balance += event.amount;
+      held -= event.releaseHeld ?? 0;
       if (event.amount > 0) income += event.amount;
       else outflow -= event.amount;
     }
-    days.push({ date, openingBalance: opening, balance, events });
+    days.push({
+      date,
+      openingBalance: opening,
+      balance,
+      projectedBalance: balance,
+      held,
+      available: balance - held,
+      events,
+    });
   }
   return {
     days,
     openingBalance,
     closingBalance: balance,
-    minimum: days.reduce((min, day) => (day.balance < min.balance ? day : min)),
-    firstShortfall: days.find((day) => day.balance < 0),
-    firstBelowBuffer: days.find((day) => day.balance < state.settings.buffer),
+    openingHeld,
+    openingAvailable: openingBalance - openingHeld,
+    closingAvailable: balance - held,
+    minimum: days.reduce((min, day) =>
+      day.available < min.available ? day : min,
+    ),
+    firstShortfall: days.find((day) => day.available < 0),
+    firstBelowBuffer: days.find((day) => day.available < state.settings.buffer),
     buffer: state.settings.buffer,
     income,
     outflow,

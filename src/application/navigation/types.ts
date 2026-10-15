@@ -24,6 +24,7 @@ type SimpleSheetName =
   | "export";
 export type SheetState =
   | { type: SimpleSheetName }
+  | { type: "importResult"; id?: string }
   | { type: "guide"; journey?: boolean; lesson?: LessonId }
   | { type: "onboarding"; startWithAccounts?: boolean }
   | { type: "debt" | "goal" | "category" | "scenario"; id?: string }

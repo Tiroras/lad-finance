@@ -11,6 +11,7 @@ import {
 import { assertProfileId } from "../../domain/profiles";
 import { createVault } from "./vault";
 import { createProfileStorage, type FinanceProfile } from "./profileStorage";
+import { createNativeEncryptedFileStorage } from "./ciphertextFiles.native";
 
 export const encryptedStorage = true;
 
@@ -21,7 +22,23 @@ function createProfileVault(profile: FinanceProfile) {
   };
   const keyName = (id: string) => `lad-${profile}-vault-key-${id}`;
   return createVault({
-    storage: createProfileStorage(AsyncStorage, profile),
+    profileId: profile,
+    allowances: {
+      get: () =>
+        SecureStore.getItemAsync(`lad-${profile}-rescue-allowance`, options),
+      set: (value) =>
+        SecureStore.setItemAsync(
+          `lad-${profile}-rescue-allowance`,
+          value,
+          options,
+        ),
+      remove: () =>
+        SecureStore.deleteItemAsync(`lad-${profile}-rescue-allowance`, options),
+    },
+    storage: createNativeEncryptedFileStorage(
+      profile,
+      createProfileStorage(AsyncStorage, profile),
+    ),
     keys: {
       get: (id) => SecureStore.getItemAsync(keyName(id), options),
       async create() {

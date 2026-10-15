@@ -10,6 +10,7 @@ import {
   type CurrencyCode,
 } from "./currency";
 import type { Account, FinanceState, Transaction } from "./types";
+import { isPosted, pendingHolds, transactionStatus } from "./transactionStatus";
 
 export interface Debt {
   id: string;
@@ -55,7 +56,9 @@ export function debtBalance(
   return state.transactions
     .filter(
       (transaction) =>
-        transaction.debtId === debt.id && transaction.date <= today,
+        isPosted(transaction) &&
+        transaction.debtId === debt.id &&
+        transaction.date <= today,
     )
     .reduce(
       (balance, transaction) =>
@@ -86,6 +89,7 @@ export function creditPaymentRemaining(
     .filter(
       (transaction) =>
         transaction.type === "transfer" &&
+        isPosted(transaction) &&
         transaction.toAccountId === account.id &&
         transaction.date <= today &&
         !baseline.has(transaction.id),
@@ -153,6 +157,46 @@ export function debtObligations(
   );
 }
 
+/** A pending repayment has already reserved its source money. Forecast and
+ * spendable need only the uncovered due amount, without marking any debt paid.
+ * Undated and distant intentions retain that reservation until post/cancel. */
+export function projectedDebtObligations(
+  state: FinanceState,
+  today: string,
+  end: string,
+): DebtObligation[] {
+  const reserved = new Map<string, number>();
+  for (const transaction of state.transactions) {
+    if (
+      transactionStatus(transaction) !== "pending" ||
+      transaction.type !== "transfer" ||
+      !transaction.toAccountId
+    )
+      continue;
+    reserved.set(
+      transaction.toAccountId,
+      Math.min(
+        MAX_MONEY,
+        (reserved.get(transaction.toAccountId) ?? 0) +
+          receivedAmount(transaction),
+      ),
+    );
+  }
+  return debtObligations(state, today, end)
+    .map((obligation) =>
+      obligation.kind === "credit"
+        ? {
+            ...obligation,
+            amount: Math.max(
+              0,
+              obligation.amount - (reserved.get(obligation.id) ?? 0),
+            ),
+          }
+        : obligation,
+    )
+    .filter((obligation) => obligation.amount > 0);
+}
+
 export function validateDebts(state: FinanceState, today = localDate()) {
   const debts = state.debts ?? [];
   if (
@@ -182,6 +226,8 @@ export function validateDebts(state: FinanceState, today = localDate()) {
   }
   for (const transaction of state.transactions) {
     if (!transaction.debtId && !transaction.debtAction) continue;
+    if (!isPosted(transaction))
+      throw new Error("Движения долга должны быть проведены.");
     const debt = transaction.debtId ? byId.get(transaction.debtId) : undefined;
     if (
       !debt ||
@@ -250,6 +296,7 @@ export function validateCreditAccounts(
   state: FinanceState,
   today = localDate(),
 ) {
+  const held = pendingHolds(state);
   for (const account of state.accounts) {
     if (account.kind !== "credit") {
       if (
@@ -269,7 +316,12 @@ export function validateCreditAccounts(
       (account.creditLimit ?? 0) > MAX_MONEY
     )
       throw new Error("Укажите положительный кредитный лимит.");
-    if (creditOutstanding(state, account, today) > account.creditLimit!)
+    if (
+      Math.max(
+        0,
+        -accountBalance(state, account.id, today) + (held.get(account.id) ?? 0),
+      ) > account.creditLimit!
+    )
       throw new Error("Задолженность по карте превышает кредитный лимит.");
     if (
       account.paymentDueAmount !== undefined &&

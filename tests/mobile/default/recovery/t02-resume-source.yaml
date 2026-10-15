@@ -1,0 +1,22 @@
+# Default source5560 after cold AVD return from independent target5562.
+# Required CURRENT_PROFILE (large export profile). Does not assume that the
+# Android receiver activity or a React sheet survived the AVD shutdown.
+# Reopens Lad, verifies the persisted active profile, switches to original A04,
+# and stops at a fresh actual export SUCCESS for the final full host oracle.
+appId: app.lad.finance
+name: t02-resume-source
+---
+- launchApp
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${CURRENT_PROFILE}\E\. Открыть профили'
+    timeout: 600000
+- tapOn: 'Текущий профиль: \Q${CURRENT_PROFILE}\E\. Открыть профили'
+- tapOn: "Открыть профиль: A04-20261015-Android"
+- extendedWaitUntil:
+    visible: "Текущий профиль: A04-20261015-Android. Открыть профили"
+    timeout: 600000
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: A04-20261015-Android
+- runFlow: t02-export-json.yaml

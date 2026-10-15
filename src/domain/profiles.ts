@@ -93,6 +93,75 @@ export function validateProfiles(value: unknown): LedgerProfile[] {
   return result;
 }
 
+export function decodeProfileRegistry(raw: string): LedgerProfile[] {
+  const value: unknown = JSON.parse(raw);
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !("version" in value) ||
+    value.version !== 1 ||
+    !("profiles" in value)
+  )
+    throw new Error("Неизвестный формат списка профилей.");
+  return validateProfiles(value.profiles);
+}
+
+export function encodeProfileRegistry(
+  profiles: readonly LedgerProfile[],
+): string {
+  return JSON.stringify({ version: 1, profiles: validateProfiles(profiles) });
+}
+
+/** Salvage only independently valid names; namespaces, never financial names, define IDs. */
+export function recoveredProfileEntries(
+  raw: string | null,
+  ids: readonly FinanceProfile[],
+): LedgerProfile[] {
+  let records: unknown[] = [];
+  try {
+    const value = raw === null ? null : JSON.parse(raw);
+    if (value?.version === 1 && Array.isArray(value.profiles))
+      records = value.profiles;
+  } catch {
+    /* Invalid metadata does not make a financial namespace disappear. */
+  }
+  let result = createDefaultProfiles();
+  let nextName = 1;
+  for (const id of [...new Set(ids)].sort()) {
+    if (id === "personal" || id === "demo") continue;
+    assertProfileId(id);
+    const matches = records.filter(
+      (entry): entry is { id: string; name: unknown } =>
+        !!entry &&
+        typeof entry === "object" &&
+        "id" in entry &&
+        entry.id === id &&
+        "name" in entry,
+    );
+    if (matches.length === 1) {
+      try {
+        result = addProfile(result, id, matches[0].name as string);
+        continue;
+      } catch {
+        /* Invalid or conflicting names receive an explicit recovery name. */
+      }
+    }
+    for (;;) {
+      try {
+        result = addProfile(
+          result,
+          id,
+          `Восстановленный профиль ${nextName++}`,
+        );
+        break;
+      } catch {
+        /* A salvaged name may already use the next numbered name. */
+      }
+    }
+  }
+  return result;
+}
+
 export function addProfile(
   profiles: readonly LedgerProfile[],
   id: FinanceProfile,

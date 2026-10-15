@@ -4,6 +4,7 @@ import {
   selectTransactionList,
   type TransactionFilterType,
   type TransactionPeriod,
+  type TransactionFilterStatus,
 } from "../../domain/transactionList";
 import { monthKey } from "../../domain/finance";
 import type { Transaction } from "../../domain/types";
@@ -33,6 +34,7 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
   const [period, setPeriod] = useState<TransactionPeriod>("month");
   const [query, setQuery] = useState("");
   const [type, setType] = useState<TransactionFilterType>("all");
+  const [status, setStatus] = useState<TransactionFilterStatus>("all");
   const [account, setAccount] = useState("all");
   const [category, setCategory] = useState("all");
   const [limit, setLimit] = useState(60);
@@ -44,10 +46,10 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
     () =>
       selectTransactionList(
         state,
-        { month, period, type, query, account, category },
+        { month, period, type, status, query, account, category },
         today,
       ),
-    [state, today, month, period, type, query, account, category],
+    [state, today, month, period, type, status, query, account, category],
   );
   const groups = useMemo(() => {
     const byDate = new Map<string, Transaction[]>();
@@ -59,13 +61,18 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
     return byDate;
   }, [filtered, limit]);
   const hasFilters =
-    !!query.trim() || type !== "all" || account !== "all" || category !== "all";
+    !!query.trim() ||
+    type !== "all" ||
+    status !== "all" ||
+    account !== "all" ||
+    category !== "all";
   const hasHistory = state.transactions.some(
     (transaction) => transaction.date <= today,
   );
   const resetFilters = () => {
     setQuery("");
     setType("all");
+    setStatus("all");
     setAccount("all");
     setCategory("all");
     setLimit(60);
@@ -115,6 +122,11 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
         )}
       </View>
       <TransactionFilters
+        status={status}
+        setStatus={(value) => {
+          setStatus(value);
+          setLimit(60);
+        }}
         query={query}
         setQuery={(value) => {
           setQuery(value);
@@ -145,7 +157,7 @@ export function TransactionsScreen({ open }: { open: OpenSheet }) {
         >
           По выбранным фильтрам · операций: {filtered.length}.{" "}
           {period === "all" ? "За всю историю" : "За выбранный месяц"}; суммы по
-          всем найденным операциям.
+          проведённым операциям. Ожидаемые и отменённые не меняют эти итоги.
           {category !== "all"
             ? " Расходы — только часть выбранной категории."
             : ""}

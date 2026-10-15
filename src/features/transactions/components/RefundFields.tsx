@@ -2,6 +2,7 @@ import { useState } from "react";
 import { accountCurrency } from "../../../domain/currency";
 import { refundedAmount } from "../../../domain/transactionAmounts";
 import type { Transaction } from "../../../domain/types";
+import { isPosted } from "../../../domain/transactionStatus";
 import {
   Button,
   Card,
@@ -39,6 +40,7 @@ export function RefundFields({
   const candidates = state.transactions.filter(
     (entry) =>
       entry.type === "expense" &&
+      isPosted(entry) &&
       !entry.debtId &&
       entry.amount > refundedAmount(state, entry.id, transactionId) &&
       entry.title

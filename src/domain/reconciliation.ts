@@ -5,6 +5,7 @@ import { MAX_MONEY } from "./currency";
 import { accountBalance } from "./accountBalances";
 import { validDate } from "../shared/lib/dates";
 import type { FinanceState } from "./types";
+import { isPosted } from "./transactionStatus";
 
 export interface BalanceAdjustment {
   id: string;
@@ -50,6 +51,7 @@ export function accountSignature(
   const transactions = state.transactions
     .filter(
       (t) =>
+        isPosted(t) &&
         t.date <= date &&
         (t.accountId === accountId || t.toAccountId === accountId),
     )

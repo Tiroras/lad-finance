@@ -1,0 +1,15 @@
+# Default source5560 only, after control full oracle at receiver SUCCESS.
+# Leaves the existing small A04 active before the source AVD is stopped. Large
+# profile already passed its own cold app restart and complete exported oracle.
+appId: app.lad.finance
+name: t02-return-a04
+---
+- tapOn: "Закрыть приёмник"
+- tapOn: "Закрыть"
+- tapOn: "Текущий профиль: Личный. Открыть профили"
+- assertVisible: "Открыть профиль: T02-20261015-Large"
+- assertVisible: "Открыть профиль: T02-20261015-Trial"
+- tapOn: "Открыть профиль: A04-20261015-Android"
+- extendedWaitUntil:
+    visible: "Текущий профиль: A04-20261015-Android. Открыть профили"
+    timeout: 600000

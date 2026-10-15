@@ -1,0 +1,19 @@
+# Default source5560 after returning from independent target5562. Source was
+# left on A04 after both full source/control oracles; no data or profile reset.
+appId: app.lad.finance
+name: t02-final-source
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Текущий профиль: A04-20261015-Android. Открыть профили"
+    timeout: 600000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 9 300,00 ₽"
+- assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 1 000,00 ₽"
+- tapOn: "Закрыть"
+- takeScreenshot: t02-final-source

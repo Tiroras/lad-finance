@@ -7,6 +7,7 @@ import {
 } from "../shared/lib/dates";
 import type { FinanceState, Occurrence, Recurring, Transaction } from "./types";
 import { iterateScheduleDates, scheduleDates } from "./recurrence";
+import { isPosted, transactionStatus } from "./transactionStatus";
 
 export const paymentOccurrenceKey = (payment: Recurring, date: string) =>
   payment.schedule ? date : monthKey(date);
@@ -19,6 +20,7 @@ export function canLinkPayment(
 ) {
   return (
     transaction.type === "expense" &&
+    isPosted(transaction) &&
     !transaction.recurringId &&
     !transaction.debtId &&
     transaction.amount === payment.amount &&
@@ -36,7 +38,9 @@ export function annualPreparation(
   if (!payment.active || payment.schedule?.unit !== "year") return undefined;
   const paid = new Set(
     state.transactions
-      .filter((t) => t.recurringId === payment.id && t.date <= today)
+      .filter(
+        (t) => isPosted(t) && t.recurringId === payment.id && t.date <= today,
+      )
       .map((t) => t.occurrenceDate),
   );
   const date = scheduleDates(payment.schedule, today, "2101-01-01").find(
@@ -93,6 +97,7 @@ function visitPaymentOccurrences(
     if (
       payment &&
       transaction.type === "expense" &&
+      isPosted(transaction) &&
       transaction.occurrenceDate &&
       transaction.date <= today
     )
@@ -209,5 +214,20 @@ export function overduePayments(state: FinanceState, today = localDate()) {
     today,
     today,
     true,
+  );
+}
+
+export function paymentPending(
+  state: FinanceState,
+  payment: Recurring,
+  date: string,
+) {
+  return state.transactions.find(
+    (transaction) =>
+      transactionStatus(transaction) === "pending" &&
+      transaction.recurringId === payment.id &&
+      transaction.occurrenceDate &&
+      paymentOccurrenceKey(payment, transaction.occurrenceDate) ===
+        paymentOccurrenceKey(payment, date),
   );
 }

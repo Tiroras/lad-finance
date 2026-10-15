@@ -1,0 +1,28 @@
+# План: ../../plans/recovery-t02.md, вход в B10/A03.
+# Режим: default release, Lad_T02_Recovery_Test; очистка и блокировка выключены.
+# Данные: контроллер уже восстановил синтетический PROFILE и отдельный контроль.
+# Старт: главный экран выбранного PROFILE. Финиш: «Данные и копии».
+# T02 hierarchy pending: сверить на выбранном устройстве перед первым запуском.
+appId: app.lad.finance
+name: t02-open-data
+---
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Профиль и настройки"
+    timeout: 30000
+- assertVisible: 'Текущий профиль: \Q${PROFILE}\E\. Открыть профили'
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Данные и копии"
+    direction: DOWN
+    timeout: 30000
+- tapOn: "Данные и копии"
+- assertVisible: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: "Создать копию с паролем"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "Создать копию с паролем"

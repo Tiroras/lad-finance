@@ -18,6 +18,7 @@ import {
 import { parseQuickEntry } from "../../../domain/finance";
 import { refundedAmount } from "../../../domain/transactionAmounts";
 import type { FinanceState, Transaction } from "../../../domain/types";
+import { transactionStatus } from "../../../domain/transactionStatus";
 
 export interface SplitDraft {
   key: string;
@@ -38,6 +39,8 @@ export interface TransactionDraft {
   received: string | null;
   valuation: string | null;
   date: string;
+  status: "posted" | "pending";
+  expectedDate: string;
   note: string;
   splitEnabled: boolean;
   parts: SplitDraft[];
@@ -53,8 +56,9 @@ export function createTransactionDraft(
 ): TransactionDraft {
   const accountId =
     original?.accountId ??
-    state.accounts.find((a) => a.kind === "spending")!.id;
-  const currency = accountCurrency(state, accountId);
+    state.accounts.find((a) => !a.archived && a.kind === "spending")?.id ??
+    "";
+  const currency = draftAccountCurrency(state, accountId);
   return {
     repeating: false,
     manualCategory: !!original,
@@ -65,7 +69,8 @@ export function createTransactionDraft(
     accountId,
     toAccountId:
       original?.toAccountId ??
-      state.accounts.find((a) => a.kind === "savings")!.id,
+      state.accounts.find((a) => !a.archived && a.kind === "savings")?.id ??
+      "",
     received:
       original?.type === "transfer"
         ? moneyInput(
@@ -75,6 +80,11 @@ export function createTransactionDraft(
         : null,
     valuation: null,
     date: original?.date ?? today,
+    status:
+      original && transactionStatus(original) === "pending"
+        ? "pending"
+        : "posted",
+    expectedDate: original?.expectedDate ?? "",
     note: original?.note ?? "",
     splitEnabled: !!original?.splits,
     parts:
@@ -135,7 +145,28 @@ export function applyTransactionTemplate(
   template: TransactionTemplate,
   today: string,
 ): TransactionDraft {
-  const transaction = templateDraft(state, template, today);
+  // An archived account may fill the editable form, but never a financial
+  // action. Keep its identity visible until the user chooses another account.
+  const archivedAccount = state.accounts.some(
+    (account) =>
+      account.archived &&
+      (account.id === template.accountId ||
+        account.id === template.toAccountId),
+  );
+  const transaction = archivedAccount
+    ? {
+        type: template.type,
+        title: template.title,
+        amount: template.amount,
+        category: template.category,
+        accountId: template.accountId,
+        toAccountId: template.toAccountId,
+        toAmount: template.toAmount,
+        date: today,
+        note: template.note,
+        splits: template.splits?.map((part) => ({ ...part })),
+      }
+    : templateDraft(state, template, today);
   return {
     ...createTransactionDraft(state, today, transaction),
     repeating: draft.repeating,
@@ -179,6 +210,8 @@ export function repeatTransaction(
     ...draft,
     repeating: true,
     date: today,
+    status: "posted",
+    expectedDate: "",
     valuation: null,
     templateId: undefined,
   };
@@ -225,8 +258,8 @@ export function transactionDraftAmounts(
   original?: Transaction,
 ) {
   if (draft.repeating) original = undefined;
-  const sourceCurrency = accountCurrency(state, draft.accountId);
-  const targetCurrency = accountCurrency(state, draft.toAccountId);
+  const sourceCurrency = draftAccountCurrency(state, draft.accountId);
+  const targetCurrency = draftAccountCurrency(state, draft.toAccountId);
   const parsedAmount = parseMoney(draft.amount, sourceCurrency);
   const receivedEstimate = tryConvertMoney(
     state,
@@ -259,6 +292,13 @@ export function transactionDraftAmounts(
 }
 
 function commonFields(state: FinanceState, draft: TransactionDraft) {
+  if (!state.accounts.some((account) => account.id === draft.accountId))
+    throw new Error("Выберите активный счёт для операции.");
+  if (
+    draft.type === "transfer" &&
+    !state.accounts.some((account) => account.id === draft.toAccountId)
+  )
+    throw new Error("Выберите активный счёт зачисления.");
   const {
     sourceCurrency,
     targetCurrency,
@@ -308,6 +348,9 @@ export function transactionInput(
     ...commonFields(state, draft),
     id: original?.id,
     date: draft.date,
+    status: draft.status,
+    expectedDate:
+      draft.status === "pending" ? draft.expectedDate || undefined : undefined,
     baseAmount:
       draft.type !== "transfer" && sourceCurrency !== baseCode
         ? (parseMoney(
@@ -329,6 +372,13 @@ export function transactionInput(
           ) ?? NaN)
         : undefined,
   };
+}
+
+/** Currency for displaying an incomplete form; final actions still require an account. */
+export function draftAccountCurrency(state: FinanceState, id: string) {
+  return state.accounts.some((account) => account.id === id)
+    ? accountCurrency(state, id)
+    : baseCurrency(state);
 }
 
 export function transactionTemplateInput(

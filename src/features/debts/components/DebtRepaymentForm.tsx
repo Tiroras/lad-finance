@@ -1,3 +1,4 @@
+import type { OpenSheet } from "../../../application/navigation/types";
 import { useState } from "react";
 import { currencySymbol } from "../../../domain/currency";
 import { debtBalance } from "../../../domain/debts";
@@ -14,14 +15,15 @@ import {
   AmountField,
   DateField,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 
-export function DebtRepaymentForm({
+function DebtRepaymentFormFields({
   id,
   close,
 }: {
   id: string;
   close: () => void;
+  open: OpenSheet;
 }) {
   const { state, today, notify } = useFinance();
   const { money, moneyInput, parseMoney } = useMoney();
@@ -91,4 +93,17 @@ export function DebtRepaymentForm({
       />
     </>
   );
+}
+
+export function DebtRepaymentForm(
+  props: Parameters<typeof DebtRepaymentFormFields>[0],
+) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <DebtRepaymentFormFields {...props} />;
 }

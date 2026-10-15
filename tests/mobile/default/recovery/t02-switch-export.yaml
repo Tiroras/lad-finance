@@ -1,0 +1,18 @@
+# Default, both isolated T02 AVDs. Start at receiver SUCCESS over Data sheet.
+# Required CURRENT_PROFILE and TARGET_PROFILE. This reads existing profiles only.
+# Fresh SUCCESS must be pulled/compared before the next switch/export.
+appId: app.lad.finance
+name: t02-switch-export
+---
+- tapOn: "Закрыть приёмник"
+- tapOn: "Закрыть"
+- tapOn: 'Текущий профиль: \Q${CURRENT_PROFILE}\E\. Открыть профили'
+- tapOn: 'Открыть профиль: \Q${TARGET_PROFILE}\E'
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${TARGET_PROFILE}\E\. Открыть профили'
+    timeout: 600000
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: ${TARGET_PROFILE}
+- runFlow: t02-export-json.yaml

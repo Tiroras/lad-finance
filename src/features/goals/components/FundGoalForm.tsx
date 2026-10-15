@@ -24,9 +24,9 @@ import {
   ErrorText,
   AmountField,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 
-export function FundGoalForm({
+function FundGoalFormFields({
   id,
   close,
   open,
@@ -46,11 +46,14 @@ export function FundGoalForm({
     moneyInput(Math.min(goal?.monthly || remaining, remaining), goalCurrency),
   );
   const [accountId, setAccountId] = useState(
-    state.accounts.find((a) => a.kind === "spending")!.id,
+    state.accounts.find((a) => !a.archived && a.kind === "spending")!.id,
   );
   const [toAccountId, setToAccountId] = useState(
     state.accounts.find(
-      (a) => a.kind === "savings" && (a.currency ?? "RUB") === goalCurrency,
+      (a) =>
+        !a.archived &&
+        a.kind === "savings" &&
+        (a.currency ?? "RUB") === goalCurrency,
     )?.id ?? "",
   );
   const [debit, setDebit] = useState<string | null>(null);
@@ -169,4 +172,15 @@ export function FundGoalForm({
       />
     </>
   );
+}
+
+export function FundGoalForm(props: Parameters<typeof FundGoalFormFields>[0]) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <FundGoalFormFields {...props} />;
 }

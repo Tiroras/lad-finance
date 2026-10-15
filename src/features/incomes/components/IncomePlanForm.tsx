@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { accountCurrency, currencySymbol } from "../../../domain/currency";
 import type { PlannedIncome } from "../../../domain/types";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 import {
   DeleteButton,
   ErrorText,
@@ -23,7 +23,7 @@ import { RecurrenceFields } from "../../payments";
 import type { RecurrenceSchedule } from "../../../domain/recurrence";
 import { IncomeReceipt } from "./IncomeReceipt";
 
-export function IncomePlanForm({
+function IncomePlanFormFields({
   sheet,
   close,
   open,
@@ -51,7 +51,7 @@ export function IncomePlanForm({
   );
   const [accountId, setAccountId] = useState(
     original?.accountId ??
-      state.accounts.find((a) => a.kind === "spending")?.id ??
+      state.accounts.find((a) => !a.archived && a.kind === "spending")?.id ??
       "",
   );
   const { error, run } = useActionError();
@@ -166,4 +166,17 @@ export function IncomePlanForm({
       )}
     </>
   );
+}
+
+export function IncomePlanForm(
+  props: Parameters<typeof IncomePlanFormFields>[0],
+) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <IncomePlanFormFields {...props} />;
 }

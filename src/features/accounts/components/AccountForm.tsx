@@ -4,6 +4,8 @@ import { currencySymbol, type CurrencyCode } from "../../../domain/currency";
 import { accountBalance } from "../../../domain/finance";
 import type { Account } from "../../../domain/types";
 import { creditPaymentRemaining } from "../../../domain/debts";
+import { accountArchiveBlockers } from "../../../domain/accountArchive";
+import type { OpenSheet } from "../../../application/navigation/types";
 import { CurrencyPicker } from "../../currencies";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -21,17 +23,20 @@ import {
   AmountField,
 } from "../../../shared/ui";
 import { CreditCardFields } from "./CreditCardFields";
+import { AccountHistory } from "./AccountHistory";
 
 export function AccountForm({
   id,
   close,
   defaultCurrency,
   defaultKind,
+  open,
 }: {
   id?: string;
   close: () => void;
   defaultCurrency?: CurrencyCode;
   defaultKind?: Account["kind"];
+  open: OpenSheet;
 }) {
   const { moneyInput, parseMoney, currency: baseCode } = useMoney();
   const { state, today, notify } = useFinance();
@@ -62,6 +67,10 @@ export function AccountForm({
       : "",
   );
   const { error, setError, run } = useActionError();
+  const archiveBlockers =
+    original && !original.archived
+      ? accountArchiveBlockers(state, original.id, today)
+      : [];
   const save = () =>
     run(() => {
       const balanceInput = amount.trim() || "0";
@@ -99,6 +108,27 @@ export function AccountForm({
       notify("Счёт сохранён");
       close();
     });
+  if (original?.archived)
+    return (
+      <>
+        <Notice>
+          Счёт «{original.name}» в архиве. История сохранена; новые записи
+          станут доступны после восстановления.
+        </Notice>
+        <ErrorText error={error} />
+        <Button
+          label="Восстановить счёт"
+          onPress={() =>
+            run(() => {
+              actions.restoreAccount(original.id);
+              notify("Счёт восстановлен");
+              open({ type: "accounts" });
+            })
+          }
+        />
+        <AccountHistory id={original.id} open={open} />
+      </>
+    );
   return (
     <>
       <Field
@@ -171,6 +201,36 @@ export function AccountForm({
       </Notice>
       <ErrorText error={error} />
       <Button label="Сохранить счёт" onPress={save} />
+      {original && (
+        <>
+          <Notice>
+            Архивирование сохраняет историю и исключает счёт из нового выбора.
+            Нужны нулевой остаток и отсутствие ожидаемых движений и действующих
+            обязательств.
+          </Notice>
+          {archiveBlockers.map((blocker, index) => (
+            <Notice
+              key={`${blocker.code}-${blocker.entityId ?? index}`}
+              tone="warning"
+            >
+              {blocker.message}
+            </Notice>
+          ))}
+          <Button
+            label="Архивировать счёт"
+            variant="secondary"
+            disabled={archiveBlockers.length > 0}
+            onPress={() =>
+              run(() => {
+                actions.archiveAccount(original.id);
+                notify("Счёт перемещён в архив; история сохранена");
+                open({ type: "accounts" });
+              })
+            }
+          />
+          <AccountHistory id={original.id} open={open} />
+        </>
+      )}
     </>
   );
 }

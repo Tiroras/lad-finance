@@ -63,6 +63,7 @@ export function completeOnboarding(
   let next = createInitialState(false, today);
   next = {
     ...next,
+    version: state.version === 5 ? 5 : next.version,
     accounts: next.accounts.map((a) => ({
       ...a,
       currency: input.currency,

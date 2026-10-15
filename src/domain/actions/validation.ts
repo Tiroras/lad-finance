@@ -6,6 +6,7 @@ import { goalContributions } from "../goals";
 import type { FinanceState } from "../types";
 import { validatePaymentCapacity } from "../payments";
 import { validateBudgetCapacity } from "../budgets";
+import { pendingHolds } from "../transactionStatus";
 
 export function ensure(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -38,6 +39,7 @@ export function checkDay(value: number) {
 
 export function checkSavings(state: FinanceState, today: string) {
   const balances = accountBalances(state, today);
+  const held = pendingHolds(state);
   const contributions = goalContributions(state, today);
   for (const currency of CURRENCY_CODES) {
     const allocated = state.goals
@@ -49,7 +51,10 @@ export function checkSavings(state: FinanceState, today: string) {
       );
     const savings = state.accounts
       .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === currency)
-      .reduce((sum, a) => sum + (balances.get(a.id) ?? 0), 0);
+      .reduce(
+        (sum, a) => sum + (balances.get(a.id) ?? 0) - (held.get(a.id) ?? 0),
+        0,
+      );
     ensure(
       savings >= allocated,
       "Эти накопления распределены по целям. Сначала освободите средства в целях.",
@@ -81,6 +86,10 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
   for (const scenario of state.scenarios ?? [])
     validateScenarioCurrencies(state, scenario);
   checkBalanceCapacity(state, accountBalances(state, today));
+  const balances = accountBalances(state, today);
+  for (const [id, held] of pendingHolds(state))
+    balances.set(id, (balances.get(id) ?? 0) - held);
+  checkBalanceCapacity(state, balances);
   for (const goal of state.goals) {
     checkAmount(toBase(state, goal.target, goal.currency), true);
     checkAmount(toBase(state, goal.monthly, goal.currency), true);

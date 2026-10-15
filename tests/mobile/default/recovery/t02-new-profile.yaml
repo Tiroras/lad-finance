@@ -1,0 +1,59 @@
+# План: ../../plans/recovery-t02.md, подтверждённая проба B10-03 / A03-01/02.
+# Режим: default release, Lad_T02_Recovery_Test; блокировка выключена.
+# Старт: одна проверенная копия и одна кнопка «Восстановить в новый профиль»;
+# не выбирать оба маршрута picker в одном открытом окне. Форма профиля закрыта.
+# Данные: NAME заранее отсутствует в каталоге, состав совпадает с manifest;
+# источник и отдельный контроль сохранены контроллером. Для повтора новое NAME.
+# Финиш: новый профиль активен после отдельного подтверждения; перезапуск,
+# проверка счетов и экспорт полного oracle выполняются следующими этапами.
+# T02 hierarchy pending; никаких замен текущего учёта и удаления профилей.
+appId: app.lad.finance
+name: t02-new-profile
+---
+- assertVisible: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: "Восстановить в новый профиль"
+    direction: DOWN
+    timeout: 30000
+- tapOn: "Восстановить в новый профиль"
+- scrollUntilVisible:
+    element:
+      text: "Название нового профиля"
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: "Название нового профиля"
+    waitToSettleTimeoutMs: 500
+- eraseText
+- inputText: ${NAME}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Подготовить восстановление в новый профиль"
+    direction: DOWN
+    timeout: 30000
+- tapOn: "Подготовить восстановление в новый профиль"
+- scrollUntilVisible:
+    element:
+      text: 'Создать профиль «\Q${NAME}\E» из копии\?'
+    direction: DOWN
+    timeout: 30000
+- assertVisible: 'Создать профиль «\Q${NAME}\E» из копии\?'
+- scrollUntilVisible:
+    element:
+      text: 'В файле ${TRANSACTIONS} операций, ${ACCOUNTS} счетов и ${GOALS} целей\. После проверки записи откроется новый профиль\. Проверьте его данные перед удалением исходной копии\.'
+    direction: DOWN
+    timeout: 30000
+- assertVisible: 'В файле ${TRANSACTIONS} операций, ${ACCOUNTS} счетов и ${GOALS} целей\. После проверки записи откроется новый профиль\. Проверьте его данные перед удалением исходной копии\.'
+- scrollUntilVisible:
+    element:
+      text: "Подтвердить создание профиля из копии"
+    direction: DOWN
+    timeout: 30000
+- tapOn: "Подтвердить создание профиля из копии"
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 600000
+- assertVisible: "Профиль и настройки"
+- assertNotVisible: "Подтвердить создание профиля из копии"

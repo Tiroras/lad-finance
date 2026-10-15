@@ -1,7 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BackHandler } from "react-native";
 import type { CurrencyCode } from "../../../domain/currency";
 import { canStartOnboarding } from "../../../domain/onboarding";
+import type { FinanceState } from "../../../domain/types";
+import { useStoredDraft } from "../../../infrastructure/storage/useStoredDraft";
+import { useSecurity } from "../../security";
+import {
+  parseOnboardingDraft,
+  type OnboardingDraft,
+} from "../model/onboardingDraft";
 import { DEMO_ENABLED } from "../../../shared/lib/buildOptions";
 import { dateLabel, shiftDate, validDate } from "../../../shared/lib/dates";
 import { useActionError } from "../../../shared/lib/useActionError";
@@ -19,6 +26,7 @@ import {
   Section,
   Txt,
   AmountField,
+  font,
 } from "../../../shared/ui";
 import { OnboardingBalanceStep } from "./OnboardingBalanceStep";
 import { OnboardingPlanStep } from "./OnboardingPlanStep";
@@ -36,8 +44,9 @@ export function OnboardingFlow({
   onStepChange?: () => void;
   active?: boolean;
 }) {
-  const { state, today, notify } = useFinance();
-  const { switching, switchProfile } = useFinanceStatus();
+  const { state, today, notify, profile } = useFinance();
+  const { switching, switchProfile, confirmCurrentSave } = useFinanceStatus();
+  const { locked } = useSecurity();
   const actions = useFinanceActions();
   const { parseMoney, money } = useMoney();
   const [step, setStep] = useState(startWithAccounts ? 1 : 0);
@@ -54,6 +63,93 @@ export function OnboardingFlow({
   const [billAmount, setBillAmount] = useState("");
   const [billDate, setBillDate] = useState(shiftDate(today, 10));
   const { error, setError, run } = useActionError();
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [pendingSnapshot, setPendingSnapshot] = useState<FinanceState | null>(
+    null,
+  );
+  const payload: OnboardingDraft = {
+    version: 1,
+    step,
+    name,
+    accountName,
+    currency,
+    balance,
+    savings,
+    buffer,
+    incomeName,
+    incomeAmount,
+    incomeDate,
+    billName,
+    billAmount,
+    billDate,
+  };
+  const draft = useStoredDraft({
+    profileId: profile,
+    slot: "onboarding",
+    recordId: "setup",
+    payload,
+    enabled: active && !locked && !switching && !state.demo,
+    parse: parseOnboardingDraft,
+    onRestore(value) {
+      setStep(value.step || 1);
+      setName(value.name);
+      setAccountName(value.accountName);
+      setCurrency(value.currency);
+      setBalance(value.balance);
+      setSavings(value.savings);
+      setBuffer(value.buffer);
+      setIncomeName(value.incomeName);
+      setIncomeAmount(value.incomeAmount);
+      setIncomeDate(value.incomeDate);
+      setBillName(value.billName);
+      setBillAmount(value.billAmount);
+      setBillDate(value.billDate);
+      onStepChange?.();
+    },
+  });
+  const draftOffer = draft.offer && (
+    <Card style={{ gap: 12 }}>
+      <Txt style={{ fontFamily: font.semibold }}>Есть черновик настройки</Txt>
+      <Notice>
+        Восстановите введённые поля или удалите черновик. Финансовые записи пока
+        не изменятся.
+      </Notice>
+      <Button
+        label="Восстановить черновик настройки"
+        onPress={() => void draft.restore().catch(() => undefined)}
+      />
+      <Button
+        label="Удалить черновик настройки"
+        variant="secondary"
+        onPress={() => void draft.discard().catch(() => undefined)}
+      />
+    </Card>
+  );
+  const draftRecovery = draft.error && (
+    <>
+      <ErrorText error={draft.error} />
+      <Button
+        label="Повторить чтение черновика настройки"
+        onPress={draft.retryLoad}
+      />
+      <Button
+        label="Удалить все черновики профиля"
+        variant="danger"
+        onPress={() =>
+          void draft
+            .discardAll()
+            .catch((failure: unknown) =>
+              setError(
+                failure instanceof Error
+                  ? failure.message
+                  : "Не удалось удалить черновики.",
+              ),
+            )
+        }
+      />
+    </>
+  );
   const changeStep = (next: number) => {
     setError("");
     onStepChange?.();
@@ -68,7 +164,7 @@ export function OnboardingFlow({
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        if (!switching) goBack();
+        if (!switching && !saving) goBack();
         return true;
       },
     );
@@ -104,6 +200,67 @@ export function OnboardingFlow({
       );
     return value;
   };
+  const submit = async () => {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setError("");
+    try {
+      if (!pendingSnapshot) await draft.flush();
+      draft.suspend();
+      setSaving(true);
+      const next =
+        pendingSnapshot ??
+        actions.completeOnboarding({
+          name,
+          accountName,
+          currency,
+          balance: parse(balance),
+          savings: parse(savings),
+          buffer: parse(buffer),
+          incomeName,
+          incomeAmount: parse(incomeAmount),
+          incomeDate,
+          billName,
+          billAmount: parse(billAmount),
+          billDate,
+        });
+      setPendingSnapshot(next);
+      // FirstRunFlow switches to its dedicated save/retry view immediately.
+      // That view performs the same read-back proof and draft cleanup.
+      if (onBack) return;
+      await confirmCurrentSave(profile, next);
+      await draft.clear();
+      notify(
+        "Собственный учёт готов. Посмотрите, как рассчитана сумма на день.",
+      );
+      close();
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : "Не удалось подтвердить сохранение учёта.",
+      );
+      if (!pendingSnapshot && canStartOnboarding(state)) draft.resume();
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  };
+  if (pendingSnapshot && !canStartOnboarding(state))
+    return (
+      <>
+        <Notice>
+          Настройка применена. Проверяем её сохранение перед удалением
+          черновика.
+        </Notice>
+        <ErrorText error={error || draft.error} />
+        <Button
+          label="Повторить сохранение настройки"
+          disabled={saving || switching}
+          onPress={() => void submit()}
+        />
+      </>
+    );
   if (!canStartOnboarding(state))
     return (
       <>
@@ -118,6 +275,8 @@ export function OnboardingFlow({
     return (
       <>
         <Section title="Больше ясности с первого дня" />
+        {draftOffer}
+        {draftRecovery}
         <Txt>
           {state.demo
             ? "Посмотрите возможности на примере или настройте собственный учёт: остатки, ближайший доход и обязательные платежи."
@@ -134,7 +293,7 @@ export function OnboardingFlow({
           label={
             switching ? "Открываем личный профиль…" : "Настроить свой учёт"
           }
-          disabled={switching}
+          disabled={switching || !!draft.offer}
           onPress={() => void startPersonal()}
         />
         {DEMO_ENABLED && state.demo && (
@@ -159,6 +318,8 @@ export function OnboardingFlow({
   return (
     <>
       <Section title={`Шаг ${step} из 4`} />
+      {draftOffer}
+      {draftRecovery}
       {step === 1 && (
         <OnboardingBalanceStep
           {...{
@@ -237,7 +398,7 @@ export function OnboardingFlow({
       <ErrorText error={error} />
       <Button
         label={step < 4 ? "Продолжить" : "Начать учёт с этими данными"}
-        disabled={switching}
+        disabled={switching || saving || !draft.ready || !!draft.offer}
         onPress={() =>
           run(() => {
             if (step === 1) {
@@ -266,31 +427,14 @@ export function OnboardingFlow({
               changeStep(step + 1);
               return;
             }
-            actions.completeOnboarding({
-              name,
-              accountName,
-              currency,
-              balance: parse(balance),
-              savings: parse(savings),
-              buffer: parse(buffer),
-              incomeName,
-              incomeAmount: parse(incomeAmount),
-              incomeDate,
-              billName,
-              billAmount: parse(billAmount),
-              billDate,
-            });
-            notify(
-              "Собственный учёт готов. Посмотрите, как рассчитана сумма на день.",
-            );
-            close();
+            void submit();
           })
         }
       />
       <Button
         label="Назад"
         variant="secondary"
-        disabled={switching}
+        disabled={switching || saving}
         onPress={goBack}
       />
     </>

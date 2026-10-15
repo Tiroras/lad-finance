@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { View } from "react-native";
-import {
-  exportTransactionsCsv,
-  type CsvExportOptions,
-} from "../../../domain/csvExport";
+import type { CsvExportOptions } from "../../../domain/csvExport";
 import { AccountPicker } from "../../accounts";
 import {
   ErrorText,
@@ -15,28 +12,18 @@ import {
   Txt,
   DateField,
 } from "../../../shared/ui";
-import { shareFile } from "../../../infrastructure/files/shareFile";
 import { useFinance } from "../../../state/finance";
+import { useCsvExport } from "../model/useCsvExport";
+import { CsvExportResult } from "./CsvExportResult";
 
 export function CsvExportSheet() {
-  const { state, today, notify } = useFinance();
+  const { state, today } = useFinance();
   const [format, setFormat] = useState<CsvExportOptions["format"]>("universal");
   const [accountId, setAccount] = useState<string>();
   const [from, setFrom] = useState("");
   const [through, setThrough] = useState(today);
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
-  let preview: ReturnType<typeof exportTransactionsCsv> | undefined,
-    validation = "";
-  try {
-    preview = exportTransactionsCsv(
-      state,
-      { format, accountId, from, through },
-      today,
-    );
-  } catch (e) {
-    validation = (e as Error).message;
-  }
+  const exporting = useCsvExport({ format, accountId, from, through });
+  const { busy, preview } = exporting;
   return (
     <View style={{ gap: 18 }}>
       <Notice>
@@ -47,6 +34,7 @@ export function CsvExportSheet() {
       <Segments
         value={format}
         onChange={(value) => {
+          if (!exporting.invalidate()) return;
           setFormat(value);
           if (value === "ynab" && !accountId) setAccount(state.accounts[0].id);
         }}
@@ -60,23 +48,36 @@ export function CsvExportSheet() {
           <Chip
             label="Все счета"
             active={!accountId}
-            onPress={() => setAccount(undefined)}
+            onPress={() => {
+              if (exporting.invalidate()) setAccount(undefined);
+            }}
           />
         )}
         <Chip
           label="Выбрать счёт"
           active={!!accountId}
-          onPress={() => setAccount(accountId ?? state.accounts[0].id)}
+          onPress={() => {
+            if (exporting.invalidate())
+              setAccount(accountId ?? state.accounts[0].id);
+          }}
         />
       </Row>
       {accountId && (
-        <AccountPicker selected={accountId} onChange={setAccount} />
+        <AccountPicker
+          allowArchived
+          selected={accountId}
+          onChange={(value) => {
+            if (exporting.invalidate()) setAccount(value);
+          }}
+        />
       )}
       <DateField
         label="С даты"
         accessibilityLabel="Начало экспорта"
         value={from}
-        onChangeText={setFrom}
+        onChangeText={(value) => {
+          if (exporting.invalidate()) setFrom(value);
+        }}
         placeholder="Вся история"
         allowClear
       />
@@ -84,7 +85,9 @@ export function CsvExportSheet() {
         label="По дату включительно"
         accessibilityLabel="Конец экспорта"
         value={through}
-        onChangeText={setThrough}
+        onChangeText={(value) => {
+          if (exporting.invalidate()) setThrough(value);
+        }}
         placeholder="Без ограничения"
         allowClear
       />
@@ -106,33 +109,34 @@ export function CsvExportSheet() {
       </Txt>
       {preview && (
         <Txt testID="csv-export-count">
-          Будет экспортировано операций: {preview.transactionCount} · строк:{" "}
-          {preview.count}
+          Будет экспортировано операций: {preview.totals.transactionCount} ·
+          строк: {preview.totals.rowCount} · файлов: {preview.totals.partCount}
         </Txt>
       )}
-      <ErrorText error={error || validation} />
+      <ErrorText error={exporting.error} />
+      {!!exporting.message && <Notice>{exporting.message}</Notice>}
       <Button
-        label={busy ? "Подготовка CSV…" : "Сохранить CSV"}
-        disabled={busy || !preview || preview.count === 0}
+        label={
+          busy
+            ? "Подготовка CSV…"
+            : exporting.batch
+              ? "Подготовить новый набор"
+              : "Сохранить CSV"
+        }
+        disabled={busy || !preview || preview.totals.rowCount === 0}
         icon="download-outline"
-        onPress={() => {
-          if (!preview) return;
-          setBusy(true);
-          setError("");
-          void shareFile(
-            preview.content,
-            `lad-transactions-${today}${accountId ? "-account" : ""}-${format}.csv`,
-            "text/csv",
-          )
-            .then(() => notify("CSV подготовлен"))
-            .catch((e) =>
-              setError(
-                e instanceof Error ? e.message : "Не удалось подготовить CSV.",
-              ),
-            )
-            .finally(() => setBusy(false));
-        }}
+        onPress={exporting.prepare}
       />
+      {exporting.receipt && (
+        <CsvExportResult
+          batch={exporting.batch}
+          receipt={exporting.receipt}
+          busy={busy}
+          share={exporting.share}
+          confirm={exporting.confirm}
+          verify={exporting.verify}
+        />
+      )}
     </View>
   );
 }

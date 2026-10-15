@@ -1,0 +1,91 @@
+# Default source5560, AFTER storage fix APK is reviewed/installed in-place.
+# Start on the existing pending import journal from SQLITE_FULL, no rollback.
+# FILE_NAME: exact plaintext rescue equivalent of the already decrypted password
+# archive. NAME MUST equal pending target name; do not clear or edit that field.
+# Host verifies candidate identity equivalence and file SHA before this flow.
+# This resumes the same journal/target; it does not claim another protected read.
+appId: app.lad.finance
+name: t02-resume-pending-large
+---
+- extendedWaitUntil:
+    visible: "Найдено прерванное восстановление. Продолжение использует ту же операцию и тот же профиль."
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: "Восстановить в новый профиль"
+    direction: DOWN
+- tapOn: "Восстановить в новый профиль"
+- scrollUntilVisible:
+    element:
+      text: "Выбрать копию для нового профиля"
+    direction: DOWN
+- tapOn: "Выбрать копию для нового профиля"
+- extendedWaitUntil:
+    visible: "Show roots"
+    timeout: 30000
+- tapOn: "Show roots"
+- tapOn: "Downloads"
+- scrollUntilVisible:
+    element:
+      text: '\Q${FILE_NAME}\E'
+    direction: DOWN
+    timeout: 30000
+- tapOn: '\Q${FILE_NAME}\E'
+- extendedWaitUntil:
+    visible: "Выбрать копию для нового профиля"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "Подготовить восстановление в новый профиль"
+    direction: DOWN
+    timeout: 600000
+- assertNotVisible: "Пароль для восстановления"
+- scrollUntilVisible:
+    element:
+      text: '\Q${NAME}\E'
+    direction: UP
+- assertVisible: '\Q${NAME}\E'
+- scrollUntilVisible:
+    element:
+      text: "Подготовить восстановление в новый профиль"
+    direction: DOWN
+- tapOn: "Подготовить восстановление в новый профиль"
+- scrollUntilVisible:
+    element:
+      text: 'Создать профиль «\Q${NAME}\E» из копии\?'
+    direction: DOWN
+- assertVisible: 'Создать профиль «\Q${NAME}\E» из копии\?'
+- scrollUntilVisible:
+    element:
+      text: 'В файле 9997 операций, 3 счетов и 0 целей\. После проверки записи откроется новый профиль\. Проверьте его данные перед удалением исходной копии\.'
+    direction: DOWN
+- assertVisible: 'В файле 9997 операций, 3 счетов и 0 целей\. После проверки записи откроется новый профиль\. Проверьте его данные перед удалением исходной копии\.'
+- scrollUntilVisible:
+    element:
+      text: "Подтвердить создание профиля из копии"
+    direction: DOWN
+- tapOn: "Подтвердить создание профиля из копии"
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 600000
+- assertNotVisible: "Продолжить восстановление списка"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 600000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+    timeout: 60000
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 9 997 000,00 ₽"
+- assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 0,00 ₽"
+- tapOn: "Закрыть"
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: ${NAME}
+- runFlow: t02-export-json.yaml

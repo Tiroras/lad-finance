@@ -1,0 +1,14 @@
+# Default; clean Lad_T02_Transfer_Test only. No clearState or reused userdata.
+# Runs real first-use setup, then exports the untouched initial control account.
+# Stop at fresh receiver SUCCESS: pull complete baseline before target restore.
+appId: app.lad.finance
+name: t02-target-baseline
+---
+- runFlow: ../security/a04-transfer-target-setup.yaml
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Данные и копии"
+    direction: DOWN
+- tapOn: "Данные и копии"
+- runFlow: t02-export-json.yaml

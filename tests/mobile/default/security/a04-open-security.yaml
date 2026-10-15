@@ -1,0 +1,12 @@
+# Default, isolated test profile; opens app security settings from home.
+appId: app.lad.finance
+name: a04-open-security
+---
+- assertVisible: "Профиль и настройки"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Защита данных"
+    direction: DOWN
+- tapOn: "Защита данных"
+- assertVisible: "Включить блокировку"

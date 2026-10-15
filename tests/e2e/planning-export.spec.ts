@@ -238,7 +238,9 @@ test("CSV export downloads universal rows and account-specific YNAB transfers", 
   let downloadPromise = page.waitForEvent("download");
   await button(page, "Сохранить CSV").click();
   const universal = await downloadPromise;
-  expect(universal.suggestedFilename()).toMatch(/universal.csv$/);
+  expect(universal.suggestedFilename()).toMatch(
+    /^lad-2026-09-10-[a-zA-Z0-9-]+-001-of-001\.csv$/,
+  );
   const csv = parseCsv(await readFile((await universal.path())!, "utf8"));
   expect(csv.rows[0][1]).toBe("transfer");
   expect(csv.rows[0][2]).toBe("-500.00");

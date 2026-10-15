@@ -1,0 +1,39 @@
+# Default, recovery-t02.md. Negative SOURCE export and full oracle completed.
+# Same selection remains open; controller ran focus -> MOVE_END -> clear,
+# verified empty hierarchy, filled correct password and verified 18 masked chars.
+# NAME is required and absent; pass -e NAME=T02-20261015-Large.
+# Uses the SAME selected encrypted file after wrong-password refusal.
+appId: app.lad.finance
+name: t02-large-positive
+---
+- runFlow:
+    file: t02-unlock-entered-password.yaml
+    env:
+      EXPECTED_RESULT: Большая копия проверена. Для сохранности исходного учёта восстановите её в новый профиль.
+- runFlow:
+    file: t02-new-profile.yaml
+    env:
+      NAME: ${NAME}
+      TRANSACTIONS: "9997"
+      ACCOUNTS: "3"
+      GOALS: "0"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 600000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+    timeout: 60000
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 9 997 000,00 ₽"
+- assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 0,00 ₽"
+- tapOn: "Закрыть"
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: ${NAME}
+- runFlow: t02-export-json.yaml

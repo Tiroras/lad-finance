@@ -110,9 +110,18 @@ export function CsvImportReview({ model }: { model: CsvImportModel }) {
         )}
       </View>
       <Button
-        label={`Импортировать ${selected.length} операций`}
-        disabled={!selected.length || !!preview.error}
-        onPress={commit}
+        label={
+          model.busy
+            ? "Сохраняем импорт…"
+            : `Импортировать ${selected.length} операций`
+        }
+        disabled={
+          model.busy ||
+          model.financeWriteBlocked ||
+          !selected.length ||
+          !!preview.error
+        }
+        onPress={() => void commit()}
       />
     </>
   );

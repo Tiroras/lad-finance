@@ -1,0 +1,113 @@
+# Default release, isolated test device, protection disabled; never clears data.
+# SOURCE_PROFILE is open and contains the complete A04 synthetic fixture.
+# CONTROL_PROFILE must be a new unique ASCII name (for Android inputText).
+# Creating CONTROL_PROFILE flushes SOURCE_PROFILE through the real provider.
+# The explicit source -> control -> source switch then confirms that barrier.
+# This checks restart AFTER that barrier, not interruption inside a native write.
+# UI checks do not replace comparison of the full exported JSON or device faults.
+appId: app.lad.finance
+name: a05-confirmed-restart
+---
+- launchApp:
+    stopApp: false
+- assertVisible: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+- tapOn: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+- tapOn: "Добавить профиль"
+- tapOn: "Название профиля"
+- inputText: ${CONTROL_PROFILE}
+- hideKeyboard
+- tapOn: "Создать профиль"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 0,00 ₽"
+- tapOn: "Закрыть"
+- tapOn: "Операции"
+- tapOn: "Вся история"
+- scrollUntilVisible:
+    element:
+      text: "Пока нет операций"
+    direction: DOWN
+- assertVisible: "Пока нет операций"
+- tapOn: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+- tapOn: "Открыть профиль: ${SOURCE_PROFILE}"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+    timeout: 30000
+- tapOn: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+- tapOn: "Открыть профиль: ${CONTROL_PROFILE}"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+    timeout: 30000
+- tapOn: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+- tapOn: "Открыть профиль: ${SOURCE_PROFILE}"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+    timeout: 30000
+- repeat:
+    times: 10
+    commands:
+      - stopApp
+      - launchApp
+      - extendedWaitUntil:
+          visible: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+          timeout: 30000
+      - scrollUntilVisible:
+          element:
+            text: "Открыть мои счета"
+          direction: DOWN
+      - tapOn: "Открыть мои счета"
+      - assertVisible: "Основная карта, Повседневные расходы, 9 300,00 ₽"
+      - scrollUntilVisible:
+          element:
+            text: "Наличные, Повседневные расходы, 0,00 ₽"
+          direction: DOWN
+      - assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+      - scrollUntilVisible:
+          element:
+            text: "Накопления, Накопления · вне доступного бюджета, 1 000,00 ₽"
+          direction: DOWN
+      - assertVisible: "Накопления, Накопления · вне доступного бюджета, 1 000,00 ₽"
+      - tapOn: "Закрыть"
+      - tapOn: "Операции"
+      - tapOn: "Вся история"
+      - scrollUntilVisible:
+          element:
+            text: "A04 Income"
+          direction: DOWN
+      - assertVisible: "A04 Income"
+      - assertVisible: "A04 Expense"
+      - scrollUntilVisible:
+          element:
+            text: "A04 Goal transfer"
+          direction: DOWN
+      - assertVisible: "A04 Goal transfer"
+- tapOn: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+- tapOn: "Открыть профиль: ${CONTROL_PROFILE}"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 0,00 ₽"
+- tapOn: "Закрыть"
+- tapOn: "Операции"
+- tapOn: "Вся история"
+- scrollUntilVisible:
+    element:
+      text: "Пока нет операций"
+    direction: DOWN
+- assertVisible: "Пока нет операций"
+- tapOn: "Текущий профиль: ${CONTROL_PROFILE}. Открыть профили"
+- tapOn: "Открыть профиль: ${SOURCE_PROFILE}"
+- extendedWaitUntil:
+    visible: "Текущий профиль: ${SOURCE_PROFILE}. Открыть профили"
+    timeout: 30000

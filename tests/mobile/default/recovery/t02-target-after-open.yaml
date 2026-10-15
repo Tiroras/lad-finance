@@ -1,0 +1,41 @@
+# Target5562 only, after rare observation of the same successful protected open.
+# Does not pick a file or submit a password. NAME must be new. Stops at fresh
+# receiver SUCCESS after new profile confirmation/restart/all balances/export.
+appId: app.lad.finance
+name: t02-target-after-open
+---
+- assertNotVisible: "Пароль неверный или файл повреждён. Данные не изменены."
+- scrollUntilVisible:
+    element:
+      text: "Большая копия проверена. Для сохранности исходного учёта восстановите её в новый профиль."
+    direction: DOWN
+    timeout: 60000
+- assertVisible: "Большая копия проверена. Для сохранности исходного учёта восстановите её в новый профиль."
+- assertNotVisible: "Заменить данные этой копией"
+- runFlow:
+    file: t02-new-profile.yaml
+    env:
+      NAME: ${NAME}
+      TRANSACTIONS: "9997"
+      ACCOUNTS: "3"
+      GOALS: "0"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 600000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+    timeout: 60000
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 9 997 000,00 ₽"
+- assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 0,00 ₽"
+- tapOn: "Закрыть"
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: ${NAME}
+- runFlow: t02-export-json.yaml

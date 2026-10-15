@@ -1,19 +1,25 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import {
   matchCategoryRule,
   type TransactionTemplate,
 } from "../../../domain/automation";
 import { refundedAmount } from "../../../domain/transactionAmounts";
-import { accountCurrency, currencySymbol } from "../../../domain/currency";
-import type { Transaction } from "../../../domain/types";
+import { currencySymbol } from "../../../domain/currency";
+import { uid } from "../../../domain/finance";
+import { sameTransaction } from "../../../domain/actions/transactions";
+import { transactionStatus } from "../../../domain/transactionStatus";
+import type { FinanceState, Transaction } from "../../../domain/types";
+import { useStoredDraft } from "../../../infrastructure/storage/useStoredDraft";
+import { encryptedDraftStorage } from "../../../infrastructure/storage/draftStorage";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
   useMoney,
   useFinance,
+  useFinanceStatus,
 } from "../../../state/finance";
-import type { SheetOf } from "../../../application/navigation/types";
+import type { OpenSheet, SheetOf } from "../../../application/navigation/types";
 import {
   Button,
   Field,
@@ -26,7 +32,8 @@ import {
   DateField,
   useSheetScrollToStart,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
+import { useSecurity } from "../../security";
 import { DebtTransactionDetails } from "../../debts";
 import { CategoryPicker } from "../../categories";
 import { RefundFields } from "./RefundFields";
@@ -36,10 +43,15 @@ import { TransactionDetails } from "./TransactionDetails";
 import { usePreventSheetDismiss } from "../../../shared/ui/SheetDismissal";
 import { transactionDraftSnapshot } from "../model/transactionDraftChanges";
 import {
+  parseStoredTransactionDraft,
+  type StoredTransactionDraft,
+} from "../model/storedTransactionDraft";
+import {
   applyQuickEntry,
   applyTransactionTemplate,
   changeTransactionType,
   createTransactionDraft,
+  draftAccountCurrency,
   repeatTransaction,
   selectRefund as selectRefundDraft,
   toggleTransactionSplits,
@@ -49,18 +61,44 @@ import {
   type TransactionDraft,
 } from "../model/transactionDraft";
 
-export function TransactionForm({
-  sheet,
-  close,
-}: {
+type TransactionFormProps = {
   sheet: SheetOf<"transaction">;
   close: () => void;
-}) {
+  open: OpenSheet;
+};
+
+export function TransactionForm(props: TransactionFormProps) {
+  const { profile } = useFinance();
+  return (
+    <TransactionFormFields
+      key={`${profile}:${props.sheet.id ?? "new"}`}
+      {...props}
+    />
+  );
+}
+
+function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
   const { moneyInput, currency: baseCode, symbol: baseSymbol } = useMoney();
-  const { state, notify, today } = useFinance();
+  const { state, profile, notify, today } = useFinance();
+  const status = useFinanceStatus();
+  const { locked } = useSecurity();
   const actions = useFinanceActions();
   const scrollToStart = useSheetScrollToStart();
   const sourceOriginal = state.transactions.find((t) => t.id === sheet.id);
+  const [baseline, setBaseline] = useState<Transaction | null>(
+    sourceOriginal ?? null,
+  );
+  const [createId, setCreateId] = useState(uid);
+  const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
+  const keepingDraftOnClose = useRef(false);
+  const pendingSave = useRef<{
+    state: FinanceState;
+    message: string;
+    confirmed?: boolean;
+  } | null>(null);
+  const [awaitingSave, setAwaitingSave] = useState(false);
+  const [postDate, setPostDate] = useState(today);
   const [quick, setQuick] = useState("");
   const [templateName, setTemplateName] = useState("");
   const auxiliaryDraft = useRef({
@@ -85,25 +123,6 @@ export function TransactionForm({
     auxiliaryDraft.current.templateName = value;
     setTemplateName(value);
   };
-  usePreventSheetDismiss({
-    hasChanges: () =>
-      !sourceOriginal?.debtId &&
-      (!!auxiliaryDraft.current.quick.trim() ||
-        auxiliaryDraft.current.templateName.trim() !==
-          auxiliaryDraft.current.savedTemplateName ||
-        transactionDraftSnapshot(
-          state,
-          currentDraft.current,
-          sourceOriginal,
-        ) !==
-          transactionDraftSnapshot(
-            state,
-            initialDraft.current,
-            sourceOriginal,
-          )),
-    description:
-      "Введённые данные операции не сохранены. Если закрыть окно, их придётся ввести заново. Сохранённая история не изменится.",
-  });
   const [entryTool, setEntryTool] = useState<EntryTool>(null);
   const [detailsExpanded, setDetailsExpanded] = useState(
     !!draft.note || draft.splitEnabled,
@@ -121,6 +140,8 @@ export function TransactionForm({
     received,
     valuation,
     date,
+    status: draftStatus,
+    expectedDate,
     splitEnabled,
     refundOf,
     refundSource,
@@ -137,12 +158,97 @@ export function TransactionForm({
   const patch = (values: Partial<TransactionDraft>) =>
     setDraft((current) => ({ ...current, ...values }));
   const { error, setError, run } = useActionError();
+  const payload = useMemo<StoredTransactionDraft>(
+    () => ({
+      version: 1,
+      createId,
+      draft,
+      quick,
+      templateName,
+      savedTemplateName: auxiliaryDraft.current.savedTemplateName,
+      original: baseline,
+    }),
+    [createId, draft, quick, templateName, baseline],
+  );
+  const recordId = draft.repeating ? "new" : (sheet.id ?? "new");
+  const savedDraft = useStoredDraft({
+    profileId: profile,
+    slot: "transaction",
+    recordId,
+    payload,
+    dirty:
+      !!quick.trim() ||
+      templateName.trim() !== auxiliaryDraft.current.savedTemplateName ||
+      transactionDraftSnapshot(state, draft, sourceOriginal) !==
+        transactionDraftSnapshot(state, initialDraft.current, sourceOriginal),
+    enabled:
+      status.ready &&
+      !status.financeWriteBlocked &&
+      !locked &&
+      !sourceOriginal?.debtId,
+    parse: parseStoredTransactionDraft,
+    onRestore: (restored) => {
+      setCreateId(restored.createId);
+      setBaseline(restored.original);
+      setDraft(restored.draft);
+      setQuick(restored.quick);
+      setTemplateName(restored.templateName);
+      auxiliaryDraft.current = {
+        quick: restored.quick,
+        templateName: restored.templateName,
+        savedTemplateName: restored.savedTemplateName,
+      };
+      setDetailsExpanded(!!restored.draft.note || restored.draft.splitEnabled);
+      setError("");
+    },
+  });
+  const hasChanges = () =>
+    !keepingDraftOnClose.current &&
+    !sourceOriginal?.debtId &&
+    (!!pendingSave.current ||
+      !!auxiliaryDraft.current.quick.trim() ||
+      auxiliaryDraft.current.templateName.trim() !==
+        auxiliaryDraft.current.savedTemplateName ||
+      transactionDraftSnapshot(state, currentDraft.current, sourceOriginal) !==
+        transactionDraftSnapshot(state, initialDraft.current, sourceOriginal));
+  usePreventSheetDismiss({
+    hasChanges,
+    description:
+      "Введённые поля и сохранённый черновик этой формы будут удалены. Записанные финансовые операции не изменятся.",
+    onDiscard: async () => {
+      if (saving.current || pendingSave.current)
+        throw new Error(
+          "Сначала подтвердите сохранение операции. Черновик пока нужен для безопасного повтора.",
+        );
+      await savedDraft.clear();
+    },
+  });
+  const originalChanged =
+    !!original && (!baseline || !sameTransaction(original, baseline));
+  const originalRemoved = !!sheet.id && !repeating && !sourceOriginal;
+  const validAccount = state.accounts.some(
+    (account) =>
+      account.id === accountId &&
+      !account.archived &&
+      (type !== "expense" ||
+        account.kind === "spending" ||
+        account.kind === "credit"),
+  );
+  const validTarget =
+    type !== "transfer" ||
+    state.accounts.some(
+      (account) =>
+        account.id === toAccountId &&
+        account.id !== accountId &&
+        !account.archived,
+    );
   const {
     error: entryError,
     setError: setEntryError,
     run: runEntry,
   } = useActionError();
   const revealDraft = (next: TransactionDraft) => {
+    if (next.repeating && !currentDraft.current.repeating) setCreateId(uid());
     setError("");
     setEntryError("");
     setDraft(next);
@@ -173,26 +279,274 @@ export function TransactionForm({
       if (!id) auxiliaryDraft.current.savedTemplateName = name.trim();
       notify(id ? "Шаблон обновлён" : "Шаблон сохранён");
     });
+  const commit = async (change: () => FinanceState, message: string) => {
+    if (saving.current) return;
+    saving.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      if (!pendingSave.current) {
+        if (!savedDraft.ready || savedDraft.offer)
+          throw new Error(
+            "Сначала выберите, что делать с сохранённым черновиком.",
+          );
+        await savedDraft.flush();
+        savedDraft.suspend();
+        try {
+          pendingSave.current = { state: change(), message };
+          setAwaitingSave(true);
+        } catch (cause) {
+          savedDraft.resume();
+          throw cause;
+        }
+      }
+      const pending = pendingSave.current;
+      await status.confirmCurrentSave(profile, pending.state);
+      pending.confirmed = true;
+      await savedDraft.clear();
+      pendingSave.current = null;
+      setAwaitingSave(false);
+      notify(pending.message);
+      keepingDraftOnClose.current = true;
+      close();
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Не удалось подтвердить сохранение. Черновик сохранён для повтора.",
+      );
+    } finally {
+      saving.current = false;
+      setBusy(false);
+    }
+  };
   const save = () =>
-    run(() => {
-      actions.saveTransaction(transactionInput(state, draft, original));
-      notify(
-        original
+    void commit(
+      () =>
+        actions.saveTransaction({
+          ...transactionInput(state, draft, original),
+          ...(!original
+            ? { createId }
+            : { expectedOriginal: baseline ?? original }),
+        }),
+      draftStatus === "pending"
+        ? "Операция ожидает проведения"
+        : original
           ? "Операция обновлена"
           : type === "transfer"
             ? "Перевод записан"
             : "Операция добавлена",
-      );
-      close();
-    });
+    );
   if (original?.debtId)
     return <DebtTransactionDetails transaction={original} close={close} />;
+  if (busy || awaitingSave)
+    return (
+      <>
+        <Notice>
+          {busy
+            ? "Подтверждаем запись операции и очищаем её черновик…"
+            : pendingSave.current?.confirmed
+              ? "Операция сохранена. Не удалось очистить её черновик; повтор проверит ту же запись и завершит очистку, без добавления второго движения."
+              : "Сохранение операции ещё не подтверждено. Повтор проверит ту же запись, без добавления второго движения."}
+        </Notice>
+        <ErrorText error={error} />
+        <Button
+          label={busy ? "Сохранение…" : "Повторить подтверждение сохранения"}
+          disabled={busy}
+          onPress={save}
+        />
+        {!busy && (
+          <Button
+            label="Закрыть и сохранить черновик"
+            variant="secondary"
+            onPress={() => {
+              keepingDraftOnClose.current = true;
+              close();
+            }}
+          />
+        )}
+      </>
+    );
+  if (!savedDraft.ready)
+    return (
+      <>
+        <Notice>Проверяем сохранённый черновик…</Notice>
+        <ErrorText error={savedDraft.error} />
+        {!!savedDraft.error && (
+          <>
+            <Button
+              label="Повторить чтение черновика"
+              onPress={savedDraft.retryLoad}
+            />
+            <DeleteButton
+              label="Удалить все черновики профиля"
+              explanation="Удалятся черновики операции и первоначальной настройки только этого профиля. Записанный учёт не изменится. Это действие нельзя отменить."
+              onDelete={() =>
+                void savedDraft
+                  .discardAll()
+                  .catch((cause: unknown) =>
+                    setError(
+                      cause instanceof Error
+                        ? cause.message
+                        : "Не удалось удалить черновики.",
+                    ),
+                  )
+              }
+            />
+          </>
+        )}
+      </>
+    );
+  const sameDraftRecord = savedDraft.offer?.lease.recordId === recordId;
+  const storedDraftError = error || savedDraft.error;
+  if (savedDraft.offer)
+    return (
+      <>
+        <Notice>
+          На этом профиле есть сохранённый черновик операции. Поля ещё не
+          применены.
+          {sameDraftRecord
+            ? " Можно продолжить ввод или явно удалить черновик."
+            : " Он относится к другой записи; открыть его или заменить текущей формой нужно явно."}
+        </Notice>
+        <ErrorText error={storedDraftError} />
+        <Button
+          label={
+            sameDraftRecord
+              ? "Восстановить черновик операции"
+              : "Открыть сохранённый черновик"
+          }
+          onPress={() => {
+            if (!sameDraftRecord) {
+              const id = savedDraft.offer?.lease.recordId;
+              open({
+                type: "transaction",
+                ...(id && id !== "new" ? { id } : {}),
+              });
+            } else
+              void savedDraft
+                .restore()
+                .catch((cause: unknown) =>
+                  setError(
+                    cause instanceof Error
+                      ? cause.message
+                      : "Не удалось открыть черновик.",
+                  ),
+                );
+          }}
+        />
+        <Button
+          label={
+            sameDraftRecord
+              ? "Удалить сохранённый черновик"
+              : "Заменить черновик этой формой"
+          }
+          variant="danger"
+          onPress={() =>
+            void savedDraft
+              .discard()
+              .catch((cause: unknown) =>
+                setError(
+                  cause instanceof Error
+                    ? cause.message
+                    : "Не удалось удалить черновик.",
+                ),
+              )
+          }
+        />
+      </>
+    );
+  if (originalRemoved)
+    return (
+      <>
+        <Notice tone="warning">
+          Исходная операция удалена. Черновик не перезапишет другую запись.
+          Можно явно создать новую операцию с этими полями.
+        </Notice>
+        <ErrorText error={storedDraftError} />
+        <Button
+          label="Создать новую из черновика"
+          onPress={() => revealDraft(repeatTransaction(draft, today))}
+        />
+      </>
+    );
+  if (original && transactionStatus(original) === "cancelled")
+    return (
+      <>
+        <Notice>
+          «{original.title}» отменена. Деньги не списаны, резерв освобождён.
+          Отмена сохранена в истории.
+        </Notice>
+        <Button
+          label="Создать новую операцию"
+          variant="secondary"
+          onPress={() => revealDraft(repeatTransaction(draft, today))}
+        />
+      </>
+    );
+  if (!original && !state.accounts.some((account) => !account.archived))
+    return <AccountChoiceEmpty open={open} />;
+  const pendingChanged =
+    !!original &&
+    transactionStatus(original) === "pending" &&
+    transactionDraftSnapshot(state, draft, original) !==
+      transactionDraftSnapshot(
+        state,
+        createTransactionDraft(state, today, original),
+        original,
+      );
   return (
     <>
+      {!encryptedDraftStorage && (
+        <Notice>
+          Черновик автоматически сохраняется в браузере без шифрования. После
+          перезапуска его восстановление нужно подтвердить.
+        </Notice>
+      )}
+      <ErrorText error={savedDraft.error} />
+      {originalChanged && (
+        <>
+          <Notice tone="warning">
+            Операция изменилась после сохранения черновика. Сейчас записано:
+            {" «"}
+            {original!.title}
+            {"», "}
+            {moneyInput(
+              original!.amount,
+              draftAccountCurrency(state, original!.accountId),
+            )}{" "}
+            {draftAccountCurrency(state, original!.accountId)}, {original!.date}
+            . Ваши поля ещё не записаны. Подтвердите замену только после
+            проверки.
+          </Notice>
+          <Button
+            label="Подтвердить замену актуальной записи черновиком"
+            variant="secondary"
+            onPress={() => setBaseline(original ?? null)}
+          />
+        </>
+      )}
       {repeating && (
         <Notice>
           Новая копия операции на сегодня. Проверьте сумму и дату; связи с
           целями и планами не повторяются.
+        </Notice>
+      )}
+      {!original && !refundOf && (
+        <Segments
+          value={draftStatus}
+          onChange={(status) => patch({ status })}
+          options={[
+            { value: "posted", label: "Проведена" },
+            { value: "pending", label: "Ожидается" },
+          ]}
+        />
+      )}
+      {draftStatus === "pending" && (
+        <Notice>
+          Ожидаемая операция не меняет фактический остаток. Исходящая сумма
+          зарезервирована до проведения или отмены; поступление ещё не доступно
+          для трат.
         </Notice>
       )}
       {original?.goalId ? (
@@ -240,7 +594,7 @@ export function TransactionForm({
         />
       )}
       <AmountField
-        label={`Сумма, ${currencySymbol(accountCurrency(state, accountId))}`}
+        label={`Сумма, ${currencySymbol(draftAccountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма операции"
         value={amount}
         onChangeText={(value) => {
@@ -291,18 +645,24 @@ export function TransactionForm({
         }
         label={type === "transfer" ? "Откуда" : "Счёт"}
       />
-      {type === "income" && !original?.plannedIncomeId && !original?.debtId && (
-        <RefundFields
-          refundOf={refundOf}
-          sourceAmount={refundSource}
-          accountId={accountId}
-          transactionId={original?.id}
-          locked={!!original?.refundOf}
-          onSelect={selectRefund}
-          onClear={() => patch({ refundOf: undefined, refundSource: "" })}
-          onSourceAmount={(refundSource) => patch({ refundSource })}
-        />
-      )}
+      {!validAccount && <AccountChoiceEmpty open={open} />}
+      {type === "income" &&
+        draftStatus === "posted" &&
+        validAccount &&
+        !original?.plannedIncomeId &&
+        !original?.debtId && (
+          <RefundFields
+            refundOf={refundOf}
+            sourceAmount={refundSource}
+            accountId={accountId}
+            transactionId={original?.id}
+            locked={!!original?.refundOf}
+            onSelect={selectRefund}
+            onClear={() => patch({ refundOf: undefined, refundSource: "" })}
+            onSourceAmount={(refundSource) => patch({ refundSource })}
+          />
+        )}
+      {!validTarget && <AccountChoiceEmpty open={open} />}
       {type === "transfer" && !original?.goalId && (
         <AccountPicker
           label="Куда"
@@ -345,23 +705,78 @@ export function TransactionForm({
         </>
       )}
       <DateField
-        label="Дата"
+        label={draftStatus === "pending" ? "Дата создания ожидания" : "Дата"}
         accessibilityLabel="Дата операции"
         value={date}
         onChangeText={(date) => patch({ date })}
       />
+      {draftStatus === "pending" && (
+        <DateField
+          label="Ожидаемая дата · необязательно"
+          accessibilityLabel="Ожидаемая дата операции"
+          value={expectedDate}
+          onChangeText={(expectedDate) => patch({ expectedDate })}
+        />
+      )}
       <ErrorText error={error} />
       <Button
         label={
           original
             ? "Сохранить изменения"
-            : type === "transfer"
-              ? "Записать перевод"
-              : "Добавить операцию"
+            : draftStatus === "pending"
+              ? "Добавить ожидаемую операцию"
+              : type === "transfer"
+                ? "Записать перевод"
+                : "Добавить операцию"
         }
         icon="checkmark"
         onPress={save}
+        disabled={
+          originalChanged ||
+          !validAccount ||
+          !validTarget ||
+          status.financeWriteBlocked
+        }
       />
+      {original && transactionStatus(original) === "pending" && (
+        <>
+          {pendingChanged && (
+            <Notice>
+              Сначала сохраните изменённые поля ожидания, затем проведите
+              операцию.
+            </Notice>
+          )}
+          <DateField
+            label="Дата проведения"
+            accessibilityLabel="Дата проведения операции"
+            value={postDate}
+            onChangeText={setPostDate}
+          />
+          <Button
+            label="Провести операцию"
+            disabled={
+              pendingChanged || originalChanged || !validAccount || !validTarget
+            }
+            onPress={() =>
+              void commit(
+                () => actions.postPendingTransaction(original.id, postDate),
+                "Операция проведена; резерв освобождён",
+              )
+            }
+          />
+          <Button
+            label="Отменить ожидаемую операцию"
+            variant="secondary"
+            disabled={originalChanged}
+            onPress={() =>
+              void commit(
+                () => actions.cancelPendingTransaction(original.id),
+                "Ожидание отменено; резерв освобождён",
+              )
+            }
+          />
+        </>
+      )}
       <TransactionDetails
         draft={draft}
         currency={sourceCurrency}
@@ -372,6 +787,7 @@ export function TransactionForm({
         onToggleSplits={() => setDraft(toggleTransactionSplits)}
       />
       {original?.type === "expense" &&
+        transactionStatus(original) === "posted" &&
         !original.debtId &&
         original.amount > refundedAmount(state, original.id) && (
           <Button
@@ -419,11 +835,10 @@ export function TransactionForm({
         <DeleteButton
           label="Удалить операцию"
           onDelete={() =>
-            run(() => {
-              actions.deleteTransaction(original.id);
-              notify("Операция удалена, баланс пересчитан");
-              close();
-            })
+            void commit(
+              () => actions.deleteTransaction(original.id),
+              "Операция удалена, баланс пересчитан",
+            )
           }
         />
       )}

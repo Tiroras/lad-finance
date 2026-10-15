@@ -1,10 +1,16 @@
 import { accountBalance, accountBalances } from "./accountBalances";
 import { goalReserve, goalSaved } from "./goals";
-import { overduePayments, upcoming, paymentOccurrenceKey } from "./payments";
+import {
+  overduePayments,
+  upcoming,
+  paymentOccurrenceKey,
+  paymentPending,
+} from "./payments";
 import { forecast, type ForecastHorizon } from "./forecast";
 import { incomeOccurrences, incomeOccurrenceKey } from "./incomes";
-import { debtObligations } from "./debts";
+import { projectedDebtObligations } from "./debts";
 import { isScheduledDate } from "./recurrence";
+import { pendingLinkError } from "./pendingLinks";
 import {
   expenseContributions,
   periodTotals,
@@ -47,6 +53,13 @@ import {
   type CurrencyCode,
 } from "./currency";
 import type { CategoryId, FinanceState, Transaction } from "./types";
+import {
+  isPosted,
+  pendingHolds,
+  spendingHeld,
+  transactionStatus,
+  transactionStatusError,
+} from "./transactionStatus";
 export { MAX_MONEY, money, moneyInput, parseMoney } from "./currency";
 
 export const uid = () =>
@@ -98,7 +111,12 @@ export function categorySpending(
 export function spendable(state: FinanceState, today = localDate()) {
   // Use the same occurrence identities as the forecast, including early receipts.
   // An income beyond 90 days is not a dependable boundary for a daily allowance.
-  const income = incomeOccurrences(state, today, shiftDate(today, 90)).find(
+  const income = incomeOccurrences(
+    state,
+    today,
+    shiftDate(today, 90),
+    today,
+  ).find(
     ({ plan }) =>
       !state.settings.spendableIncomeId ||
       plan.id === state.settings.spendableIncomeId,
@@ -113,27 +131,40 @@ export function spendable(state: FinanceState, today = localDate()) {
       (sum, a) => sum + accountToBase(state, balances.get(a.id) ?? 0, a.id),
       0,
     );
-  const overdue = overduePayments(state, today).reduce(
-    (sum, o) =>
-      sum + accountToBase(state, o.payment.amount, o.payment.accountId),
-    0,
-  );
+  const overdue = overduePayments(state, today)
+    .filter(
+      (occurrence) =>
+        !paymentPending(state, occurrence.payment, occurrence.date),
+    )
+    .reduce(
+      (sum, o) =>
+        sum + accountToBase(state, o.payment.amount, o.payment.accountId),
+      0,
+    );
   const payments =
     overdue +
     upcoming(state, today, paymentEnd)
-      .filter((o) => !o.paid && !o.skipped)
+      .filter(
+        (o) =>
+          !o.paid && !o.skipped && !paymentPending(state, o.payment, o.date),
+      )
       .reduce(
         (sum, o) =>
           sum + accountToBase(state, o.payment.amount, o.payment.accountId),
         0,
       );
   const goals = goalReserve(state, today);
-  const debts = debtObligations(state, today, shiftDate(paymentEnd, -1)).reduce(
+  const debts = projectedDebtObligations(
+    state,
+    today,
+    shiftDate(paymentEnd, -1),
+  ).reduce(
     (sum, item) => sum + accountToBase(state, item.amount, item.accountId),
     0,
   );
+  const held = spendingHeld(state);
   const beforeProtection =
-    liquid - payments - debts - goals - state.settings.buffer;
+    liquid - held - payments - debts - goals - state.settings.buffer;
   const protection = income
     ? spendableProtection(state, today, payday, days)
     : undefined;
@@ -142,6 +173,7 @@ export function spendable(state: FinanceState, today = localDate()) {
   const raw = Math.min(beforeProtection, protection?.limit ?? beforeProtection);
   return {
     liquid,
+    held,
     payments,
     debts,
     overdue,
@@ -191,7 +223,7 @@ function spendableProtection(
   const checked = withoutDailySpending.days.map((day) => ({
     date: day.date,
     available:
-      day.balance -
+      day.available -
       state.settings.buffer -
       Math.max(0, daysBetween(dailyStart, day.date) + 1) * dailySpending,
   }));
@@ -273,6 +305,10 @@ export function validateTransaction(
   transaction: Transaction,
   today = localDate(),
 ): string | null {
+  const statusError = transactionStatusError(transaction);
+  if (statusError) return statusError;
+  const linkError = pendingLinkError(state, transaction);
+  if (linkError) return linkError;
   if (!["expense", "income", "transfer"].includes(transaction.type))
     return "Неизвестный тип операции.";
   if (!transaction.title.trim() || transaction.title.length > 120)
@@ -294,6 +330,11 @@ export function validateTransaction(
   if ((transaction.note?.length ?? 0) > 500)
     return "Примечание должно быть не длиннее 500 символов.";
   const source = state.accounts.find((a) => a.id === transaction.accountId)!;
+  if (
+    source.archived ||
+    state.accounts.find((a) => a.id === transaction.toAccountId)?.archived
+  )
+    return "Счёт в архиве. Сначала восстановите его или выберите активный счёт.";
   if (transaction.type === "expense" && source.kind === "savings")
     return "Для расхода сначала переведите свободные накопления на обычный счёт.";
   if (
@@ -330,7 +371,12 @@ export function validateTransaction(
       return "Цель не найдена.";
     if (
       transaction.amount >
-      accountBalance(state, transaction.accountId, transaction.date)
+      accountBalance(
+        state,
+        transaction.accountId,
+        isPosted(transaction) ? transaction.date : today,
+      ) -
+        (pendingHolds(state).get(transaction.accountId) ?? 0)
     )
       return "На выбранном счёте недостаточно средств.";
     if (
@@ -346,12 +392,28 @@ export function validateTransaction(
             (a.currency ?? "RUB") === (source.currency ?? "RUB"),
         )
         .reduce(
-          (sum, a) => sum + accountBalance(state, a.id, transaction.date),
+          (sum, a) =>
+            sum +
+            accountBalance(
+              state,
+              a.id,
+              isPosted(transaction) ? transaction.date : today,
+            ) -
+            (pendingHolds(state).get(a.id) ?? 0),
           0,
         );
       const allocated = state.goals
         .filter((g) => (g.currency ?? "RUB") === (source.currency ?? "RUB"))
-        .reduce((sum, g) => sum + goalSaved(state, g, transaction.date), 0);
+        .reduce(
+          (sum, g) =>
+            sum +
+            goalSaved(
+              state,
+              g,
+              isPosted(transaction) ? transaction.date : today,
+            ),
+          0,
+        );
       if (transaction.amount > savings - allocated)
         return "Эти накопления распределены по целям. Сначала освободите средства в целях.";
     }
@@ -394,8 +456,10 @@ export function validateTransaction(
     )
       return "Дата оплаты не соответствует графику.";
     if (
+      transactionStatus(transaction) !== "cancelled" &&
       state.transactions.some(
         (t) =>
+          transactionStatus(t) !== "cancelled" &&
           t.recurringId === transaction.recurringId &&
           !!t.occurrenceDate &&
           paymentOccurrenceKey(payment, t.occurrenceDate) ===
@@ -425,8 +489,10 @@ export function validateTransaction(
     )
       return "Дата поступления не соответствует графику.";
     if (
+      transactionStatus(transaction) !== "cancelled" &&
       state.transactions.some(
         (t) =>
+          transactionStatus(t) !== "cancelled" &&
           t.plannedIncomeId === plan.id &&
           !!t.incomeOccurrenceDate &&
           incomeOccurrenceKey(plan, t.incomeOccurrenceDate) ===

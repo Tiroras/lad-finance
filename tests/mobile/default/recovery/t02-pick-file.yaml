@@ -1,0 +1,35 @@
+# План: ../../plans/recovery-t02.md, B10-02 / A03-01 / A03-02.
+# Режим: default release, Lad_T02_Recovery_Test; английский Android DocumentsUI.
+# Данные: FILE_NAME с проверенными байтами заранее помещён в настоящий Downloads.
+# Старт: «Данные и копии», после open-data/confirm-saved, без открытого picker.
+# PICKER_ACTION: «Проверить копию» для read-only либо «Восстановить из файла»
+# для отдельной ветки большого импорта; после выбора файл ещё НЕ применяется.
+# Финиш: возврат в Лад. Для .ladbackup далее t02-unlock-password;
+# для JSON/.ladrescue — t02-verified-read-only или подготовка нового профиля.
+# T02 hierarchy pending: Show roots/Downloads известны по T01, на новом AVD
+# контроллер обязан подтвердить их и прямой выбор файла без отдельного Select.
+appId: app.lad.finance
+name: t02-pick-file
+---
+- assertVisible: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: '\Q${PICKER_ACTION}\E'
+    direction: DOWN
+    timeout: 30000
+- tapOn: '\Q${PICKER_ACTION}\E'
+- extendedWaitUntil:
+    visible: "Show roots"
+    timeout: 30000
+- tapOn: "Show roots"
+- assertVisible: "Downloads"
+- tapOn: "Downloads"
+- scrollUntilVisible:
+    element:
+      text: '\Q${FILE_NAME}\E'
+    direction: DOWN
+    timeout: 30000
+- tapOn: '\Q${FILE_NAME}\E'
+- extendedWaitUntil:
+    visible: "Данные и копии"
+    timeout: 30000

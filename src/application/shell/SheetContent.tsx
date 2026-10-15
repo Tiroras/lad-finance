@@ -11,6 +11,7 @@ import {
   CsvExportSheet,
   CsvImportSheet,
   DataSettings,
+  ImportResults,
 } from "../../features/data-transfer";
 import {
   ForecastPanel,
@@ -64,11 +65,16 @@ export const SheetContent = memo(function SheetContent({
   switch (sheet.type) {
     case "debt":
       return (
-        <DebtForm id={sheet.id} close={() => open({ type: "accounts" })} />
+        <DebtForm
+          id={sheet.id}
+          open={open}
+          close={() => open({ type: "accounts" })}
+        />
       );
     case "repayDebt":
       return (
         <DebtRepaymentForm
+          open={open}
           id={sheet.id}
           close={() => open({ type: "accounts" })}
         />
@@ -76,6 +82,7 @@ export const SheetContent = memo(function SheetContent({
     case "repayCredit":
       return (
         <CreditRepaymentForm
+          open={open}
           id={sheet.id}
           close={() => open({ type: "accounts" })}
         />
@@ -119,7 +126,13 @@ export const SheetContent = memo(function SheetContent({
         <ScenarioForm id={sheet.id} close={() => open({ type: "scenarios" })} />
       );
     case "transaction":
-      return <TransactionForm sheet={sheet} close={returnToGuide ?? close} />;
+      return (
+        <TransactionForm
+          sheet={sheet}
+          close={returnToGuide ?? close}
+          open={open}
+        />
+      );
     case "formula":
       return <FormulaContent />;
     case "simulate":
@@ -138,6 +151,7 @@ export const SheetContent = memo(function SheetContent({
           close={returnToGuide ?? close}
           defaultCurrency={sheet.currency}
           defaultKind={sheet.accountKind}
+          open={open}
         />
       );
     case "settings":
@@ -159,7 +173,9 @@ export const SheetContent = memo(function SheetContent({
     case "about":
       return <AboutSettings />;
     case "csv":
-      return <CsvImportSheet close={close} />;
+      return <CsvImportSheet open={open} />;
+    case "importResult":
+      return <ImportResults id={sheet.id} />;
     case "forecast":
       return <ForecastPanel open={open} />;
     case "forecastSettings":
@@ -179,6 +195,7 @@ export const SheetContent = memo(function SheetContent({
     case "recurring":
       return (
         <RecurringForm
+          open={open}
           id={sheet.id}
           sourceTransactionId={sheet.sourceTransactionId}
           defaultKind={sheet.kind}

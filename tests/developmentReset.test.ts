@@ -6,6 +6,7 @@ import ts from "typescript";
 import * as profiles from "../src/domain/profiles";
 import * as notificationPlan from "../src/infrastructure/notifications/notificationPlan";
 import { VAULT_STORAGE_KEY } from "../src/infrastructure/storage/vault";
+import * as draftStore from "../src/infrastructure/storage/draftStore";
 
 const source = (path: string) =>
   ts.transpileModule(
@@ -30,7 +31,11 @@ function fixture(dev: boolean, flag: string | undefined) {
   const items = new Map<string, string>();
   const secrets = new Map<string, string>();
   const calls: string[] = [];
-  const failures = { remove: false, secureStore: false };
+  const failures = { remove: false, secureStore: false, files: false };
+  const ciphertextKeys: {
+    profile: profiles.FinanceProfile;
+    keyId: string | null;
+  }[] = [];
   let response: {
     notification: { request: { content: { data: { source: string } } } };
   } | null = {
@@ -78,6 +83,10 @@ function fixture(dev: boolean, flag: string | undefined) {
     },
     "expo-secure-store": {
       WHEN_UNLOCKED_THIS_DEVICE_ONLY: 1,
+      async getItemAsync(key: string, options: { keychainService: string }) {
+        if (failures.secureStore) throw new Error("device locked");
+        return secrets.get(`${options.keychainService}:${key}`) ?? null;
+      },
       async deleteItemAsync(key: string, options: { keychainService: string }) {
         calls.push(`secret:remove:${options.keychainService}:${key}`);
         if (failures.secureStore) throw new Error("device locked");
@@ -95,6 +104,15 @@ function fixture(dev: boolean, flag: string | undefined) {
     "../../domain/reminders": {},
     "./notificationPlan": notificationPlan,
     "./vault": { VAULT_STORAGE_KEY },
+    "./draftStore": draftStore,
+    "./ciphertextFiles.native": {
+      listCiphertextKeysForReset: () => ciphertextKeys,
+      removeCiphertextFilesForReset() {
+        calls.push("files:remove-owned-root");
+        if (failures.files) throw new Error("files unavailable");
+        ciphertextKeys.length = 0;
+      },
+    },
   };
   const load = (name: keyof typeof sources) => {
     const exports = {};
@@ -122,6 +140,7 @@ function fixture(dev: boolean, flag: string | undefined) {
     secrets,
     calls,
     failures,
+    ciphertextKeys,
     notifications,
     restart,
     getResponse: () => response,
@@ -233,7 +252,7 @@ test("one JS launch resets once; a full restart resets again", async () => {
 });
 
 test("failed reset rejects and allows retry instead of marking startup complete", async () => {
-  for (const failure of ["secureStore", "remove"] as const) {
+  for (const failure of ["secureStore", "files", "remove"] as const) {
     const { items, calls, failures, restart } = fixture(true, "true");
     items.set("lad-profiles-v1", "previous profile");
     const runtime = restart();
@@ -246,4 +265,48 @@ test("failed reset rejects and allows retry instead of marking startup complete"
     await runtime.resetDevelopmentData();
     assert.equal(items.size, 0);
   }
+});
+
+test("fresh removes file pointers, orphan-generation keys and rescue permits without reading financial files", async () => {
+  const { items, secrets, ciphertextKeys, calls, restart } = fixture(
+    true,
+    "true",
+  );
+  const pending = "profile-550e8400-e29b-41d4-a716-446655440000";
+  items.set(
+    `lad-profile-personal:${VAULT_STORAGE_KEY}`,
+    JSON.stringify({
+      format: "lad-ciphertext-file",
+      version: 1,
+      profileId: "personal",
+      fileName: "../untrusted",
+      keyId: "pointer-key",
+    }),
+  );
+  items.set("lad-profile-recovery-v1", JSON.stringify({ targetId: pending }));
+  ciphertextKeys.push({ profile: "personal", keyId: "orphan-key" });
+  ciphertextKeys.push({ profile: "demo", keyId: null });
+  for (const [profile, key] of [
+    ["personal", "pointer-key"],
+    ["personal", "orphan-key"],
+    [pending, "permit-key"],
+  ])
+    secrets.set(
+      `app.lad.finance.vault.${profile}:lad-${profile}-vault-key-${key}`,
+      "secret",
+    );
+  secrets.set(
+    `app.lad.finance.vault.${pending}:lad-${pending}-rescue-allowance`,
+    JSON.stringify({ keyId: "permit-key" }),
+  );
+  secrets.set(
+    "app.lad.finance.vault.demo:lad-demo-rescue-allowance",
+    "{broken",
+  );
+  secrets.set("another-app:key", "keep");
+  await restart().resetDevelopmentData();
+  assert.deepEqual([...secrets], [["another-app:key", "keep"]]);
+  assert.equal(ciphertextKeys.length, 0);
+  assert.equal(items.size, 0);
+  assert.ok(calls.includes("files:remove-owned-root"));
 });

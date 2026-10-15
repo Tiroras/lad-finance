@@ -15,9 +15,9 @@ export function planPurchase(
   let lowest = Infinity;
   let limitingDay = baseline.days[index];
   for (let i = baseline.days.length - 1; i >= 0; i--) {
-    lowest = Math.min(lowest, baseline.days[i].balance);
+    lowest = Math.min(lowest, baseline.days[i].available);
     limits[i] = Math.max(0, Math.min(MAX_MONEY, lowest - baseline.buffer));
-    if (i >= index && baseline.days[i].balance <= limitingDay.balance)
+    if (i >= index && baseline.days[i].available <= limitingDay.available)
       limitingDay = baseline.days[i];
   }
   const feasible = !baseline.firstBelowBuffer;

@@ -1,12 +1,21 @@
 export async function shareFile(
-  content: string,
+  content: string | readonly Uint8Array[],
   name: string,
   mimeType: string,
 ) {
-  const url = URL.createObjectURL(new Blob([content], { type: mimeType }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = name;
-  link.click();
+  const parts =
+    typeof content === "string"
+      ? [content]
+      : content.map((part) => new Uint8Array(part));
+  const url = URL.createObjectURL(new Blob(parts, { type: mimeType }));
+  try {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    link.click();
+  } catch (error) {
+    URL.revokeObjectURL(url);
+    throw error;
+  }
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

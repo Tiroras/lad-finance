@@ -18,9 +18,9 @@ export function ForecastChart({
   const values = [
     0,
     result.buffer,
-    result.openingBalance,
-    ...result.days.map((d) => d.balance),
-    ...(baseline?.days.map((d) => d.balance) ?? []),
+    result.openingAvailable,
+    ...result.days.map((d) => d.available),
+    ...(baseline?.days.map((d) => d.available) ?? []),
   ];
   const min = Math.min(...values),
     max = Math.max(...values);
@@ -30,13 +30,13 @@ export function ForecastChart({
     data.days
       .map(
         (day, i) =>
-          `${8 + (i / (data.days.length - 1)) * 304},${y(day.balance)}`,
+          `${8 + (i / (data.days.length - 1)) * 304},${y(day.available)}`,
       )
       .join(" ");
   return (
     <View style={{ gap: 10 }}>
       <Txt style={{ fontFamily: font.bold, fontSize: 16 }}>
-        Как меняется остаток
+        Как меняется доступный остаток
       </Txt>
       <Row style={{ justifyContent: "space-between" }}>
         <Txt style={{ fontSize: 11, color: C.muted }}>{money(max)}</Txt>
@@ -47,7 +47,7 @@ export function ForecastChart({
       <View
         accessible
         accessibilityRole="image"
-        accessibilityLabel="График остатка по дням; точные суммы доступны в календаре ниже"
+        accessibilityLabel="График доступного остатка по дням; точные суммы доступны в календаре ниже"
       >
         <Svg
           width="100%"

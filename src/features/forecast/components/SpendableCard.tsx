@@ -54,6 +54,12 @@ export function SpendableCard({
         {safe.payday === today ? "На сегодня" : `до ${dateLabel(safe.payday)}`}{" "}
         · {safe.income ? safe.income.plan.name : "дата из настроек"}
       </Txt>
+      {safe.held > 0 && (
+        <Txt style={{ color: "#AFC5B6", fontSize: 11 }}>
+          Ожидающие списания учтены:{" "}
+          {hidden ? `••• ${baseSymbol}` : money(safe.held)}
+        </Txt>
+      )}
       <View style={st.heroDivider} />
       <Row
         style={{

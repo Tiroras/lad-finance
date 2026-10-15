@@ -9,14 +9,20 @@ import {
   validDate,
   shiftDate,
 } from "../finance";
-import { canLinkPayment, paymentOccurrenceKey } from "../payments";
+import {
+  canLinkPayment,
+  paymentOccurrenceKey,
+  paymentPending,
+} from "../payments";
 import {
   isScheduledDate,
   scheduleSchema,
   validateSchedules,
 } from "../recurrence";
 import type { FinanceState, Recurring } from "../types";
-import { saveTransaction } from "./transactions";
+import { postPendingTransaction, saveTransaction } from "./transactions";
+import { isPosted, transactionStatus } from "../transactionStatus";
+import { pendingLinkError } from "../pendingLinks";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -45,6 +51,19 @@ export function saveRecurring(
 ): FinanceState {
   const original = state.recurring.find((p) => p.id === input.id);
   ensure(!input.id || original, "Платёж уже удалён.");
+  ensure(
+    !original ||
+      !state.transactions.some(
+        (transaction) =>
+          transaction.recurringId === original.id &&
+          transactionStatus(transaction) === "pending",
+      ) ||
+      (original.accountId === input.accountId &&
+        original.amount === input.amount &&
+        original.day === input.day &&
+        original.startsOn === input.startsOn),
+    "Сначала проведите или отмените ожидание этого платежа, затем измените его условия.",
+  );
   ensure(
     original || state.recurring.length < 200,
     "Можно создать не более 200 платежей.",
@@ -88,7 +107,7 @@ export function saveRecurring(
   );
   ensure(
     state.accounts.some(
-      (a) => a.id === input.accountId && a.kind === "spending",
+      (a) => a.id === input.accountId && a.kind === "spending" && !a.archived,
     ),
     "Выберите повседневный счёт.",
   );
@@ -131,6 +150,11 @@ export function saveRecurring(
   };
 
   validateSchedules(next);
+  for (const transaction of next.transactions) {
+    if (transaction.recurringId !== payment.id) continue;
+    const error = pendingLinkError(next, transaction);
+    ensure(!error, error ?? "Проверьте ожидание платежа.");
+  }
   checkCurrencyAmounts(next, today);
   return next;
 }
@@ -153,6 +177,23 @@ export function setRecurringActive(
   active: boolean,
   today = localDate(),
 ): FinanceState {
+  ensure(
+    !state.transactions.some(
+      (transaction) =>
+        transaction.recurringId === id &&
+        transactionStatus(transaction) === "pending",
+    ),
+    "Сначала проведите или отмените ожидание этого платежа.",
+  );
+  ensure(
+    !active ||
+      !state.accounts.find(
+        (account) =>
+          account.id ===
+          state.recurring.find((payment) => payment.id === id)?.accountId,
+      )?.archived,
+    "Сначала восстановите счёт платежа из архива.",
+  );
   ensure(
     state.recurring.some((p) => p.id === id),
     "Платёж уже удалён.",
@@ -200,12 +241,13 @@ export function setPaymentSkipped(
   ensure(
     !state.transactions.some(
       (t) =>
+        transactionStatus(t) !== "cancelled" &&
         t.recurringId === id &&
         t.occurrenceDate &&
         paymentOccurrenceKey(payment, t.occurrenceDate) ===
           paymentOccurrenceKey(payment, date),
     ),
-    "Оплаченный платёж нельзя пропустить.",
+    "Проведённый платёж или активное ожидание нельзя пропустить.",
   );
   const next: FinanceState = {
     ...state,
@@ -245,6 +287,7 @@ export function payRecurring(
   if (
     state.transactions.some(
       (t) =>
+        isPosted(t) &&
         t.recurringId === id &&
         t.occurrenceDate &&
         paymentOccurrenceKey(payment, t.occurrenceDate) ===
@@ -252,6 +295,14 @@ export function payRecurring(
     )
   )
     return state;
+  const pending = paymentPending(state, payment, date);
+  if (pending) {
+    ensure(
+      !transactionId || transactionId === pending.id,
+      "У этого платежа уже есть ожидание. Сначала проведите или отмените его.",
+    );
+    return postPendingTransaction(state, pending.id, today, today);
+  }
   ensure(
     !(payment.schedule
       ? payment.skippedDates?.includes(date)

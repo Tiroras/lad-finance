@@ -23,7 +23,12 @@ export function FormulaContent() {
         {[
           { label: "На повседневных счетах", value: safe.liquid, sign: "" },
           {
-            label: "Платежи до дохода и просрочки",
+            label: "Ожидающие списания и переводы",
+            value: safe.held,
+            sign: "−",
+          },
+          {
+            label: "Платежи до дохода и просрочки без уже ожидающих списаний",
             value: safe.payments,
             sign: "−",
           },

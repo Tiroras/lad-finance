@@ -87,18 +87,18 @@ export function ForecastCalendar({
             );
           const active = selected === date;
           const color =
-            day && day.balance < 0
+            day && day.available < 0
               ? C.red
-              : day && day.balance < result.buffer
+              : day && day.available < result.buffer
                 ? C.orange
                 : C.green;
           const marked =
-            day && (day.events.length > 0 || day.balance < result.buffer);
+            day && (day.events.length > 0 || day.available < result.buffer);
           return (
             <View key={date} style={{ width: `${100 / 7}%`, padding: 2 }}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${dateLabel(date)}: ${day ? money(day.balance, true) : "вне прогноза"}`}
+                accessibilityLabel={`${dateLabel(date)}: ${day ? money(day.available, true) : "вне прогноза"}`}
                 accessibilityState={{ selected: active, disabled: !day }}
                 disabled={!day}
                 onPress={() => onSelect(date)}
@@ -110,7 +110,7 @@ export function ForecastCalendar({
                   gap: 4,
                   backgroundColor: active
                     ? C.green
-                    : day && day.balance < 0
+                    : day && day.available < 0
                       ? "#FAECE9"
                       : "transparent",
                   opacity: day ? 1 : 0.3,

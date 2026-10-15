@@ -1,0 +1,22 @@
+# Android 17 System UI, isolated AVD only; public synthetic system PIN 260615.
+# Precondition: real PIN dialog opened by "Включить блокировку".
+# This exercises device-credential fallback, not physical strong biometrics.
+appId: app.lad.finance
+name: a04-android-pin-enable
+---
+- back
+- assertVisible: "Изменение защиты не подтверждено."
+- assertVisible: "Включить блокировку"
+- tapOn: "Включить блокировку"
+- tapOn: "2"
+- tapOn: "6"
+- tapOn: "0"
+- tapOn: "6"
+- tapOn: "1"
+- tapOn: "5"
+- tapOn:
+    id: "com.android.systemui:id/key_enter"
+- extendedWaitUntil:
+    visible: "Выключить блокировку"
+    timeout: 30000
+- assertVisible: "Заблокировать сейчас"

@@ -2,6 +2,8 @@ import { CURRENCY_CODES, currencyRate, type CurrencyCode } from "../currency";
 import { accountBalance, localDate, MAX_MONEY, uid } from "../finance";
 import type { Account, FinanceState } from "../types";
 import { validateCreditAccounts } from "../debts";
+import { isPosted } from "../transactionStatus";
+import { validateAccountArchives } from "../accountArchive";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -54,6 +56,10 @@ export function saveAccount(
     ? input.balance - accountBalance(state, original.id, today)
     : 0;
   ensure(
+    !original?.archived || adjustment === 0,
+    "Сначала восстановите счёт из архива, чтобы корректировать остаток.",
+  );
+  ensure(
     Math.abs(adjustment) <= MAX_MONEY,
     "Корректировка остатка превышает допустимый лимит.",
   );
@@ -82,6 +88,9 @@ export function saveAccount(
       original?.icon ??
       (input.kind === "savings" ? "wallet-outline" : "card-outline"),
     color: original?.color ?? "#234B3C",
+    ...(original?.archived !== undefined
+      ? { archived: original.archived }
+      : {}),
     ...(input.kind === "credit"
       ? {
           creditLimit,
@@ -92,6 +101,7 @@ export function saveAccount(
                 .filter(
                   (transaction) =>
                     transaction.type === "transfer" &&
+                    isPosted(transaction) &&
                     transaction.toAccountId === original?.id &&
                     transaction.date <= today,
                 )
@@ -132,6 +142,7 @@ export function saveAccount(
     );
   }
   checkSavings(next, today);
+  validateAccountArchives(next, today);
   validateCreditAccounts(next, today);
   checkCurrencyAmounts(next, today);
   return next;

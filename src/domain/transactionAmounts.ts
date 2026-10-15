@@ -1,5 +1,6 @@
 import { accountCurrency, MAX_MONEY, transactionValue } from "./currency";
 import type { FinanceState, Transaction } from "./types";
+import { isPosted, transactionStatusError } from "./transactionStatus";
 
 export interface ExpenseContribution {
   category: string;
@@ -40,11 +41,13 @@ export function expenseContributions(
   state: FinanceState,
   transaction: Transaction,
 ): ExpenseContribution[] {
-  if (transaction.debtId) return [];
+  if (!isPosted(transaction) || transaction.debtId) return [];
   const original = transaction.refundOf
     ? state.transactions.find(
         (entry) =>
-          entry.id === transaction.refundOf && entry.type === "expense",
+          entry.id === transaction.refundOf &&
+          entry.type === "expense" &&
+          isPosted(entry),
       )
     : undefined;
   if (transaction.type !== "expense" && !original) return [];
@@ -71,7 +74,10 @@ export function expenseContributions(
   let remaining = [...initial];
   const refunds = [
     ...state.transactions.filter(
-      (entry) => entry.refundOf === original.id && entry.id !== transaction.id,
+      (entry) =>
+        isPosted(entry) &&
+        entry.refundOf === original.id &&
+        entry.id !== transaction.id,
     ),
     transaction,
   ].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
@@ -107,7 +113,10 @@ export const transactionIncomeAmount = (
   state: FinanceState,
   transaction: Transaction,
 ) =>
-  transaction.type === "income" && !transaction.refundOf && !transaction.debtId
+  isPosted(transaction) &&
+  transaction.type === "income" &&
+  !transaction.refundOf &&
+  !transaction.debtId
     ? transactionValue(state, transaction)
     : 0;
 
@@ -117,7 +126,12 @@ export function periodTotals(state: FinanceState, start: string, end: string) {
   let expense = 0;
   let count = 0;
   for (const transaction of state.transactions) {
-    if (transaction.date < start || transaction.date > end) continue;
+    if (
+      !isPosted(transaction) ||
+      transaction.date < start ||
+      transaction.date > end
+    )
+      continue;
     income += transactionIncomeAmount(state, transaction);
     for (const part of expenseContributions(state, transaction))
       expense += part.amount;
@@ -135,7 +149,12 @@ export function refundedAmount(
   excludeId?: string,
 ) {
   return state.transactions
-    .filter((entry) => entry.refundOf === expenseId && entry.id !== excludeId)
+    .filter(
+      (entry) =>
+        isPosted(entry) &&
+        entry.refundOf === expenseId &&
+        entry.id !== excludeId,
+    )
     .reduce((sum, entry) => sum + refundPrincipal(entry), 0);
 }
 
@@ -143,6 +162,8 @@ export function transactionAmountsError(
   state: FinanceState,
   transaction: Transaction,
 ): string | undefined {
+  const statusError = transactionStatusError(transaction);
+  if (statusError) return statusError;
   if (transaction.splits !== undefined) {
     if (
       transaction.type !== "expense" ||
@@ -189,6 +210,7 @@ export function transactionAmountsError(
   const original = state.transactions.find(
     (entry) =>
       entry.id === transaction.refundOf &&
+      isPosted(entry) &&
       entry.type === "expense" &&
       !entry.refundOf &&
       !entry.debtId,

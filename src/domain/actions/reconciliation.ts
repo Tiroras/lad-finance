@@ -44,6 +44,12 @@ export function reconcileAccount(
   const difference =
     input.balance - accountBalance(state, input.accountId, input.date);
   ensure(
+    !difference ||
+      !state.accounts.find((account) => account.id === input.accountId)
+        ?.archived,
+    "Сначала восстановите счёт из архива, чтобы корректировать остаток.",
+  );
+  ensure(
     difference === 0 || input.adjust,
     "Сначала найдите расхождение или подтвердите корректировку.",
   );

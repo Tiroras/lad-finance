@@ -8,6 +8,7 @@ import {
   upcoming,
 } from "../../../domain/finance";
 import { useMoney, useFinance } from "../../../state/finance";
+import { paymentPending } from "../../../domain/payments";
 import type { OpenSheet } from "../../../application/navigation/types";
 import {
   Button,
@@ -48,16 +49,19 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
         <Txt style={{ color: C.muted }}>На ближайший месяц платежей нет.</Txt>
       )}
       {occurrences.slice(0, limit).map(({ payment, date, paid, skipped }) => {
+        const pending = paymentPending(state, payment, date);
         const late = date < today && !paid && !skipped;
         const status = paid
           ? "Оплачен"
-          : skipped
-            ? "Пропущен"
-            : late
-              ? `Просрочен на ${daysBetween(date, today)} дн.`
-              : date === today
-                ? "Сегодня"
-                : "Запланирован";
+          : pending
+            ? "Ожидает проведения"
+            : skipped
+              ? "Пропущен"
+              : late
+                ? `Просрочен на ${daysBetween(date, today)} дн.`
+                : date === today
+                  ? "Сегодня"
+                  : "Запланирован";
         return (
           <Pressable
             key={`${payment.id}-${date}`}

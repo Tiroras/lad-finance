@@ -328,6 +328,10 @@ test("export downloads data; import validates and requires replacement confirmat
   await page
     .getByRole("button", { name: "Заменить данные этой копией", exact: true })
     .click();
+  await expect(page.getByTestId("import-result-status")).toHaveText(
+    "Импорт сохранён и проверен чтением.",
+  );
+  await page.getByRole("button", { name: "Закрыть", exact: true }).click();
   await expect(page.getByText("Тимур, всё на виду.")).toBeVisible();
   await expect
     .poll(async () => (await getState(page)).transactions.length)

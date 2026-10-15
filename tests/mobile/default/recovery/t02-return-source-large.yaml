@@ -1,0 +1,18 @@
+# Default release, recovery-t02.md. Start at fresh receiver SUCCESS of the small
+# trial; host already pulled and checked it. CURRENT_PROFILE is required.
+# Returns to preserved original source and starts negative/cancel large test.
+appId: app.lad.finance
+name: t02-return-source-large
+---
+- tapOn: "Закрыть приёмник"
+- tapOn: "Закрыть"
+- tapOn: 'Текущий профиль: \Q${CURRENT_PROFILE}\E\. Открыть профили'
+- tapOn: "Открыть профиль: A04-20261015-Android"
+- extendedWaitUntil:
+    visible: "Текущий профиль: A04-20261015-Android. Открыть профили"
+    timeout: 30000
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: A04-20261015-Android
+- runFlow: t02-large-password-negative.yaml

@@ -11,6 +11,7 @@ import {
   periodTotals,
 } from "./transactionAmounts";
 import type { FinanceState, Transaction } from "./types";
+import { isPosted } from "./transactionStatus";
 
 export interface InsightTransaction {
   transactionId: string;
@@ -39,7 +40,11 @@ const normalizeTitle = (value: string) =>
 function historyStart(state: FinanceState, today: string) {
   let first: string | undefined;
   for (const transaction of state.transactions)
-    if (transaction.date <= today && (!first || transaction.date < first))
+    if (
+      isPosted(transaction) &&
+      transaction.date <= today &&
+      (!first || transaction.date < first)
+    )
       first = transaction.date;
   return first;
 }
@@ -281,7 +286,9 @@ export function recurringSuggestions(
   // A refund excludes its purchase even when the refund is outside this window.
   const refundedTransactions = new Set(
     state.transactions.flatMap((transaction) =>
-      transaction.refundOf ? [transaction.refundOf] : [],
+      isPosted(transaction) && transaction.refundOf
+        ? [transaction.refundOf]
+        : [],
     ),
   );
   const spendingAccounts = new Set(
@@ -300,6 +307,7 @@ export function recurringSuggestions(
   for (const transaction of state.transactions) {
     if (
       transaction.type !== "expense" ||
+      !isPosted(transaction) ||
       !!transaction.debtId ||
       refundedTransactions.has(transaction.id) ||
       transaction.date < start ||

@@ -1,0 +1,11 @@
+# Continuation ONLY when a previously started export exceeded the harness wait
+# while the app was still busy. Never press export or derive another key here.
+# Preserve the original timeout and its start timestamp. Pull a fresh receipt
+# and run the full protection-aware oracle after this flow finishes.
+appId: app.lad.finance
+name: t02-receive-existing-export
+---
+- extendedWaitUntil:
+    visible: "A04 Test Receiver"
+    timeout: 600000
+- runFlow: ../security/a04-send-test-receiver.yaml

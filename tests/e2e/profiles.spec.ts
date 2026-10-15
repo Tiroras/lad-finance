@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { accountBalance } from "../../src/domain/accountBalances";
 import { createInitialState } from "../../src/domain/seed";
+import type { FinanceState } from "../../src/domain/types";
 import {
   ACTIVE_PROFILE_KEY,
   PROFILE_REGISTRY_KEY,
@@ -54,6 +55,170 @@ async function openData(page: Page) {
 test.beforeEach(async ({ page }) => {
   await page.route("https://api.frankfurter.dev/**", (route) => route.abort());
 });
+
+for (const recovery of ["retry", "reload"] as const) {
+  test(`A05: a failed save blocks profile switching; ${recovery} preserves the exact confirmed revision`, async ({
+    page,
+  }) => {
+    const s0 = createInitialState(false, TODAY);
+    s0.accounts[0].openingBalance = 1_000_000;
+    s0.settings.exchange = { automatic: false, rates: {} };
+    await startApp(page, TODAY, s0);
+    const otherId = await createProfile(page, "Контрольный A05");
+    await addIncome(page, "Независимый доход A05", "250");
+    const other = await readState(page);
+    await switchProfile(page, "Личный");
+
+    const addExpense = async (amount: string, confirmed = true) => {
+      await button(page, "Добавить операцию").click();
+      await page.getByRole("tab", { name: "Расход", exact: true }).click();
+      await page
+        .getByLabel("Название операции", { exact: true })
+        .fill(`Расход A05 ${amount}`);
+      await page.getByLabel("Сумма операции", { exact: true }).fill(amount);
+      await button(page, "Добавить операцию").click();
+      if (!confirmed) {
+        await expect(
+          button(page, "Повторить подтверждение сохранения"),
+        ).toBeVisible();
+        await button(page, "Закрыть и сохранить черновик").click();
+      }
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+      await expect(
+        page.getByRole("button", {
+          name: new RegExp(`^Расход A05 ${amount},`),
+        }),
+      ).toBeVisible();
+    };
+    await addExpense("700");
+    // This switch executes the real provider's flush/lastSaved check, not just
+    // a read of localStorage or a successful toast from the transaction form.
+    await switchProfile(page, "Контрольный A05");
+    const s1 = await readState(page, "personal");
+    expect(s1.transactions).toHaveLength(1);
+    expect(s1.transactions[0]).toMatchObject({
+      type: "expense",
+      title: "Расход A05 700",
+      amount: 70_000,
+      baseAmount: 70_000,
+      accountId: "card",
+      date: TODAY,
+    });
+    expect(accountBalance(s1, "card", TODAY)).toBe(930_000);
+    expect(await readState(page)).toEqual(other);
+    await switchProfile(page, "Личный");
+    const registry = await readRegistry(page);
+    const key = await activeStorageKey(page);
+
+    await page.evaluate((ledgerKey) => {
+      const setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (name, value) {
+        if (
+          this === localStorage &&
+          name === ledgerKey &&
+          sessionStorage.getItem("a05-allow-save") !== "yes"
+        ) {
+          // Only synthetic test data is captured, inside this browser context.
+          setItem.call(sessionStorage, "a05-rejected-snapshot", value);
+          setItem.call(
+            sessionStorage,
+            "a05-rejected-write-count",
+            String(
+              Number(sessionStorage.getItem("a05-rejected-write-count") ?? 0) +
+                1,
+            ),
+          );
+          throw new DOMException(
+            "A05 injected disk full",
+            "QuotaExceededError",
+          );
+        }
+        return setItem.call(this, name, value);
+      };
+    }, key);
+
+    await addExpense("300", false);
+    const saveError = page.getByRole("alert").filter({
+      hasText: "Не удалось сохранить изменения. Нажмите, чтобы повторить.",
+    });
+    await expect(saveError).toBeVisible();
+    const rejectedWriteCount = () =>
+      page.evaluate(() =>
+        Number(sessionStorage.getItem("a05-rejected-write-count")),
+      );
+    const attemptsBeforeSwitch = await rejectedWriteCount();
+    expect(attemptsBeforeSwitch).toBeGreaterThan(0);
+    const s2: FinanceState = await page.evaluate(() =>
+      JSON.parse(sessionStorage.getItem("a05-rejected-snapshot")!),
+    );
+    const expense = s2.transactions[0];
+    expect(expense).toMatchObject({
+      id: expect.any(String),
+      type: "expense",
+      title: "Расход A05 300",
+      amount: 30_000,
+      baseAmount: 30_000,
+      accountId: "card",
+      date: TODAY,
+    });
+    expect(expense.id).not.toBe(s1.transactions[0].id);
+    // Check every other entity and the entire confirmed history, not just money.
+    expect(s2).toEqual({
+      ...s1,
+      transactions: [expense, ...s1.transactions],
+    });
+    expect(accountBalance(s2, "card", TODAY)).toBe(900_000);
+    expect(await readState(page)).toEqual(s1);
+
+    await openProfiles(page);
+    await button(page, "Открыть профиль: Контрольный A05").click();
+    await expect(
+      page.getByText(
+        "Не удалось сохранить текущий профиль. Повторите попытку.",
+        {
+          exact: true,
+        },
+      ),
+    ).toBeVisible();
+    expect(await rejectedWriteCount()).toBeGreaterThan(attemptsBeforeSwitch);
+    await expect(button(page, "Открыть профиль: Личный")).toBeDisabled();
+    expect(await activeProfile(page)).toBe("personal");
+    expect(await readState(page)).toEqual(s1);
+    expect(await readState(page, otherId)).toEqual(other);
+    expect(await readRegistry(page)).toEqual(registry);
+    await button(page, "Закрыть").click();
+
+    if (recovery === "retry") {
+      await page.evaluate(() =>
+        sessionStorage.setItem("a05-allow-save", "yes"),
+      );
+      await page.getByRole("button").filter({ has: saveError }).click();
+      await expect(saveError).toHaveCount(0);
+      await expect.poll(() => readState(page)).toEqual(s2);
+      await switchProfile(page, "Контрольный A05");
+      expect(await readState(page)).toEqual(other);
+      expect(await readState(page, "personal")).toEqual(s2);
+      await switchProfile(page, "Личный");
+    }
+    // Reload destroys the unsaved React state and the injected Storage method.
+    await page.reload();
+    await expect(
+      button(page, "Текущий профиль: Личный. Открыть профили"),
+    ).toBeVisible();
+    const expected = recovery === "retry" ? s2 : s1;
+    expect(await readState(page)).toEqual(expected);
+    expect(accountBalance(await readState(page), "card", TODAY)).toBe(
+      recovery === "retry" ? 900_000 : 930_000,
+    );
+    expect(await readState(page, otherId)).toEqual(other);
+    expect(await readRegistry(page)).toEqual(registry);
+    await expect(saveError).toHaveCount(0);
+    if (recovery === "reload")
+      await expect(
+        page.getByRole("button", { name: /^Расход A05 300,/ }),
+      ).toHaveCount(0);
+  });
+}
 
 test("personal is the first profile; two optional profiles keep independent money, names and reload preferences", async ({
   page,
@@ -205,6 +370,10 @@ test("a custom profile backup, restore and confirmed reset never change other pr
   });
   expect(await readState(page)).toEqual(family);
   await button(page, "Заменить данные этой копией").click();
+  await expect(page.getByTestId("import-result-status")).toHaveText(
+    "Импорт сохранён и проверен чтением.",
+  );
+  await button(page, "Закрыть").click();
   await expect
     .poll(async () => (await readState(page)).settings.name)
     .toBe("Из копии");
@@ -391,6 +560,12 @@ test("recovering an unreadable inactive profile requires confirmation and preser
     if (confirm) {
       await button(page, "Подтвердить восстановление хранилища").click();
       await expect.poll(async () => readState(page, workId)).toEqual(backup);
+      await expect(page.getByTestId("import-result-status")).toHaveText(
+        "Импорт сохранён и проверен чтением.",
+      );
+      await expect(
+        page.getByRole("dialog").getByText("Профиль: Рабочий", { exact: true }),
+      ).toBeVisible();
     } else {
       await button(page, "Отмена восстановления").click();
       await expect(
@@ -403,6 +578,8 @@ test("recovering an unreadable inactive profile requires confirmation and preser
   expect(await readState(page)).toEqual(family);
   expect(await readState(page, "personal")).toEqual(personal);
   expect(await readRegistry(page)).toEqual(registry);
+  await button(page, "Закрыть").click();
+  await openProfiles(page);
   await button(page, "Открыть профиль: Рабочий").click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(await activeProfile(page)).toBe(workId);

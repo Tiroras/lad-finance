@@ -1,0 +1,15 @@
+# Synthetic a04-malformed.json is visible in real Android DocumentsUI.
+# Export and full-state comparison must follow this fragment.
+appId: app.lad.finance
+name: a04-android-malformed-json
+---
+- tapOn: "a04-malformed.json"
+- scrollUntilVisible:
+    element:
+      text: "Не удалось прочитать файл резервной копии."
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "Не удалось прочитать файл резервной копии."
+- assertNotVisible: "Заменить данные этой копией"
+- tapOn: "Закрыть"
+- assertVisible: "Профиль и настройки"

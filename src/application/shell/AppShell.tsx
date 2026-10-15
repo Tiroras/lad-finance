@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View, Animated, StyleSheet, useWindowDimensions } from "react-native";
 import { useFinanceStatus } from "../../state/finance";
 import {
@@ -29,7 +29,7 @@ import {
 import { FirstRunScreen } from "./FirstRunScreen";
 
 export function AppShell() {
-  const { ready, needsIntroduction } = useFinanceStatus();
+  const { ready, needsIntroduction, latestImportResultId } = useFinanceStatus();
   const learning = useLearningProgress();
   const security = useSecurity();
   const navigation = useAppNavigation();
@@ -42,6 +42,17 @@ export function AppShell() {
     },
     [navigation.open, tour.start],
   );
+  const shownImport = useRef<string | null>(null);
+  useEffect(() => {
+    if (
+      !ready ||
+      !latestImportResultId ||
+      shownImport.current === latestImportResultId
+    )
+      return;
+    shownImport.current = latestImportResultId;
+    navigation.open({ type: "importResult", id: latestImportResultId });
+  }, [ready, latestImportResultId, navigation.open]);
   const content = useRef<View>(null);
   const { width } = useWindowDimensions();
   const wide = width >= 900;

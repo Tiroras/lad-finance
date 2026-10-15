@@ -1,3 +1,4 @@
+import type { OpenSheet } from "../../../application/navigation/types";
 import { useState } from "react";
 import { accountCurrency, currencySymbol } from "../../../domain/currency";
 import type { Debt } from "../../../domain/debts";
@@ -17,9 +18,16 @@ import {
   AmountField,
   DateField,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 
-export function DebtForm({ id, close }: { id?: string; close: () => void }) {
+function DebtFormFields({
+  id,
+  close,
+}: {
+  id?: string;
+  close: () => void;
+  open: OpenSheet;
+}) {
   const { state, today, notify } = useFinance();
   const { parseMoney } = useMoney();
   const actions = useFinanceActions();
@@ -30,7 +38,9 @@ export function DebtForm({ id, close }: { id?: string; close: () => void }) {
   );
   const [accountId, setAccountId] = useState(
     original?.accountId ??
-      state.accounts.find((account) => account.kind === "spending")!.id,
+      state.accounts.find(
+        (account) => !account.archived && account.kind === "spending",
+      )!.id,
   );
   const [amount, setAmount] = useState("");
   const [mode, setMode] = useState<"record" | "existing">("record");
@@ -167,4 +177,15 @@ export function DebtForm({ id, close }: { id?: string; close: () => void }) {
         ))}
     </>
   );
+}
+
+export function DebtForm(props: Parameters<typeof DebtFormFields>[0]) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <DebtFormFields {...props} />;
 }

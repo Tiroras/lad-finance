@@ -1,0 +1,10 @@
+# Real external receiver finished. Return to Lad requires authentication.
+appId: app.lad.finance
+name: a04-android-share-return
+---
+- tapOn: "Закрыть приёмник"
+- assertVisible: "Лад под защитой"
+- runFlow: a04-android-pin-unlock.yaml
+- assertVisible: "Данные и копии"
+- tapOn: "Закрыть"
+- assertVisible: "Профиль и настройки"

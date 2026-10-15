@@ -1,0 +1,9 @@
+# Android 17 isolated AVD, public synthetic PIN; background draft is still open.
+appId: app.lad.finance
+name: a04-android-draft-return
+---
+- runFlow: a04-android-pin-unlock.yaml
+- runFlow: a04-draft-after-unlock.yaml
+- tapOn: "Закрыть"
+- tapOn: "Сбросить и закрыть"
+- assertVisible: "Профиль и настройки"

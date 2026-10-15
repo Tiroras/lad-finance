@@ -22,6 +22,8 @@ for (const width of [320, 390]) {
     for (let attempt = 0; attempt < 3; attempt++) {
       await button(page, "Настроить свой учёт").click();
       await expect(page.getByText("Шаг 1 из 4", { exact: true })).toBeVisible();
+      const discard = button(page, "Удалить черновик настройки");
+      if (await discard.isVisible()) await discard.click();
       await expect(
         page.getByText("Больше ясности с первого дня", { exact: true }),
       ).toHaveCount(0);
@@ -41,6 +43,8 @@ for (const width of [320, 390]) {
     }
 
     await button(page, "Настроить свой учёт").click();
+    const discard = button(page, "Удалить черновик настройки");
+    if (await discard.isVisible()) await discard.click();
     await page.getByLabel("Начальный остаток", { exact: true }).fill("1250");
     for (let step = 1; step < 4; step++)
       await button(page, "Продолжить").click();

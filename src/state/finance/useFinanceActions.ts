@@ -1,22 +1,22 @@
 import { useMemo } from "react";
 import * as actions from "../../domain/actions";
-import {
-  applyCsvImport,
-  type CsvOptions,
-  type CsvOverride,
-  type CsvTable,
-} from "../../domain/csv";
+import type { CsvImportInput } from "../../domain/actions/dataTransfer";
+import type { BackupTransportFormat } from "../../domain/dataTransfer";
+import type { VerifiedRestoreCandidate } from "../../domain/backupRecovery";
+import type { FinanceProfile } from "../../domain/profiles";
 import type { CurrencyCode, ExchangeRate } from "../../domain/currency";
 import type {
   FinanceState,
   ForecastPreferences,
   ReminderPreferences,
 } from "../../domain/types";
-import { useFinance } from "./FinanceProvider";
+import { useFinance, useImportCommit } from "./FinanceProvider";
 import { assertDemoAllowed } from "./demoMode";
+import { getDraftStorage } from "../../infrastructure/storage/draftStorage";
 
 export function useFinanceActions() {
-  const { update, today } = useFinance();
+  const { update, today, profile } = useFinance();
+  const commitImport = useImportCommit();
   return useMemo(
     () => ({
       saveDebt: (input: actions.DebtInput) =>
@@ -70,8 +70,16 @@ export function useFinanceActions() {
         update((s) => actions.saveTransaction(s, input, today)),
       deleteTransaction: (id: string) =>
         update((s) => actions.deleteTransaction(s, id, today)),
+      postPendingTransaction: (id: string, date: string) =>
+        update((s) => actions.postPendingTransaction(s, id, date, today)),
+      cancelPendingTransaction: (id: string) =>
+        update((s) => actions.cancelPendingTransaction(s, id, today)),
       saveAccount: (input: actions.AccountInput) =>
         update((s) => actions.saveAccount(s, input, today)),
+      archiveAccount: (id: string) =>
+        update((s) => actions.archiveAccount(s, id, today)),
+      restoreAccount: (id: string) =>
+        update((s) => actions.restoreAccount(s, id)),
       saveGoal: (input: actions.GoalInput) =>
         update((s) => actions.saveGoal(s, input, today)),
       deleteGoal: (id: string) => update((s) => actions.deleteGoal(s, id)),
@@ -116,24 +124,50 @@ export function useFinanceActions() {
         update((s) =>
           actions.receivePlannedIncome(s, id, date, today, transactionId),
         ),
-      importCsv: (
-        table: CsvTable,
-        options: CsvOptions,
-        excluded: ReadonlySet<number>,
-        overrides: Record<number, CsvOverride>,
+      importCsvConfirmed: (
+        input: CsvImportInput & {
+          operationId: string;
+          expectedProfileId: FinanceProfile;
+        },
       ) =>
-        update((s) =>
-          applyCsvImport(s, table, options, excluded, overrides, today),
-        ),
-      restore: (backup: FinanceState) => {
-        assertDemoAllowed(backup);
-        return update((s) =>
-          actions.restoreFinance(s, { ...backup, demo: s.demo }),
-        );
+        commitImport({
+          operationId: input.operationId,
+          expectedProfileId: input.expectedProfileId,
+          format: "csv",
+          mode: "add",
+          apply: (current, date) =>
+            actions.applyCsvImportWithSummary(current, input, date),
+        }),
+      restoreConfirmed: (input: {
+        operationId: string;
+        expectedProfileId: FinanceProfile;
+        candidate: VerifiedRestoreCandidate;
+        format: BackupTransportFormat;
+      }) =>
+        commitImport({
+          operationId: input.operationId,
+          expectedProfileId: input.expectedProfileId,
+          format: input.format,
+          mode: "replace",
+          apply(current, date) {
+            assertDemoAllowed({
+              ...input.candidate.state,
+              demo: input.candidate.sourceDemo,
+            });
+            return actions.restoreFinanceWithSummary(
+              current,
+              input.candidate,
+              date,
+            );
+          },
+        }),
+      reset: async (demo: boolean) => {
+        // The reset confirmation explicitly discards this profile's drafts.
+        // Invalidate leases first, including already queued autosaves.
+        await getDraftStorage(profile).clearProfile();
+        return update((s) => actions.resetFinance(s, demo, today));
       },
-      reset: (demo: boolean) =>
-        update((s) => actions.resetFinance(s, demo, today)),
     }),
-    [update, today],
+    [update, today, profile, commitImport],
   );
 }

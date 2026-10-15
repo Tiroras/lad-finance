@@ -1,0 +1,21 @@
+# Default, existing synthetic A04 profile, protection disabled.
+# Opens the real picker without creating/resetting a profile.
+appId: app.lad.finance
+name: a04-open-backup-picker
+---
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Профиль и настройки"
+    timeout: 30000
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Данные и копии"
+    direction: DOWN
+- tapOn: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: "Восстановить из файла"
+    direction: DOWN
+- tapOn: "Восстановить из файла"

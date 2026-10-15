@@ -1,0 +1,9 @@
+# Isolated Android AVD only, test-only app.lad.testreceiver installed.
+# Start at real Sharesheet from a fresh Lad JSON/.ladbackup export.
+appId: app.lad.finance
+name: a04-send-test-receiver
+---
+- tapOn: "A04 Test Receiver"
+- extendedWaitUntil:
+    visible: "(?s)SUCCESS.*"
+    timeout: 30000

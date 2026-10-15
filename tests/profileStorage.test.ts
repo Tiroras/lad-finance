@@ -175,6 +175,24 @@ test("profile preference always defaults to personal and ignores disabled or unk
   assert.equal(items.get("lad-active-profile-v1"), "broken-preference");
 });
 
+test("missing catalog with a custom namespace requires recovery, while legacy personal remains readable", async () => {
+  const { profiles, items } = fixture();
+  const personal = profiles.profileStorageKey("personal", LEGACY_STORAGE_KEY);
+  items.set(personal, encodeBackup(createInitialState(false)));
+  assert.deepEqual(
+    await profiles.readProfiles(),
+    profileDomain.createDefaultProfiles(),
+  );
+  const custom = profiles.profileStorageKey(
+    "profile-11111111-1111-4111-8111-111111111111",
+    VAULT_STORAGE_KEY,
+  );
+  items.set(custom, "unavailable encrypted bytes");
+  const before = new Map(items);
+  await assert.rejects(profiles.readProfiles(), /список профилей/);
+  assert.deepEqual(items, before);
+});
+
 test("web profiles ignore former shared records and preserve separate ledgers across save, restart and reset", async () => {
   const { items, access, restart, profiles } = fixture();
   const personal = createInitialState(false, "2026-09-26");

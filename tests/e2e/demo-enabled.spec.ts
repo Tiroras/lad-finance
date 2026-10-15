@@ -44,6 +44,10 @@ async function restore(page: Page, state: FinanceState) {
     buffer: Buffer.from(JSON.stringify(state)),
   });
   await button(page, "Заменить данные этой копией").click();
+  await expect(page.getByTestId("import-result-status")).toHaveText(
+    "Импорт сохранён и проверен чтением.",
+  );
+  await button(page, "Закрыть").click();
   await expect
     .poll(async () => (await readState(page)).settings.name)
     .toBe(state.settings.name);

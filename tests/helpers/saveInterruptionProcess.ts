@@ -42,12 +42,17 @@ async function read(path: string) {
 function diskVault(selected: string) {
   const folder = join(directory, selected);
   const path = (key: string) => join(folder, key);
+  let pendingReadback = false;
   return createVault({
     storage: {
       async getItem(key) {
         const value = await read(path(key));
-        if (key === VAULT_STORAGE_KEY && committed)
+        if (key === VAULT_STORAGE_KEY && pendingReadback) {
+          // Only the first read after this adapter's commit is its readback.
+          // A later preflight read must not inherit the previous revision's stage.
+          pendingReadback = false;
           await checkpoint("envelope-readback");
+        }
         return value;
       },
       async setItem(key, value) {
@@ -63,7 +68,7 @@ function diskVault(selected: string) {
         }
         await checkpoint("envelope-before-commit");
         await rename(temporary, path(key));
-        committed = true;
+        pendingReadback = true;
         await checkpoint("envelope-after-commit");
       },
       async removeItem(key) {
@@ -92,7 +97,6 @@ function diskVault(selected: string) {
     cipher: reliabilityCipher,
   });
 }
-let committed = false;
 async function main() {
   await mkdir(join(directory, profile), { recursive: true });
   await mkdir(join(directory, otherProfile), { recursive: true });
@@ -115,7 +119,6 @@ async function main() {
     } else {
       await vault.save(snapshots[0]);
     }
-    committed = false;
     // Acknowledgement ledger belongs to this harness, not FinanceProvider.
     // Revision identity AND destination are checked after the full vault path.
     const lastSaved = new Map([[profile, snapshots[0]]]);

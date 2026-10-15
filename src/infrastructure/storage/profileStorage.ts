@@ -3,6 +3,8 @@ import { randomUUID } from "expo-crypto";
 import {
   assertProfileId,
   createDefaultProfiles,
+  decodeProfileRegistry,
+  encodeProfileRegistry,
   isFinanceProfile,
   validateProfiles,
   type FinanceProfile,
@@ -14,6 +16,25 @@ export type { FinanceProfile, LedgerProfile } from "../../domain/profiles";
 
 const ACTIVE_PROFILE_KEY = "lad-active-profile-v1";
 const PROFILES_KEY = "lad-profiles-v1";
+const RECOVERY_KEY = "lad-profile-recovery-v1";
+
+/** Raw metadata only. The recovery protocol never receives a ledger writer here. */
+export const profileRecoveryStorage = {
+  getAllKeys: () => AsyncStorage.getAllKeys(),
+  readCatalog: () => AsyncStorage.getItem(PROFILES_KEY),
+  writeCatalog: (raw: string | null) =>
+    raw === null
+      ? AsyncStorage.removeItem(PROFILES_KEY)
+      : AsyncStorage.setItem(PROFILES_KEY, raw),
+  readActive: () => AsyncStorage.getItem(ACTIVE_PROFILE_KEY),
+  writeActive: (raw: string | null) =>
+    raw === null
+      ? AsyncStorage.removeItem(ACTIVE_PROFILE_KEY)
+      : AsyncStorage.setItem(ACTIVE_PROFILE_KEY, raw),
+  readJournal: () => AsyncStorage.getItem(RECOVERY_KEY),
+  writeJournal: (raw: string) => AsyncStorage.setItem(RECOVERY_KEY, raw),
+  removeJournal: () => AsyncStorage.removeItem(RECOVERY_KEY),
+};
 
 export function generateProfileId(): FinanceProfile {
   return `profile-${randomUUID()}`;
@@ -46,19 +67,23 @@ export function createProfileStorage(
 
 export async function readProfiles(): Promise<LedgerProfile[]> {
   const raw = await AsyncStorage.getItem(PROFILES_KEY);
-  if (raw === null) return createDefaultProfiles();
   try {
-    const registry: unknown = JSON.parse(raw);
-    if (
-      !registry ||
-      typeof registry !== "object" ||
-      !("version" in registry) ||
-      registry.version !== 1 ||
-      !("profiles" in registry)
-    ) {
-      throw new Error("Неизвестный формат списка профилей.");
+    if (raw === null) {
+      const keys = await AsyncStorage.getAllKeys();
+      if (
+        keys.some((key) => {
+          const match = /^lad-profile-(profile-[^:]+):(.+)$/.exec(key);
+          return (
+            match &&
+            isFinanceProfile(match[1]) &&
+            (match[2] === LEGACY_STORAGE_KEY || match[2] === VAULT_STORAGE_KEY)
+          );
+        })
+      )
+        throw new Error("Отсутствует список сохранённых профилей.");
+      return createDefaultProfiles();
     }
-    return validateProfiles(registry.profiles);
+    return decodeProfileRegistry(raw);
   } catch {
     throw new Error(
       "Не удалось прочитать список профилей. Данные сохранены на устройстве. Попробуйте открыть приложение заново.",
@@ -82,11 +107,7 @@ export async function hasStoredProfiles(): Promise<boolean> {
 }
 
 export async function writeProfiles(profiles: readonly LedgerProfile[]) {
-  const checked = validateProfiles(profiles);
-  await AsyncStorage.setItem(
-    PROFILES_KEY,
-    JSON.stringify({ version: 1, profiles: checked }),
-  );
+  await AsyncStorage.setItem(PROFILES_KEY, encodeProfileRegistry(profiles));
 }
 
 export async function readActiveProfile(

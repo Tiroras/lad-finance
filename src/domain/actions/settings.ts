@@ -89,11 +89,16 @@ export function resetFinance(
   today = localDate(),
 ): FinanceState {
   const next = createInitialState(demo, today);
-  return { ...next, settings: { ...next.settings, name: state.settings.name } };
+  return {
+    ...next,
+    version: state.version === 5 ? 5 : next.version,
+    settings: { ...next.settings, name: state.settings.name },
+  };
 }
 export function restoreFinance(
   _state: FinanceState,
   backup: FinanceState,
+  today = localDate(),
 ): FinanceState {
-  return decodeBackup(encodeBackup(backup));
+  return decodeBackup(encodeBackup(backup), today);
 }

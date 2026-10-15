@@ -1,0 +1,29 @@
+# Android 17 isolated AVD, public synthetic PIN 260615. Start at unlocked home.
+# Cancelling must preserve protection; successful authentication disables it.
+appId: app.lad.finance
+name: a04-android-pin-disable
+---
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Защита данных"
+    direction: DOWN
+- tapOn: "Защита данных"
+- tapOn: "Выключить блокировку"
+- back
+- assertVisible: "Изменение защиты не подтверждено."
+- assertVisible: "Выключить блокировку"
+- tapOn: "Выключить блокировку"
+- tapOn: "2"
+- tapOn: "6"
+- tapOn: "0"
+- tapOn: "6"
+- tapOn: "1"
+- tapOn: "5"
+- tapOn:
+    id: "com.android.systemui:id/key_enter"
+- extendedWaitUntil:
+    visible: "Включить блокировку"
+    timeout: 30000
+- tapOn: "Закрыть"
+- assertVisible: "Профиль и настройки"

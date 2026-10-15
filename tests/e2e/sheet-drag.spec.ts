@@ -239,8 +239,31 @@ test("touch scrolling a long form leaves the sheet in place and its handle still
   await page.setViewportSize({ width: 320, height: 660 });
   await startApp(page, TODAY, initial);
   await button(page, "Добавить операцию").click();
+  // The draft is read asynchronously before the full form replaces its short
+  // loading state. Capture gesture coordinates only once that content is ready.
+  await expect(
+    page.getByLabel("Название операции", { exact: true }),
+  ).toBeVisible();
   const sheet = page.getByTestId("sheet");
   const scroll = page.getByTestId("sheet-scroll");
+  await expect
+    .poll(() =>
+      scroll.evaluate((element) => element.scrollHeight - element.clientHeight),
+    )
+    .toBeGreaterThan(100);
+  // DOM visibility can precede the fade's onShow, which activates the web
+  // Modal and its focus trap. Await the real CSS animation, then let pending
+  // animation-frame callbacks run before capturing touch coordinates.
+  await sheet.evaluate(async (element) => {
+    const opening = document.getAnimations().filter((animation) => {
+      const target = (animation.effect as KeyframeEffect | null)?.target;
+      return target instanceof Element && target.contains(element);
+    });
+    await Promise.all(opening.map((animation) => animation.finished));
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+  });
   const top = (await sheet.boundingBox())!.y;
   const viewport = (await scroll.boundingBox())!;
   const x = viewport.x + 8;

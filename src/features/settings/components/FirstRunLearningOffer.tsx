@@ -6,7 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { View } from "react-native";
-import { useFinanceStatus } from "../../../state/finance";
+import { useFinance, useFinanceStatus } from "../../../state/finance";
+import { getDraftStorage } from "../../../infrastructure/storage/draftStorage";
 import { Button, C, ErrorText, font, Txt } from "../../../shared/ui";
 import { tourSteps } from "../lib/tourSteps";
 import { useLearningProgress } from "../model/useLearningProgress";
@@ -18,7 +19,8 @@ export function FirstRunLearningOffer({
   brand: ReactNode;
   onLearn: () => void;
 }) {
-  const { saveCurrentProfile } = useFinanceStatus();
+  const { saveCurrentProfile, confirmCurrentSave } = useFinanceStatus();
+  const { profile, state } = useFinance();
   const learning = useLearningProgress();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(true);
@@ -46,10 +48,13 @@ export function FirstRunLearningOffer({
     () =>
       run(async () => {
         // Confirm the existing snapshot, never repeat completeOnboarding on retry.
-        await saveCurrentProfile();
+        await confirmCurrentSave(profile, state);
+        const drafts = getDraftStorage(profile);
+        const stored = await drafts.load("onboarding");
+        if (stored.draft) await drafts.clear(stored.draft.lease);
         setSaved(true);
       }),
-    [run, saveCurrentProfile],
+    [run, confirmCurrentSave, profile, state],
   );
   useEffect(() => {
     void save();

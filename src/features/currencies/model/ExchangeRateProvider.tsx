@@ -20,35 +20,49 @@ const Context = createContext<{
 } | null>(null);
 export function ExchangeRateProvider({ children }: { children: ReactNode }) {
   const { state, today, update, profile } = useFinance();
-  const { ready, loadError, switching } = useFinanceStatus();
+  const { financeWriteBlocked } = useFinanceStatus();
   const { locked } = useSecurity();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const request = useRef<AbortController | null>(null);
   const attempted = useRef("");
   const automatic = state.settings.exchange?.automatic ?? true;
+  const scope = useRef({ profile, blocked: financeWriteBlocked || locked });
+  scope.current = { profile, blocked: financeWriteBlocked || locked };
   const refresh = useCallback(async () => {
-    if (request.current || !ready || loadError || locked || switching) return;
+    if (request.current || scope.current.blocked) return;
     const controller = new AbortController();
+    const capturedProfile = scope.current.profile;
+    const isCurrent = () =>
+      request.current === controller &&
+      !controller.signal.aborted &&
+      !scope.current.blocked &&
+      scope.current.profile === capturedProfile;
     request.current = controller;
     attempted.current = today;
     setBusy(true);
     setError("");
     try {
       const rates = await fetchExchangeRates(today, controller.signal);
-      if (!controller.signal.aborted)
+      if (isCurrent())
         update((current) => mergeCurrencyRates(current, rates, today));
     } catch (e) {
-      if (!controller.signal.aborted)
+      if (isCurrent())
         setError(e instanceof Error ? e.message : "Не удалось обновить курсы.");
     } finally {
       // A cancelled request did not consume this day's automatic update.
-      if (controller.signal.aborted && attempted.current === today)
+      if (
+        request.current === controller &&
+        controller.signal.aborted &&
+        attempted.current === today
+      )
         attempted.current = "";
-      request.current = null;
-      setBusy(false);
+      if (request.current === controller) {
+        request.current = null;
+        setBusy(false);
+      }
     }
-  }, [today, ready, loadError, locked, switching, update]);
+  }, [today, update]);
   useEffect(() => {
     attempted.current = "";
     setError("");
@@ -56,9 +70,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
   }, [profile]);
   useEffect(() => {
     if (
-      ready &&
-      !switching &&
-      !loadError &&
+      !financeWriteBlocked &&
       !locked &&
       !busy &&
       automatic &&
@@ -68,9 +80,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       void refresh();
     }
   }, [
-    ready,
-    switching,
-    loadError,
+    financeWriteBlocked,
     locked,
     busy,
     automatic,
@@ -79,8 +89,8 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
     refresh,
   ]);
   useEffect(() => {
-    if (locked || !automatic || switching) request.current?.abort();
-  }, [locked, automatic, switching]);
+    if (locked || !automatic || financeWriteBlocked) request.current?.abort();
+  }, [locked, automatic, financeWriteBlocked]);
   useEffect(
     () => () => {
       request.current?.abort();

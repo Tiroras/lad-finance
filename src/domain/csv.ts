@@ -18,6 +18,11 @@ import {
   validateTransaction,
 } from "./finance";
 import type { CategoryId, FinanceState, Transaction } from "./types";
+import { isPosted, transactionStatus } from "./transactionStatus";
+import {
+  buildReplacementImportSummary,
+  type ImportApplication,
+} from "./dataTransfer";
 
 export const CSV_MAX_BYTES = 2_000_000;
 export const CSV_MAX_ROWS = 5000;
@@ -243,14 +248,23 @@ export function previewCsv(
     throw new Error("Каждой роли нужна отдельная колонка CSV.");
   if (
     !state.accounts.some(
-      (a) => a.id === options.accountId && a.kind === "spending",
+      (a) => a.id === options.accountId && a.kind === "spending" && !a.archived,
     )
   )
     throw new Error("Выберите повседневный счёт для выписки.");
   const currency = accountCurrency(state, options.accountId);
   const existing = new Map<string, number>();
   const existingIds = new Map<string, Transaction>();
+  const pendingIds = new Set(
+    state.transactions
+      .filter(
+        (transaction) =>
+          transactionStatus(transaction) === "pending" && transaction.importKey,
+      )
+      .map((transaction) => transaction.importKey),
+  );
   state.transactions.forEach((t) => {
+    if (!isPosted(t)) return;
     const key = fingerprint(t);
     existing.set(key, (existing.get(key) ?? 0) + 1);
     if (t.importKey) existingIds.set(t.importKey, t);
@@ -390,7 +404,11 @@ export function previewCsv(
         activeCategory(state, suggestCategory(title)),
     };
     if (type === "transfer") {
-      if (!state.accounts.some((a) => a.id === override.otherAccountId))
+      if (
+        !state.accounts.some(
+          (a) => a.id === override.otherAccountId && !a.archived,
+        )
+      )
         return fail("Выберите второй счёт для перевода.");
       const otherCurrency = accountCurrency(state, override.otherAccountId);
       if (otherCurrency !== currency) {
@@ -450,6 +468,10 @@ export function previewCsv(
       transaction.importKey = `csv:${key}:${ordinal}`;
       result.duplicate = (existing.get(key) ?? 0) >= ordinal;
     }
+    if (pendingIds.has(transaction.importKey))
+      return fail(
+        "Этому ID соответствует ожидающая операция. Сначала проведите или отмените её; CSV не изменяет ожидания автоматически.",
+      );
     return { ...result, transaction };
   });
   return rows.map((row) =>
@@ -472,18 +494,44 @@ export function applyCsvImport(
   overrides: Record<number, CsvOverride>,
   today = localDate(),
 ) {
-  const transactions = previewCsv(state, table, options, overrides, today)
-    .filter(
-      (row) =>
-        row.transaction &&
-        !row.error &&
-        !row.duplicate &&
-        !excluded.has(row.line),
-    )
-    .map((row) => ({ ...row.transaction!, id: uid() }));
+  return applyCsvImportWithSummary(
+    state,
+    table,
+    options,
+    excluded,
+    overrides,
+    today,
+  ).state;
+}
+
+/** Revalidate S0 exactly once; skip reasons partition logical source rows. */
+export function applyCsvImportWithSummary(
+  state: FinanceState,
+  table: CsvTable,
+  options: CsvOptions,
+  excluded: ReadonlySet<number>,
+  overrides: Readonly<Record<number, CsvOverride>>,
+  today: string,
+): ImportApplication {
+  const rows = previewCsv(state, table, options, overrides, today);
+  const skipped = { invalid: 0, duplicate: 0, excluded: 0 };
+  const transactions: Transaction[] = [];
+  for (const row of rows) {
+    if (!row.transaction || row.error) skipped.invalid++;
+    else if (row.duplicate) skipped.duplicate++;
+    else if (excluded.has(row.line)) skipped.excluded++;
+    else transactions.push({ ...row.transaction, id: uid() });
+  }
   if (!transactions.length)
     throw new Error("Нет новых выбранных операций для импорта.");
-  return appendTransactions(state, transactions, today);
+  const next = appendTransactions(state, transactions, today);
+  return {
+    state: next,
+    summary: {
+      ...buildReplacementImportSummary(state, next, today),
+      csv: { sourceRows: rows.length, added: transactions.length, skipped },
+    },
+  };
 }
 
 export const importedBalance = (

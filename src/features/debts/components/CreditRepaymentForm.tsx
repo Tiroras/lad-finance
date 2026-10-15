@@ -1,3 +1,4 @@
+import type { OpenSheet } from "../../../application/navigation/types";
 import { useState } from "react";
 import { accountCurrency, currencySymbol } from "../../../domain/currency";
 import {
@@ -17,14 +18,15 @@ import {
   AmountField,
   DateField,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 
-export function CreditRepaymentForm({
+function CreditRepaymentFormFields({
   id,
   close,
 }: {
   id: string;
   close: () => void;
+  open: OpenSheet;
 }) {
   const { state, today, notify } = useFinance();
   const { money, moneyInput, parseMoney } = useMoney();
@@ -35,9 +37,13 @@ export function CreditRepaymentForm({
   const [fromAccountId, setFromAccountId] = useState(
     state.accounts.find(
       (entry) =>
+        !entry.archived &&
         entry.kind === "spending" &&
         (entry.currency ?? "RUB") === (account?.currency ?? "RUB"),
-    )?.id ?? state.accounts.find((entry) => entry.kind === "spending")!.id,
+    )?.id ??
+      state.accounts.find(
+        (entry) => !entry.archived && entry.kind === "spending",
+      )!.id,
   );
   const [amount, setAmount] = useState(
     account &&
@@ -121,4 +127,17 @@ export function CreditRepaymentForm({
       />
     </>
   );
+}
+
+export function CreditRepaymentForm(
+  props: Parameters<typeof CreditRepaymentFormFields>[0],
+) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <CreditRepaymentFormFields {...props} />;
 }

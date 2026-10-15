@@ -1,7 +1,12 @@
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
-import { dateLabel, paymentForMonth } from "../../../domain/finance";
-import { canLinkPayment, paymentOccurrenceKey } from "../../../domain/payments";
+import { dateLabel, paymentForMonth, uid } from "../../../domain/finance";
+import {
+  canLinkPayment,
+  paymentOccurrenceKey,
+  paymentPending,
+} from "../../../domain/payments";
+import { isPosted } from "../../../domain/transactionStatus";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
@@ -41,11 +46,13 @@ export function PaymentContent({
     : payment.skippedMonths?.includes(date.slice(0, 7));
   const recorded = state.transactions.find(
     (t) =>
+      isPosted(t) &&
       t.recurringId === payment.id &&
       t.occurrenceDate &&
       paymentOccurrenceKey(payment, t.occurrenceDate) ===
         paymentOccurrenceKey(payment, date),
   );
+  const pending = paymentPending(state, payment, date);
   const candidates = state.transactions
     .filter((transaction) => canLinkPayment(transaction, payment, date, today))
     .slice(0, 8);
@@ -71,14 +78,21 @@ export function PaymentContent({
       <Notice>
         {skipped && !recorded
           ? "Этот платёж пропущен: сумма не резервируется. Вы можете вернуть его в план."
-          : recorded
-            ? "Этот платёж уже записан в расходах и не резервируется повторно."
-            : "Если вы уже оплатили, запишите расход. Баланс уменьшится, а соответствующий платёж будет отмечен выполненным."}
+          : pending
+            ? "Списание ожидает проведения: фактический остаток не изменён, сумма удержана. План и ожидание учитываются один раз."
+            : recorded
+              ? "Этот платёж уже записан в расходах и не резервируется повторно."
+              : "Если вы уже оплатили, запишите расход. Баланс уменьшится, а соответствующий платёж будет отмечен выполненным."}
       </Notice>
       {recorded ? (
         <Button
           label="Открыть записанную операцию"
           onPress={() => open({ type: "transaction", id: recorded.id })}
+        />
+      ) : pending ? (
+        <Button
+          label="Открыть ожидаемое списание"
+          onPress={() => open({ type: "transaction", id: pending.id })}
         />
       ) : !skipped ? (
         <Button
@@ -93,7 +107,32 @@ export function PaymentContent({
           }
         />
       ) : null}
-      {!recorded && (
+      {!recorded && !pending && !skipped && (
+        <Button
+          label="Ожидать списание по плану"
+          variant="secondary"
+          onPress={() =>
+            run(() => {
+              const id = uid();
+              actions.saveTransaction({
+                createId: id,
+                type: "expense",
+                status: "pending",
+                title: payment.name,
+                amount: payment.amount,
+                date: today,
+                expectedDate: date,
+                accountId: payment.accountId,
+                category: payment.category,
+                recurringId: payment.id,
+                occurrenceDate: date,
+              });
+              open({ type: "transaction", id });
+            })
+          }
+        />
+      )}
+      {!recorded && !pending && (
         <Button
           label={
             payment.schedule
@@ -115,7 +154,7 @@ export function PaymentContent({
           }
         />
       )}
-      {!recorded && !skipped && candidates.length > 0 && (
+      {!recorded && !pending && !skipped && candidates.length > 0 && (
         <>
           <Notice>
             Расход мог уже попасть в учёт из CSV или вручную. Свяжите подходящую

@@ -11,7 +11,12 @@ import {
   type CsvOverride,
 } from "../../../domain/csv";
 import { accountCurrency } from "../../../domain/currency";
-import { useFinance, useFinanceActions } from "../../../state/finance";
+import { uid } from "../../../domain/finance";
+import {
+  useFinance,
+  useFinanceActions,
+  useFinanceStatus,
+} from "../../../state/finance";
 import { pickDocument } from "../../../infrastructure/files/documents";
 import { prepareCsvSource, type CsvSourceSettings } from "../lib/csvImport";
 
@@ -24,9 +29,11 @@ const progress = (stage: Stage, profileId?: string) => ({
   page: 0,
 });
 
-export function useCsvImport(close: () => void) {
-  const { state, notify, today } = useFinance();
+export function useCsvImport() {
+  const { state, notify, today, profile } = useFinance();
+  const { financeWriteBlocked } = useFinanceStatus();
   const actions = useFinanceActions();
+  const [expectedProfileId] = useState(profile);
   const [source, setSource] = useState(() =>
     prepareCsvSource(null, {
       encoding: "auto",
@@ -36,7 +43,9 @@ export function useCsvImport(close: () => void) {
   );
   const [options, setOptions] = useState<CsvOptions>(() => ({
     accountId:
-      state.accounts.find((account) => account.kind === "spending")?.id ?? "",
+      state.accounts.find(
+        (account) => !account.archived && account.kind === "spending",
+      )?.id ?? "",
     mapping: guessCsvMapping([]),
     mode: "signed",
     positive: "income",
@@ -165,21 +174,22 @@ export function useCsvImport(close: () => void) {
       );
     }
   };
-  const commit = () => {
-    if (!source.table || submitted.current) return;
+  const commit = async () => {
+    if (!source.table || submitted.current || financeWriteBlocked) return;
+    setBusy(true);
+    setError("");
     try {
-      // The action validates the entire import against the latest finance state.
       submitted.current = true;
-      const next = actions.importCsv(
-        source.table,
+      // Counts and application are computed together against the current profile.
+      // The provider retains the result and opens it even if this form is closed.
+      await actions.importCsvConfirmed({
+        operationId: uid(),
+        expectedProfileId,
+        table: source.table,
         options,
-        draft.excluded,
-        draft.overrides,
-      );
-      notify(
-        `Импортировано операций: ${next.transactions.length - state.transactions.length}`,
-      );
-      close();
+        excluded: draft.excluded,
+        overrides: draft.overrides,
+      });
     } catch (failure) {
       submitted.current = false;
       setError(
@@ -187,6 +197,8 @@ export function useCsvImport(close: () => void) {
           ? failure.message
           : "Не удалось импортировать операции.",
       );
+    } finally {
+      setBusy(false);
     }
   };
   return {
@@ -197,6 +209,7 @@ export function useCsvImport(close: () => void) {
     preview,
     selected,
     busy,
+    financeWriteBlocked,
     error,
     selectFile,
     changeSource,

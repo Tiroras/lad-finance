@@ -93,4 +93,6 @@ EXPO_OFFLINE=1 npx expo export --platform all --max-workers 2
 
 Для снимков используйте `scripts/capture-features.mjs`, `scripts/capture-forecast.mjs` и `node --import tsx scripts/capture-planning.mjs` при работающем сервере на 8087. Подготовьте режим и данные, ожидаемые скриптом; первые два используют демопримеры. `scripts/capture.mjs` также перезаписывает иконки приложения — учитывайте этот побочный результат перед запуском.
 
+Playwright пишет в отдельные `test-results/demo`, `test-results/personal` и `test-results/fresh`: не задавайте общий `test-results` как outputDir, поскольку он очищается перед прогоном. Долгоживущие нативные стенды, резервные копии тестовых профилей и сводные логи храните в игнорируемом `test-artifacts/`, вне каталогов очистки тестового раннера.
+
 `docs/screenshots/` очищена по просьбе пользователя и исключена из Git; создавайте снимки только для проверки. Валютные e2e сохраняют их в `test-results/`. Генерируемые `dist/`, `.expo/`, `test-results/`, `playwright-report/`, `ios/`, `android/` также исключены из Git и не должны попадать в коммит как побочный результат проверки.

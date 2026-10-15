@@ -114,11 +114,12 @@ export async function encryptBackup(
   }
 }
 
-export async function decryptBackup(
+/** Authenticate v1 and retain its exact source for the shared restore factory. */
+export async function decryptBackupSource(
   raw: string,
   password: string,
   crypto: BackupCrypto,
-): Promise<FinanceState> {
+): Promise<string> {
   const envelope = parsePasswordEnvelope(raw);
   validateBackupPassword(password, false);
   const key = await crypto.derive(
@@ -139,8 +140,29 @@ export async function decryptBackup(
     key.fill(0);
   }
   try {
-    return decodeBackup(new TextDecoder().decode(plain));
+    if (plain.length < 1 || plain.length > MAX_PLAIN_BACKUP_BYTES)
+      throw new Error("Файл резервной копии слишком большой.");
+    try {
+      return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(
+        plain,
+      );
+    } catch {
+      throw new Error("Не удалось прочитать защищённую копию.");
+    }
   } finally {
     plain.fill(0);
   }
+}
+
+export async function decryptBackup(
+  raw: string,
+  password: string,
+  crypto: BackupCrypto,
+): Promise<FinanceState> {
+  const source = await decryptBackupSource(raw, password, crypto);
+  // The original v1 TextDecoder consumed a UTF-8 BOM. Keep that compatibility
+  // here, while the source API retains every decoded character for its caller.
+  return decodeBackup(
+    source.charCodeAt(0) === 0xfeff ? source.slice(1) : source,
+  );
 }

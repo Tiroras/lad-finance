@@ -83,6 +83,7 @@ export function fundGoal(
   const destination = state.accounts.find(
     (a) =>
       a.kind === "savings" &&
+      !a.archived &&
       (a.currency ?? "RUB") === (goal.currency ?? "RUB") &&
       (!input.toAccountId || a.id === input.toAccountId),
   );

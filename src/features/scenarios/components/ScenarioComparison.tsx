@@ -28,7 +28,7 @@ export function ScenarioComparison({ scenario }: { scenario: SavedScenario }) {
       ? scenarioWarnings(state, other, today).map((w) => `${other.name}: ${w}`)
       : []),
   ];
-  const delta = result.closingBalance - baseline.closingBalance;
+  const delta = result.closingAvailable - baseline.closingAvailable;
   const outside = scenario.events.filter(
     (e) => e.date > result.days.at(-1)!.date,
   );

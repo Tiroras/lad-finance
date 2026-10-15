@@ -6,7 +6,8 @@ import type { OpenSheet } from "../navigation/types";
 
 export function AppStatusBanners({ open }: { open: OpenSheet }) {
   const reminders = useReminders();
-  const { saveError, retrySave } = useFinanceStatus();
+  const { saveError, retrySave, pendingImportId, busyImportId } =
+    useFinanceStatus();
   return (
     <>
       {(!!reminders.error || reminders.result?.status === "denied") && (
@@ -21,7 +22,24 @@ export function AppStatusBanners({ open }: { open: OpenSheet }) {
           </Txt>
         </Pressable>
       )}
-      {saveError && (
+      {pendingImportId && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Открыть неподтверждённый результат импорта"
+          onPress={() => open({ type: "importResult", id: pendingImportId })}
+          style={{ padding: 12, backgroundColor: "#F8E8DA" }}
+        >
+          <Txt
+            accessibilityRole="alert"
+            style={{ color: C.red, fontSize: 12, textAlign: "center" }}
+          >
+            {busyImportId === pendingImportId
+              ? "Импорт сохраняется. Открыть результат."
+              : "Запись импорта не подтверждена. Откройте результат, чтобы продолжить."}
+          </Txt>
+        </Pressable>
+      )}
+      {saveError && !pendingImportId && (
         <Pressable
           accessibilityRole="button"
           onPress={retrySave}

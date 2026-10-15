@@ -1,0 +1,46 @@
+# План: ../../plans/recovery-t02.md, B10-02 / A03-02, только проверка чтения.
+# Режим: default release, Lad_T02_Recovery_Test; блокировка выключена.
+# Старт: выбран файл через «Проверить копию», пароль при необходимости открыт.
+# Данные: FILE_NAME/состав должны совпадать с manifest; последний экспорт уже
+# подтверждён вручную. По умолчанию выбраны точные байты последнего экспорта.
+# Для другой копии передать EXPECTED_MESSAGE из UI и
+# READ_STATUS="Чтение этой копии ещё не проверено."; последнее чтение до этого
+# должно быть непроверенным. Не менять ожидания вслед за неожиданным результатом.
+# Финиш: виден состав и кнопка пробы; создания/замены профиля этот этап не делает.
+# Полный oracle источника/контроля выполняется отдельно ПОСЛЕ фиксации отметок.
+# T02 hierarchy pending.
+appId: app.lad.finance
+name: t02-verified-read-only
+---
+- assertVisible: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: 'Копия проверена: ${TRANSACTIONS} операций, ${ACCOUNTS} счетов, ${GOALS} целей\. Файл: \Q${FILE_NAME}\E\.'
+    direction: DOWN
+    timeout: 30000
+- assertVisible: 'Копия проверена: ${TRANSACTIONS} операций, ${ACCOUNTS} счетов, ${GOALS} целей\. Файл: \Q${FILE_NAME}\E\.'
+- scrollUntilVisible:
+    element:
+      text: '\Q${EXPECTED_MESSAGE}\E'
+    direction: DOWN
+    timeout: 30000
+- assertVisible: '\Q${EXPECTED_MESSAGE}\E'
+- assertNotVisible: "Заменить данные этой копией"
+- scrollUntilVisible:
+    element:
+      text: '\Q${READ_STATUS}\E'
+    direction: UP
+    timeout: 30000
+- assertVisible: '\Q${READ_STATUS}\E'
+- scrollUntilVisible:
+    element:
+      text: "Сохранение файла подтверждено вами."
+    direction: UP
+    timeout: 30000
+- assertVisible: "Сохранение файла подтверждено вами."
+- scrollUntilVisible:
+    element:
+      text: "Восстановить в новый профиль"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "Восстановить в новый профиль"

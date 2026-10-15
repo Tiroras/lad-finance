@@ -14,6 +14,10 @@ export function ForecastDayDetails({
 }) {
   const { money } = useMoney();
   const openEvent = (event: ForecastEvent) => {
+    if (open && event.pendingId) {
+      open({ type: "transaction", id: event.pendingId });
+      return;
+    }
     if (!open || !event.sourceId) return;
     if (event.type === "income")
       open({ type: "income", id: event.sourceId, date: event.occurrenceDate });
@@ -41,8 +45,10 @@ export function ForecastDayDetails({
       {day.events.map((event) => (
         <Pressable
           key={event.id}
-          accessibilityRole={open && event.sourceId ? "button" : undefined}
-          disabled={!open || !event.sourceId}
+          accessibilityRole={
+            open && (event.sourceId || event.pendingId) ? "button" : undefined
+          }
+          disabled={!open || !(event.sourceId || event.pendingId)}
           onPress={() => openEvent(event)}
           style={{ gap: 5, paddingVertical: 6 }}
         >
@@ -72,6 +78,11 @@ export function ForecastDayDetails({
               {event.type === "goal" && (
                 <Txt style={{ fontSize: 10, color: C.muted }}>
                   Плановый взнос на цель
+                </Txt>
+              )}
+              {event.pendingId && (
+                <Txt style={{ fontSize: 10, color: C.muted }}>
+                  Ожидающая операция · прогноз не проводит её автоматически
                 </Txt>
               )}
               {(event.type === "debt" || event.type === "credit") && (
@@ -104,16 +115,23 @@ export function ForecastDayDetails({
           flexWrap: "wrap",
         }}
       >
-        <Txt style={{ fontSize: 12 }}>К концу дня</Txt>
+        <Txt style={{ fontSize: 12 }}>Доступно к концу дня</Txt>
         <Txt
           style={{
             fontFamily: font.bold,
-            color: day.balance < 0 ? C.red : C.green,
+            color: day.available < 0 ? C.red : C.green,
           }}
         >
-          {money(day.balance, true)}
+          {money(day.available, true)}
         </Txt>
       </Row>
+      {day.held > 0 && (
+        <Txt style={{ fontSize: 11, color: C.muted, lineHeight: 18 }}>
+          Остаток по событиям: {money(day.projectedBalance, true)}. Из него
+          удержано ожидающими списаниями: {money(day.held, true)}. Проведение
+          снимает соответствующее удержание одновременно с движением денег.
+        </Txt>
+      )}
     </View>
   );
 }

@@ -16,6 +16,7 @@ export function getLedgerStorage(profile: FinanceProfile) {
   if (!ledger) {
     ledger = createPlainLedgerStorage(
       createProfileStorage(AsyncStorage, profile),
+      profile,
     );
     ledgers.set(profile, ledger);
   }

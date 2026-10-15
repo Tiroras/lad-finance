@@ -1,4 +1,4 @@
-import { accountBalance } from "../accountBalances";
+import { accountAvailability } from "../accountBalances";
 import { accountCurrency } from "../currency";
 import {
   creditOutstanding,
@@ -53,6 +53,10 @@ export function saveDebt(
   );
   const account = state.accounts.find((entry) => entry.id === input.accountId);
   ensure(account?.kind === "spending", "Выберите повседневный счёт для долга.");
+  ensure(
+    !account.archived || original?.accountId === account.id,
+    "Выберите активный счёт для долга.",
+  );
   const currency = accountCurrency(state, account.id);
   ensure(
     !original || currency === original.currency,
@@ -100,7 +104,7 @@ export function saveDebt(
     const type = debtTransactionType(debt, "issue");
     if (type === "expense")
       ensure(
-        accountBalance(state, account.id, date) >= input.amount!,
+        accountAvailability(state, account.id, date).available >= input.amount!,
         "На выбранном счёте недостаточно денег для выдачи долга.",
       );
     next = appendTransaction(
@@ -153,13 +157,15 @@ export function repayDebt(
   const account = state.accounts.find((entry) => entry.id === input.accountId);
   ensure(
     account?.kind === "spending" &&
+      !account.archived &&
       accountCurrency(state, account.id) === debt.currency,
     "Выберите повседневный счёт в валюте долга.",
   );
   const type = debtTransactionType(debt, "repay");
   if (type === "expense")
     ensure(
-      accountBalance(state, account.id, input.date) >= input.amount,
+      accountAvailability(state, account.id, input.date).available >=
+        input.amount,
       "На выбранном счёте недостаточно денег для возврата долга.",
     );
   const next = appendTransaction(

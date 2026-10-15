@@ -1,13 +1,14 @@
 import { accountCurrency } from "../currency";
 import { dateInMonth, localDate, uid, validDate } from "../finance";
-import { canLinkIncome, incomeReceived } from "../incomes";
+import { canLinkIncome, incomePending, incomeReceived } from "../incomes";
 import {
   isScheduledDate,
   scheduleSchema,
   validateSchedules,
 } from "../recurrence";
 import type { FinanceState, PlannedIncome } from "../types";
-import { saveTransaction } from "./transactions";
+import { postPendingTransaction, saveTransaction } from "./transactions";
+import { transactionStatus } from "../transactionStatus";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -23,6 +24,19 @@ export function savePlannedIncome(
   const plans = state.plannedIncomes ?? [],
     original = plans.find((p) => p.id === input.id);
   ensure(!input.id || original, "Планируемый доход уже удалён.");
+  ensure(
+    !original ||
+      !state.transactions.some(
+        (transaction) =>
+          transaction.plannedIncomeId === original.id &&
+          transactionStatus(transaction) === "pending",
+      ) ||
+      (original.accountId === input.accountId &&
+        original.amount === input.amount &&
+        original.date === input.date &&
+        original.repeat === input.repeat),
+    "Сначала проведите или отмените ожидание этого дохода, затем измените его условия.",
+  );
   ensure(
     original || plans.length < 200,
     "Можно создать не более 200 планируемых доходов.",
@@ -57,7 +71,7 @@ export function savePlannedIncome(
   );
   ensure(
     state.accounts.some(
-      (a) => a.id === input.accountId && a.kind === "spending",
+      (a) => a.id === input.accountId && a.kind === "spending" && !a.archived,
     ),
     "Выберите повседневный счёт.",
   );
@@ -125,6 +139,14 @@ export function receivePlannedIncome(
     "Дата не соответствует планируемому доходу.",
   );
   if (incomeReceived(state, plan, date, today)) return state;
+  const pending = incomePending(state, plan, date);
+  if (pending) {
+    ensure(
+      !transactionId || transactionId === pending.id,
+      "У этого поступления уже есть ожидание. Сначала проведите или отмените его.",
+    );
+    return postPendingTransaction(state, pending.id, today, today);
+  }
   if (transactionId) {
     const transaction = state.transactions.find((t) => t.id === transactionId);
     ensure(

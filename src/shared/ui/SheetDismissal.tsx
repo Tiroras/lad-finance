@@ -13,6 +13,7 @@ import type {
 } from "../lib/dismissal";
 import { Button } from "./Button";
 import { Txt } from "./Txt";
+import { ErrorText } from "./ErrorText";
 import { C, font } from "./theme";
 
 const DismissalContext = createContext<DismissalController | null>(null);
@@ -36,6 +37,7 @@ export function usePreventSheetDismiss(guard: DismissalGuard) {
       controller?.register({
         hasChanges: () => latest.current.hasChanges(),
         description: guard.description,
+        onDiscard: () => latest.current.onDiscard?.(),
       }),
     [controller, guard.description],
   );
@@ -59,11 +61,17 @@ export function SheetDismissalConfirmation({
       <Txt accessibilityRole="alert" style={{ color: C.muted, lineHeight: 22 }}>
         {pending.description}
       </Txt>
-      <Button label="Продолжить ввод" onPress={controller.cancel} />
+      <ErrorText error={pending.error ?? ""} />
       <Button
-        label="Сбросить и закрыть"
+        label="Продолжить ввод"
+        onPress={controller.cancel}
+        disabled={pending.busy}
+      />
+      <Button
+        label={pending.busy ? "Удаление черновика…" : "Сбросить и закрыть"}
         variant="danger"
         onPress={controller.discard}
+        disabled={pending.busy}
       />
     </View>
   );

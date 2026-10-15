@@ -3,6 +3,7 @@ import {
   transactionTemplateSchema,
   csvSourceProfileSchema,
   templateProblem,
+  applyCsvProfile,
   validateAutomation,
   type CategoryRule,
   type TransactionTemplate,
@@ -151,6 +152,7 @@ export function saveCsvProfile(
     id: input.id ?? uid(),
   });
   ensure(parsed.success, "Проверьте название и настройки профиля CSV.");
+  applyCsvProfile(state, parsed.data, parsed.data.headers);
   const next = {
     ...state,
     csvProfiles: input.id

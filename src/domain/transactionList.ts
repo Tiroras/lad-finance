@@ -5,9 +5,12 @@ import {
 } from "./transactionAmounts";
 import type { FinanceState, Transaction } from "./types";
 import { monthKey } from "../shared/lib/dates";
+import { isPosted, transactionStatus } from "./transactionStatus";
 
 export type TransactionFilterType = "all" | Transaction["type"] | "debt";
 export type TransactionPeriod = "month" | "all";
+export type TransactionFilterStatus =
+  "all" | "posted" | "pending" | "cancelled";
 
 export interface TransactionListFilters {
   month: string;
@@ -16,6 +19,7 @@ export interface TransactionListFilters {
   type: TransactionFilterType;
   account: string;
   category: string;
+  status?: TransactionFilterStatus;
 }
 
 /** Totals cover every match, independently of how many rows the UI displays. */
@@ -34,6 +38,9 @@ export function selectTransactionList(
 
   for (const transaction of state.transactions) {
     if (
+      (filters.status &&
+        filters.status !== "all" &&
+        transactionStatus(transaction) !== filters.status) ||
       (period === "month" && monthKey(transaction.date) !== month) ||
       transaction.date > today ||
       (account !== "all" &&
@@ -59,11 +66,20 @@ export function selectTransactionList(
     // Reuse split/refund allocation for type, category and totals, after cheap
     // filters have discarded unrelated entries.
     const parts = expenseContributions(state, transaction);
-    if (type === "expense" && parts.length === 0) continue;
+    const categories = isPosted(transaction)
+      ? parts
+      : (transaction.splits ?? [{ category: transaction.category, amount: 0 }]);
+    if (
+      type === "expense" &&
+      (isPosted(transaction)
+        ? parts.length === 0
+        : transaction.type !== "expense")
+    )
+      continue;
     if (
       category !== "all" &&
       !(transaction.type === "expense" || transaction.refundOf
-        ? parts.some((part) => matchesCategory(part.category))
+        ? categories.some((part) => matchesCategory(part.category))
         : !transaction.debtId && matchesCategory(transaction.category))
     )
       continue;

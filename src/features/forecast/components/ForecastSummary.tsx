@@ -28,17 +28,17 @@ export function ForecastSummary({
       <View style={{ gap: 7 }}>
         <Txt style={{ color: "#CBDBCA", fontSize: 12 }}>
           {labels?.result ??
-            (baseline ? "Остаток с покупкой" : "Остаток по плану")}{" "}
+            (baseline ? "Доступно с покупкой" : "Доступно по плану")}{" "}
           · {dateLabel(result.days.at(-1)!.date)}
         </Txt>
         <Txt
           testID="forecast-closing"
           style={{ color: "#fff", fontFamily: font.semibold, fontSize: 32 }}
         >
-          {money(result.closingBalance, true)}
+          {money(result.closingAvailable, true)}
         </Txt>
         <Txt style={{ color: "#CBDBCA", fontSize: 11 }}>
-          На повседневных счетах, без накоплений
+          На повседневных счетах, за вычетом ожидаемых списаний
         </Txt>
       </View>
       <View
@@ -68,13 +68,14 @@ export function ForecastSummary({
           </Txt>
         </Row>
         <Txt style={{ fontSize: 11, color: "#596651", lineHeight: 18 }}>
-          Минимум: {money(result.minimum.balance, true)} ·{" "}
+          Минимум: {money(result.minimum.available, true)} ·{" "}
           {dateLabel(result.minimum.date)}
         </Txt>
       </View>
       <View style={{ gap: 10 }}>
         {[
           ["Сейчас на счетах", money(result.openingBalance)],
+          ["Сейчас удержано ожидающими списаниями", money(result.openingHeld)],
           ["Ожидаемые доходы", `+${money(result.income)}`],
           ["Расходы и взносы", `−${money(result.outflow)}`],
         ].map(([label, value]) => (
@@ -106,7 +107,7 @@ export function ForecastSummary({
         >
           <Txt style={{ color: "#fff", fontSize: 12 }}>
             {labels?.baseline ?? "Без покупки"}:{" "}
-            {money(baseline.closingBalance, true)}
+            {money(baseline.closingAvailable, true)}
           </Txt>
           <Txt style={{ color: "#CBDBCA", fontSize: 11 }}>
             {status(baseline)}

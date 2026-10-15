@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import { useFinance, useFinanceStatus } from "../../state/finance";
-import type { FinanceProfile } from "../../domain/profiles";
+import {
+  decodeProfileRegistry,
+  type FinanceProfile,
+} from "../../domain/profiles";
 import { C, Txt, Button, ErrorText, font } from "../../shared/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSecurity, LockScreen } from "../../features/security";
-import { RecoveryControls } from "../../features/data-transfer";
+import {
+  RecoveryControls,
+  ProfileRecovery,
+  BackupNewProfile,
+  ImportResults,
+} from "../../features/data-transfer";
 import { Brand } from "./Brand";
 
 export function AppLoadingScreen({
@@ -20,11 +28,20 @@ export function AppLoadingScreen({
     canRecover: financeCanRecover,
     switchProfile,
     switching,
+    catalogRecovery,
+    pendingRecovery,
+    pendingImportId,
   } = useFinanceStatus();
   const loadError = pending?.error ?? financeError;
   const canRecover = !pending && financeCanRecover;
   const [switchError, setSwitchError] = useState("");
   const security = useSecurity();
+  const pendingImportName =
+    pendingRecovery?.kind === "import"
+      ? decodeProfileRegistry(pendingRecovery.candidateRegistryRaw).find(
+          (p) => p.id === pendingRecovery.targetId,
+        )?.name
+      : undefined;
   const openProfile = async (target: FinanceProfile) => {
     setSwitchError("");
     try {
@@ -53,7 +70,11 @@ export function AppLoadingScreen({
       >
         <Brand />
         <View style={{ height: 24 }} />
-        {loadError ? (
+        {pendingImportId ? (
+          <View style={{ gap: 16, width: "100%", maxWidth: 520 }}>
+            <ImportResults id={pendingImportId} />
+          </View>
+        ) : loadError ? (
           <>
             {canRecover && (
               <Txt
@@ -80,6 +101,13 @@ export function AppLoadingScreen({
               disabled={switching}
               style={{ marginTop: 22 }}
             />
+            {!pending && catalogRecovery && (
+              <ProfileRecovery
+                importControls={
+                  <BackupNewProfile defaultName={pendingImportName} />
+                }
+              />
+            )}
             {canRecover && (
               <>
                 <RecoveryControls key={profile} target={activeProfile} />

@@ -23,9 +23,9 @@ export function ForecastRiskInsight({
       <View style={{ gap: 12 }}>
         <Notice tone="warning">
           По текущему прогнозу {dateLabel(day.date)} до резерва будет не хватать{" "}
-          {money(result.buffer - day.balance)}. Ожидаемый остаток на конец дня:{" "}
-          {money(day.balance)}. Расчёт на ближайшие 30 дней учитывает заданные
-          планы и повседневные расходы.
+          {money(result.buffer - day.available)}. Доступный остаток на конец
+          дня: {money(day.available)}. Расчёт на ближайшие 30 дней учитывает
+          заданные планы и повседневные расходы.
         </Notice>
         <Notice>
           В сценарии можно проверить перенос дохода, изменение платежа или

@@ -1,11 +1,15 @@
 export interface DismissalGuard {
   hasChanges: () => boolean;
   description: string;
+  onDiscard?: () => void | Promise<void>;
 }
 
 export interface PendingDismissal {
   description: string;
   action: () => void;
+  onDiscard?: () => void | Promise<void>;
+  busy?: boolean;
+  error?: string;
 }
 
 /** A transient confirmation: no draft values or navigation state are persisted. */
@@ -41,24 +45,53 @@ export function createDismissalController() {
       }
       if (pending) return false;
       if (guard?.hasChanges()) {
-        publish({ description: guard.description, action });
+        publish({
+          description: guard.description,
+          action,
+          onDiscard: guard.onDiscard,
+        });
         return false;
       }
       action();
       return true;
     },
-    cancel: () => publish(null),
+    cancel: () => {
+      if (!pending?.busy) publish(null);
+    },
     discard() {
-      const action = pending?.action;
-      if (!action) return;
-      publish(null);
-      // A sheet Back action may itself ask the tour to leave this step.
-      // One explicit confirmation also authorizes that nested transition.
-      accepting = true;
+      const current = pending;
+      if (!current || current.busy) return;
+      const complete = () => {
+        if (pending?.action !== current.action) return;
+        publish(null);
+        // One explicit confirmation also authorizes nested navigation.
+        accepting = true;
+        try {
+          current.action();
+        } finally {
+          accepting = false;
+        }
+      };
+      const failed = (error: unknown) => {
+        if (pending?.action !== current.action) return;
+        publish({
+          ...current,
+          busy: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Не удалось удалить черновик. Повторите попытку.",
+        });
+      };
       try {
-        action();
-      } finally {
-        accepting = false;
+        const result = current.onDiscard?.();
+        if (result && typeof result.then === "function") {
+          publish({ ...current, busy: true, error: undefined });
+          return result.then(complete, failed);
+        }
+        complete();
+      } catch (error) {
+        failed(error);
       }
     },
   };

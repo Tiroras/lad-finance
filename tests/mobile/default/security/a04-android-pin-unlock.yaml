@@ -1,0 +1,19 @@
+# Android 17, isolated AVD only, synthetic PIN 260615; start at locked app.
+appId: app.lad.finance
+name: a04-android-pin-unlock
+---
+- tapOn: "Разблокировать Лад"
+- back
+- runFlow: a04-auth-cancelled.yaml
+- tapOn: "Разблокировать Лад"
+- tapOn: "2"
+- tapOn: "6"
+- tapOn: "0"
+- tapOn: "6"
+- tapOn: "1"
+- tapOn: "5"
+- tapOn:
+    id: "com.android.systemui:id/key_enter"
+- extendedWaitUntil:
+    notVisible: "Лад под защитой"
+    timeout: 30000

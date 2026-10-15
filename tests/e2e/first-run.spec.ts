@@ -271,7 +271,7 @@ test("setup preserves drafts through Back and commits balances only after confir
   expect(await readState(page)).toEqual(state);
 });
 
-test("reloading unfinished setup restores its screen without persisting the draft or changing money", async ({
+test("reloading unfinished setup offers its draft without applying fields or changing money", async ({
   page,
 }) => {
   await startFresh(page);
@@ -282,6 +282,16 @@ test("reloading unfinished setup restores its screen without persisting the draf
   await page.getByLabel("Начальный остаток", { exact: true }).fill("777");
   await button(page, "Продолжить").click();
   await expect(page.getByText("Шаг 2 из 4", { exact: true })).toBeVisible();
+  await page.clock.runFor(700);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        localStorage
+          .getItem("lad-profile-personal:lad-drafts-v1")
+          ?.includes("777"),
+      ),
+    )
+    .toBe(true);
   await page.reload();
   await expectSetup(page);
   await expect(page.getByLabel("Ваше имя", { exact: true })).toHaveValue(
@@ -295,6 +305,16 @@ test("reloading unfinished setup restores its screen without persisting the draf
     status: "new",
     firstRun: "setup",
   });
+  await button(page, "Восстановить черновик настройки").click();
+  await expect(page.getByText("Шаг 2 из 4", { exact: true })).toBeVisible();
+  await button(page, "Назад").click();
+  await expect(page.getByLabel("Ваше имя", { exact: true })).toHaveValue(
+    "Не сохранено",
+  );
+  await expect(
+    page.getByLabel("Начальный остаток", { exact: true }),
+  ).toHaveValue("777");
+  expect(await readState(page)).toEqual(state);
   await finishAccountSetup(page);
   await button(page, "Начать без обучения").click();
   await expectOverview(page);

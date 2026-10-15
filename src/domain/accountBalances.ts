@@ -1,6 +1,7 @@
 import { localDate } from "../shared/lib/dates";
 import { receivedAmount } from "./currency";
 import type { FinanceState } from "./types";
+import { isPostedAt, pendingHolds } from "./transactionStatus";
 
 /** All balances at the same calendar date, including dated adjustments. */
 export function accountBalances(state: FinanceState, today = localDate()) {
@@ -8,7 +9,7 @@ export function accountBalances(state: FinanceState, today = localDate()) {
   const add = (id: string, amount: number) =>
     balances.set(id, (balances.get(id) ?? 0) + amount);
   for (const transaction of state.transactions) {
-    if (transaction.date > today) continue;
+    if (!isPostedAt(transaction, today)) continue;
     add(
       transaction.accountId,
       transaction.type === "income" ? transaction.amount : -transaction.amount,
@@ -26,3 +27,13 @@ export const accountBalance = (
   id: string,
   today = localDate(),
 ) => accountBalances(state, today).get(id) ?? 0;
+
+export function accountAvailability(
+  state: FinanceState,
+  id: string,
+  today = localDate(),
+) {
+  const balance = accountBalance(state, id, today);
+  const held = pendingHolds(state).get(id) ?? 0;
+  return { balance, held, available: balance - held };
+}

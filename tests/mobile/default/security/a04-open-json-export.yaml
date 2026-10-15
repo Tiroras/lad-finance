@@ -1,0 +1,17 @@
+# Isolated synthetic A04 profile; start at unlocked home.
+# Ends at the real Android/iOS share menu; destination is a separate step.
+appId: app.lad.finance
+name: a04-open-json-export
+---
+- assertVisible: "Профиль и настройки"
+- tapOn: "Профиль и настройки"
+- scrollUntilVisible:
+    element:
+      text: "Данные и копии"
+    direction: DOWN
+- tapOn: "Данные и копии"
+- scrollUntilVisible:
+    element:
+      text: "Экспортировать резервную копию"
+    direction: DOWN
+- tapOn: "Экспортировать резервную копию"

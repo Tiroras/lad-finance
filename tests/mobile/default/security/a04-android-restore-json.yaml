@@ -1,0 +1,26 @@
+# Default, isolated synthetic profile, protection disabled.
+# Precondition: a04-valid.json visible in Android DocumentsUI Downloads.
+# Prepares independent storage/auth tests; does not validate the password path.
+appId: app.lad.finance
+name: a04-android-restore-json
+---
+- assertVisible: "a04-valid.json"
+- tapOn: "a04-valid.json"
+- scrollUntilVisible:
+    element:
+      text: "Копия проверена"
+    direction: DOWN
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: ".*В файле 3 операций, 3 счетов, 1 целей и 0 сценариев.*"
+    direction: DOWN
+- assertVisible: ".*В файле 3 операций, 3 счетов, 1 целей и 0 сценариев.*"
+- scrollUntilVisible:
+    element:
+      text: "Заменить данные этой копией"
+    direction: DOWN
+- tapOn: "Заменить данные этой копией"
+- extendedWaitUntil:
+    visible: "Профиль и настройки"
+    timeout: 30000

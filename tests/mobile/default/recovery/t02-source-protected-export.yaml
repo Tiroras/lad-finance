@@ -1,0 +1,12 @@
+# Default source5560 after the large plaintext export passed its full host oracle.
+# Start at fresh receiver SUCCESS over Data. PASSWORD is public synthetic input.
+# Finish at another fresh SUCCESS; host must assert protection=password and full
+# current state/anchor before copying this exact file to the independent target.
+appId: app.lad.finance
+name: t02-source-protected-export
+---
+- tapOn: "Закрыть приёмник"
+- runFlow:
+    file: t02-export-password.yaml
+    env:
+      PASSWORD: ${PASSWORD}

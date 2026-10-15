@@ -1,0 +1,18 @@
+# Start at locked app; system credential dialog is cancelled by Android Home.
+# Does not simulate a late native authentication callback or real biometrics.
+appId: app.lad.finance
+name: a04-auth-background
+---
+- launchApp:
+    stopApp: false
+- assertVisible: "Лад под защитой"
+- tapOn: "Разблокировать Лад"
+- pressKey: Home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "Лад под защитой"
+    timeout: 30000
+- assertVisible: "Разблокировать Лад"
+- assertNotVisible: "Профиль и настройки"
+- assertNotVisible: "A04 unsaved draft"

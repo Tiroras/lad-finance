@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {
   createCipheriv,
   createDecipheriv,
+  createHash,
   randomBytes,
   randomUUID,
 } from "node:crypto";
@@ -13,6 +14,11 @@ import { encodeBackup } from "../src/domain/backup";
 import { createInitialState } from "../src/domain/seed";
 import * as profileDomain from "../src/domain/profiles";
 import type { FinanceProfile } from "../src/infrastructure/storage/profileStorage";
+import {
+  createEncryptedFileStorage,
+  parseCiphertextPointer,
+  type EncryptedFileStorageDependencies,
+} from "../src/infrastructure/storage/encryptedFileStorage";
 import {
   createVault,
   LEGACY_STORAGE_KEY,
@@ -50,8 +56,14 @@ const ledgerKey = (profile: FinanceProfile, key = VAULT_STORAGE_KEY) =>
 function fixture() {
   const items = new Map<string, string>();
   const secrets = new Map<string, string>();
+  const ciphertextFiles = new Map<string, string>();
+  const cryptoCalls = { decrypt: 0 };
   const access: string[] = [];
   const failures = { key: null as string | null };
+  const fileKey = (profile: FinanceProfile, name: string) =>
+    `${profile}/${name}`;
+  const sha256 = (value: string) =>
+    createHash("sha256").update(value).digest("hex");
   const storage = {
     async getItem(key: string) {
       access.push(key);
@@ -70,6 +82,37 @@ function fixture() {
   const modules: Record<string, unknown> = {
     "@react-native-async-storage/async-storage": storage,
     "../../domain/profiles": profileDomain,
+    "./ciphertextFiles.native": {
+      createNativeEncryptedFileStorage(
+        profile: FinanceProfile,
+        metadata: EncryptedFileStorageDependencies["metadata"],
+      ) {
+        // Execute the real generation/pointer protocol. Only platform file I/O
+        // is replaced; the Expo FileHandle contract has its own adapter tests.
+        return createEncryptedFileStorage({
+          profile,
+          metadata,
+          randomId: randomUUID,
+          sha256: async (value) => sha256(value),
+          files: {
+            async writeNew(name, value) {
+              const key = fileKey(profile, name);
+              assert.equal(ciphertextFiles.has(key), false);
+              ciphertextFiles.set(key, value);
+            },
+            async read(name, expectedBytes) {
+              const raw = ciphertextFiles.get(fileKey(profile, name));
+              if (raw === undefined || Buffer.byteLength(raw) !== expectedBytes)
+                throw new Error("missing or incomplete ciphertext");
+              return raw;
+            },
+            async remove(name) {
+              ciphertextFiles.delete(fileKey(profile, name));
+            },
+          },
+        });
+      },
+    },
     "expo-secure-store": {
       WHEN_UNLOCKED_THIS_DEVICE_ONLY: 1,
       getItemAsync: async (key: string, options: { keychainService: string }) =>
@@ -132,6 +175,7 @@ function fixture() {
         key: Buffer,
         options: { additionalData: Uint8Array },
       ) {
+        cryptoCalls.decrypt++;
         const decipher = createDecipheriv(
           "aes-256-gcm",
           key,
@@ -185,15 +229,62 @@ function fixture() {
     restartAdapter()(profile);
   const state = createInitialState(false, "2026-09-26");
   state.settings.name = "Проверка сохранения 🔐";
-  return { items, secrets, restart, restartAdapter, state, access, failures };
+  const pointer = (profile: FinanceProfile) => {
+    const value = parseCiphertextPointer(
+      items.get(ledgerKey(profile))!,
+      profile,
+    );
+    assert.ok(value, "native writes must commit a file pointer");
+    return value;
+  };
+  const ciphertext = (profile: FinanceProfile) =>
+    ciphertextFiles.get(fileKey(profile, pointer(profile).fileName))!;
+  const replaceCiphertext = (profile: FinanceProfile, raw: string) => {
+    const value = pointer(profile);
+    ciphertextFiles.set(fileKey(profile, value.fileName), raw);
+    // Match the physical checksum so the test exercises AES authentication,
+    // rather than failing earlier at the generation checksum gate.
+    items.set(
+      ledgerKey(profile),
+      JSON.stringify({
+        ...value,
+        bytes: Buffer.byteLength(raw),
+        sha256: sha256(raw),
+      }),
+    );
+  };
+  const copyCiphertext = (from: FinanceProfile, to: FinanceProfile) => {
+    const value = pointer(from);
+    ciphertextFiles.set(fileKey(to, value.fileName), ciphertext(from));
+    // A copied file with a target-bound pointer still has no target device key.
+    items.set(ledgerKey(to), JSON.stringify({ ...value, profileId: to }));
+  };
+  return {
+    items,
+    secrets,
+    restart,
+    restartAdapter,
+    state,
+    access,
+    failures,
+    ciphertext,
+    replaceCiphertext,
+    copyCiphertext,
+    cryptoCalls,
+    ciphertextFiles,
+  };
 }
 
-test("native adapter saves a base64 envelope and reopens Unicode data after restart", async () => {
-  const { items, restart, state } = fixture();
+test("native adapter saves a base64 envelope in a generation file and reopens Unicode data after restart", async () => {
+  const { items, restart, state, ciphertext } = fixture();
   const ledger = restart();
   await ledger.save(state);
   const first = items.get(ledgerKey("personal"))!;
   assert.equal(first.includes(state.settings.name), false);
+  assert.ok(first.length < 1024);
+  const encrypted = ciphertext("personal");
+  assert.equal(encrypted.includes(state.settings.name), false);
+  assert.match(JSON.parse(encrypted).sealed, /^[A-Za-z0-9+/]+=*$/);
   assert.deepEqual(await restart().load(), state);
   await ledger.save(state);
   assert.notEqual(items.get(ledgerKey("personal")), first);
@@ -210,17 +301,26 @@ test("native adapter verifies profile-local plaintext before deleting only that 
 });
 
 test("native adapter rejects a changed authentication tag without overwriting the envelope", async () => {
-  const { items, restart, state } = fixture();
+  const { items, restart, state, ciphertext, replaceCiphertext, cryptoCalls } =
+    fixture();
   await restart().save(state);
-  const payload = JSON.parse(items.get(ledgerKey("personal"))!);
+  const payload = JSON.parse(ciphertext("personal"));
   const bytes = Buffer.from(payload.sealed, "base64");
   bytes[bytes.length - 1] ^= 1;
   payload.sealed = bytes.toString("base64");
   const damaged = JSON.stringify(payload);
-  items.set(ledgerKey("personal"), damaged);
-  await assert.rejects(restart().load());
-  await assert.rejects(restart().save(state));
-  assert.equal(items.get(ledgerKey("personal")), damaged);
+  replaceCiphertext("personal", damaged);
+  const pointer = items.get(ledgerKey("personal"));
+  const calls = cryptoCalls.decrypt;
+  await assert.rejects(restart().load(), /расшифровать/);
+  await assert.rejects(restart().save(state), /расшифровать/);
+  assert.equal(
+    cryptoCalls.decrypt,
+    calls + 2,
+    "both failures must reach AES-GCM authentication",
+  );
+  assert.equal(items.get(ledgerKey("personal")), pointer);
+  assert.equal(ciphertext("personal"), damaged);
 });
 
 test("native profiles have independent vaults and keys, and ignore all former shared data", async () => {
@@ -305,16 +405,19 @@ test("native failed saves and recoveries cannot affect another profile", async (
 });
 
 test("native profiles cannot decrypt each other's copied envelope", async () => {
-  const { items, restart, state } = fixture();
+  const { items, restart, state, copyCiphertext } = fixture();
   await restart("personal").save(state);
   const personalEnvelope = items.get(ledgerKey("personal"))!;
   items.set(ledgerKey("demo"), personalEnvelope);
+  await assert.rejects(restart("demo").load(), /файл зашифрованного/);
+  copyCiphertext("personal", "demo");
   await assert.rejects(restart("demo").load(), /Ключ устройства/);
   assert.deepEqual(await restart("personal").load(), state);
 });
 
 test("custom native profiles use separate device keys and survive failures, resets and corruption independently", async () => {
-  const { items, secrets, restartAdapter, state, failures } = fixture();
+  const { items, secrets, restartAdapter, state, failures, copyCiphertext } =
+    fixture();
   const family = "profile-11111111-1111-4111-8111-111111111111";
   const work = "profile-22222222-2222-4222-8222-222222222222";
   const familyState = structuredClone(state);
@@ -357,11 +460,15 @@ test("custom native profiles use separate device keys and survive failures, rese
   assert.equal(secrets.get(workKey[0]), workKey[1]);
   assert.equal(secrets.has(familyKey[0]), false);
 
-  // A copied snapshot is still encrypted with the other profile's key service.
+  // A foreign pointer fails its profile binding; rebinding and copying the
+  // ciphertext still cannot move the other profile's SecureStore key service.
   items.set(ledgerKey(family), workRaw);
+  await assert.rejects(restartAdapter()(family).load(), /файл зашифрованного/);
+  copyCiphertext(work, family);
+  const copiedRaw = items.get(ledgerKey(family));
   await assert.rejects(restartAdapter()(family).load(), /Ключ устройства/);
   await assert.rejects(restartAdapter()(family).save(familyState));
-  assert.equal(items.get(ledgerKey(family)), workRaw);
+  assert.equal(items.get(ledgerKey(family)), copiedRaw);
   await restartAdapter()(family).recover(familyState);
   assert.deepEqual(await restartAdapter()(family).load(), familyState);
   assert.equal(items.get(ledgerKey(work)), workRaw);

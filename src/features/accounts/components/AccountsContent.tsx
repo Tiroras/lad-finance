@@ -1,6 +1,7 @@
 import { Pressable, View } from "react-native";
 import { accountToBase } from "../../../domain/currency";
 import { accountBalance } from "../../../domain/finance";
+import { accountAvailability } from "../../../domain/accountBalances";
 import { CurrencyNotice } from "../../currencies";
 import { useMoney, useFinance } from "../../../state/finance";
 import type { OpenSheet } from "../../../application/navigation/types";
@@ -18,7 +19,9 @@ import {
 
 export function AccountsContent({ open }: { open: OpenSheet }) {
   const { money, currency: baseCode } = useMoney();
-  const { state } = useFinance();
+  const { state, today } = useFinance();
+  const active = state.accounts.filter((account) => !account.archived);
+  const archived = state.accounts.filter((account) => account.archived);
   return (
     <>
       <Notice>
@@ -26,7 +29,13 @@ export function AccountsContent({ open }: { open: OpenSheet }) {
         банкам в этой версии нет.
       </Notice>
       <CurrencyNotice />
-      {state.accounts.map((account) => (
+      {!active.length && (
+        <Notice>
+          Активных счетов пока нет. Добавьте счёт или откройте архив и
+          восстановите нужный. Сохранённые операции остаются в истории.
+        </Notice>
+      )}
+      {active.map((account) => (
         <View key={account.id} style={{ gap: 8 }}>
           <Pressable
             accessibilityRole="button"
@@ -69,6 +78,22 @@ export function AccountsContent({ open }: { open: OpenSheet }) {
                   )}
                 </Txt>
               )}
+              {accountAvailability(state, account.id, today).held > 0 && (
+                <Txt style={{ color: C.muted, fontSize: 12, marginTop: 8 }}>
+                  В ожидании списания:{" "}
+                  {money(
+                    accountAvailability(state, account.id, today).held,
+                    true,
+                    account.currency ?? "RUB",
+                  )}
+                  {" · "}После резервов:{" "}
+                  {money(
+                    accountAvailability(state, account.id, today).available,
+                    true,
+                    account.currency ?? "RUB",
+                  )}
+                </Txt>
+              )}
             </Card>
           </Pressable>
           <Button
@@ -78,6 +103,25 @@ export function AccountsContent({ open }: { open: OpenSheet }) {
           />
         </View>
       ))}
+      {archived.length > 0 && (
+        <>
+          <Txt accessibilityRole="header" style={{ fontFamily: font.bold }}>
+            Архив счетов
+          </Txt>
+          <Notice>
+            Архивные счета сохранены вместе с историей. Для новых записей
+            сначала восстановите счёт.
+          </Notice>
+          {archived.map((account) => (
+            <Button
+              key={account.id}
+              label={`${account.name} · архив`}
+              variant="secondary"
+              onPress={() => open({ type: "account", id: account.id })}
+            />
+          ))}
+        </>
+      )}
       <Button
         label="Валюты и курсы"
         variant="secondary"

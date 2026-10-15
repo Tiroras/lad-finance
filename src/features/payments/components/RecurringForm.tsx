@@ -1,3 +1,5 @@
+import { isPosted } from "../../../domain/transactionStatus";
+import type { OpenSheet } from "../../../application/navigation/types";
 import { useState } from "react";
 import { accountCurrency, currencySymbol } from "../../../domain/currency";
 import { localDate } from "../../../domain/finance";
@@ -21,10 +23,10 @@ import {
   AmountField,
   DateField,
 } from "../../../shared/ui";
-import { AccountPicker } from "../../accounts";
+import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 import { CategoryPicker } from "../../categories";
 
-export function RecurringForm({
+function RecurringFormFields({
   id,
   sourceTransactionId,
   defaultKind,
@@ -34,13 +36,18 @@ export function RecurringForm({
   sourceTransactionId?: string;
   defaultKind?: "bill" | "subscription";
   close: () => void;
+  open: OpenSheet;
 }) {
   const { moneyInput, parseMoney } = useMoney();
   const { state, today, notify } = useFinance();
   const actions = useFinanceActions();
   const original = state.recurring.find((p) => p.id === id);
   const source = state.transactions.find(
-    (t) => t.id === sourceTransactionId && t.type === "expense" && !t.debtId,
+    (t) =>
+      t.id === sourceTransactionId &&
+      isPosted(t) &&
+      t.type === "expense" &&
+      !t.debtId,
   );
   const [name, setName] = useState(original?.name ?? source?.title ?? "");
   const [amount, setAmount] = useState(
@@ -65,7 +72,7 @@ export function RecurringForm({
   const [accountId, setAccountId] = useState(
     original?.accountId ??
       source?.accountId ??
-      state.accounts.find((a) => a.kind === "spending")!.id,
+      state.accounts.find((a) => !a.archived && a.kind === "spending")!.id,
   );
   const [startsOn, setStartsOn] = useState(
     original?.startsOn ?? (source ? shiftDate(today, 1) : today),
@@ -210,4 +217,17 @@ export function RecurringForm({
       )}
     </>
   );
+}
+
+export function RecurringForm(
+  props: Parameters<typeof RecurringFormFields>[0],
+) {
+  const { state } = useFinance();
+  if (
+    !state.accounts.some(
+      (account) => !account.archived && account.kind === "spending",
+    )
+  )
+    return <AccountChoiceEmpty open={props.open} />;
+  return <RecurringFormFields {...props} />;
 }

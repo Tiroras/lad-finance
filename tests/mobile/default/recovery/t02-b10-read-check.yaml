@@ -1,0 +1,49 @@
+# Default release, recovery-t02.md. Start in Data after confirmed saving.
+# Downloads contains actual exported bytes t02-small-latest.json and the same
+# full JSON with different whitespace t02-same-state-pretty.json; host equality checked.
+# This verifies read-only status. Does not create or replace any profile.
+appId: app.lad.finance
+name: t02-b10-read-check
+---
+- takeScreenshot: b10-confirmed-not-read
+- scrollUntilVisible:
+    element:
+      text: "Проверить копию"
+    direction: UP
+- runFlow:
+    file: t02-pick-file.yaml
+    env:
+      PICKER_ACTION: Проверить копию
+      FILE_NAME: t02-same-state-pretty.json
+- runFlow:
+    file: t02-verified-read-only.yaml
+    env:
+      FILE_NAME: t02-same-state-pretty.json
+      TRANSACTIONS: "3"
+      ACCOUNTS: "3"
+      GOALS: "1"
+      EXPECTED_MESSAGE: Файл читается, но это другая копия. Отметка о последнем экспорте не изменена.
+      READ_STATUS: Чтение этой копии ещё не проверено.
+- scrollUntilVisible:
+    element:
+      text: "Проверить копию"
+    direction: UP
+- runFlow:
+    file: t02-pick-file.yaml
+    env:
+      PICKER_ACTION: Проверить копию
+      FILE_NAME: t02-small-latest.json
+- runFlow:
+    file: t02-verified-read-only.yaml
+    env:
+      FILE_NAME: t02-small-latest.json
+      TRANSACTIONS: "3"
+      ACCOUNTS: "3"
+      GOALS: "1"
+      EXPECTED_MESSAGE: Последняя подготовленная копия проверена чтением.
+      READ_STATUS: Эта копия успешно проверена чтением.
+- scrollUntilVisible:
+    element:
+      text: "Эта копия успешно проверена чтением."
+    direction: UP
+- takeScreenshot: b10-read-verified

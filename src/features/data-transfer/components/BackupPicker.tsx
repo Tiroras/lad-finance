@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { pickBackup, unlockBackup } from "../lib/backup";
-import type { FinanceState } from "../../../domain/types";
+import {
+  pickBackup,
+  type EncryptedBackup,
+  type VerifiedBackup,
+} from "../lib/backup";
 import { DEMO_ENABLED } from "../../../shared/lib/buildOptions";
 import { ErrorText, Button, Card, Field, Notice } from "../../../shared/ui";
 
@@ -12,20 +15,43 @@ export function BackupPicker({
   disabled = false,
 }: {
   label: string;
-  onReady: (state: FinanceState) => void;
+  onReady: (backup: VerifiedBackup) => void;
   onStart?: () => void;
   disabled?: boolean;
 }) {
-  const [raw, setRaw] = useState<string>();
+  const [selection, setSelection] = useState<EncryptedBackup>();
+  const selected = useRef<EncryptedBackup | undefined>(undefined);
+  const mounted = useRef(true);
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
-  const acceptBackup = (state: FinanceState) => {
-    if (state.demo && !DEMO_ENABLED)
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      try {
+        selected.current?.close();
+      } catch {
+        /* No UI remains for a cache cleanup error. */
+      }
+      selected.current = undefined;
+    };
+  }, []);
+  const clear = () => {
+    try {
+      selected.current?.close();
+    } finally {
+      selected.current = undefined;
+      setSelection(undefined);
+      setPassword("");
+    }
+  };
+  const acceptBackup = (backup: VerifiedBackup) => {
+    if (backup.candidate.sourceDemo && !DEMO_ENABLED)
       throw new Error(
         "В этой копии сохранён демонстрационный учёт. Эта версия приложения поддерживает только личный учёт. Выберите копию своих данных.",
       );
-    onReady(state);
+    onReady(backup);
   };
   const run = async (task: () => Promise<void>) => {
     setBusy(true);
@@ -33,9 +59,10 @@ export function BackupPicker({
     try {
       await task();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Не удалось открыть копию.");
+      if (mounted.current)
+        setError(e instanceof Error ? e.message : "Не удалось открыть копию.");
     } finally {
-      setBusy(false);
+      if (mounted.current) setBusy(false);
     }
   };
   return (
@@ -48,15 +75,21 @@ export function BackupPicker({
         onPress={() =>
           void run(async () => {
             onStart?.();
-            setRaw(undefined);
-            setPassword("");
+            clear();
             const file = await pickBackup();
-            if (file?.kind === "open") acceptBackup(file.state);
-            if (file?.kind === "encrypted") setRaw(file.raw);
+            if (!mounted.current) {
+              if (file?.kind === "encrypted") file.selection.close();
+              return;
+            }
+            if (file?.kind === "open") acceptBackup(file.backup);
+            if (file?.kind === "encrypted") {
+              selected.current = file.selection;
+              setSelection(file.selection);
+            }
           })
         }
       />
-      {raw && (
+      {selection && (
         <Card style={{ gap: 14 }}>
           <Notice>
             Это копия с паролем. Введите пароль, заданный при её создании. Если
@@ -78,10 +111,10 @@ export function BackupPicker({
             disabled={busy || disabled || !password}
             onPress={() =>
               void run(async () => {
-                const state = await unlockBackup(raw, password);
-                setPassword("");
-                setRaw(undefined);
-                acceptBackup(state);
+                const backup = await selection.unlock(password);
+                if (!mounted.current) return;
+                clear();
+                acceptBackup(backup);
               })
             }
           />
@@ -89,11 +122,11 @@ export function BackupPicker({
             label="Отмена ввода пароля"
             variant="secondary"
             disabled={busy || disabled}
-            onPress={() => {
-              setRaw(undefined);
-              setPassword("");
-              setError("");
-            }}
+            onPress={() =>
+              void run(async () => {
+                clear();
+              })
+            }
           />
         </Card>
       )}

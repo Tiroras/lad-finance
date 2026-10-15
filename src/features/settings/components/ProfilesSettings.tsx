@@ -25,8 +25,14 @@ type ProfileEditor = { id: FinanceProfile } | "create" | null;
 
 export function ProfilesSettings({ close }: { close: () => void }) {
   const { profile, profiles, notify } = useFinance();
-  const { switching, switchProfile, createProfile, renameProfile } =
-    useFinanceStatus();
+  const {
+    switching,
+    financeWriteBlocked,
+    switchProfile,
+    createProfile,
+    renameProfile,
+  } = useFinanceStatus();
+  const blocked = switching || financeWriteBlocked;
   const [editor, setEditor] = useState<ProfileEditor>(null);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
@@ -55,7 +61,7 @@ export function ProfilesSettings({ close }: { close: () => void }) {
     }
   };
   const saveProfile = async () => {
-    if (!editor || switching) return;
+    if (!editor || blocked) return;
     setError("");
     try {
       if (editor === "create") {
@@ -79,6 +85,13 @@ export function ProfilesSettings({ close }: { close: () => void }) {
         У каждого профиля свои счета, операции и планы. Добавьте отдельный
         профиль, если ведёте, например, семейный или рабочий бюджет.
       </Txt>
+      {financeWriteBlocked && (
+        <Notice tone="warning">
+          Смена и изменение профилей доступны после проверки записи импорта.
+          Вернитесь к результату импорта, чтобы повторить сохранение или открыть
+          сохранённый снимок устройства.
+        </Notice>
+      )}
       <Card style={{ padding: 0, overflow: "hidden" }}>
         {profiles.map((item, index) => {
           const active = item.id === profile;
@@ -99,9 +112,9 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                 accessibilityLabel={`Открыть профиль: ${item.name}`}
                 accessibilityState={{
                   selected: active,
-                  disabled: switching || active,
+                  disabled: blocked || active,
                 }}
-                disabled={switching || active}
+                disabled={blocked || active}
                 onPress={() => void openProfile(item)}
                 style={({ pressed }) => [
                   {
@@ -113,7 +126,7 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                     minHeight: 76,
                     padding: 14,
                   },
-                  switching && { opacity: 0.5 },
+                  blocked && { opacity: 0.5 },
                   pressed && interactionStyles.pressed,
                 ]}
               >
@@ -142,8 +155,8 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel={`Переименовать профиль: ${item.name}`}
-                  accessibilityState={{ disabled: switching }}
-                  disabled={switching}
+                  accessibilityState={{ disabled: blocked }}
+                  disabled={blocked}
                   onPress={() => {
                     setEditor({ id: item.id });
                     setRecoveryTarget(null);
@@ -159,7 +172,7 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                       alignItems: "center",
                       justifyContent: "center",
                     },
-                    switching && { opacity: 0.5 },
+                    blocked && { opacity: 0.5 },
                     pressed && interactionStyles.pressed,
                   ]}
                 >
@@ -186,7 +199,7 @@ export function ProfilesSettings({ close }: { close: () => void }) {
             value={name}
             onChangeText={setName}
             placeholder="Например, Семейный"
-            editable={!switching}
+            editable={!blocked}
             autoCapitalize="sentences"
             returnKeyType="done"
             onSubmitEditing={() => void saveProfile()}
@@ -200,13 +213,13 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                   ? "Создать профиль"
                   : "Сохранить название"
             }
-            disabled={switching}
+            disabled={blocked}
             onPress={() => void saveProfile()}
           />
           <Button
             label="Отмена"
             variant="secondary"
-            disabled={switching}
+            disabled={blocked}
             onPress={clearEditor}
           />
         </Card>
@@ -217,7 +230,7 @@ export function ProfilesSettings({ close }: { close: () => void }) {
             label="Добавить профиль"
             icon="add-outline"
             variant="secondary"
-            disabled={switching}
+            disabled={blocked}
             onPress={() => {
               setEditor("create");
               setRecoveryTarget(null);

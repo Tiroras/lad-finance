@@ -94,7 +94,11 @@ export function templateProblem(
   template: TransactionTemplate,
 ): string | undefined {
   const account = state.accounts.find((a) => a.id === template.accountId);
-  if (!account || accountCurrency(state, account.id) !== template.currency)
+  if (
+    !account ||
+    account.archived ||
+    accountCurrency(state, account.id) !== template.currency
+  )
     return "Счёт или валюта шаблона недоступны. Сохраните шаблон заново.";
   if (template.type === "expense" && account.kind === "savings")
     return "Для расхода нужен повседневный счёт.";
@@ -126,6 +130,7 @@ export function templateProblem(
     const target = state.accounts.find((a) => a.id === template.toAccountId);
     if (
       !target ||
+      target.archived ||
       target.id === account.id ||
       accountCurrency(state, target.id) !== template.toCurrency
     )
@@ -202,6 +207,7 @@ export function applyCsvProfile(
   );
   if (
     !account ||
+    account.archived ||
     account.kind !== "spending" ||
     accountCurrency(state, account.id) !== profile.currency
   )
@@ -255,6 +261,10 @@ export function validateAutomation(state: FinanceState) {
     const available = {
       ...state,
       categories: state.categories.map((c) => ({ ...c, archived: false })),
+      accounts: state.accounts.map((account) => ({
+        ...account,
+        archived: false,
+      })),
     };
     const error = templateProblem(available, template);
     if (error) throw new Error(error);
@@ -265,6 +275,16 @@ export function validateAutomation(state: FinanceState) {
     if (names.has(key))
       throw new Error("Названия профилей CSV должны различаться.");
     names.add(key);
-    applyCsvProfile(state, profile, profile.headers);
+    applyCsvProfile(
+      {
+        ...state,
+        accounts: state.accounts.map((account) => ({
+          ...account,
+          archived: false,
+        })),
+      },
+      profile,
+      profile.headers,
+    );
   }
 }

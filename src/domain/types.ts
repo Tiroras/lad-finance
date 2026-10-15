@@ -58,6 +58,7 @@ export interface Account {
   currency?: CurrencyCode;
   icon: IconName;
   color: string;
+  archived?: boolean;
 }
 
 export interface Transaction {
@@ -83,6 +84,8 @@ export interface Transaction {
   refundSourceAmount?: number;
   debtId?: string;
   debtAction?: "issue" | "repay";
+  status?: "posted" | "pending" | "cancelled";
+  expectedDate?: string;
 }
 
 export interface Goal {
@@ -137,7 +140,7 @@ export interface ForecastPreferences {
 }
 
 export interface FinanceState {
-  version: 2 | 3 | 4;
+  version: 2 | 3 | 4 | 5;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];

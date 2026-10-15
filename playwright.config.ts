@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  outputDir: "test-results/demo",
   testIgnore: ["**/demo-disabled.spec.ts", "**/fresh-start.spec.ts"],
   timeout: 45000,
   expect: { timeout: 10000 },

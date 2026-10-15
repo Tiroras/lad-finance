@@ -40,6 +40,8 @@ export function transactionDraftSnapshot(
     category: draft.category,
     accountId: draft.accountId,
     date: draft.date,
+    status: draft.status,
+    expectedDate: draft.status === "pending" ? draft.expectedDate : undefined,
     note: draft.note.trim(),
     toAccountId: draft.type === "transfer" ? draft.toAccountId : undefined,
     received: foreignTransfer

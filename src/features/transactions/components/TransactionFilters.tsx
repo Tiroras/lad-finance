@@ -7,7 +7,10 @@ import {
   View,
 } from "react-native";
 import { categoryLabel, orderedCategories } from "../../../domain/categories";
-import type { TransactionFilterType } from "../../../domain/transactionList";
+import type {
+  TransactionFilterType,
+  TransactionFilterStatus,
+} from "../../../domain/transactionList";
 import { useFinance } from "../../../state/finance";
 import {
   C,
@@ -39,6 +42,8 @@ export function TransactionFilters({
   category,
   setCategory,
   onReset,
+  status,
+  setStatus,
 }: {
   query: string;
   setQuery: (value: string) => void;
@@ -49,6 +54,8 @@ export function TransactionFilters({
   category: string;
   setCategory: (value: string) => void;
   onReset: () => void;
+  status: TransactionFilterStatus;
+  setStatus: (value: TransactionFilterStatus) => void;
 }) {
   const { state } = useFinance();
   const [expanded, setExpanded] = useState(false);
@@ -58,6 +65,15 @@ export function TransactionFilters({
     if (tourExpanded) setExpanded(true);
   }, [tourExpanded]);
   const active = [
+    ...(status !== "all"
+      ? [
+          status === "posted"
+            ? "Проведённые"
+            : status === "pending"
+              ? "Ожидаемые"
+              : "Отменённые",
+        ]
+      : []),
     ...(type !== "all" ? [typeLabels[type]] : []),
     ...(account !== "all"
       ? [
@@ -118,6 +134,27 @@ export function TransactionFilters({
       )}
       {isExpanded && (
         <View style={{ gap: 12 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8 }}
+          >
+            {(
+              [
+                ["all", "Все статусы"],
+                ["posted", "Проведённые"],
+                ["pending", "Ожидаемые"],
+                ["cancelled", "Отменённые"],
+              ] as const
+            ).map(([value, label]) => (
+              <Chip
+                key={value}
+                label={label}
+                active={status === value}
+                onPress={() => setStatus(value)}
+              />
+            ))}
+          </ScrollView>
           <View style={s.typeFilters}>
             <Segments
               style={s.typeFilterRow}
@@ -156,7 +193,7 @@ export function TransactionFilters({
             {state.accounts.map((item) => (
               <Chip
                 key={item.id}
-                label={item.name}
+                label={`${item.name}${item.archived ? " · архив" : ""}`}
                 active={item.id === account}
                 onPress={() => setAccount(item.id)}
               />

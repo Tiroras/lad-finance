@@ -19,6 +19,7 @@ state.settings = {
   ...state.settings,
   name: "A04 Synthetic",
   onboardingCompleted: true,
+  exchange: { automatic: false, rates: {} },
 };
 state.accounts[0].openingBalance = 1_000_000;
 state.goals = [
@@ -79,7 +80,6 @@ assert.deepEqual(
 assert.equal(checked.transactions[2].goalId, checked.goals[0].id);
 const digest = (text: string) =>
   createHash("sha256").update(text).digest("hex");
-const directory = resolve("test-results/t01/a04/fixtures");
 
 async function main() {
   if (process.argv[2] === "verify") {
@@ -104,6 +104,8 @@ async function main() {
     );
     return;
   }
+  // An explicit destination preserves manifests from previous device runs.
+  const directory = resolve(process.argv[2] ?? "test-results/t01/a04/fixtures");
   await mkdir(directory, { recursive: true });
   const encrypted = await encryptBackup(checked, password, backupCrypto);
   assert.deepEqual(

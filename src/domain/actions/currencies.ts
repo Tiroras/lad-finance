@@ -151,7 +151,7 @@ export function changeBaseCurrency(
   };
   const next: FinanceState = {
     ...state,
-    version: 4,
+    version: state.version === 5 ? 5 : 4,
     settings: {
       ...state.settings,
       baseCurrency: currency,

@@ -42,6 +42,7 @@ yarn-error.*
 
 # Test artifacts
 test-results/
+test-artifacts/
 playwright-report/
 native-export/
 

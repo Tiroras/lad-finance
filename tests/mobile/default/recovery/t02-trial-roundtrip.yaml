@@ -1,0 +1,37 @@
+# Default, recovery-t02.md. B10 read check succeeded with the small A04 copy.
+# NAME is required, absent before this run; pass -e NAME=T02-20261015-Trial.
+# Actual JSON is pulled after the fresh SUCCESS and compared with the full A04 oracle.
+appId: app.lad.finance
+name: t02-trial-roundtrip
+---
+- runFlow:
+    file: t02-new-profile.yaml
+    env:
+      NAME: ${NAME}
+      TRANSACTIONS: "3"
+      ACCOUNTS: "3"
+      GOALS: "1"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: 'Текущий профиль: \Q${NAME}\E\. Открыть профили'
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: "Открыть мои счета"
+    direction: DOWN
+- tapOn: "Открыть мои счета"
+- assertVisible: "Основная карта, Повседневные расходы, 9 300,00 ₽"
+- assertVisible: "Наличные, Повседневные расходы, 0,00 ₽"
+- assertVisible: "Накопления, Накопления · вне доступного бюджета, 1 000,00 ₽"
+- tapOn: "Закрыть"
+- tapOn: "Операции"
+- tapOn: "Вся история"
+- assertVisible: "A04 Income"
+- assertVisible: "A04 Expense"
+- assertVisible: "A04 Goal transfer"
+- runFlow:
+    file: t02-open-data.yaml
+    env:
+      PROFILE: ${NAME}
+- runFlow: t02-export-json.yaml

@@ -1,6 +1,15 @@
 import { accountCurrency } from "../../../domain/currency";
-import { dateInMonth, dateLabel, daysBetween } from "../../../domain/finance";
-import { canLinkIncome, incomeReceived } from "../../../domain/incomes";
+import {
+  dateInMonth,
+  dateLabel,
+  daysBetween,
+  uid,
+} from "../../../domain/finance";
+import {
+  canLinkIncome,
+  incomeReceived,
+  incomePending,
+} from "../../../domain/incomes";
 import { scheduleDates } from "../../../domain/recurrence";
 import { shiftDate } from "../../../shared/lib/dates";
 import type { PlannedIncome } from "../../../domain/types";
@@ -37,6 +46,7 @@ export function IncomeReceipt({
   const occurrenceDate =
     date ?? (currentDate < plan.date ? plan.date : currentDate);
   const recorded = incomeReceived(state, plan, occurrenceDate, today);
+  const pending = incomePending(state, plan, occurrenceDate);
   const candidates = state.transactions
     .filter((transaction) => canLinkIncome(transaction, plan, today))
     .sort(
@@ -69,6 +79,19 @@ export function IncomeReceipt({
             onPress={() => open({ type: "transaction", id: recorded.id })}
           />
         </>
+      ) : pending ? (
+        <>
+          <Notice>
+            Поступление ожидает проведения. Оно ещё не получено и не увеличивает
+            фактический остаток. Просроченная или отсутствующая ожидаемая дата
+            исключает его из прогноза.
+          </Notice>
+          <Button
+            label="Открыть ожидаемое поступление"
+            variant="secondary"
+            onPress={() => open({ type: "transaction", id: pending.id })}
+          />
+        </>
       ) : (
         <>
           <Notice>
@@ -95,6 +118,29 @@ export function IncomeReceipt({
             label="Доход получен — записать"
             variant="secondary"
             onPress={() => receive()}
+          />
+          <Button
+            label="Ожидать поступление по плану"
+            variant="secondary"
+            onPress={() =>
+              run(() => {
+                const id = uid();
+                actions.saveTransaction({
+                  createId: id,
+                  type: "income",
+                  status: "pending",
+                  title: plan.name,
+                  amount: plan.amount,
+                  date: today,
+                  expectedDate: occurrenceDate,
+                  accountId: plan.accountId,
+                  category: "other",
+                  plannedIncomeId: plan.id,
+                  incomeOccurrenceDate: occurrenceDate,
+                });
+                open({ type: "transaction", id });
+              })
+            }
           />
         </>
       )}
