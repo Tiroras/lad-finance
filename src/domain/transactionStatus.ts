@@ -54,7 +54,26 @@ export function transactionStatusError(
 /** Old readers must reject new semantics, rather than silently post a pending row. */
 export function assertFinanceVersion(state: FinanceState) {
   if (
-    state.version !== 5 &&
+    state.version < 6 &&
+    (state.recurring.some((p) => p.versions !== undefined) ||
+      state.plannedIncomes?.some(
+        (p) =>
+          p.versions !== undefined ||
+          p.paused !== undefined ||
+          p.occurrenceOverrides !== undefined,
+      ) ||
+      state.budgetPlans?.some((p) => p.versions !== undefined) ||
+      state.transactions.some(
+        (t) =>
+          t.recurringVersionId !== undefined || t.incomeVersionId !== undefined,
+      ))
+  )
+    throw new Error(
+      "История условий и переносы событий требуют финансовый формат версии 6.",
+    );
+
+  if (
+    state.version < 5 &&
     (state.accounts.some((account) => account.archived !== undefined) ||
       state.transactions.some(
         (transaction) =>

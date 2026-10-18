@@ -20,9 +20,19 @@ export function ForecastDayDetails({
     }
     if (!open || !event.sourceId) return;
     if (event.type === "income")
-      open({ type: "income", id: event.sourceId, date: event.occurrenceDate });
+      open({
+        type: "income",
+        id: event.sourceId,
+        date: event.occurrenceDate,
+        versionId: event.versionId,
+      });
     if (event.type === "payment")
-      open({ type: "payment", id: event.sourceId, date: event.occurrenceDate });
+      open({
+        type: "payment",
+        id: event.sourceId,
+        date: event.occurrenceDate,
+        versionId: event.versionId,
+      });
     if (event.type === "goal") open({ type: "fund", id: event.sourceId });
     if (event.type === "debt") open({ type: "repayDebt", id: event.sourceId });
     if (event.type === "credit")

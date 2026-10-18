@@ -124,17 +124,18 @@ test("skipping a weekly date does not skip other dates that month", () => {
     () => payRecurring(skipped, id, "2026-09-11", TODAY),
     /верните/,
   );
-  assert.equal(
-    setPaymentSkipped(skipped, id, "2026-09-11", false, TODAY).recurring[0]
-      .skippedDates?.length,
-    0,
+  const restored = setPaymentSkipped(skipped, id, "2026-09-11", false, TODAY);
+  assert.deepEqual(restored.recurring[0].versions![0].skippedDates, []);
+  assert.deepEqual(
+    overduePayments(restored, TODAY).map((entry) => entry.date),
+    ["2026-09-11", "2026-09-18"],
   );
   assert.throws(
     () => setPaymentSkipped(start, id, "2026-09-12", true, TODAY),
     /Дата/,
   );
 });
-test("scheduled price edits preserve older unpaid obligations and the schedule is immutable", () => {
+test("scheduled price and cadence edits start tomorrow and preserve older unpaid obligations", () => {
   const state = weekly(),
     old = state.recurring[0];
   const changed = saveRecurring(state, { ...old, amount: 2_000 }, TODAY);
@@ -143,21 +144,38 @@ test("scheduled price edits preserve older unpaid obligations and the schedule i
     [1_000, 1_000],
   );
   assert.equal(upcoming(changed, TODAY, "2026-09-26")[0].payment.amount, 2_000);
-  assert.throws(
-    () =>
-      saveRecurring(
-        changed,
-        {
-          ...changed.recurring[0],
-          schedule: { ...old.schedule!, interval: 2 },
-        },
-        TODAY,
-      ),
-    /График/,
+  const rescheduled = saveRecurring(
+    changed,
+    {
+      ...changed.recurring[0],
+      schedule: { ...old.schedule!, interval: 2 },
+    },
+    TODAY,
   );
-  assert.equal(
-    decodeBackup(encodeBackup(changed)).recurring[0].amountHistory?.[0].amount,
-    1_000,
+  assert.deepEqual(
+    overduePayments(rescheduled, TODAY).map((entry) => [
+      entry.date,
+      entry.payment.amount,
+    ]),
+    [
+      ["2026-09-11", 1_000],
+      ["2026-09-18", 1_000],
+    ],
+  );
+  assert.deepEqual(
+    upcoming(rescheduled, TODAY, "2026-10-12").map((entry) => [
+      entry.date,
+      entry.payment.amount,
+    ]),
+    [
+      ["2026-09-25", 2_000],
+      ["2026-10-09", 2_000],
+    ],
+  );
+  assert.equal(rescheduled.recurring[0].versions![0].effectiveTo, "2026-09-21");
+  assert.deepEqual(
+    decodeBackup(encodeBackup(rescheduled)).recurring[0].versions,
+    JSON.parse(JSON.stringify(rescheduled.recurring[0].versions)),
   );
 });
 test("weekly income receipts are keyed by date and received occurrences leave the projection", () => {
@@ -242,8 +260,28 @@ test("monthly legacy identities and price history retain their original behavior
     { ...paid.recurring[0], day: 20, amount: 2_000 },
     TODAY,
   );
-  assert.equal(upcoming(edited, TODAY, "2026-10-01")[0].paid, true);
-  assert.equal(overduePayments(edited, TODAY)[0].payment.amount, 1_000);
+  const september = upcoming(edited, "2026-09-01", "2026-10-01");
+  assert.equal(september.length, 1);
+  assert.equal(september[0].date, "2026-09-10");
+  assert.equal(september[0].payment.amount, 1_000);
+  // upcoming treats its start as the valuation day; the September 20 receipt
+  // is instead verified at TODAY through idempotency and the overdue set.
+  assert.equal(
+    payRecurring(edited, edited.recurring[0].id, "2026-09-10", TODAY),
+    edited,
+  );
+  assert.deepEqual(upcoming(edited, TODAY, "2026-10-01"), []);
+  const october = upcoming(edited, "2026-10-01", "2026-11-01");
+  assert.equal(october[0].date, "2026-10-20");
+  assert.equal(october[0].payment.amount, 2_000);
+  assert.equal(october[0].paid, false);
+  assert.deepEqual(
+    overduePayments(edited, TODAY).map((entry) => [
+      entry.date,
+      entry.payment.amount,
+    ]),
+    [["2026-08-10", 1_000]],
+  );
 });
 
 test("annual saving guideline skips paid dates, respects leap years and never changes reserves", () => {

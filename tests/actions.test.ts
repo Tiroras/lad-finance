@@ -286,7 +286,7 @@ test("recurring payment actions are idempotent and linking a recorded expense ne
   assert.strictEqual(payRecurring(paid, "bill", "2026-09-15", TODAY), paid);
   assert.throws(
     () => setPaymentSkipped(paid, "bill", "2026-09-15", true, TODAY),
-    /Оплаченный/,
+    /Проведённый платёж/,
   );
   const recorded = saveTransaction(state, { ...expense, amount: 75000 }, TODAY);
   const linked = payRecurring(
@@ -304,23 +304,21 @@ test("recurring payment actions are idempotent and linking a recorded expense ne
   assert.deepEqual(balances(removed), balances(linked));
 });
 
-test("skipped, inactive and stale occurrences cannot be paid; editing a bill retains old conditions", () => {
+test("skipped and cancelled future occurrences cannot be paid; stopping and editing retain old obligations", () => {
   const state = fixture();
   const skipped = setPaymentSkipped(state, "bill", "2026-09-15", true, TODAY);
   assert.throws(
     () => payRecurring(skipped, "bill", "2026-09-15", TODAY),
     /верните/,
   );
+  const stopped = setRecurringActive(state, "bill", false, TODAY);
   assert.throws(
-    () =>
-      payRecurring(
-        setRecurringActive(state, "bill", false, TODAY),
-        "bill",
-        "2026-09-15",
-        TODAY,
-      ),
-    /исключён/,
+    () => payRecurring(stopped, "bill", "2026-09-15", TODAY),
+    /Дата не соответствует/,
   );
+  const paidStoppedArrear = payRecurring(stopped, "bill", "2026-08-15", TODAY);
+  assert.equal(paidStoppedArrear.transactions[0].amount, 75000);
+  assert.equal(paidStoppedArrear.transactions[0].occurrenceDate, "2026-08-15");
   const changed = saveRecurring(
     state,
     { ...state.recurring[0], amount: 100000, day: 20 },
@@ -337,13 +335,17 @@ test("skipped, inactive and stale occurrences cannot be paid; editing a bill ret
 
 test("planning income changes no balance; receiving, editing and deleting the plan retains actual money", () => {
   const initial = fixture();
-  const state = savePlannedIncome(initial, {
-    name: "Зарплата",
-    amount: 50000,
-    date: "2026-09-15",
-    repeat: "monthly",
-    accountId: "card",
-  });
+  const state = savePlannedIncome(
+    initial,
+    {
+      name: "Зарплата",
+      amount: 50000,
+      date: "2026-09-15",
+      repeat: "monthly",
+      accountId: "card",
+    },
+    TODAY,
+  );
   const plan = state.plannedIncomes![0];
   assert.deepEqual(balances(state), balances(initial));
   const received = receivePlannedIncome(state, plan.id, "2026-09-15", TODAY);
@@ -353,12 +355,28 @@ test("planning income changes no balance; receiving, editing and deleting the pl
     received,
   );
   assert.throws(
-    () => savePlannedIncome(received, { ...plan, repeat: "once" }),
-    /периодичности/,
+    () => savePlannedIncome(received, { ...plan, repeat: "once" }, TODAY),
+    /полученные/,
+  );
+  const transitioned = savePlannedIncome(
+    received,
+    {
+      ...plan,
+      repeat: "once",
+      date: "2026-09-16",
+      effectiveFrom: "2026-09-16",
+    },
+    TODAY,
+  );
+  assert.deepEqual(balances(transitioned), balances(received));
+  assert.deepEqual(transitioned.transactions, received.transactions);
+  assert.equal(
+    transitioned.plannedIncomes![0].versions![0].effectiveTo,
+    "2026-09-16",
   );
   const edited = saveTransaction(
-    received,
-    { ...received.transactions[0], amount: 49999 },
+    transitioned,
+    { ...transitioned.transactions[0], amount: 49999 },
     TODAY,
   );
   assert.equal(edited.transactions[0].plannedIncomeId, plan.id);

@@ -1,3 +1,4 @@
+import { resolvePaymentOccurrence } from "../payments";
 import { validateTransactionAmountsState } from "../transactionAmounts";
 import { accountBalances } from "../accountBalances";
 import { validateAccountArchives } from "../accountArchive";
@@ -63,7 +64,13 @@ function prepareTransaction(
       state.recurring.some(
         (p) =>
           p.id === transaction.recurringId &&
-          p.category === transaction.category,
+          (transaction.occurrenceDate
+            ? resolvePaymentOccurrence(
+                p,
+                transaction.occurrenceDate,
+                transaction.recurringVersionId,
+              )?.payment.category
+            : p.category) === transaction.category,
       ),
     "Категория в архиве. Выберите активную категорию.",
   );
@@ -115,9 +122,12 @@ export function appendTransaction(
   const valued = prepareTransaction(state, transaction, today, allowArchived);
   const next: FinanceState = {
     ...state,
-    ...(valued.status !== undefined || valued.expectedDate !== undefined
-      ? { version: 5 as const }
-      : {}),
+    ...(valued.recurringVersionId !== undefined ||
+    valued.incomeVersionId !== undefined
+      ? { version: 6 as const }
+      : valued.status !== undefined || valued.expectedDate !== undefined
+        ? { version: state.version === 6 ? (6 as const) : (5 as const) }
+        : {}),
     transactions: [valued, ...state.transactions],
   };
   checkSavings(next, today);
@@ -188,10 +198,17 @@ export function appendTransactions(
   next = {
     ...next,
     ...(transactions.some(
-      (entry) => entry.status !== undefined || entry.expectedDate !== undefined,
+      (entry) =>
+        entry.recurringVersionId !== undefined ||
+        entry.incomeVersionId !== undefined,
     )
-      ? { version: 5 as const }
-      : {}),
+      ? { version: 6 as const }
+      : transactions.some(
+            (entry) =>
+              entry.status !== undefined || entry.expectedDate !== undefined,
+          )
+        ? { version: state.version === 6 ? (6 as const) : (5 as const) }
+        : {}),
     transactions: [
       ...transactions.map((transaction) => added.get(transaction.id)!),
       ...state.transactions,
@@ -311,6 +328,14 @@ export function saveTransaction(
     recurringId:
       input.type === "expense"
         ? (original?.recurringId ?? input.recurringId)
+        : undefined,
+    recurringVersionId:
+      input.type === "expense"
+        ? (original?.recurringVersionId ?? input.recurringVersionId)
+        : undefined,
+    incomeVersionId:
+      input.type === "income"
+        ? (original?.incomeVersionId ?? input.incomeVersionId)
         : undefined,
     occurrenceDate:
       input.type === "expense"
@@ -444,7 +469,7 @@ export function cancelPendingTransaction(
   );
   const next: FinanceState = {
     ...state,
-    version: 5,
+    version: state.version === 6 ? 6 : 5,
     transactions: state.transactions.map((entry) =>
       entry.id === id ? { ...entry, status: "cancelled" } : entry,
     ),

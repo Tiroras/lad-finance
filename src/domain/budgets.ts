@@ -12,8 +12,7 @@ import { MAX_MONEY, transactionValue } from "./currency";
 import { expenseContributions } from "./transactionAmounts";
 import type { Category, FinanceState } from "./types";
 
-export interface BudgetPlan {
-  categoryId: string;
+export interface BudgetTerms {
   period: "monthly" | "weekly" | "yearly";
   startDay: number;
   anchor: string;
@@ -21,6 +20,15 @@ export interface BudgetPlan {
   rolloverDeficit: boolean;
   changes: { from: string; amount: number }[];
   overrides: { start: string; amount: number }[];
+}
+export interface BudgetVersion extends BudgetTerms {
+  id: string;
+  effectiveFrom: string;
+}
+export interface BudgetPlan extends BudgetTerms {
+  categoryId: string;
+  /** Later conditions only; the top-level terms remain the original history. */
+  versions?: BudgetVersion[];
 }
 const date = z
   .string()
@@ -40,8 +48,42 @@ export const budgetPlanSchema = z.object({
   overrides: z.array(z.object({ start: date, amount })).max(6000),
 });
 
+export const budgetVersionSchema = budgetPlanSchema
+  .omit({ categoryId: true })
+  .extend({ id: z.string().min(1).max(100), effectiveFrom: date });
+export const budgetPlanSchemaV6 = budgetPlanSchema.extend({
+  versions: z.array(budgetVersionSchema).min(1).max(200).optional(),
+});
+
+export function budgetTermsAt(plan: BudgetPlan, date: string): BudgetTerms {
+  return (
+    plan.versions?.filter((entry) => entry.effectiveFrom <= date).at(-1) ?? plan
+  );
+}
+
+export function budgetHistory(plan: BudgetPlan): BudgetVersion[] {
+  const { categoryId: _categoryId, versions: _versions, ...original } = plan;
+  return [
+    { ...original, id: "legacy", effectiveFrom: plan.anchor },
+    ...(plan.versions ?? []),
+  ];
+}
+
 export function budgetPeriod(
-  plan: Pick<BudgetPlan, "period" | "startDay" | "anchor"> | undefined,
+  plan:
+    | (Pick<BudgetPlan, "period" | "startDay" | "anchor"> &
+        Partial<Pick<BudgetPlan, "versions">>)
+    | undefined,
+  date: string,
+) {
+  const version = plan?.versions
+    ?.filter((entry) => entry.effectiveFrom <= date)
+    .at(-1);
+  return termsPeriod(version ?? plan, date);
+}
+
+function termsPeriod(
+  plan: Pick<BudgetTerms, "period" | "startDay" | "anchor"> | undefined,
   date: string,
 ) {
   if (!plan || date < plan.anchor) {
@@ -83,9 +125,10 @@ function periodLimit(
   fallback: number,
 ) {
   if (!plan) return fallback;
+  const terms = budgetTermsAt(plan, start);
   return (
-    plan.overrides.find((entry) => entry.start === start)?.amount ??
-    plan.changes.filter((entry) => entry.from <= start).at(-1)?.amount ??
+    terms.overrides.find((entry) => entry.start === start)?.amount ??
+    terms.changes.filter((entry) => entry.from <= start).at(-1)?.amount ??
     fallback
   );
 }
@@ -191,7 +234,9 @@ function calculateCategoryBudget(
   let carried = 0;
   if (
     plan &&
-    (plan.rolloverSurplus || plan.rolloverDeficit) &&
+    budgetHistory(plan).some(
+      (terms) => terms.rolloverSurplus || terms.rolloverDeficit,
+    ) &&
     period.start > plan.anchor
   )
     for (
@@ -199,18 +244,19 @@ function calculateCategoryBudget(
       start < period.start;
       start = budgetPeriod(plan, start).end
     ) {
-      if (++count > 5300)
+      if (++count > 5400)
         throw new Error("Период бюджета превышает поддерживаемые 100 лет.");
+      const terms = budgetTermsAt(plan, start);
       const left =
         periodLimit(plan, start, category.budget) +
         carried -
         (spending.get(start) ?? 0);
       carried =
         left >= 0
-          ? plan.rolloverSurplus
+          ? terms.rolloverSurplus
             ? left
             : 0
-          : plan.rolloverDeficit
+          : terms.rolloverDeficit
             ? left
             : 0;
       if (!Number.isSafeInteger(carried))
@@ -276,37 +322,56 @@ export function validateBudgetPlans(state: FinanceState) {
     throw new Error("Повторяющиеся планы бюджета категории.");
   for (const plan of plans) {
     if (
-      !budgetPlanSchema.safeParse(plan).success ||
+      !budgetPlanSchemaV6.safeParse(plan).success ||
       !state.categories.some(
         (category) => category.id === plan.categoryId && !category.parentId,
       )
     )
       throw new Error("Некорректный план бюджета категории.");
-    if (
-      budgetPeriod(plan, plan.anchor).start !== plan.anchor ||
-      plan.changes[0].from !== "2000-01-01"
-    )
-      throw new Error("Некорректная исходная дата бюджета.");
-    if (
-      plan.changes.some(
-        (entry, index) =>
-          index > 0 &&
-          (entry.from <= plan.changes[index - 1].from ||
-            entry.from < plan.anchor ||
-            budgetPeriod(plan, entry.from).start !== entry.from),
+    if (plan.versions && state.version !== 6)
+      throw new Error(
+        "История условий бюджета требует финансовый формат версии 6.",
+      );
+    const history = budgetHistory(plan);
+    if (new Set(history.map((entry) => entry.id)).size !== history.length)
+      throw new Error("Повторяющиеся версии бюджета.");
+    for (let index = 0; index < history.length; index++) {
+      const terms = history[index];
+      const nextStart = history[index + 1]?.effectiveFrom;
+      const previous = history[index - 1];
+      if (
+        termsPeriod(terms, terms.anchor).start !== terms.anchor ||
+        terms.effectiveFrom !== terms.anchor ||
+        terms.changes[0].from !== (index ? terms.anchor : "2000-01-01") ||
+        (previous &&
+          (terms.effectiveFrom <= previous.effectiveFrom ||
+            termsPeriod(previous, shiftDate(terms.effectiveFrom, -1)).end !==
+              terms.effectiveFrom))
       )
-    )
-      throw new Error("Некорректная история лимитов бюджета.");
-    if (
-      new Set(plan.overrides.map((entry) => entry.start)).size !==
-        plan.overrides.length ||
-      plan.overrides.some(
-        (entry) =>
-          entry.start < plan.anchor ||
-          budgetPeriod(plan, entry.start).start !== entry.start,
+        throw new Error("Некорректная граница условий бюджета.");
+      if (
+        terms.changes.some(
+          (entry, changeIndex) =>
+            (changeIndex > 0 &&
+              (entry.from <= terms.changes[changeIndex - 1].from ||
+                entry.from < terms.anchor ||
+                termsPeriod(terms, entry.from).start !== entry.from)) ||
+            !!(nextStart && entry.from >= nextStart),
+        )
       )
-    )
-      throw new Error("Некорректный лимит отдельного периода.");
+        throw new Error("Некорректная история лимитов бюджета.");
+      if (
+        new Set(terms.overrides.map((entry) => entry.start)).size !==
+          terms.overrides.length ||
+        terms.overrides.some(
+          (entry) =>
+            entry.start < terms.anchor ||
+            termsPeriod(terms, entry.start).start !== entry.start ||
+            !!(nextStart && entry.start >= nextStart),
+        )
+      )
+        throw new Error("Некорректный лимит отдельного периода.");
+    }
   }
   validateBudgetCapacity(state);
 }
@@ -321,21 +386,51 @@ export function validateBudgetCapacity(state: FinanceState) {
   let magnitude = 0n;
   for (const category of state.categories.filter((entry) => !entry.parentId)) {
     const plan = plans.get(category.id);
-    const maximum = Math.max(
-      category.budget,
-      ...(plan?.changes.map((entry) => entry.amount) ?? []),
-      ...(plan?.overrides.map((entry) => entry.amount) ?? []),
-    );
-    const periods = !plan?.rolloverSurplus
-      ? 1
-      : plan.period === "weekly"
-        ? Math.ceil(daysBetween(plan.anchor, "2101-01-01") / 7)
-        : plan.period === "yearly"
-          ? 2101 - Number(plan.anchor.slice(0, 4))
-          : (2101 - Number(plan.anchor.slice(0, 4))) * 12 -
-            Number(plan.anchor.slice(5, 7)) +
-            1;
-    magnitude += BigInt(maximum) * BigInt(Math.max(1, periods));
+    // Preserve the accepted legacy bound for snapshots without any transition.
+    if (!plan?.versions) {
+      const maximum = Math.max(
+        category.budget,
+        ...(plan?.changes.map((entry) => entry.amount) ?? []),
+        ...(plan?.overrides.map((entry) => entry.amount) ?? []),
+      );
+      const periods = !plan?.rolloverSurplus
+        ? 1
+        : plan.period === "weekly"
+          ? Math.ceil(daysBetween(plan.anchor, "2101-01-01") / 7)
+          : plan.period === "yearly"
+            ? 2101 - Number(plan.anchor.slice(0, 4))
+            : (2101 - Number(plan.anchor.slice(0, 4))) * 12 -
+              Number(plan.anchor.slice(5, 7)) +
+              1;
+      magnitude += BigInt(maximum) * BigInt(Math.max(1, periods));
+      continue;
+    }
+    const history = plan ? budgetHistory(plan) : [];
+    if (!history.length) {
+      magnitude += BigInt(category.budget);
+      continue;
+    }
+    for (let index = 0; index < history.length; index++) {
+      const terms = history[index];
+      const end = history[index + 1]?.effectiveFrom ?? "2101-01-01";
+      const maximum = Math.max(
+        category.budget,
+        ...terms.changes.map((entry) => entry.amount),
+        ...terms.overrides.map((entry) => entry.amount),
+      );
+      const periods = !terms.rolloverSurplus
+        ? 1
+        : terms.period === "weekly"
+          ? Math.ceil(daysBetween(terms.anchor, end) / 7)
+          : terms.period === "yearly"
+            ? Number(end.slice(0, 4)) - Number(terms.anchor.slice(0, 4)) + 1
+            : (Number(end.slice(0, 4)) - Number(terms.anchor.slice(0, 4))) *
+                12 +
+              Number(end.slice(5, 7)) -
+              Number(terms.anchor.slice(5, 7)) +
+              1;
+      magnitude += BigInt(maximum) * BigInt(Math.max(1, periods));
+    }
   }
   for (const transaction of state.transactions) {
     if (transaction.type !== "expense" && !transaction.refundOf) continue;

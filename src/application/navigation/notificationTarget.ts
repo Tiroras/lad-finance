@@ -1,3 +1,4 @@
+import { resolvePaymentOccurrence } from "../../domain/payments";
 import type { FinanceState } from "../../domain/types";
 import type { PaymentNotification } from "../../infrastructure/notifications/notifications.types";
 import type { FinanceProfile } from "../../infrastructure/storage/profileStorage";
@@ -9,12 +10,21 @@ export function notificationTarget(
   state: FinanceState,
 ): { tab: "plan"; sheet: SheetState | null } | null {
   if (notification.profile !== profile) return null;
-  const { paymentId, date } = notification;
+  const { paymentId, date, versionId } = notification;
+  const plan = state.recurring.find((item) => item.id === paymentId);
   return {
     tab: "plan",
     sheet:
-      paymentId && date && state.recurring.some((item) => item.id === paymentId)
-        ? { type: "payment", id: paymentId, date }
+      paymentId &&
+      date &&
+      plan &&
+      resolvePaymentOccurrence(plan, date, versionId)
+        ? {
+            type: "payment",
+            id: paymentId,
+            date,
+            ...(versionId ? { versionId } : {}),
+          }
         : null,
   };
 }

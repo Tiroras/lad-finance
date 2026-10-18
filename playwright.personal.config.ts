@@ -10,6 +10,7 @@ export default defineConfig({
     "**/backup-verification.spec.ts",
     "**/import-export-calculations.spec.ts",
     "**/daily-accounting-calculations.spec.ts",
+    "**/plan-history-*.spec.ts",
     "**/daily-accounting.spec.ts",
     "**/onboarding-draft.spec.ts",
     "**/import-result-csv.spec.ts",

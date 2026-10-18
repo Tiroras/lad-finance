@@ -1,10 +1,12 @@
+import { overduePayments, upcoming, paymentVersions } from "./payments";
+import { shiftDate } from "../shared/lib/dates";
 import { accountBalance } from "./accountBalances";
 import {
   creditOutstanding,
   creditPaymentRemaining,
   debtBalance,
 } from "./debts";
-import { incomeReceived } from "./incomes";
+import { incomeReceived, incomeAccountObligation } from "./incomes";
 import { transactionStatus } from "./transactionStatus";
 import type { FinanceState } from "./types";
 
@@ -40,17 +42,39 @@ export function accountArchiveBlockers(
         message: `Проведите или отмените ожидание «${transaction.title}».`,
       });
   for (const payment of state.recurring)
-    if (payment.accountId === accountId && payment.active)
+    if (
+      payment.versions
+        ? paymentVersions(payment).some(
+            (v) =>
+              v.accountId === accountId &&
+              !v.inactiveLegacy &&
+              !v.voided &&
+              (!v.effectiveTo || v.effectiveTo > shiftDate(today, 1)),
+          ) ||
+          [
+            ...overduePayments({ ...state, recurring: [payment] }, today),
+            ...upcoming(
+              { ...state, recurring: [payment] },
+              today,
+              shiftDate(today, 1),
+            ),
+          ].some(
+            (o) => o.payment.accountId === accountId && !o.paid && !o.skipped,
+          )
+        : payment.accountId === accountId && payment.active
+    )
       blockers.push({
         code: "payment",
         entityId: payment.id,
-        message: `Перенесите или отключите платёж «${payment.name}».`,
+        message: `Завершите обязательства или перенесите платёж «${payment.name}».`,
       });
   for (const income of state.plannedIncomes ?? [])
     if (
-      income.accountId === accountId &&
-      (income.repeat !== "once" ||
-        !incomeReceived(state, income, income.date, today))
+      income.versions
+        ? incomeAccountObligation(state, income, accountId, today)
+        : income.accountId === accountId &&
+          (income.repeat !== "once" ||
+            !incomeReceived(state, income, income.date, today))
     )
       blockers.push({
         code: "income",

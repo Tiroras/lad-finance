@@ -2,9 +2,11 @@ import { useState } from "react";
 import {
   budgetPeriod,
   categoryBudget,
+  budgetTermsAt,
   type BudgetPlan,
 } from "../../../domain/budgets";
 import { useActionError } from "../../../shared/lib/useActionError";
+import { dateLabel, shiftDate, validDate } from "../../../shared/lib/dates";
 import {
   useFinanceActions,
   useMoney,
@@ -24,26 +26,52 @@ import {
   DateField,
   Toggle,
 } from "../../../shared/ui";
+import { BudgetTransitionForm } from "./BudgetTransitionForm";
+import { BudgetHistory } from "./BudgetHistory";
 
 export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
-  const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
+  const { money, moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
   const { state, today, notify } = useFinance();
   const actions = useFinanceActions();
   const category = state.categories.find((c) => c.id === id)!;
   const original = state.budgetPlans?.find((p) => p.categoryId === id);
+  const initialTerms = original && budgetTermsAt(original, today);
+  const [transition, setTransition] = useState(false);
   const [amount, setAmount] = useState(
     moneyInput(categoryBudget(state, category.id, today, today).base),
   );
   const [period, setPeriod] = useState<BudgetPlan["period"]>(
-    original?.period ?? "monthly",
+    initialTerms?.period ?? "monthly",
   );
-  const [startDay, setStartDay] = useState(String(original?.startDay ?? 1));
-  const [anchor, setAnchor] = useState(original?.anchor ?? today);
+  const [startDay, setStartDay] = useState(String(initialTerms?.startDay ?? 1));
+  const [anchor, setAnchor] = useState(initialTerms?.anchor ?? today);
   const [date, setDate] = useState(today);
   const [scope, setScope] = useState<"future" | "once">("future");
-  const [surplus, setSurplus] = useState(original?.rolloverSurplus ?? false);
-  const [deficit, setDeficit] = useState(original?.rolloverDeficit ?? false);
+  const [surplus, setSurplus] = useState(
+    initialTerms?.rolloverSurplus ?? false,
+  );
+  const [deficit, setDeficit] = useState(
+    initialTerms?.rolloverDeficit ?? false,
+  );
   const { error, setError, run } = useActionError();
+  if (transition && original)
+    return (
+      <BudgetTransitionForm
+        plan={original}
+        close={close}
+        back={() => setTransition(false)}
+      />
+    );
+  const selectedTerms = original && budgetTermsAt(original, date);
+  const validPeriodDate =
+    validDate(date) && date >= "2000-01-01" && date <= "2100-12-31";
+  const dateError =
+    validDate(date) && !validPeriodDate
+      ? "Выберите дату бюджетного периода от 2000 до 2100 года."
+      : undefined;
+  const selectedBudget = validPeriodDate
+    ? categoryBudget(state, category.id, date, today)
+    : undefined;
   return (
     <>
       <Row>
@@ -104,13 +132,15 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
       ) : (
         <Notice>
           Период:{" "}
-          {period === "monthly"
-            ? `месяц с ${original.startDay}-го числа`
-            : period === "weekly"
+          {selectedTerms!.period === "monthly"
+            ? `месяц с ${selectedTerms!.startDay}-го числа`
+            : selectedTerms!.period === "weekly"
               ? "неделя"
               : "год"}
-          . Перенос остатка: {surplus ? "включён" : "выключен"}; перерасхода:{" "}
-          {deficit ? "включён" : "выключен"}. График сохраняется для истории.
+          . Перенос остатка:{" "}
+          {selectedTerms!.rolloverSurplus ? "включён" : "выключен"};
+          перерасхода: {selectedTerms!.rolloverDeficit ? "включён" : "выключен"}
+          . График сохраняется для истории.
         </Notice>
       )}
       <DateField
@@ -118,7 +148,17 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
         accessibilityLabel="Дата бюджетного периода"
         value={date}
         onChangeText={setDate}
+        error={dateError}
       />
+      {selectedBudget && original && (
+        <Notice>
+          Выбранный период: {dateLabel(selectedBudget.start)} —{" "}
+          {dateLabel(shiftDate(selectedBudget.end, -1))}. Лимит:{" "}
+          {money(selectedBudget.base, true)}; перенос:{" "}
+          {money(selectedBudget.carried, true)}; расходы:{" "}
+          {money(selectedBudget.spent, true)}.
+        </Notice>
+      )}
       <AmountField
         label={`Лимит периода, ${baseSymbol}`}
         accessibilityLabel="Лимит категории"
@@ -137,11 +177,12 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
         Закрытые периоды сохраняют прежние лимиты. Разовый лимит действует
         только в выбранном периоде. В бюджет входят подкатегории; повторного
         резерва в «Можно потратить» нет. Даты первого графика и правила переноса
-        после сохранения изменить нельзя.
+        сохраняются. Новый график можно назначить с будущей границы периода.
       </Notice>
       <ErrorText error={error} />
       <Button
         label="Сохранить лимит"
+        disabled={!validPeriodDate}
         onPress={() =>
           run(() => {
             const parsed = parseMoney(amount),
@@ -151,7 +192,7 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
             if (!Number.isInteger(day) || day < 1 || day > 31)
               return setError("Укажите начало месяца от 1 до 31.");
             const first =
-              original?.anchor ??
+              selectedTerms?.anchor ??
               (period === "monthly"
                 ? budgetPeriod(
                     { period, startDay: day, anchor: "2000-01-01" },
@@ -160,11 +201,11 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
                 : anchor);
             actions.saveBudgetPlan({
               categoryId: category.id,
-              period,
-              startDay: day,
+              period: selectedTerms?.period ?? period,
+              startDay: selectedTerms?.startDay ?? day,
               anchor: first,
-              rolloverSurplus: surplus,
-              rolloverDeficit: deficit,
+              rolloverSurplus: selectedTerms?.rolloverSurplus ?? surplus,
+              rolloverDeficit: selectedTerms?.rolloverDeficit ?? deficit,
               date,
               amount: parsed,
               onlyThisPeriod: scope === "once",
@@ -174,6 +215,16 @@ export function BudgetForm({ id, close }: { id?: string; close: () => void }) {
           })
         }
       />
+      {original && (
+        <>
+          <Button
+            label="Новый график бюджета"
+            variant="secondary"
+            onPress={() => setTransition(true)}
+          />
+          <BudgetHistory plan={original} />
+        </>
+      )}
     </>
   );
 }

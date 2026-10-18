@@ -6,6 +6,12 @@ import { localDate } from "../../../domain/finance";
 import { shiftDate } from "../../../shared/lib/dates";
 import { RecurrenceFields } from "./RecurrenceFields";
 import type { RecurrenceSchedule } from "../../../domain/recurrence";
+import {
+  paymentTransitionPreview,
+  paymentTermsChanged,
+  type RecurringInput,
+} from "../../../domain/actions/recurring";
+import { PaymentTermsHistory } from "./PaymentTermsHistory";
 import type { CategoryId } from "../../../domain/types";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
@@ -31,6 +37,7 @@ function RecurringFormFields({
   sourceTransactionId,
   defaultKind,
   close,
+  open,
 }: {
   id?: string;
   sourceTransactionId?: string;
@@ -80,18 +87,20 @@ function RecurringFormFields({
   const [schedule, setSchedule] = useState<RecurrenceSchedule | undefined>(
     original?.schedule,
   );
-  const [skippedDates, setSkippedDates] = useState(
-    original?.skippedDates ?? [],
-  );
-  const [skippedMonths, setSkippedMonths] = useState(
-    original?.skippedMonths ?? [],
-  );
+  const [effectiveFrom, setEffectiveFrom] = useState(shiftDate(today, 1));
+  const [proposed, setProposed] = useState<RecurringInput | null>(null);
   const { error, setError, run } = useActionError();
+  const commit = (input: RecurringInput) =>
+    run(() => {
+      actions.saveRecurring(input);
+      notify("Платёж сохранён");
+      close();
+    });
   const save = () =>
     run(() => {
       const parsed = parseMoney(amount, accountCurrency(state, accountId));
       if (parsed === null) return setError("Введите корректную сумму платежа.");
-      actions.saveRecurring({
+      const input: RecurringInput = {
         id,
         name,
         amount: parsed,
@@ -100,20 +109,29 @@ function RecurringFormFields({
         category,
         accountId,
         startsOn,
-        skippedMonths,
-        skippedDates,
-        schedule: schedule
-          ? { ...schedule, anchor: original?.schedule?.anchor ?? startsOn }
-          : undefined,
-      });
-      notify("Платёж сохранён");
-      close();
+        schedule,
+        effectiveFrom: original ? effectiveFrom : undefined,
+      };
+      if (original && paymentTermsChanged(original, input)) setProposed(input);
+      else commit(input);
     });
+  const preview =
+    original && proposed
+      ? paymentTransitionPreview(
+          state,
+          original.id,
+          proposed.effectiveFrom!,
+          today,
+        )
+      : undefined;
   return (
     <>
       <Segments
         value={kind}
-        onChange={setKind}
+        onChange={(value) => {
+          setKind(value);
+          setProposed(null);
+        }}
         options={[
           { value: "subscription", label: "Подписка" },
           { value: "bill", label: "Обязательный платёж" },
@@ -124,84 +142,136 @@ function RecurringFormFields({
         accessibilityLabel="Название платежа"
         placeholder="Например, домашний интернет"
         value={name}
-        onChangeText={setName}
+        onChangeText={(value) => {
+          setName(value);
+          setProposed(null);
+        }}
         maxLength={120}
       />
       <AmountField
         label={`Сумма одного платежа, ${currencySymbol(accountCurrency(state, accountId))}`}
         accessibilityLabel="Сумма платежа"
         value={amount}
-        onChangeText={setAmount}
+        onChangeText={(value) => {
+          setAmount(value);
+          setProposed(null);
+        }}
       />
       <RecurrenceFields
         schedule={schedule}
-        onChange={setSchedule}
-        anchor={startsOn}
-        locked={!!original}
+        onChange={(value) => {
+          setSchedule(value);
+          setProposed(null);
+        }}
+        anchor={original ? effectiveFrom : startsOn}
       />
       {!schedule && (
         <Field
           label="День списания · от 1 до 31"
           accessibilityLabel="День списания"
           value={day}
-          onChangeText={setDay}
+          onChangeText={(value) => {
+            setDay(value);
+            setProposed(null);
+          }}
           keyboardType="number-pad"
           maxLength={2}
         />
       )}
       <AccountPicker
         selected={accountId}
-        onChange={setAccountId}
+        onChange={(value) => {
+          setAccountId(value);
+          setProposed(null);
+        }}
         spendingOnly
         currency={
           original ? accountCurrency(state, original.accountId) : undefined
         }
       />
-      <DateField
-        label="Учитывать с даты"
-        accessibilityLabel="Дата начала платежа"
-        value={startsOn}
-        onChangeText={(value) => {
-          setStartsOn(value);
-          if (schedule && !original)
-            setSchedule({ ...schedule, anchor: value });
+      {original ? (
+        <DateField
+          label="Новые условия действуют с даты"
+          accessibilityLabel="Начало новых условий платежа"
+          value={effectiveFrom}
+          onChangeText={(value) => {
+            setEffectiveFrom(value);
+            setProposed(null);
+          }}
+        />
+      ) : (
+        <DateField
+          label="Учитывать с даты"
+          accessibilityLabel="Дата начала платежа"
+          value={startsOn}
+          onChangeText={(value) => {
+            setStartsOn(value);
+            if (schedule) setSchedule({ ...schedule, anchor: value });
+          }}
+          placeholder={localDate()}
+        />
+      )}
+      {original && schedule && (
+        <DateField
+          label="Опорная дата повторений новых условий"
+          accessibilityLabel="Опорная дата графика платежа"
+          value={schedule.anchor}
+          onChangeText={(anchor) => {
+            setSchedule({ ...schedule, anchor });
+            setProposed(null);
+          }}
+        />
+      )}
+      <CategoryPicker
+        value={category}
+        onChange={(value) => {
+          setCategory(value);
+          setProposed(null);
         }}
-        placeholder={localDate()}
       />
-      <CategoryPicker value={category} onChange={setCategory} />
       <Notice>
         Если в месяце нет выбранного числа, платёж планируется на последний день
         месяца. Неотмеченные платежи после даты начала остаются просроченными.
         Реального списания приложение не выполняет.
-        {schedule
-          ? " Изменение суммы действует с сегодняшнего дня; прошлые обязательства сохраняют прежнюю сумму."
-          : " Изменение суммы и дня действует с текущего месяца; прошлые месяцы сохраняют прежние условия."}
+        {original &&
+          " Новые условия начнутся не раньше завтра. Прежние обязательства сохранят дату, сумму, счёт и категорию. Уже отмеченные будущие события защищены от изменения."}
       </Notice>
       <ErrorText error={error} />
-      {skippedMonths.length > 0 && (
+      {proposed && preview ? (
         <>
-          <Notice>
-            Пропущено месяцев: {skippedMonths.length}. Чтобы снова учитывать эти
-            обязательства, верните их и сохраните платёж.
+          <Notice tone={preview.conflicts.length ? "warning" : undefined}>
+            С {proposed.effectiveFrom}: {preview.affected.length} будущих
+            событий в ближайшие 90 дней будут рассчитаны по новым условиям.
+            {preview.replacedVersions.length > 0 &&
+              ` Уже назначенные будущие условия с дат ${preview.replacedVersions.map((version) => version.effectiveFrom).join(", ")} будут отменены до начала и сохранены в истории.`}
+            {preview.conflicts.length > 0 &&
+              ` Конфликты: ${preview.conflicts
+                .map((item) => item.date)
+                .slice(0, 8)
+                .join(
+                  ", ",
+                )}. Выберите дату не раньше ${preview.suggestedFrom}.`}
+            {preview.affected.length > 0 &&
+              ` Даты прежнего графика: ${preview.affected
+                .slice(0, 8)
+                .map((item) => item.date)
+                .join(", ")}${preview.affected.length > 8 ? "…" : ""}.`}
           </Notice>
           <Button
-            label="Вернуть все пропущенные месяцы"
-            variant="secondary"
-            onPress={() => setSkippedMonths([])}
+            label="Подтвердить новые условия"
+            disabled={preview.conflicts.length > 0}
+            onPress={() => commit(proposed)}
           />
-        </>
-      )}
-      {skippedDates.length > 0 && (
-        <>
-          <Notice>Пропущено платежей: {skippedDates.length}.</Notice>
           <Button
-            label="Вернуть все пропущенные платежи"
+            label="Изменить условия"
             variant="secondary"
-            onPress={() => setSkippedDates([])}
+            onPress={() => setProposed(null)}
           />
         </>
+      ) : (
+        <Button label="Сохранить платёж" onPress={save} />
       )}
-      <Button label="Сохранить платёж" onPress={save} />
+      {original && <PaymentTermsHistory payment={original} open={open} />}
       {original && (
         <DeleteButton
           label="Удалить из плана"

@@ -37,11 +37,23 @@ test("overdue payment stays reserved, can be skipped, restored and paid without 
   await page
     .getByRole("button", { name: "Пропустить этот месяц", exact: true })
     .click();
+  await page
+    .getByRole("button", {
+      name: "Подтвердить пропуск обязательства",
+      exact: true,
+    })
+    .click();
   await expect
     .poll(async () => spendable(await readState(page), TODAY).overdue)
     .toBe(0);
   await page
     .getByRole("button", { name: "Вернуть этот месяц в план", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Подтвердить возврат обязательства",
+      exact: true,
+    })
     .click();
   await expect
     .poll(async () => spendable(await readState(page), TODAY).overdue)

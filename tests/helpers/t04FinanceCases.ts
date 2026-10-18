@@ -921,8 +921,8 @@ export const t04FinanceCases: readonly {
         incomeOccurrenceDate: NEXT,
       });
       rejects(
-        () => savePlannedIncome(state, { ...income(), amount: 1 }),
-        /ожидан/,
+        () => savePlannedIncome(state, { ...income(), amount: 1 }, TODAY),
+        /ожидающие поступления: 2026-10-16/,
       );
       state = pending(state, {
         createId: "bill-intent",

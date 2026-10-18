@@ -1,5 +1,6 @@
 import { dateInMonth, monthKey, validDate } from "../shared/lib/dates";
-import { paymentForMonth } from "./payments";
+import { paymentForMonth, resolvePaymentOccurrence } from "./payments";
+import { resolveIncomeOccurrence } from "./incomes";
 import { isScheduledDate } from "./recurrence";
 import { transactionStatus } from "./transactionStatus";
 import type { FinanceState, Transaction } from "./types";
@@ -12,13 +13,34 @@ export function pendingLinkError(
 ): string | null {
   if (transactionStatus(transaction) !== "pending") return null;
   if (transaction.recurringId) {
-    const payment = state.recurring.find(
+    const template = state.recurring.find(
       (entry) => entry.id === transaction.recurringId,
     );
     const date = transaction.occurrenceDate;
-    if (!payment || transaction.type !== "expense" || !date || !validDate(date))
+    const payment =
+      template && date
+        ? resolvePaymentOccurrence(
+            template,
+            date,
+            transaction.recurringVersionId,
+          )?.payment
+        : undefined;
+    if (
+      !template ||
+      transaction.type !== "expense" ||
+      !date ||
+      !validDate(date)
+    )
       return "Неверная связь ожидающего платежа.";
-    if (!payment.active)
+    if (!payment)
+      return "Дата или версия ожидания не соответствует обязательству платежа.";
+    if (
+      template?.versions?.find(
+        (v) => v.id === (transaction.recurringVersionId ?? "legacy"),
+      )?.inactiveLegacy
+    )
+      return "Этот прежний выключенный план не создаёт обязательств.";
+    if (!template?.versions && !payment.active)
       return "Сначала включите платёж, чтобы сохранить ожидание.";
     if (
       (payment.startsOn && date < payment.startsOn) ||
@@ -35,12 +57,18 @@ export function pendingLinkError(
       return "Сначала верните пропущенный платёж в план, затем создайте ожидание.";
   }
   if (transaction.plannedIncomeId) {
-    const plan = state.plannedIncomes?.find(
+    const template = state.plannedIncomes?.find(
       (entry) => entry.id === transaction.plannedIncomeId,
     );
     const date = transaction.incomeOccurrenceDate;
+    const occurrence =
+      template && date
+        ? resolveIncomeOccurrence(template, date, transaction.incomeVersionId)
+        : undefined;
+    const plan = occurrence?.plan;
     if (
       !plan ||
+      occurrence?.cancelled ||
       transaction.type !== "income" ||
       !date ||
       !validDate(date) ||

@@ -68,11 +68,23 @@ test("weekly budgets and payment schedules are editable on a narrow screen and p
   await page
     .getByRole("button", { name: "Пропустить этот платёж", exact: true })
     .click();
+  await page
+    .getByRole("button", {
+      name: "Подтвердить пропуск обязательства",
+      exact: true,
+    })
+    .click();
   await expect
     .poll(async () => (await read()).recurring[0].skippedDates)
     .toEqual([TODAY]);
   await page
     .getByRole("button", { name: "Вернуть этот платёж в план", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "Подтвердить возврат обязательства",
+      exact: true,
+    })
     .click();
   await page
     .getByRole("button", { name: "Я оплатил — записать расход", exact: true })

@@ -99,6 +99,19 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
   for (const plan of state.recurring)
     for (const rule of [...(plan.history ?? []), ...(plan.amountHistory ?? [])])
       checkAmount(accountToBase(state, rule.amount, plan.accountId), true);
+  for (const plan of [...state.recurring, ...(state.plannedIncomes ?? [])])
+    for (const version of plan.versions ?? [])
+      checkAmount(
+        accountToBase(state, version.amount, version.accountId),
+        true,
+      );
+  for (const plan of state.recurring)
+    for (const version of plan.versions ?? [])
+      for (const rule of [
+        ...(version.history ?? []),
+        ...(version.amountHistory ?? []),
+      ])
+        checkAmount(accountToBase(state, rule.amount, version.accountId), true);
   for (const debt of state.debts ?? [])
     checkAmount(
       accountToBase(state, debtBalance(state, debt, today), debt.accountId),

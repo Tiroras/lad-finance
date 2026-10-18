@@ -28,6 +28,8 @@ export function useFinanceActions() {
         update((s) => actions.repayCredit(s, input, today)),
       saveBudgetPlan: (input: actions.BudgetPlanInput) =>
         update((s) => actions.saveBudgetPlan(s, input, today)),
+      scheduleBudgetTransition: (input: actions.BudgetTransitionInput) =>
+        update((s) => actions.scheduleBudgetTransition(s, input, today)),
       acceptDemo: () => update((s) => actions.acceptDemo(s)),
       completeOnboarding: (input: actions.OnboardingInput) =>
         update((s) => actions.completeOnboarding(s, input, today)),
@@ -96,10 +98,24 @@ export function useFinanceActions() {
         update((s) => actions.deleteRecurring(s, id)),
       setRecurringActive: (id: string, active: boolean) =>
         update((s) => actions.setRecurringActive(s, id, active, today)),
-      setPaymentSkipped: (id: string, date: string, skipped: boolean) =>
-        update((s) => actions.setPaymentSkipped(s, id, date, skipped, today)),
-      payRecurring: (id: string, date: string, transactionId?: string) =>
-        update((s) => actions.payRecurring(s, id, date, today, transactionId)),
+      setPaymentSkipped: (
+        id: string,
+        date: string,
+        skipped: boolean,
+        versionId?: string,
+      ) =>
+        update((s) =>
+          actions.setPaymentSkipped(s, id, date, skipped, today, versionId),
+        ),
+      payRecurring: (
+        id: string,
+        date: string,
+        transactionId?: string,
+        versionId?: string,
+      ) =>
+        update((s) =>
+          actions.payRecurring(s, id, date, today, transactionId, versionId),
+        ),
       saveBudget: (id: string, amount: number) =>
         update((s) => actions.saveBudget(s, id, amount, today)),
       saveSettings: (
@@ -113,16 +129,51 @@ export function useFinanceActions() {
       saveForecastPreferences: (preferences: ForecastPreferences) =>
         update((s) => actions.saveForecastPreferences(s, preferences)),
       savePlannedIncome: (input: actions.IncomeInput) =>
-        update((s) => actions.savePlannedIncome(s, input)),
+        update((s) => actions.savePlannedIncome(s, input, today)),
+      moveIncomeOccurrence: (
+        id: string,
+        date: string,
+        expectedDate: string,
+        versionId?: string,
+      ) =>
+        update((s) =>
+          actions.moveIncomeOccurrence(
+            s,
+            id,
+            date,
+            expectedDate,
+            today,
+            versionId,
+          ),
+        ),
+      setIncomeCancelled: (
+        id: string,
+        date: string,
+        cancelled: boolean,
+        versionId?: string,
+      ) =>
+        update((s) =>
+          actions.setIncomeCancelled(s, id, date, cancelled, today, versionId),
+        ),
+      setIncomePaused: (id: string, paused: boolean) =>
+        update((s) => actions.setIncomePaused(s, id, paused, today)),
       deletePlannedIncome: (id: string) =>
         update((s) => actions.deletePlannedIncome(s, id)),
       receivePlannedIncome: (
         id: string,
         date: string,
         transactionId?: string,
+        versionId?: string,
       ) =>
         update((s) =>
-          actions.receivePlannedIncome(s, id, date, today, transactionId),
+          actions.receivePlannedIncome(
+            s,
+            id,
+            date,
+            today,
+            transactionId,
+            versionId,
+          ),
         ),
       importCsvConfirmed: (
         input: CsvImportInput & {

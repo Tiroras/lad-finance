@@ -1,4 +1,4 @@
-import { readState as getState, startDemoApp } from "./helpers";
+import { readState as getState, startDemoApp, pickDate } from "./helpers";
 import { test, expect, type Page } from "@playwright/test";
 import { createInitialState } from "../../src/domain/seed";
 import { categoryBudget } from "../../src/domain/budgets";
@@ -227,6 +227,9 @@ test("budget editing and subscription toggle persist", async ({
   await page
     .getByLabel("Учитывать Яндекс Плюс в плане", { exact: true })
     .click();
+  await page
+    .getByRole("button", { name: "Подтвердить остановку", exact: true })
+    .click();
   await expect
     .poll(
       async () =>
@@ -267,8 +270,12 @@ test("a paid subscription remains paid after changing its monthly date", async (
     .getByRole("button", { name: "Изменить платёж Яндекс Плюс", exact: true })
     .click();
   await page.getByLabel("День списания", { exact: true }).fill("14");
+  await pickDate(page, "Начало новых условий платежа", "2026-09-13");
   await page
     .getByRole("button", { name: "Сохранить платёж", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Подтвердить новые условия", exact: true })
     .click();
   await page
     .getByRole("button", { name: /Яндекс Плюс.*Оплачен/ })

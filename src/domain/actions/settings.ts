@@ -1,3 +1,4 @@
+import { budgetTermsAt } from "../budgets";
 import { localDate } from "../finance";
 import { DEFAULT_REMINDERS } from "../reminders";
 import { createInitialState } from "../seed";
@@ -48,7 +49,13 @@ export function saveBudget(
   if (plan)
     return saveBudgetPlan(
       state,
-      { ...plan, date: today, amount: budget, onlyThisPeriod: false },
+      {
+        ...budgetTermsAt(plan, today),
+        categoryId: id,
+        date: today,
+        amount: budget,
+        onlyThisPeriod: false,
+      },
       today,
     );
   return {
@@ -91,7 +98,7 @@ export function resetFinance(
   const next = createInitialState(demo, today);
   return {
     ...next,
-    version: state.version === 5 ? 5 : next.version,
+    version: state.version >= 5 ? state.version : next.version,
     settings: { ...next.settings, name: state.settings.name },
   };
 }

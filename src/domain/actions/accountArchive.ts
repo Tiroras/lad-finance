@@ -14,7 +14,7 @@ export function archiveAccount(
   ensure(!blocker, blocker?.message ?? "Счёт пока нельзя архивировать.");
   return {
     ...state,
-    version: 5,
+    version: state.version === 6 ? 6 : 5,
     accounts: state.accounts.map((entry) =>
       entry.id === id ? { ...entry, archived: true } : entry,
     ),
@@ -27,7 +27,7 @@ export function restoreAccount(state: FinanceState, id: string): FinanceState {
   if (!account.archived) return state;
   return {
     ...state,
-    version: 5,
+    version: state.version === 6 ? 6 : 5,
     accounts: state.accounts.map((entry) =>
       entry.id === id ? { ...entry, archived: false } : entry,
     ),

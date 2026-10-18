@@ -78,7 +78,7 @@ export function scenarioWarnings(
       !state.recurring.find((p) => p.id === c.sourceId)?.active
     )
       warnings.push(
-        `«${c.name}» отключён в плане: изменение не участвует в расчёте.`,
+        `«${c.name}»: будущие события остановлены. Сохранённые обязательства учитываются по прежним условиям.`,
       );
   }
   for (const event of scenario.events)

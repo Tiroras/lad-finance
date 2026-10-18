@@ -45,6 +45,7 @@ export interface ForecastEvent {
   amount: number;
   sourceId?: string;
   occurrenceDate: string;
+  versionId?: string;
   overdue?: boolean;
   pendingId?: string;
   releaseHeld?: number;
@@ -113,7 +114,13 @@ export function forecast(
     }
   };
   // Keep original occurrence identity when shifting dates, including early receipts.
-  for (const { plan, date, pending } of incomeOccurrences(
+  for (const {
+    plan,
+    date,
+    occurrenceDate,
+    versionId,
+    pending,
+  } of incomeOccurrences(
     state,
     scenario ? shiftDate(today, -90) : today,
     scenario ? shiftDate(end, 90) : end,
@@ -124,19 +131,21 @@ export function forecast(
     const amount = override?.amount ?? plan.amount;
     if (amount === 0) continue;
     add(shiftDate(date, override?.delayDays ?? 0), {
-      id: `income:${plan.id}:${date}`,
+      id: `income:${plan.id}:${versionId}:${occurrenceDate}`,
       type: "income",
       name: plan.name,
       amount: accountToBase(state, amount, plan.accountId),
       sourceId: plan.id,
-      occurrenceDate: date,
+      occurrenceDate,
+      versionId,
     });
   }
-  for (const { payment, date, paid, skipped } of [
+  for (const { payment, date, versionId, paid, skipped } of [
     ...overduePayments(state, today),
     ...upcoming(state, today, end),
   ]) {
-    if (paid || skipped || paymentPending(state, payment, date)) continue;
+    if (paid || skipped || paymentPending(state, payment, date, versionId))
+      continue;
     const overdue = date < today;
     // A future price change must not rewrite existing arrears.
     const amount = overdue
@@ -144,12 +153,13 @@ export function forecast(
       : (change("payment", payment.id)?.amount ?? payment.amount);
     if (amount === 0) continue;
     add(overdue ? today : date, {
-      id: `payment:${payment.id}:${date}`,
+      id: `payment:${payment.id}:${versionId ?? "legacy"}:${date}`,
       type: "payment",
       name: payment.name,
       amount: -accountToBase(state, amount, payment.accountId),
       sourceId: payment.id,
       occurrenceDate: date,
+      versionId,
       overdue,
     });
   }

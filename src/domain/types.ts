@@ -74,10 +74,12 @@ export interface Transaction {
   baseAmount?: number;
   goalId?: string;
   recurringId?: string;
+  recurringVersionId?: string;
   occurrenceDate?: string;
   note?: string;
   importKey?: string;
   plannedIncomeId?: string;
+  incomeVersionId?: string;
   incomeOccurrenceDate?: string;
   splits?: { category: CategoryId; amount: number }[];
   refundOf?: string;
@@ -116,6 +118,26 @@ export interface Recurring {
   schedule?: RecurrenceSchedule;
   skippedDates?: string[];
   amountHistory?: { until: string; amount: number }[];
+  versions?: PaymentTermsVersion[];
+}
+
+/** Original occurrence dates select immutable terms; pause leaves an interval gap. */
+export interface PaymentTermsVersion {
+  id: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  legacy?: true;
+  voided?: true;
+  inactiveLegacy?: true;
+  amount: number;
+  day: number;
+  accountId: string;
+  category: CategoryId;
+  schedule?: RecurrenceSchedule;
+  history?: { untilMonth: string; amount: number; day: number }[];
+  amountHistory?: { until: string; amount: number }[];
+  skippedMonths?: string[];
+  skippedDates?: string[];
 }
 
 export interface ReminderPreferences {
@@ -132,6 +154,29 @@ export interface PlannedIncome {
   repeat: "once" | "monthly";
   schedule?: RecurrenceSchedule;
   accountId: string;
+  versions?: IncomeTermsVersion[];
+  paused?: boolean;
+  occurrenceOverrides?: IncomeOccurrenceOverride[];
+}
+
+export interface IncomeTermsVersion {
+  id: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  legacy?: true;
+  voided?: true;
+  amount: number;
+  accountId: string;
+  date: string;
+  repeat: "once" | "monthly";
+  schedule?: RecurrenceSchedule;
+}
+
+export interface IncomeOccurrenceOverride {
+  versionId: string;
+  occurrenceDate: string;
+  expectedDate?: string;
+  cancelled?: boolean;
 }
 
 export interface ForecastPreferences {
@@ -140,7 +185,7 @@ export interface ForecastPreferences {
 }
 
 export interface FinanceState {
-  version: 2 | 3 | 4 | 5;
+  version: 2 | 3 | 4 | 5 | 6;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];
@@ -200,4 +245,5 @@ export interface Occurrence {
   date: string;
   paid: boolean;
   skipped?: boolean;
+  versionId?: string;
 }

@@ -21,7 +21,12 @@ export function NextPaymentCard({ open }: { open: OpenSheet }) {
     <Pressable
       accessibilityRole="button"
       onPress={() =>
-        open({ type: "payment", id: next.payment.id, date: next.date })
+        open({
+          type: "payment",
+          id: next.payment.id,
+          date: next.date,
+          versionId: next.versionId,
+        })
       }
     >
       <Row style={st.upcoming}>

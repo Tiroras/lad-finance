@@ -11,6 +11,9 @@ export function readPaymentNotification(
     profile: data.profile,
     paymentId: typeof data.paymentId === "string" ? data.paymentId : undefined,
     date: typeof data.date === "string" ? data.date : undefined,
+    ...(typeof data.versionId === "string"
+      ? { versionId: data.versionId }
+      : {}),
   };
 }
 

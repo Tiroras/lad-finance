@@ -111,6 +111,7 @@ export function synchronizeReminders(
               at: item.at,
               paymentId: item.paymentId ?? null,
               date: item.date ?? null,
+              versionId: item.versionId ?? null,
             },
           },
           trigger: {

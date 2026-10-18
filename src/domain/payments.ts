@@ -4,28 +4,128 @@ import {
   monthKey,
   shiftDate,
   shiftMonth,
+  validDate,
 } from "../shared/lib/dates";
-import type { FinanceState, Occurrence, Recurring, Transaction } from "./types";
-import { iterateScheduleDates, scheduleDates } from "./recurrence";
+import type {
+  FinanceState,
+  Occurrence,
+  PaymentTermsVersion,
+  Recurring,
+  Transaction,
+} from "./types";
+import { isScheduledDate, iterateScheduleDates } from "./recurrence";
 import { isPosted, transactionStatus } from "./transactionStatus";
 
-export const paymentOccurrenceKey = (payment: Recurring, date: string) =>
-  payment.schedule ? date : monthKey(date);
+export function legacyPaymentTerms(
+  payment: Recurring,
+  fallbackStart = "2000-01-01",
+): PaymentTermsVersion {
+  return {
+    id: "legacy",
+    legacy: true,
+    effectiveFrom: payment.startsOn ?? fallbackStart,
+    amount: payment.amount,
+    day: payment.day,
+    accountId: payment.accountId,
+    category: payment.category,
+    schedule: payment.schedule,
+    history: payment.history,
+    amountHistory: payment.amountHistory,
+    skippedMonths: payment.skippedMonths,
+    skippedDates: payment.skippedDates,
+  };
+}
+
+/** Reading old ledgers never materializes versions or revives disabled plans. */
+export function paymentVersions(payment: Recurring, fallbackStart?: string) {
+  return (
+    payment.versions ??
+    (payment.active ? [legacyPaymentTerms(payment, fallbackStart)] : [])
+  );
+}
+
+function snapshot(
+  payment: Recurring,
+  version: PaymentTermsVersion,
+  date: string,
+): Recurring {
+  const resolved: Recurring = {
+    ...payment,
+    amount: version.amount,
+    day: version.day,
+    accountId: version.accountId,
+    category: version.category,
+    schedule: version.schedule,
+    startsOn: version.effectiveFrom,
+    history: version.history,
+    amountHistory: version.amountHistory,
+    skippedMonths: version.skippedMonths,
+    skippedDates: version.skippedDates,
+  };
+  if (version.schedule) {
+    const rule = version.amountHistory?.find((item) => date <= item.until);
+    return rule ? { ...resolved, amount: rule.amount } : resolved;
+  }
+  const rule = version.history
+    ?.slice()
+    .sort((a, b) => a.untilMonth.localeCompare(b.untilMonth))
+    .find((item) => monthKey(date) <= item.untilMonth);
+  return rule ? { ...resolved, day: rule.day, amount: rule.amount } : resolved;
+}
+
+export function resolvePaymentOccurrence(
+  payment: Recurring,
+  date: string,
+  versionId = "legacy",
+): { payment: Recurring; date: string; versionId: string } | undefined {
+  if (!validDate(date)) return undefined;
+  const version = payment.versions
+    ? payment.versions.find((item) => item.id === versionId)
+    : versionId === "legacy"
+      ? legacyPaymentTerms(payment)
+      : undefined;
+  if (
+    !version ||
+    version.voided ||
+    date < version.effectiveFrom ||
+    (version.effectiveTo && date >= version.effectiveTo)
+  )
+    return undefined;
+  const resolved = snapshot(payment, version, date);
+  if (
+    resolved.schedule
+      ? !isScheduledDate(resolved.schedule, date)
+      : date !== dateInMonth(date, resolved.day)
+  )
+    return undefined;
+  return { payment: resolved, date, versionId };
+}
+
+export const paymentOccurrenceKey = (
+  payment: Recurring,
+  date: string,
+  versionId = "legacy",
+) => {
+  const version = payment.versions?.find((item) => item.id === versionId);
+  const schedule = version ? version.schedule : payment.schedule;
+  return `${versionId}:${schedule ? date : monthKey(date)}`;
+};
 
 export function canLinkPayment(
   transaction: Transaction,
   payment: Recurring,
-  date: string,
+  _date: string,
   today: string,
 ) {
   return (
     transaction.type === "expense" &&
     isPosted(transaction) &&
     !transaction.recurringId &&
+    !transaction.plannedIncomeId &&
     !transaction.debtId &&
+    !transaction.refundOf &&
     transaction.amount === payment.amount &&
     transaction.accountId === payment.accountId &&
-    transaction.date >= `${monthKey(date)}-01` &&
     transaction.date <= today
   );
 }
@@ -35,21 +135,33 @@ export function annualPreparation(
   payment: Recurring,
   today = localDate(),
 ) {
-  if (!payment.active || payment.schedule?.unit !== "year") return undefined;
-  const paid = new Set(
-    state.transactions
-      .filter(
-        (t) => isPosted(t) && t.recurringId === payment.id && t.date <= today,
-      )
-      .map((t) => t.occurrenceDate),
+  if (
+    !paymentVersions(payment, today).some(
+      (version) =>
+        version.schedule?.unit === "year" &&
+        !version.inactiveLegacy &&
+        !version.voided,
+    )
+  )
+    return undefined;
+  const annual = payment.versions
+    ? {
+        ...payment,
+        versions: payment.versions.filter(
+          (version) => version.schedule?.unit === "year",
+        ),
+      }
+    : payment;
+  const next = upcoming(
+    { ...state, recurring: [annual] },
+    today,
+    "2101-01-01",
+  ).find(
+    (item) =>
+      item.payment.schedule?.unit === "year" && !item.paid && !item.skipped,
   );
-  const date = scheduleDates(payment.schedule, today, "2101-01-01").find(
-    (value) =>
-      value >= (payment.startsOn ?? today) &&
-      !paid.has(value) &&
-      !payment.skippedDates?.includes(value),
-  );
-  if (!date) return undefined;
+  if (!next) return undefined;
+  const { date, payment: terms } = next;
   const months = Math.max(
     1,
     (Number(date.slice(0, 4)) - Number(today.slice(0, 4))) * 12 +
@@ -60,8 +172,8 @@ export function annualPreparation(
   return {
     date,
     months,
-    monthly: Math.ceil(payment.amount / months),
-    amount: payment.amount,
+    monthly: Math.ceil(terms.amount / months),
+    amount: terms.amount,
   };
 }
 
@@ -87,7 +199,7 @@ function visitPaymentOccurrences(
   visit: (occurrence: Occurrence) => void,
 ) {
   const templates = new Map(
-    state.recurring.filter((p) => p.active).map((p) => [p.id, p]),
+    state.recurring.map((payment) => [payment.id, payment]),
   );
   const paid = new Set<string>();
   for (const transaction of state.transactions) {
@@ -102,35 +214,43 @@ function visitPaymentOccurrences(
       transaction.date <= today
     )
       paid.add(
-        `${payment.id}:${paymentOccurrenceKey(payment, transaction.occurrenceDate)}`,
+        `${payment.id}:${paymentOccurrenceKey(payment, transaction.occurrenceDate, transaction.recurringVersionId)}`,
       );
   }
   for (const template of templates.values()) {
-    const skipped = new Set(
-      template.schedule ? template.skippedDates : template.skippedMonths,
-    );
-    const add = (payment: Recurring, date: string) => {
-      if (date < start || date >= end || date < (template.startsOn ?? today))
-        return;
-      const key = paymentOccurrenceKey(payment, date);
-      visit({
-        payment,
-        date,
-        paid: paid.has(`${payment.id}:${key}`),
-        skipped: skipped.has(key),
-      });
-    };
-    if (template.schedule) {
-      for (const date of iterateScheduleDates(template.schedule, start, end))
-        add(paymentForMonth(template, date), date);
-    } else {
-      for (
-        let month = `${monthKey(start)}-01`;
-        month < end;
-        month = shiftMonth(month, 1)
-      ) {
-        const payment = paymentForMonth(template, month);
-        add(payment, dateInMonth(month, payment.day));
+    for (const version of paymentVersions(template, today)) {
+      if (version.inactiveLegacy || version.voided) continue;
+      const begin =
+        start > version.effectiveFrom ? start : version.effectiveFrom;
+      const until =
+        version.effectiveTo && version.effectiveTo < end
+          ? version.effectiveTo
+          : end;
+      if (begin >= until) continue;
+      const skipped = new Set(
+        version.schedule ? version.skippedDates : version.skippedMonths,
+      );
+      const add = (date: string) => {
+        if (date < begin || date >= until) return;
+        const occurrence = resolvePaymentOccurrence(template, date, version.id);
+        if (!occurrence) return;
+        const key = paymentOccurrenceKey(template, date, version.id);
+        visit({
+          ...occurrence,
+          paid: paid.has(`${template.id}:${key}`),
+          skipped: skipped.has(version.schedule ? date : monthKey(date)),
+        });
+      };
+      if (version.schedule) {
+        for (const date of iterateScheduleDates(version.schedule, begin, until))
+          add(date);
+      } else {
+        for (
+          let month = `${monthKey(begin)}-01`;
+          month < until;
+          month = shiftMonth(month, 1)
+        )
+          add(dateInMonth(month, snapshot(template, version, month).day));
       }
     }
   }
@@ -154,15 +274,15 @@ function paymentOccurrences(
 
 function firstPaymentDate(state: FinanceState, today: string) {
   return state.recurring
-    .filter((p) => p.active)
+    .flatMap((payment) => paymentVersions(payment, today))
+    .filter((version) => !version.inactiveLegacy && !version.voided)
     .reduce(
-      (first, p) => (p.startsOn && p.startsOn < first ? p.startsOn : first),
+      (first, version) =>
+        version.effectiveFrom < first ? version.effectiveFrom : first,
       today,
     );
 }
 
-// Count before allocating calendar events. Paid/skipped history is not a debt;
-// future dates also cover the 365-day subscription summary and give headroom.
 export function validatePaymentCapacity(state: FinanceState, today: string) {
   let count = 0;
   visitPaymentOccurrences(
@@ -178,16 +298,15 @@ export function validatePaymentCapacity(state: FinanceState, today: string) {
   );
 }
 
+/** Compatibility accessor. Event operations must use resolvePaymentOccurrence. */
 export function paymentForMonth(payment: Recurring, date: string): Recurring {
-  if (payment.schedule) {
-    const rule = payment.amountHistory?.find((item) => date <= item.until);
-    return rule ? { ...payment, amount: rule.amount } : payment;
-  }
-  const rule = payment.history
-    ?.slice()
-    .sort((a, b) => a.untilMonth.localeCompare(b.untilMonth))
-    .find((item) => monthKey(date) <= item.untilMonth);
-  return rule ? { ...payment, day: rule.day, amount: rule.amount } : payment;
+  const version = payment.versions?.find(
+    (item) =>
+      !item.voided &&
+      date >= item.effectiveFrom &&
+      (!item.effectiveTo || date < item.effectiveTo),
+  );
+  return snapshot(payment, version ?? legacyPaymentTerms(payment), date);
 }
 
 export function changedPaymentHistory(
@@ -221,13 +340,36 @@ export function paymentPending(
   state: FinanceState,
   payment: Recurring,
   date: string,
+  versionId?: string,
 ) {
   return state.transactions.find(
     (transaction) =>
       transactionStatus(transaction) === "pending" &&
       transaction.recurringId === payment.id &&
       transaction.occurrenceDate &&
-      paymentOccurrenceKey(payment, transaction.occurrenceDate) ===
-        paymentOccurrenceKey(payment, date),
+      paymentOccurrenceKey(
+        payment,
+        transaction.occurrenceDate,
+        transaction.recurringVersionId,
+      ) === paymentOccurrenceKey(payment, date, versionId),
   );
+}
+
+/** Explicitly skipped history remains reachable after leaving the calendar. */
+export function skippedPaymentOccurrences(payment: Recurring) {
+  const result: { payment: Recurring; date: string; versionId: string }[] = [];
+  for (const version of paymentVersions(payment)) {
+    if (version.voided || version.inactiveLegacy) continue;
+    const dates = version.schedule
+      ? (version.skippedDates ?? [])
+      : (version.skippedMonths ?? []).map((month) => {
+          const date = `${month}-01`;
+          return dateInMonth(date, snapshot(payment, version, date).day);
+        });
+    for (const date of dates) {
+      const occurrence = resolvePaymentOccurrence(payment, date, version.id);
+      if (occurrence) result.push(occurrence);
+    }
+  }
+  return result.sort((first, second) => second.date.localeCompare(first.date));
 }

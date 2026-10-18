@@ -151,7 +151,7 @@ export function changeBaseCurrency(
   };
   const next: FinanceState = {
     ...state,
-    version: state.version === 5 ? 5 : 4,
+    version: state.version >= 5 ? state.version : 4,
     settings: {
       ...state.settings,
       baseCurrency: currency,
@@ -169,6 +169,21 @@ export function changeBaseCurrency(
     })),
     budgetPlans: state.budgetPlans?.map((plan) => ({
       ...plan,
+      ...(plan.versions
+        ? {
+            versions: plan.versions.map((version) => ({
+              ...version,
+              changes: version.changes.map((change) => ({
+                ...change,
+                amount: convert(change.amount),
+              })),
+              overrides: version.overrides.map((override) => ({
+                ...override,
+                amount: convert(override.amount),
+              })),
+            })),
+          }
+        : {}),
       changes: plan.changes.map((change) => ({
         ...change,
         amount: convert(change.amount),

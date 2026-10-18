@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
-import { dateLabel, paymentForMonth, uid } from "../../../domain/finance";
+import { dateLabel, uid } from "../../../domain/finance";
 import {
   canLinkPayment,
   paymentOccurrenceKey,
   paymentPending,
+  resolvePaymentOccurrence,
 } from "../../../domain/payments";
 import { isPosted } from "../../../domain/transactionStatus";
 import { useActionError } from "../../../shared/lib/useActionError";
@@ -37,10 +39,20 @@ export function PaymentContent({
   const { state, notify, today } = useFinance();
   const actions = useFinanceActions();
   const { error, run } = useActionError();
+  const [confirmSkip, setConfirmSkip] = useState(false);
+  const [confirmRestore, setConfirmRestore] = useState(false);
   const date = sheet.date;
   const template = state.recurring.find((payment) => payment.id === sheet.id);
   if (!template) return <Notice>Платёж уже удалён.</Notice>;
-  const payment = paymentForMonth(template, date);
+  const occurrence = resolvePaymentOccurrence(template, date, sheet.versionId);
+  if (!occurrence)
+    return (
+      <Notice>
+        Условия этого обязательства изменились. Откройте актуальную запись в
+        календаре платежей.
+      </Notice>
+    );
+  const { payment, versionId } = occurrence;
   const skipped = payment.schedule
     ? payment.skippedDates?.includes(date)
     : payment.skippedMonths?.includes(date.slice(0, 7));
@@ -49,10 +61,10 @@ export function PaymentContent({
       isPosted(t) &&
       t.recurringId === payment.id &&
       t.occurrenceDate &&
-      paymentOccurrenceKey(payment, t.occurrenceDate) ===
-        paymentOccurrenceKey(payment, date),
+      paymentOccurrenceKey(template, t.occurrenceDate, t.recurringVersionId) ===
+        paymentOccurrenceKey(template, date, versionId),
   );
-  const pending = paymentPending(state, payment, date);
+  const pending = paymentPending(state, template, date, versionId);
   const candidates = state.transactions
     .filter((transaction) => canLinkPayment(transaction, payment, date, today))
     .slice(0, 8);
@@ -100,7 +112,7 @@ export function PaymentContent({
           icon="checkmark"
           onPress={() =>
             run(() => {
-              actions.payRecurring(payment.id, date);
+              actions.payRecurring(payment.id, date, undefined, versionId);
               notify("Оплата записана");
               close();
             })
@@ -126,6 +138,8 @@ export function PaymentContent({
                 category: payment.category,
                 recurringId: payment.id,
                 occurrenceDate: date,
+                recurringVersionId:
+                  versionId === "legacy" ? undefined : versionId,
               });
               open({ type: "transaction", id });
             })
@@ -145,14 +159,58 @@ export function PaymentContent({
           }
           variant="secondary"
           onPress={() =>
-            run(() => {
-              actions.setPaymentSkipped(payment.id, date, !skipped);
-              notify(
-                skipped ? "Платёж возвращён в план" : "Этот месяц пропущен",
-              );
-            })
+            skipped ? setConfirmRestore(true) : setConfirmSkip(true)
           }
         />
+      )}
+      {confirmRestore && skipped && !recorded && !pending && (
+        <>
+          <Notice tone="warning">
+            Вернуть обязательство за {dateLabel(date)}? Его сумма снова будет
+            учтена в прогнозе и доступных деньгах. Для архивного счёта сначала
+            потребуется восстановление.
+          </Notice>
+          <Button
+            label="Подтвердить возврат обязательства"
+            onPress={() =>
+              run(() => {
+                actions.setPaymentSkipped(payment.id, date, false, versionId);
+                setConfirmRestore(false);
+                notify("Платёж возвращён в план");
+              })
+            }
+          />
+          <Button
+            label="Оставить пропущенным"
+            variant="secondary"
+            onPress={() => setConfirmRestore(false)}
+          />
+        </>
+      )}
+      {confirmSkip && !recorded && !pending && !skipped && (
+        <>
+          <Notice tone="warning">
+            Исключить обязательство за {dateLabel(date)}? Оно перестанет
+            уменьшать доступные деньги и участвовать в прогнозе. Записанного
+            расхода это действие не создаёт.
+          </Notice>
+          <Button
+            label="Подтвердить пропуск обязательства"
+            variant="danger"
+            onPress={() =>
+              run(() => {
+                actions.setPaymentSkipped(payment.id, date, true, versionId);
+                setConfirmSkip(false);
+                notify("Обязательство исключено из расчёта");
+              })
+            }
+          />
+          <Button
+            label="Оставить обязательство"
+            variant="secondary"
+            onPress={() => setConfirmSkip(false)}
+          />
+        </>
       )}
       {!recorded && !pending && !skipped && candidates.length > 0 && (
         <>
@@ -167,7 +225,12 @@ export function PaymentContent({
               variant="secondary"
               onPress={() =>
                 run(() => {
-                  actions.payRecurring(payment.id, date, transaction.id);
+                  actions.payRecurring(
+                    payment.id,
+                    date,
+                    transaction.id,
+                    versionId,
+                  );
                   notify("Существующий расход связан с платежом");
                   close();
                 })

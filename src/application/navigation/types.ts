@@ -45,8 +45,8 @@ export type SheetState =
       sourceTransactionId?: string;
       kind?: "bill" | "subscription";
     }
-  | { type: "income"; id?: string; date?: string }
-  | { type: "payment"; id: string; date: string };
+  | { type: "income"; id?: string; date?: string; versionId?: string }
+  | { type: "payment"; id: string; date: string; versionId?: string };
 export type SheetName = SheetState["type"];
 export type SheetOf<T extends SheetName> = SheetState & { type: T };
 export type OpenSheet = (sheet: SheetState) => void;

@@ -1,3 +1,4 @@
+import { paymentLinkValid, incomeLinkValid } from "./planHistory";
 import { accountBalance, accountBalances } from "./accountBalances";
 import { goalReserve, goalSaved } from "./goals";
 import {
@@ -9,7 +10,6 @@ import {
 import { forecast, type ForecastHorizon } from "./forecast";
 import { incomeOccurrences, incomeOccurrenceKey } from "./incomes";
 import { projectedDebtObligations } from "./debts";
-import { isScheduledDate } from "./recurrence";
 import { pendingLinkError } from "./pendingLinks";
 import {
   expenseContributions,
@@ -134,7 +134,12 @@ export function spendable(state: FinanceState, today = localDate()) {
   const overdue = overduePayments(state, today)
     .filter(
       (occurrence) =>
-        !paymentPending(state, occurrence.payment, occurrence.date),
+        !paymentPending(
+          state,
+          occurrence.payment,
+          occurrence.date,
+          occurrence.versionId,
+        ),
     )
     .reduce(
       (sum, o) =>
@@ -146,7 +151,9 @@ export function spendable(state: FinanceState, today = localDate()) {
     upcoming(state, today, paymentEnd)
       .filter(
         (o) =>
-          !o.paid && !o.skipped && !paymentPending(state, o.payment, o.date),
+          !o.paid &&
+          !o.skipped &&
+          !paymentPending(state, o.payment, o.date, o.versionId),
       )
       .reduce(
         (sum, o) =>
@@ -439,6 +446,11 @@ export function validateTransaction(
     )
       return "Пополнение превышает оставшуюся сумму цели.";
   }
+  if (
+    (transaction.recurringVersionId && !transaction.recurringId) ||
+    (transaction.incomeVersionId && !transaction.plannedIncomeId)
+  )
+    return "Версия операции должна ссылаться на свой план.";
   if (transaction.recurringId) {
     if (
       transaction.type !== "expense" ||
@@ -450,10 +462,7 @@ export function validateTransaction(
     const payment = state.recurring.find(
       (p) => p.id === transaction.recurringId,
     )!;
-    if (
-      payment.schedule &&
-      !isScheduledDate(payment.schedule, transaction.occurrenceDate)
-    )
+    if (!paymentLinkValid(payment, transaction))
       return "Дата оплаты не соответствует графику.";
     if (
       transactionStatus(transaction) !== "cancelled" &&
@@ -462,8 +471,16 @@ export function validateTransaction(
           transactionStatus(t) !== "cancelled" &&
           t.recurringId === transaction.recurringId &&
           !!t.occurrenceDate &&
-          paymentOccurrenceKey(payment, t.occurrenceDate) ===
-            paymentOccurrenceKey(payment, transaction.occurrenceDate!),
+          paymentOccurrenceKey(
+            payment,
+            t.occurrenceDate,
+            t.recurringVersionId,
+          ) ===
+            paymentOccurrenceKey(
+              payment,
+              transaction.occurrenceDate!,
+              transaction.recurringVersionId,
+            ),
       )
     )
       return payment.schedule
@@ -483,10 +500,7 @@ export function validateTransaction(
       !validDate(transaction.incomeOccurrenceDate)
     )
       return "Неверная связь планируемого дохода.";
-    if (
-      plan.schedule &&
-      !isScheduledDate(plan.schedule, transaction.incomeOccurrenceDate)
-    )
+    if (!incomeLinkValid(plan, transaction))
       return "Дата поступления не соответствует графику.";
     if (
       transactionStatus(transaction) !== "cancelled" &&
@@ -495,8 +509,16 @@ export function validateTransaction(
           transactionStatus(t) !== "cancelled" &&
           t.plannedIncomeId === plan.id &&
           !!t.incomeOccurrenceDate &&
-          incomeOccurrenceKey(plan, t.incomeOccurrenceDate) ===
-            incomeOccurrenceKey(plan, transaction.incomeOccurrenceDate!),
+          incomeOccurrenceKey(
+            plan,
+            t.incomeOccurrenceDate,
+            t.incomeVersionId,
+          ) ===
+            incomeOccurrenceKey(
+              plan,
+              transaction.incomeOccurrenceDate!,
+              transaction.incomeVersionId,
+            ),
       )
     )
       return "Это поступление уже записано.";

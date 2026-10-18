@@ -11,6 +11,7 @@ export interface PlannedReminder {
   at: number;
   paymentId?: string;
   date?: string;
+  versionId?: string;
 }
 
 // One-off local dates handle short months correctly. Keep below iOS's pending
@@ -25,7 +26,7 @@ export function reminderPlan(state: FinanceState, now = new Date()) {
       `${date}T${String(preferences.hour).padStart(2, "0")}:00:00`,
     ).getTime();
   const items: PlannedReminder[] = [];
-  for (const { payment, date, paid, skipped } of upcoming(
+  for (const { payment, date, versionId, paid, skipped } of upcoming(
     state,
     today,
     shiftDate(today, 61),
@@ -36,10 +37,11 @@ export function reminderPlan(state: FinanceState, now = new Date()) {
     if (at <= now.getTime()) at = atHour(date);
     if (at > now.getTime())
       items.push({
-        id: `lad.payment.${payment.id}.${date}`,
+        id: `lad.payment.${payment.id}.${versionId ?? "legacy"}.${date}`,
         at,
         paymentId: payment.id,
         date,
+        versionId,
       });
   }
   if (overduePayments(state, today).length) {

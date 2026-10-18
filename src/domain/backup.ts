@@ -10,13 +10,13 @@ import {
   reconciliationSchema,
   validateReconciliations,
 } from "./reconciliation";
-import {
-  scheduleSchema,
-  validateSchedules,
-  isScheduledDate,
-} from "./recurrence";
+import { scheduleSchema, validateSchedules } from "./recurrence";
 import { validateTransactionAmountsState } from "./transactionAmounts";
-import { budgetPlanSchema, validateBudgetPlans } from "./budgets";
+import {
+  budgetPlanSchema,
+  budgetPlanSchemaV6,
+  validateBudgetPlans,
+} from "./budgets";
 import { debtSchema, validateDebts, validateCreditAccounts } from "./debts";
 import { paymentOccurrenceKey } from "./payments";
 import { incomeOccurrenceKey } from "./incomes";
@@ -40,6 +40,11 @@ import {
 } from "./transactionStatus";
 import { validateAccountArchives } from "./accountArchive";
 import { pendingLinkError } from "./pendingLinks";
+import {
+  validatePlanHistory,
+  paymentLinkValid,
+  incomeLinkValid,
+} from "./planHistory";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const positiveAmount = amount.min(1);
@@ -237,6 +242,76 @@ const schemaV5 = schema.extend({
     .max(20000),
 });
 
+const versionInterval = {
+  id,
+  effectiveFrom: date.refine((d) => d >= "2000-01-01" && d <= "2100-12-31"),
+  effectiveTo: date.optional(),
+  legacy: z.literal(true).optional(),
+  voided: z.literal(true).optional(),
+};
+const paymentVersionSchema = schema.shape.recurring.element
+  .pick({
+    amount: true,
+    day: true,
+    accountId: true,
+    category: true,
+    schedule: true,
+    history: true,
+    amountHistory: true,
+    skippedMonths: true,
+    skippedDates: true,
+  })
+  .extend({ ...versionInterval, inactiveLegacy: z.literal(true).optional() });
+const incomeVersionSchema = schema.shape.plannedIncomes
+  .unwrap()
+  .element.pick({
+    amount: true,
+    accountId: true,
+    date: true,
+    repeat: true,
+    schedule: true,
+  })
+  .extend(versionInterval);
+const schemaV6 = schemaV5.extend({
+  version: z.literal(6),
+  recurring: z
+    .array(
+      schema.shape.recurring.element.extend({
+        versions: z.array(paymentVersionSchema).min(1).max(200).optional(),
+      }),
+    )
+    .max(200),
+  plannedIncomes: z
+    .array(
+      schema.shape.plannedIncomes.unwrap().element.extend({
+        versions: z.array(incomeVersionSchema).min(1).max(200).optional(),
+        paused: z.boolean().optional(),
+        occurrenceOverrides: z
+          .array(
+            z.object({
+              versionId: id,
+              occurrenceDate: date,
+              expectedDate: date.optional(),
+              cancelled: z.boolean().optional(),
+            }),
+          )
+          .max(5000)
+          .optional(),
+      }),
+    )
+    .max(200)
+    .optional(),
+  transactions: z
+    .array(
+      schemaV5.shape.transactions.element.extend({
+        recurringVersionId: id.optional(),
+        incomeVersionId: id.optional(),
+      }),
+    )
+    .max(20000),
+  budgetPlans: z.array(budgetPlanSchemaV6).max(200).optional(),
+});
+
 export function decodeBackup(raw: string, today = localDate()): FinanceState {
   // Keep reading older snapshots whose limit was measured in UTF-16 characters.
   // Portable files and new ledgers use the UTF-8 byte limit below. Existing
@@ -262,12 +337,44 @@ export function validateBackupValue(
   let state: FinanceState;
   try {
     if (!validDate(today)) throw new Error("Invalid validation date");
+    if (
+      value &&
+      typeof value === "object" &&
+      "version" in value &&
+      value.version !== 6
+    ) {
+      const raw = value as Record<string, unknown>;
+      const contains = (name: string, fields: string[]) =>
+        Array.isArray(raw[name]) &&
+        raw[name].some(
+          (entry: unknown) =>
+            entry &&
+            typeof entry === "object" &&
+            fields.some(
+              (field) =>
+                (entry as Record<string, unknown>)[field] !== undefined,
+            ),
+        );
+      if (
+        contains("recurring", ["versions"]) ||
+        contains("plannedIncomes", [
+          "versions",
+          "paused",
+          "occurrenceOverrides",
+        ]) ||
+        contains("budgetPlans", ["versions"]) ||
+        contains("transactions", ["recurringVersionId", "incomeVersionId"])
+      )
+        throw new Error("Plan history requires format 6");
+    }
     state = (
       value &&
       typeof value === "object" &&
       "version" in value &&
-      value.version === 5
-        ? schemaV5
+      (value.version === 5 || value.version === 6)
+        ? value.version === 6
+          ? schemaV6
+          : schemaV5
         : schema
     ).parse(value);
     if (state.transactions.some((entry) => entry.date > today))
@@ -304,6 +411,7 @@ export function validateBackupValue(
   validateAutomation(state);
   validateReconciliations(state, today);
   validateSchedules(state);
+  validatePlanHistory(state);
   validateTransactionAmountsState(state);
   validateBudgetPlans(state);
   validateDebts(state);
@@ -363,14 +471,9 @@ export function validateBackupValue(
       );
       if (!plan || t.type !== "income" || !t.incomeOccurrenceDate)
         throw new Error("Неверная связь планируемого дохода.");
-      if (
-        t.refundOf ||
-        t.debtId ||
-        (plan.schedule &&
-          !isScheduledDate(plan.schedule, t.incomeOccurrenceDate))
-      )
+      if (t.refundOf || t.debtId || !incomeLinkValid(plan, t))
         throw new Error("Неверная связь планируемого дохода.");
-      const key = `${plan.id}:${incomeOccurrenceKey(plan, t.incomeOccurrenceDate)}`;
+      const key = `${plan.id}:${incomeOccurrenceKey(plan, t.incomeOccurrenceDate, t.incomeVersionId)}`;
       if (transactionStatus(t) !== "cancelled" && incomeOccurrences.has(key))
         throw new Error("В файле одно поступление отмечено дважды.");
       if (transactionStatus(t) !== "cancelled") incomeOccurrences.add(key);
@@ -419,12 +522,9 @@ export function validateBackupValue(
       )
         throw new Error("Неверная связь регулярного платежа.");
       const payment = state.recurring.find((p) => p.id === t.recurringId)!;
-      if (
-        payment.schedule &&
-        !isScheduledDate(payment.schedule, t.occurrenceDate)
-      )
+      if (!paymentLinkValid(payment, t))
         throw new Error("Дата оплаты не соответствует графику.");
-      const key = `${t.recurringId}:${paymentOccurrenceKey(payment, t.occurrenceDate)}`;
+      const key = `${t.recurringId}:${paymentOccurrenceKey(payment, t.occurrenceDate, t.recurringVersionId)}`;
       if (transactionStatus(t) !== "cancelled" && occurrences.has(key))
         throw new Error("В файле один платёж отмечен дважды.");
       if (transactionStatus(t) !== "cancelled") occurrences.add(key);
