@@ -1,6 +1,7 @@
 import { paymentLinkValid, incomeLinkValid } from "./planHistory";
 import { accountBalance, accountBalances } from "./accountBalances";
-import { goalReserve, goalSaved } from "./goals";
+import { goalContributionLinkError, goalReserve, goalSaved } from "./goals";
+import { goalFundCoverage, goalFundCycleForPayment } from "./goalFunds";
 import {
   overduePayments,
   upcoming,
@@ -131,6 +132,30 @@ export function spendable(state: FinanceState, today = localDate()) {
       (sum, a) => sum + accountToBase(state, balances.get(a.id) ?? 0, a.id),
       0,
     );
+  const uncoveredPayment = (
+    occurrence: ReturnType<typeof upcoming>[number],
+  ) => {
+    const cycle = goalFundCycleForPayment(
+      state,
+      occurrence.payment.id,
+      occurrence.date,
+      occurrence.versionId,
+    );
+    // Only this month's goal contributions are reserved below. Credit those
+    // scheduled before the payment, without assuming unreserved later months.
+    const monthEnd = dateInMonth(today, 31);
+    const preparedThrough =
+      occurrence.date < monthEnd ? occurrence.date : monthEnd;
+    const saved =
+      cycle?.status === "active"
+        ? goalFundCoverage(state, cycle, today, preparedThrough, true).amount
+        : 0;
+    return accountToBase(
+      state,
+      Math.max(0, occurrence.payment.amount - saved),
+      occurrence.payment.accountId,
+    );
+  };
   const overdue = overduePayments(state, today)
     .filter(
       (occurrence) =>
@@ -141,11 +166,7 @@ export function spendable(state: FinanceState, today = localDate()) {
           occurrence.versionId,
         ),
     )
-    .reduce(
-      (sum, o) =>
-        sum + accountToBase(state, o.payment.amount, o.payment.accountId),
-      0,
-    );
+    .reduce((sum, o) => sum + uncoveredPayment(o), 0);
   const payments =
     overdue +
     upcoming(state, today, paymentEnd)
@@ -155,11 +176,7 @@ export function spendable(state: FinanceState, today = localDate()) {
           !o.skipped &&
           !paymentPending(state, o.payment, o.date, o.versionId),
       )
-      .reduce(
-        (sum, o) =>
-          sum + accountToBase(state, o.payment.amount, o.payment.accountId),
-        0,
-      );
+      .reduce((sum, o) => sum + uncoveredPayment(o), 0);
   const goals = goalReserve(state, today);
   const debts = projectedDebtObligations(
     state,
@@ -425,6 +442,8 @@ export function validateTransaction(
         return "Эти накопления распределены по целям. Сначала освободите средства в целях.";
     }
   }
+  const goalLinkError = goalContributionLinkError(state, transaction);
+  if (goalLinkError) return goalLinkError;
   if (transaction.goalId) {
     const goal = state.goals.find((g) => g.id === transaction.goalId);
     if (

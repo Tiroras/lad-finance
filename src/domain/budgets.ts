@@ -328,7 +328,7 @@ export function validateBudgetPlans(state: FinanceState) {
       )
     )
       throw new Error("Некорректный план бюджета категории.");
-    if (plan.versions && state.version !== 6)
+    if (plan.versions && state.version < 6)
       throw new Error(
         "История условий бюджета требует финансовый формат версии 6.",
       );

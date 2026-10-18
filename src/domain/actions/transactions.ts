@@ -1,3 +1,8 @@
+import { validateGoalSchedules } from "../goals";
+import {
+  assertGoalFundTransactionsUnchanged,
+  validateGoalFunds,
+} from "../goalFunds";
 import { resolvePaymentOccurrence } from "../payments";
 import { validateTransactionAmountsState } from "../transactionAmounts";
 import { accountBalances } from "../accountBalances";
@@ -98,6 +103,8 @@ function prepareTransaction(
 
 function validateAppendedState(state: FinanceState, today: string) {
   validateTransactionAmountsState(state);
+  validateGoalSchedules(state);
+  validateGoalFunds(state, today);
   validateDebts(state, today);
   validateCreditAccounts(state, today);
   checkCurrencyAmounts(state, today);
@@ -122,12 +129,15 @@ export function appendTransaction(
   const valued = prepareTransaction(state, transaction, today, allowArchived);
   const next: FinanceState = {
     ...state,
-    ...(valued.recurringVersionId !== undefined ||
-    valued.incomeVersionId !== undefined
-      ? { version: 6 as const }
-      : valued.status !== undefined || valued.expectedDate !== undefined
-        ? { version: state.version === 6 ? (6 as const) : (5 as const) }
-        : {}),
+    ...(valued.goalVersionId !== undefined ||
+    valued.goalOccurrenceDate !== undefined
+      ? { version: 7 as const }
+      : valued.recurringVersionId !== undefined ||
+          valued.incomeVersionId !== undefined
+        ? { version: state.version >= 6 ? state.version : (6 as const) }
+        : valued.status !== undefined || valued.expectedDate !== undefined
+          ? { version: state.version >= 5 ? state.version : (5 as const) }
+          : {}),
     transactions: [valued, ...state.transactions],
   };
   checkSavings(next, today);
@@ -199,16 +209,22 @@ export function appendTransactions(
     ...next,
     ...(transactions.some(
       (entry) =>
-        entry.recurringVersionId !== undefined ||
-        entry.incomeVersionId !== undefined,
+        entry.goalVersionId !== undefined ||
+        entry.goalOccurrenceDate !== undefined,
     )
-      ? { version: 6 as const }
+      ? { version: 7 as const }
       : transactions.some(
             (entry) =>
-              entry.status !== undefined || entry.expectedDate !== undefined,
+              entry.recurringVersionId !== undefined ||
+              entry.incomeVersionId !== undefined,
           )
-        ? { version: state.version === 6 ? (6 as const) : (5 as const) }
-        : {}),
+        ? { version: state.version >= 6 ? state.version : (6 as const) }
+        : transactions.some(
+              (entry) =>
+                entry.status !== undefined || entry.expectedDate !== undefined,
+            )
+          ? { version: state.version >= 5 ? state.version : (5 as const) }
+          : {}),
     transactions: [
       ...transactions.map((transaction) => added.get(transaction.id)!),
       ...state.transactions,
@@ -325,6 +341,14 @@ export function saveTransaction(
       input.type === "transfer"
         ? (original?.goalId ?? input.goalId)
         : undefined,
+    goalVersionId:
+      input.type === "transfer"
+        ? (original?.goalVersionId ?? input.goalVersionId)
+        : undefined,
+    goalOccurrenceDate:
+      input.type === "transfer"
+        ? (original?.goalOccurrenceDate ?? input.goalOccurrenceDate)
+        : undefined,
     recurringId:
       input.type === "expense"
         ? (original?.recurringId ?? input.recurringId)
@@ -386,6 +410,7 @@ export function saveTransaction(
     today,
     original?.category === transaction.category,
   );
+  assertGoalFundTransactionsUnchanged(state, next);
   if (original) checkSavings(next, today);
   return next;
 }
@@ -415,6 +440,9 @@ export function deleteTransaction(
     ...state,
     transactions: state.transactions.filter((t) => t.id !== id),
   };
+  assertGoalFundTransactionsUnchanged(state, next);
+  validateGoalSchedules(next);
+  validateGoalFunds(next, today);
   validateDebts(next, today);
   validateCreditAccounts(next, today);
   checkSavings(next, today);
@@ -469,7 +497,7 @@ export function cancelPendingTransaction(
   );
   const next: FinanceState = {
     ...state,
-    version: state.version === 6 ? 6 : 5,
+    version: state.version >= 5 ? state.version : 5,
     transactions: state.transactions.map((entry) =>
       entry.id === id ? { ...entry, status: "cancelled" } : entry,
     ),

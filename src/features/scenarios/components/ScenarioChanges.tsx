@@ -141,7 +141,7 @@ export function ScenarioChanges({
           <Card key={`${c.source}:${c.sourceId}`} style={{ gap: 12 }}>
             <Txt style={{ fontFamily: font.bold }}>{c.name}</Txt>
             <AmountField
-              label={`${c.source === "goal" ? "Взнос в месяц" : "Новая сумма"}, ${scenarioChangeCurrency(state, c)}`}
+              label={`${c.source === "goal" ? "Взнос по графику" : "Новая сумма"}, ${scenarioChangeCurrency(state, c)}`}
               accessibilityLabel={`Сумма в сценарии: ${c.name}`}
               value={c.amount}
               onChangeText={(amount) => patch({ amount })}

@@ -1,16 +1,10 @@
 import { validateScenarioCurrencies } from "./scenarios";
 import { accountToBase, MAX_MONEY, receivedAmount, toBase } from "./currency";
 import { accountBalances } from "./accountBalances";
-import { goalContributions } from "./goals";
+import { goalContributionOccurrences, goalSaved } from "./goals";
+import { goalFundCycleForPayment } from "./goalFunds";
 import { overduePayments, paymentPending, upcoming } from "./payments";
-import {
-  dateInMonth,
-  localDate,
-  monthKey,
-  shiftDate,
-  shiftMonth,
-  validDate,
-} from "../shared/lib/dates";
+import { localDate, shiftDate, validDate } from "../shared/lib/dates";
 import { incomeOccurrences } from "./incomes";
 import { projectedDebtObligations } from "./debts";
 import type { FinanceState, ForecastPreferences, SavedScenario } from "./types";
@@ -35,6 +29,7 @@ export interface ForecastEvent {
     | "income"
     | "payment"
     | "goal"
+    | "fund"
     | "daily"
     | "purchase"
     | "expense"
@@ -71,6 +66,7 @@ export interface ForecastResult {
   firstBelowBuffer?: ForecastDay;
   buffer: number;
   income: number;
+  fundReturns: number;
   outflow: number;
 }
 
@@ -140,6 +136,15 @@ export function forecast(
       versionId,
     });
   }
+  const goalEvents = new Map(
+    state.goals.map((goal) => [
+      goal.id,
+      goalContributionOccurrences(state, goal, today, end, today, {
+        legacyDay: preferences.goalDay,
+        amount: change("goal", goal.id)?.amount,
+      }),
+    ]),
+  );
   for (const { payment, date, versionId, paid, skipped } of [
     ...overduePayments(state, today),
     ...upcoming(state, today, end),
@@ -152,6 +157,32 @@ export function forecast(
       ? payment.amount
       : (change("payment", payment.id)?.amount ?? payment.amount);
     if (amount === 0) continue;
+    const cycle = goalFundCycleForPayment(state, payment.id, date, versionId);
+    const goal =
+      cycle?.status === "active"
+        ? state.goals.find((entry) => entry.id === cycle.goalId)
+        : undefined;
+    if (goal) {
+      // Contributions are separate outflows. Return only the allocation available
+      // by this exact obligation; the full expense remains below.
+      const prepared =
+        goalSaved(state, goal, today) +
+        (goalEvents.get(goal.id) ?? [])
+          .filter((entry) => entry.date <= (overdue ? today : date))
+          .reduce((sum, entry) => sum + entry.amount, 0);
+      const returned = Math.min(amount, Math.max(0, prepared));
+      if (returned)
+        add(overdue ? today : date, {
+          id: `fund:${cycle!.id}`,
+          type: "fund",
+          name: `Из фонда: ${goal.name}`,
+          amount: accountToBase(state, returned, payment.accountId),
+          sourceId: payment.id,
+          occurrenceDate: date,
+          versionId,
+          overdue,
+        });
+    }
     add(overdue ? today : date, {
       id: `payment:${payment.id}:${versionId ?? "legacy"}:${date}`,
       type: "payment",
@@ -235,39 +266,17 @@ export function forecast(
     });
   }
 
-  const contributions = goalContributions(state, today);
   for (const goal of state.goals) {
-    const contributed = contributions.get(goal.id);
-    let remaining = Math.max(
-      0,
-      goal.target - goal.initialSaved - (contributed?.total ?? 0),
-    );
-    for (
-      let month = `${monthKey(today)}-01`;
-      month < end && remaining > 0;
-      month = shiftMonth(month, 1)
-    ) {
-      const date = dateInMonth(month, preferences.goalDay);
-      const amount = Math.max(
-        0,
-        Math.min(
-          remaining,
-          (change("goal", goal.id)?.amount ?? goal.monthly) -
-            (monthKey(month) === monthKey(today)
-              ? (contributed?.month ?? 0)
-              : 0),
-        ),
-      );
-      if (date >= end || amount === 0) continue;
-      remaining -= amount;
-      add(date < today ? today : date, {
-        id: `goal:${goal.id}:${date}`,
+    for (const event of goalEvents.get(goal.id) ?? []) {
+      add(event.date, {
+        id: `goal:${goal.id}:${event.versionId}:${event.occurrenceDate}`,
         type: "goal",
         name: goal.name,
-        amount: -toBase(state, amount, goal.currency),
+        amount: -toBase(state, event.amount, goal.currency),
         sourceId: goal.id,
-        occurrenceDate: date,
-        overdue: date < today,
+        occurrenceDate: event.occurrenceDate,
+        versionId: event.versionId,
+        overdue: event.occurrenceDate < today,
       });
     }
   }
@@ -310,6 +319,7 @@ export function forecast(
   let balance = openingBalance,
     held = openingHeld,
     income = 0,
+    fundReturns = 0,
     outflow = 0;
   for (let date = today; date < end; date = shiftDate(date, 1)) {
     const events = byDate.get(date) ?? [];
@@ -317,7 +327,8 @@ export function forecast(
     for (const event of events) {
       balance += event.amount;
       held -= event.releaseHeld ?? 0;
-      if (event.amount > 0) income += event.amount;
+      if (event.type === "fund") fundReturns += event.amount;
+      else if (event.amount > 0) income += event.amount;
       else outflow -= event.amount;
     }
     days.push({
@@ -344,6 +355,7 @@ export function forecast(
     firstBelowBuffer: days.find((day) => day.available < state.settings.buffer),
     buffer: state.settings.buffer,
     income,
+    fundReturns,
     outflow,
   };
 }

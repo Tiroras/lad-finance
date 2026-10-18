@@ -303,7 +303,9 @@ export function validateCreditAccounts(
         account.creditLimit !== undefined ||
         account.paymentDueAmount !== undefined ||
         account.paymentDueDate !== undefined ||
-        account.paymentDueBaselineIds !== undefined
+        account.paymentDueBaselineIds !== undefined ||
+        account.creditTermsConfirmedOn !== undefined ||
+        account.creditTermsReminderDate !== undefined
       )
         throw new Error(
           "Кредитные условия допустимы только для кредитной карты.",
@@ -337,6 +339,17 @@ export function validateCreditAccounts(
       throw new Error("Укажите дату обязательного платежа по карте.");
     if (account.paymentDueDate && !validDate(account.paymentDueDate))
       throw new Error("Проверьте дату платежа по карте.");
+    if (
+      account.creditTermsConfirmedOn !== undefined &&
+      (!validDate(account.creditTermsConfirmedOn) ||
+        account.creditTermsConfirmedOn > today)
+    )
+      throw new Error("Дата подтверждения выписки не может быть в будущем.");
+    if (
+      account.creditTermsReminderDate !== undefined &&
+      !validDate(account.creditTermsReminderDate)
+    )
+      throw new Error("Проверьте дату напоминания об условиях карты.");
     if (
       account.paymentDueBaselineIds &&
       (account.paymentDueBaselineIds.length > 20_000 ||

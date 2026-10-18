@@ -186,7 +186,7 @@ export function scheduleBudgetTransition(
   };
   const next: FinanceState = {
     ...state,
-    version: 6,
+    version: state.version >= 6 ? state.version : 6,
     budgetPlans: state.budgetPlans!.map((entry) =>
       entry === original
         ? { ...entry, versions: [...(entry.versions ?? []), version] }

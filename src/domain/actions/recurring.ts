@@ -1,3 +1,4 @@
+import { assertGoalFundPlansPreserved, validateGoalFunds } from "../goalFunds";
 import { accountCurrency } from "../currency";
 import { validateAccountArchives } from "../accountArchive";
 import {
@@ -173,7 +174,9 @@ function finish(
 ) {
   const next: FinanceState = {
     ...state,
-    ...(promote ? { version: 6 as const } : {}),
+    ...(promote
+      ? { version: state.version >= 6 ? state.version : (6 as const) }
+      : {}),
     recurring: state.recurring.some((entry) => entry.id === payment.id)
       ? state.recurring.map((entry) =>
           entry.id === payment.id ? payment : entry,
@@ -187,6 +190,8 @@ function finish(
     const error = pendingLinkError(next, transaction);
     ensure(!error, error ?? "Проверьте ожидание платежа.");
   }
+  assertGoalFundPlansPreserved(state, next);
+  validateGoalFunds(next, today);
   validateAccountArchives(next, today);
   checkCurrencyAmounts(next, today);
   return next;
@@ -378,6 +383,23 @@ export function deleteRecurring(state: FinanceState, id: string): FinanceState {
   return {
     ...state,
     recurring: state.recurring.filter((entry) => entry.id !== id),
+    ...(state.goalFundCycles
+      ? {
+          goalFundCycles: state.goalFundCycles.map((cycle) =>
+            cycle.recurringId === id
+              ? {
+                  ...cycle,
+                  recurringId: undefined,
+                  recurringVersionId: undefined,
+                  status:
+                    cycle.status === "active"
+                      ? ("cancelled" as const)
+                      : cycle.status,
+                }
+              : cycle,
+          ),
+        }
+      : {}),
     transactions: state.transactions.map((transaction) =>
       transaction.recurringId === id
         ? {

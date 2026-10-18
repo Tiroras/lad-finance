@@ -47,8 +47,8 @@ export function ForecastPanel({ open }: { open: OpenSheet }) {
       <IncomePlans open={open} />
       <Notice>
         Повседневные расходы: {money(preferences.dailySpending)} в день с
-        завтрашнего дня. Взносы на цели — {preferences.goalDay}-го числа; в
-        коротком месяце — в последний день.
+        завтрашнего дня. Взносы — по графику каждой цели, для прежних целей —{" "}
+        {preferences.goalDay}-го числа; в коротком месяце — в последний день.
       </Notice>
       <Txt style={{ color: C.muted, fontSize: 11, lineHeight: 19 }}>
         Расчёт на конец дня по всем повседневным счетам вместе. Неоплаченные

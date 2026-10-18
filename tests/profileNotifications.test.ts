@@ -24,6 +24,7 @@ function fixture(demo: boolean) {
   const state = createInitialState(true, "2026-09-26");
   state.demo = demo;
   state.recurring[0].id = "shared-payment";
+  state.recurring[0].day = 28;
   return state;
 }
 

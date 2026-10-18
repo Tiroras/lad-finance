@@ -5,7 +5,8 @@ import {
   currencySymbol,
   tryConvertMoney,
 } from "../../../domain/currency";
-import { goalSaved } from "../../../domain/finance";
+import { goalSaved, goalContributionOccurrences } from "../../../domain/goals";
+import { dateLabel, shiftDate } from "../../../shared/lib/dates";
 import { useActionError } from "../../../shared/lib/useActionError";
 import {
   useFinanceActions,
@@ -23,6 +24,7 @@ import {
   Txt,
   ErrorText,
   AmountField,
+  SelectField,
 } from "../../../shared/ui";
 import { AccountChoiceEmpty, AccountPicker } from "../../accounts";
 
@@ -42,8 +44,31 @@ function FundGoalFormFields({
   const goalCurrency = goal?.currency ?? "RUB";
   const saved = goal ? goalSaved(state, goal, today) : 0,
     remaining = goal ? Math.max(0, goal.target - saved) : 0;
+  const occurrences = goal
+    ? goalContributionOccurrences(
+        state,
+        goal,
+        today,
+        shiftDate(today, 366),
+        today,
+      )
+    : [];
+  const [selectedEvent, setSelectedEvent] = useState(
+    occurrences[0]
+      ? `${occurrences[0].versionId}:${occurrences[0].occurrenceDate}`
+      : "",
+  );
+  const selected = occurrences.find(
+    (entry) => `${entry.versionId}:${entry.occurrenceDate}` === selectedEvent,
+  );
   const [amount, setAmount] = useState(
-    moneyInput(Math.min(goal?.monthly || remaining, remaining), goalCurrency),
+    moneyInput(
+      Math.min(
+        (occurrences[0]?.amount ?? goal?.monthly) || remaining,
+        remaining,
+      ),
+      goalCurrency,
+    ),
   );
   const [accountId, setAccountId] = useState(
     state.accounts.find((a) => !a.archived && a.kind === "spending")!.id,
@@ -76,6 +101,12 @@ function FundGoalFormFields({
         return setError("Введите корректную сумму пополнения.");
       actions.fundGoal({
         goalId: goal.id,
+        ...(goal.versions && selected
+          ? {
+              goalVersionId: selected.versionId,
+              goalOccurrenceDate: selected.occurrenceDate,
+            }
+          : {}),
         amount:
           sourceCurrency === goalCurrency
             ? parsed
@@ -104,6 +135,24 @@ function FundGoalFormFields({
       <Progress value={saved / goal.target} color="#78986A" height={8} />
       {remaining > 0 ? (
         <>
+          {!!goal.versions && occurrences.length > 0 && (
+            <SelectField
+              label="Взнос по графику цели"
+              value={selectedEvent}
+              onChange={(value) => {
+                setSelectedEvent(value);
+                const next = occurrences.find(
+                  (entry) =>
+                    `${entry.versionId}:${entry.occurrenceDate}` === value,
+                );
+                if (next) setAmount(moneyInput(next.amount, goalCurrency));
+              }}
+              options={occurrences.map((entry) => ({
+                value: `${entry.versionId}:${entry.occurrenceDate}`,
+                label: `${dateLabel(entry.occurrenceDate)} · ${money(entry.amount, false, goalCurrency)}`,
+              }))}
+            />
+          )}
           <AmountField
             label={`Сколько вы отложили, ${currencySymbol(goalCurrency)}`}
             accessibilityLabel="Сумма пополнения цели"

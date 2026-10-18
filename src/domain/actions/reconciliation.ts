@@ -1,3 +1,4 @@
+import { validateGoalFunds } from "../goalFunds";
 import { accountBalance } from "../accountBalances";
 import { accountSignature } from "../reconciliation";
 import { validateCreditAccounts } from "../debts";
@@ -79,6 +80,7 @@ export function reconcileAccount(
       }
     : state;
   checkSavings(next, today);
+  validateGoalFunds(next, today);
   validateCreditAccounts(next, today);
   checkCurrencyAmounts(next, today);
   return {

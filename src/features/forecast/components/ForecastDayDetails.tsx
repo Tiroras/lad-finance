@@ -26,7 +26,7 @@ export function ForecastDayDetails({
         date: event.occurrenceDate,
         versionId: event.versionId,
       });
-    if (event.type === "payment")
+    if (event.type === "payment" || event.type === "fund")
       open({
         type: "payment",
         id: event.sourceId,
@@ -88,6 +88,11 @@ export function ForecastDayDetails({
               {event.type === "goal" && (
                 <Txt style={{ fontSize: 10, color: C.muted }}>
                   Плановый взнос на цель
+                </Txt>
+              )}
+              {event.type === "fund" && (
+                <Txt style={{ fontSize: 10, color: C.muted }}>
+                  Возврат подготовленных накоплений на счёт платежа
                 </Txt>
               )}
               {event.pendingId && (

@@ -45,6 +45,8 @@ import {
   paymentLinkValid,
   incomeLinkValid,
 } from "./planHistory";
+import { validateGoalSchedules } from "./goals";
+import { validateGoalFunds } from "./goalFunds";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const positiveAmount = amount.min(1);
@@ -312,6 +314,74 @@ const schemaV6 = schemaV5.extend({
   budgetPlans: z.array(budgetPlanSchemaV6).max(200).optional(),
 });
 
+const schemaV7 = schemaV6.extend({
+  version: z.literal(7),
+  accounts: z
+    .array(
+      schemaV5.shape.accounts.element.extend({
+        creditTermsConfirmedOn: date.optional(),
+        creditTermsReminderDate: date.optional(),
+      }),
+    )
+    .max(30),
+  goals: z
+    .array(
+      schema.shape.goals.element.extend({
+        versions: z
+          .array(
+            z.object({
+              ...versionInterval,
+              amount,
+              day: day.optional(),
+              schedule: scheduleSchema.optional(),
+              deadline: date.optional(),
+            }),
+          )
+          .min(1)
+          .max(200)
+          .optional(),
+      }),
+    )
+    .max(100),
+  transactions: z
+    .array(
+      schemaV6.shape.transactions.element.extend({
+        goalVersionId: id.optional(),
+        goalOccurrenceDate: date.optional(),
+      }),
+    )
+    .max(20000),
+  goalFundCycles: z
+    .array(
+      z.object({
+        id,
+        goalId: id,
+        recurringId: id.optional(),
+        recurringVersionId: id.optional(),
+        occurrenceDate: date,
+        status: z.enum(["active", "paid", "cancelled"]),
+        createdOn: date,
+        paidOn: date.optional(),
+        paymentTransactionId: id.optional(),
+      }),
+    )
+    .max(5000)
+    .optional(),
+  goalReleases: z
+    .array(
+      z.object({
+        id,
+        goalId: id,
+        cycleId: id,
+        date,
+        amount: positiveAmount,
+        transferId: id,
+      }),
+    )
+    .max(5000)
+    .optional(),
+});
+
 export function decodeBackup(raw: string, today = localDate()): FinanceState {
   // Keep reading older snapshots whose limit was measured in UTF-16 characters.
   // Portable files and new ledgers use the UTF-8 byte limit below. Existing
@@ -337,12 +407,7 @@ export function validateBackupValue(
   let state: FinanceState;
   try {
     if (!validDate(today)) throw new Error("Invalid validation date");
-    if (
-      value &&
-      typeof value === "object" &&
-      "version" in value &&
-      value.version !== 6
-    ) {
+    if (value && typeof value === "object" && "version" in value) {
       const raw = value as Record<string, unknown>;
       const contains = (name: string, fields: string[]) =>
         Array.isArray(raw[name]) &&
@@ -356,14 +421,28 @@ export function validateBackupValue(
             ),
         );
       if (
-        contains("recurring", ["versions"]) ||
-        contains("plannedIncomes", [
-          "versions",
-          "paused",
-          "occurrenceOverrides",
-        ]) ||
-        contains("budgetPlans", ["versions"]) ||
-        contains("transactions", ["recurringVersionId", "incomeVersionId"])
+        value.version !== 7 &&
+        (raw.goalFundCycles !== undefined ||
+          raw.goalReleases !== undefined ||
+          contains("goals", ["versions"]) ||
+          contains("accounts", [
+            "creditTermsConfirmedOn",
+            "creditTermsReminderDate",
+          ]) ||
+          contains("transactions", ["goalVersionId", "goalOccurrenceDate"]))
+      )
+        throw new Error("Goal history and funds require format 7");
+      if (
+        value.version !== 6 &&
+        value.version !== 7 &&
+        (contains("recurring", ["versions"]) ||
+          contains("plannedIncomes", [
+            "versions",
+            "paused",
+            "occurrenceOverrides",
+          ]) ||
+          contains("budgetPlans", ["versions"]) ||
+          contains("transactions", ["recurringVersionId", "incomeVersionId"]))
       )
         throw new Error("Plan history requires format 6");
     }
@@ -371,10 +450,12 @@ export function validateBackupValue(
       value &&
       typeof value === "object" &&
       "version" in value &&
-      (value.version === 5 || value.version === 6)
-        ? value.version === 6
-          ? schemaV6
-          : schemaV5
+      (value.version === 5 || value.version === 6 || value.version === 7)
+        ? value.version === 7
+          ? schemaV7
+          : value.version === 6
+            ? schemaV6
+            : schemaV5
         : schema
     ).parse(value);
     if (state.transactions.some((entry) => entry.date > today))
@@ -412,10 +493,12 @@ export function validateBackupValue(
   validateReconciliations(state, today);
   validateSchedules(state);
   validatePlanHistory(state);
+  validateGoalSchedules(state);
+  validateGoalFunds(state, today);
   validateTransactionAmountsState(state);
   validateBudgetPlans(state);
-  validateDebts(state);
-  validateCreditAccounts(state);
+  validateDebts(state, today);
+  validateCreditAccounts(state, today);
   if (
     state.settings.spendableIncomeId &&
     !state.plannedIncomes?.some(

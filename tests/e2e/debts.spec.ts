@@ -51,8 +51,8 @@ test("borrowed money and partial repayment remain separate from consumption and 
   await page.getByRole("button", { name: /20 сентября · Выдача 500/ }).click();
   await expect(page.getByText(/Выдача основной суммы долга/)).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Сохранить изменения", exact: true }),
-  ).toHaveCount(0);
+    page.getByRole("button", { name: "Сохранить движение долга", exact: true }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Удалить операцию долга", exact: true })
     .click();

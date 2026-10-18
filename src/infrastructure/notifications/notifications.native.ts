@@ -102,9 +102,11 @@ export function synchronizeReminders(
           identifier: item.id,
           content: {
             title: "Лад · проверьте план",
-            body: item.paymentId
-              ? "Приближается запланированный платёж. Откройте Лад, чтобы посмотреть детали."
-              : "В плане остались неоплаченные платежи. Отметьте оплату или пропустите ненужные.",
+            body: item.creditAccountId
+              ? "Пора сверить условия кредитной карты с выпиской. Откройте Лад, чтобы обновить сумму и срок."
+              : item.paymentId
+                ? "Приближается запланированный платёж. Откройте Лад, чтобы посмотреть детали."
+                : "В плане остались неоплаченные платежи. Отметьте оплату или пропустите ненужные.",
             data: {
               source: "lad",
               profile,
@@ -112,6 +114,7 @@ export function synchronizeReminders(
               paymentId: item.paymentId ?? null,
               date: item.date ?? null,
               versionId: item.versionId ?? null,
+              creditAccountId: item.creditAccountId ?? null,
             },
           },
           trigger: {

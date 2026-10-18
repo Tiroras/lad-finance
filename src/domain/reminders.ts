@@ -12,6 +12,7 @@ export interface PlannedReminder {
   paymentId?: string;
   date?: string;
   versionId?: string;
+  creditAccountId?: string;
 }
 
 // One-off local dates handle short months correctly. Keep below iOS's pending
@@ -26,6 +27,22 @@ export function reminderPlan(state: FinanceState, now = new Date()) {
       `${date}T${String(preferences.hour).padStart(2, "0")}:00:00`,
     ).getTime();
   const items: PlannedReminder[] = [];
+  for (const account of state.accounts) {
+    if (
+      account.kind !== "credit" ||
+      account.archived ||
+      !account.creditTermsReminderDate
+    )
+      continue;
+    const at = atHour(account.creditTermsReminderDate);
+    if (at > now.getTime())
+      items.push({
+        id: `lad.credit-terms.${account.id}.${account.creditTermsReminderDate}`,
+        at,
+        creditAccountId: account.id,
+        date: account.creditTermsReminderDate,
+      });
+  }
   for (const { payment, date, versionId, paid, skipped } of upcoming(
     state,
     today,

@@ -10,8 +10,8 @@ import {
 } from "../debts";
 import { uid } from "../finance";
 import { localDate, validDate } from "../../shared/lib/dates";
-import type { FinanceState } from "../types";
-import { appendTransaction } from "./transactions";
+import type { FinanceState, Transaction } from "../types";
+import { appendTransaction, sameTransaction } from "./transactions";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -197,6 +197,91 @@ export function deleteDebt(state: FinanceState, id: string): FinanceState {
     "У долга есть движения денег. Сначала удалите связанные операции; закрытый долг можно оставить в истории.",
   );
   return { ...state, debts: state.debts!.filter((debt) => debt.id !== id) };
+}
+
+export interface DebtTransactionInput {
+  id: string;
+  title: string;
+  note?: string;
+  accountId: string;
+  amount: number;
+  date: string;
+  expectedOriginal: Transaction;
+}
+
+/** Replace a debt movement only after the complete resulting ledger validates. */
+export function editDebtTransaction(
+  state: FinanceState,
+  input: DebtTransactionInput,
+  today = localDate(),
+): FinanceState {
+  const original = state.transactions.find((entry) => entry.id === input.id);
+  ensure(original, "Операция уже удалена. Откройте историю долга заново.");
+  ensure(
+    sameTransaction(original, input.expectedOriginal),
+    "Операция изменилась после открытия формы. Откройте её заново и проверьте актуальные данные.",
+  );
+  const debt = state.debts?.find((entry) => entry.id === original.debtId);
+  ensure(debt && original.debtAction, "Выберите движение существующего долга.");
+  ensure(
+    !state.accounts.find((entry) => entry.id === original.accountId)?.archived,
+    "Сначала восстановите счёт из архива, чтобы изменить его историю.",
+  );
+  const account = state.accounts.find((entry) => entry.id === input.accountId);
+  ensure(
+    account?.kind === "spending" &&
+      !account.archived &&
+      accountCurrency(state, account.id) === debt.currency,
+    "Выберите активный повседневный счёт в валюте долга.",
+  );
+  checkName(input.title);
+  checkAmount(input.amount);
+  ensure(
+    validDate(input.date) && input.date >= debt.startsOn && input.date <= today,
+    "Дата движения должна быть между началом долга и сегодняшним днём.",
+  );
+  const withoutOriginal = {
+    ...state,
+    transactions: state.transactions.filter(
+      (entry) => entry.id !== original.id,
+    ),
+  };
+  const moneyChanged =
+    original.amount !== input.amount ||
+    original.accountId !== input.accountId ||
+    original.date !== input.date;
+  if (original.type === "expense" && moneyChanged)
+    ensure(
+      accountAvailability(withoutOriginal, account.id, input.date).available >=
+        input.amount,
+      "На выбранном счёте недостаточно денег на дату движения долга.",
+    );
+  const next = appendTransaction(
+    withoutOriginal,
+    {
+      ...original,
+      title: input.title.trim(),
+      note: input.note?.trim() || undefined,
+      accountId: account.id,
+      amount: input.amount,
+      date: input.date,
+      baseAmount:
+        original.amount === input.amount && original.accountId === account.id
+          ? original.baseAmount
+          : undefined,
+    },
+    today,
+    true,
+  );
+  // appendTransaction checked every debt's dated balance, account limits and
+  // savings without exposing the invalid intermediate state to the store.
+  const replacement = next.transactions[0];
+  return {
+    ...next,
+    transactions: state.transactions.map((entry) =>
+      entry.id === original.id ? replacement : entry,
+    ),
+  };
 }
 
 export interface CreditRepaymentInput {

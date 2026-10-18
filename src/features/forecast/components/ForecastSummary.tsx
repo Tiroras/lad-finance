@@ -77,6 +77,9 @@ export function ForecastSummary({
           ["Сейчас на счетах", money(result.openingBalance)],
           ["Сейчас удержано ожидающими списаниями", money(result.openingHeld)],
           ["Ожидаемые доходы", `+${money(result.income)}`],
+          ...(result.fundReturns > 0
+            ? [["Возврат из годовых фондов", `+${money(result.fundReturns)}`]]
+            : []),
           ["Расходы и взносы", `−${money(result.outflow)}`],
         ].map(([label, value]) => (
           <Row

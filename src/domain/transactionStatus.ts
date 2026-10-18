@@ -54,6 +54,25 @@ export function transactionStatusError(
 /** Old readers must reject new semantics, rather than silently post a pending row. */
 export function assertFinanceVersion(state: FinanceState) {
   if (
+    state.version < 7 &&
+    (state.goals.some((goal) => goal.versions !== undefined) ||
+      state.goalFundCycles !== undefined ||
+      state.goalReleases !== undefined ||
+      state.accounts.some(
+        (account) =>
+          account.creditTermsConfirmedOn !== undefined ||
+          account.creditTermsReminderDate !== undefined,
+      ) ||
+      state.transactions.some(
+        (transaction) =>
+          transaction.goalVersionId !== undefined ||
+          transaction.goalOccurrenceDate !== undefined,
+      ))
+  )
+    throw new Error(
+      "Графики целей, годовые фонды и актуальность кредита требуют финансовый формат версии 7.",
+    );
+  if (
     state.version < 6 &&
     (state.recurring.some((p) => p.versions !== undefined) ||
       state.plannedIncomes?.some(

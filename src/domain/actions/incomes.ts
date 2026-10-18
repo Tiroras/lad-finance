@@ -36,7 +36,9 @@ function changed(
 ): FinanceState {
   const next: FinanceState = {
     ...state,
-    ...(history ? { version: 6 as const } : {}),
+    ...(history
+      ? { version: state.version >= 6 ? state.version : (6 as const) }
+      : {}),
     plannedIncomes: (state.plannedIncomes ?? []).map((entry) =>
       entry.id === plan.id ? plan : entry,
     ),

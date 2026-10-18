@@ -1,0 +1,158 @@
+{
+  "normalizationDate": "2026-10-19",
+  "sourceCommit": "38a96a2a8b87437ca8decca306b71990e160b131",
+  "cases": [
+    {
+      "id": "v6-personal",
+      "rawText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[]}",
+      "expectedNormalized": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[],\"transactions\":[]}",
+        "fingerprint": {
+          "sha256": "8de1fbb31b17bc711b84f64fab7636ea694bea75dcecdaf789fe36e1867cfeb0",
+          "utf16Units": 1424,
+          "utf8Bytes": 1521
+        }
+      },
+      "expectedRecoveryAnchor": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[],\"transactions\":[]}",
+        "identity": {
+          "normalizationVersion": 1,
+          "normalizationDate": "2026-10-19",
+          "snapshotDate": "2026-10-19",
+          "targetDemo": false,
+          "sourceDemo": false,
+          "mode": "standard",
+          "sourceFingerprint": {
+            "sha256": "2492d78d9a6e1471bae506ca783a9520c5d179da1c3b31383ee04a98c1911da4",
+            "utf16Units": 1424,
+            "utf8Bytes": 1521
+          },
+          "normalizedFingerprint": {
+            "sha256": "8de1fbb31b17bc711b84f64fab7636ea694bea75dcecdaf789fe36e1867cfeb0",
+            "utf16Units": 1424,
+            "utf8Bytes": 1521
+          },
+          "allowance": {
+            "sha256": "8de1fbb31b17bc711b84f64fab7636ea694bea75dcecdaf789fe36e1867cfeb0",
+            "utf16Units": 1424,
+            "utf8Bytes": 1521
+          }
+        }
+      }
+    },
+    {
+      "id": "v6-payment-history",
+      "rawText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[{\"id\":\"annual\",\"name\":\"Годовой сервис\",\"amount\":150000,\"day\":20,\"kind\":\"subscription\",\"active\":true,\"icon\":\"home-outline\",\"color\":\"#EAF0E8\",\"category\":\"home\",\"accountId\":\"card\",\"startsOn\":\"2026-01-20\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"versions\":[{\"id\":\"legacy\",\"legacy\":true,\"effectiveFrom\":\"2026-01-20\",\"amount\":120000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"effectiveTo\":\"2026-10-20\"},{\"id\":\"mve9w1vr-2sfufh6y\",\"effectiveFrom\":\"2026-10-20\",\"amount\":150000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"}}]}],\"scenarios\":[]}",
+      "expectedNormalized": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[{\"id\":\"annual\",\"name\":\"Годовой сервис\",\"amount\":150000,\"day\":20,\"kind\":\"subscription\",\"active\":true,\"icon\":\"home-outline\",\"color\":\"#EAF0E8\",\"category\":\"home\",\"accountId\":\"card\",\"startsOn\":\"2026-01-20\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"versions\":[{\"amount\":120000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"id\":\"legacy\",\"effectiveFrom\":\"2026-01-20\",\"effectiveTo\":\"2026-10-20\",\"legacy\":true},{\"amount\":150000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"id\":\"mve9w1vr-2sfufh6y\",\"effectiveFrom\":\"2026-10-20\"}]}],\"transactions\":[]}",
+        "fingerprint": {
+          "sha256": "686d8f32b27b5d6946f0541663c2a4aaa54da2e9d0f1cb479f6dc6e15df5a79a",
+          "utf16Units": 2090,
+          "utf8Bytes": 2200
+        }
+      },
+      "expectedRecoveryAnchor": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[{\"id\":\"annual\",\"name\":\"Годовой сервис\",\"amount\":150000,\"day\":20,\"kind\":\"subscription\",\"active\":true,\"icon\":\"home-outline\",\"color\":\"#EAF0E8\",\"category\":\"home\",\"accountId\":\"card\",\"startsOn\":\"2026-01-20\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"versions\":[{\"amount\":120000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"id\":\"legacy\",\"effectiveFrom\":\"2026-01-20\",\"effectiveTo\":\"2026-10-20\",\"legacy\":true},{\"amount\":150000,\"day\":20,\"accountId\":\"card\",\"category\":\"home\",\"schedule\":{\"unit\":\"year\",\"interval\":1,\"anchor\":\"2026-01-20\"},\"id\":\"mve9w1vr-2sfufh6y\",\"effectiveFrom\":\"2026-10-20\"}]}],\"transactions\":[]}",
+        "identity": {
+          "normalizationVersion": 1,
+          "normalizationDate": "2026-10-19",
+          "snapshotDate": "2026-10-19",
+          "targetDemo": false,
+          "sourceDemo": false,
+          "mode": "standard",
+          "sourceFingerprint": {
+            "sha256": "8388a00e31adeda8bc76d2dbae8cc976dca7860105ea253baaf4b8b41e9f27b9",
+            "utf16Units": 2090,
+            "utf8Bytes": 2200
+          },
+          "normalizedFingerprint": {
+            "sha256": "686d8f32b27b5d6946f0541663c2a4aaa54da2e9d0f1cb479f6dc6e15df5a79a",
+            "utf16Units": 2090,
+            "utf8Bytes": 2200
+          },
+          "allowance": {
+            "sha256": "686d8f32b27b5d6946f0541663c2a4aaa54da2e9d0f1cb479f6dc6e15df5a79a",
+            "utf16Units": 2090,
+            "utf8Bytes": 2200
+          }
+        }
+      }
+    },
+    {
+      "id": "v6-income-move",
+      "rawText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[],\"plannedIncomes\":[{\"id\":\"salary\",\"name\":\"Доход\",\"amount\":100000,\"date\":\"2026-10-10\",\"repeat\":\"monthly\",\"accountId\":\"card\",\"versions\":[{\"id\":\"legacy\",\"legacy\":true,\"effectiveFrom\":\"2026-10-10\",\"amount\":100000,\"accountId\":\"card\",\"date\":\"2026-10-10\",\"repeat\":\"monthly\"}],\"occurrenceOverrides\":[{\"versionId\":\"legacy\",\"occurrenceDate\":\"2026-11-10\",\"expectedDate\":\"2026-11-12\"}]}]}",
+      "expectedNormalized": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[],\"plannedIncomes\":[{\"id\":\"salary\",\"name\":\"Доход\",\"amount\":100000,\"date\":\"2026-10-10\",\"repeat\":\"monthly\",\"accountId\":\"card\",\"versions\":[{\"amount\":100000,\"accountId\":\"card\",\"date\":\"2026-10-10\",\"repeat\":\"monthly\",\"id\":\"legacy\",\"effectiveFrom\":\"2026-10-10\",\"legacy\":true}],\"occurrenceOverrides\":[{\"versionId\":\"legacy\",\"occurrenceDate\":\"2026-11-10\",\"expectedDate\":\"2026-11-12\"}]}],\"transactions\":[]}",
+        "fingerprint": {
+          "sha256": "277771783a98698a9b922987254bf5e72488ad9fb0eb9e7d2c9aa198924965d5",
+          "utf16Units": 1799,
+          "utf8Bytes": 1901
+        }
+      },
+      "expectedRecoveryAnchor": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"goals\":[],\"recurring\":[],\"plannedIncomes\":[{\"id\":\"salary\",\"name\":\"Доход\",\"amount\":100000,\"date\":\"2026-10-10\",\"repeat\":\"monthly\",\"accountId\":\"card\",\"versions\":[{\"amount\":100000,\"accountId\":\"card\",\"date\":\"2026-10-10\",\"repeat\":\"monthly\",\"id\":\"legacy\",\"effectiveFrom\":\"2026-10-10\",\"legacy\":true}],\"occurrenceOverrides\":[{\"versionId\":\"legacy\",\"occurrenceDate\":\"2026-11-10\",\"expectedDate\":\"2026-11-12\"}]}],\"transactions\":[]}",
+        "identity": {
+          "normalizationVersion": 1,
+          "normalizationDate": "2026-10-19",
+          "snapshotDate": "2026-10-19",
+          "targetDemo": false,
+          "sourceDemo": false,
+          "mode": "standard",
+          "sourceFingerprint": {
+            "sha256": "c72b369e23693fb83b4efd95bfc86bd08fb054b5076dac3968c9748560141585",
+            "utf16Units": 1799,
+            "utf8Bytes": 1901
+          },
+          "normalizedFingerprint": {
+            "sha256": "277771783a98698a9b922987254bf5e72488ad9fb0eb9e7d2c9aa198924965d5",
+            "utf16Units": 1799,
+            "utf8Bytes": 1901
+          },
+          "allowance": {
+            "sha256": "277771783a98698a9b922987254bf5e72488ad9fb0eb9e7d2c9aa198924965d5",
+            "utf16Units": 1799,
+            "utf8Bytes": 1901
+          }
+        }
+      }
+    },
+    {
+      "id": "v6-budget-history",
+      "rawText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[],\"budgetPlans\":[{\"period\":\"monthly\",\"startDay\":1,\"anchor\":\"2026-10-01\",\"rolloverSurplus\":true,\"rolloverDeficit\":false,\"changes\":[{\"from\":\"2000-01-01\",\"amount\":0},{\"from\":\"2026-10-01\",\"amount\":100000}],\"overrides\":[],\"categoryId\":\"groceries\",\"versions\":[{\"id\":\"budget-2026-11-01\",\"effectiveFrom\":\"2026-11-01\",\"anchor\":\"2026-11-01\",\"startDay\":1,\"period\":\"weekly\",\"rolloverSurplus\":false,\"rolloverDeficit\":true,\"changes\":[{\"from\":\"2026-11-01\",\"amount\":30000}],\"overrides\":[]}]}]}",
+      "expectedNormalized": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"budgetPlans\":[{\"categoryId\":\"groceries\",\"period\":\"monthly\",\"startDay\":1,\"anchor\":\"2026-10-01\",\"rolloverSurplus\":true,\"rolloverDeficit\":false,\"changes\":[{\"from\":\"2000-01-01\",\"amount\":0},{\"from\":\"2026-10-01\",\"amount\":100000}],\"overrides\":[],\"versions\":[{\"period\":\"weekly\",\"startDay\":1,\"anchor\":\"2026-11-01\",\"rolloverSurplus\":false,\"rolloverDeficit\":true,\"changes\":[{\"from\":\"2026-11-01\",\"amount\":30000}],\"overrides\":[],\"id\":\"budget-2026-11-01\",\"effectiveFrom\":\"2026-11-01\"}]}],\"goals\":[],\"recurring\":[],\"transactions\":[]}",
+        "fingerprint": {
+          "sha256": "7d98ff488ddef22ec1453289bea59ec3aa650651e4dfecf37f4d63d5509a9e7f",
+          "utf16Units": 1899,
+          "utf8Bytes": 1996
+        }
+      },
+      "expectedRecoveryAnchor": {
+        "canonicalText": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":2000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[],\"budgetPlans\":[{\"categoryId\":\"groceries\",\"period\":\"monthly\",\"startDay\":1,\"anchor\":\"2026-10-01\",\"rolloverSurplus\":true,\"rolloverDeficit\":false,\"changes\":[{\"from\":\"2000-01-01\",\"amount\":0},{\"from\":\"2026-10-01\",\"amount\":100000}],\"overrides\":[],\"versions\":[{\"period\":\"weekly\",\"startDay\":1,\"anchor\":\"2026-11-01\",\"rolloverSurplus\":false,\"rolloverDeficit\":true,\"changes\":[{\"from\":\"2026-11-01\",\"amount\":30000}],\"overrides\":[],\"id\":\"budget-2026-11-01\",\"effectiveFrom\":\"2026-11-01\"}]}],\"goals\":[],\"recurring\":[],\"transactions\":[]}",
+        "identity": {
+          "normalizationVersion": 1,
+          "normalizationDate": "2026-10-19",
+          "snapshotDate": "2026-10-19",
+          "targetDemo": false,
+          "sourceDemo": false,
+          "mode": "standard",
+          "sourceFingerprint": {
+            "sha256": "84be50be358bb240220421083149f8bffdffbe7a9710650fb5e7c9329d060455",
+            "utf16Units": 1899,
+            "utf8Bytes": 1996
+          },
+          "normalizedFingerprint": {
+            "sha256": "7d98ff488ddef22ec1453289bea59ec3aa650651e4dfecf37f4d63d5509a9e7f",
+            "utf16Units": 1899,
+            "utf8Bytes": 1996
+          },
+          "allowance": {
+            "sha256": "7d98ff488ddef22ec1453289bea59ec3aa650651e4dfecf37f4d63d5509a9e7f",
+            "utf16Units": 1899,
+            "utf8Bytes": 1996
+          }
+        }
+      }
+    }
+  ]
+}

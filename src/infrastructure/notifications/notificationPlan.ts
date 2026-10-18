@@ -14,6 +14,9 @@ export function readPaymentNotification(
     ...(typeof data.versionId === "string"
       ? { versionId: data.versionId }
       : {}),
+    ...(typeof data.creditAccountId === "string"
+      ? { creditAccountId: data.creditAccountId }
+      : {}),
   };
 }
 

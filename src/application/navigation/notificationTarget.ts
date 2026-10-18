@@ -10,6 +10,18 @@ export function notificationTarget(
   state: FinanceState,
 ): { tab: "plan"; sheet: SheetState | null } | null {
   if (notification.profile !== profile) return null;
+  if (notification.creditAccountId) {
+    const account = state.accounts.find(
+      (entry) => entry.id === notification.creditAccountId,
+    );
+    return {
+      tab: "plan",
+      sheet:
+        account?.kind === "credit" && !account.archived
+          ? { type: "account", id: account.id }
+          : null,
+    };
+  }
   const { paymentId, date, versionId } = notification;
   const plan = state.recurring.find((item) => item.id === paymentId);
   return {

@@ -9,6 +9,9 @@ export function CreditCardFields({
   onDueDateChange,
   dueAmount,
   onDueAmountChange,
+  reminderDate,
+  onReminderDateChange,
+  existing = false,
 }: {
   currency: CurrencyCode;
   limit: string;
@@ -17,6 +20,9 @@ export function CreditCardFields({
   onDueDateChange: (value: string) => void;
   dueAmount: string;
   onDueAmountChange: (value: string) => void;
+  reminderDate: string;
+  onReminderDateChange: (value: string) => void;
+  existing?: boolean;
 }) {
   return (
     <>
@@ -41,10 +47,23 @@ export function CreditCardFields({
         onChangeText={onDueAmountChange}
       />
       <Notice>
-        Сверьте срок и оставшийся платёж с выпиской банка. После сохранения
-        новые переводы на карту уменьшают эту сумму. Лимит не входит в ваши
-        деньги для трат; проценты и льготный период автоматически не
-        рассчитываются.
+        Сверьте срок и оставшийся платёж с выпиской банка. После{" "}
+        {existing ? "подтверждения выписки" : "сохранения карты"} новые переводы
+        на карту уменьшают эту сумму. Лимит не входит в ваши деньги для трат;
+        проценты и льготный период автоматически не рассчитываются.
+      </Notice>
+      <DateField
+        label="Напомнить обновить выписку"
+        accessibilityLabel="Дата напоминания об условиях карты"
+        value={reminderDate}
+        onChangeText={onReminderDateChange}
+        placeholder="Без напоминания"
+        allowClear
+      />
+      <Notice>
+        Выберите дату сами: приложение не определяет банковский цикл. Доставка
+        напоминания доступна в мобильном приложении при включённых напоминаниях
+        в настройках. В браузере дата остаётся в карточке.
       </Notice>
     </>
   );

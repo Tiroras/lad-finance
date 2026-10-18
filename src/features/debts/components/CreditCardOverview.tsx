@@ -31,6 +31,23 @@ export function CreditCardOverview({
         Лимит: {money(account.creditLimit ?? 0, false, currency)} · Не входит в
         деньги для трат
       </Txt>
+      <Notice
+        tone={
+          account.creditTermsReminderDate &&
+          account.creditTermsReminderDate <= today
+            ? "warning"
+            : "normal"
+        }
+      >
+        {account.creditTermsConfirmedOn
+          ? `Выписка подтверждена ${dateLabel(account.creditTermsConfirmedOn, { day: "numeric", month: "long", year: "numeric" })}`
+          : "Дата подтверждения выписки неизвестна; проверьте её актуальность."}{" "}
+        {account.creditTermsReminderDate
+          ? account.creditTermsReminderDate <= today
+            ? `Пора обновить выписку: напоминание на ${dateLabel(account.creditTermsReminderDate, { day: "numeric", month: "long", year: "numeric" })}`
+            : `Обновить выписку ${dateLabel(account.creditTermsReminderDate, { day: "numeric", month: "long", year: "numeric" })}`
+          : "Дата следующего обновления не назначена."}
+      </Notice>
       {account.paymentDueDate ? (
         <Notice
           tone={

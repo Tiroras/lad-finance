@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
 import type { Recurring } from "../../../domain/types";
+import { goalFundCycleForPayment } from "../../../domain/goalFunds";
 import { scheduleLabel } from "../../../domain/recurrence";
 import { recurringPausePreview } from "../../../domain/actions/recurring";
 import {
   annualPreparation,
   overduePayments,
   paymentVersions,
+  resolvePaymentOccurrence,
 } from "../../../domain/payments";
 import { dateLabel } from "../../../shared/lib/dates";
 import {
@@ -169,23 +171,41 @@ export function RecurringPaymentCard({
       )}
 
       {preparation && (
-        <Txt
-          style={{
-            color: C.muted,
-            fontSize: 11,
-            lineHeight: 18,
-            marginTop: 12,
-          }}
-        >
-          Подготовка с нуля к {dateLabel(preparation.date)}: около{" "}
-          {money(
-            preparation.monthly,
-            true,
-            accountCurrency(state, p.accountId),
-          )}{" "}
-          в месяц за {preparation.months} мес. Это ориентир для накопления;
-          отдельный резерв не создаётся.
-        </Txt>
+        <View style={{ gap: 12 }}>
+          <Txt
+            style={{
+              color: C.muted,
+              fontSize: 11,
+              lineHeight: 18,
+              marginTop: 12,
+            }}
+          >
+            Подготовка с нуля к {dateLabel(preparation.date)}: около{" "}
+            {money(
+              preparation.monthly,
+              true,
+              accountCurrency(state, p.accountId),
+            )}{" "}
+            в месяц за {preparation.months} мес. Настройте фонд в обязательстве,
+            чтобы учитывать подготовленные накопления.
+          </Txt>
+          <Button
+            label={
+              goalFundCycleForPayment(
+                state,
+                p.id,
+                preparation.date,
+                resolvePaymentOccurrence(p, preparation.date)?.versionId,
+              )?.status === "active"
+                ? "Открыть годовой фонд"
+                : "Подготовить годовой фонд"
+            }
+            variant="secondary"
+            onPress={() =>
+              open({ type: "payment", id: p.id, date: preparation.date })
+            }
+          />
+        </View>
       )}
     </Card>
   );

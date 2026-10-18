@@ -18,6 +18,11 @@ function equal(actual: unknown, expected: unknown, message?: string) {
   }
 }
 
+function notEqual(actual: unknown, expected: unknown, message?: string) {
+  if (Object.is(actual, expected))
+    fail(message || `Expected a value different from ${display(expected)}`);
+}
+
 function deepDifference(
   actual: unknown,
   expected: unknown,
@@ -115,6 +120,8 @@ function doesNotThrow(run: () => unknown, message?: string) {
 export default {
   equal,
   strictEqual: equal,
+  notEqual,
+  notStrictEqual: notEqual,
   deepEqual,
   ok,
   match,

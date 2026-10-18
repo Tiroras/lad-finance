@@ -23,6 +23,16 @@ export function useFinanceActions() {
         update((s) => actions.saveDebt(s, input, today)),
       repayDebt: (input: actions.DebtRepaymentInput) =>
         update((s) => actions.repayDebt(s, input, today)),
+      editDebtTransaction: (
+        input: Parameters<typeof actions.editDebtTransaction>[1],
+      ) => update((s) => actions.editDebtTransaction(s, input, today)),
+      confirmCreditTerms: (
+        input: Parameters<typeof actions.confirmCreditTerms>[1],
+      ) => update((s) => actions.confirmCreditTerms(s, input, today)),
+      saveCreditTermsReminder: (accountId: string, date: string) =>
+        update((s) =>
+          actions.saveCreditTermsReminder(s, accountId, date, today),
+        ),
       deleteDebt: (id: string) => update((s) => actions.deleteDebt(s, id)),
       repayCredit: (input: actions.CreditRepaymentInput) =>
         update((s) => actions.repayCredit(s, input, today)),
@@ -84,6 +94,14 @@ export function useFinanceActions() {
         update((s) => actions.restoreAccount(s, id)),
       saveGoal: (input: actions.GoalInput) =>
         update((s) => actions.saveGoal(s, input, today)),
+      createAnnualFund: (
+        input: Parameters<typeof actions.createAnnualFund>[1],
+      ) => update((s) => actions.createAnnualFund(s, input, today)),
+      cancelAnnualFund: (cycleId: string) =>
+        update((s) => actions.cancelAnnualFund(s, cycleId, today)),
+      payFundedPayment: (
+        input: Parameters<typeof actions.payFundedPayment>[1],
+      ) => update((s) => actions.payFundedPayment(s, input, today)),
       deleteGoal: (id: string) => update((s) => actions.deleteGoal(s, id)),
       fundGoal: (input: {
         goalId: string;
@@ -91,6 +109,8 @@ export function useFinanceActions() {
         accountId: string;
         toAccountId?: string;
         toAmount?: number;
+        goalVersionId?: string;
+        goalOccurrenceDate?: string;
       }) => update((s) => actions.fundGoal(s, input, today)),
       saveRecurring: (input: actions.RecurringInput) =>
         update((s) => actions.saveRecurring(s, input, today)),

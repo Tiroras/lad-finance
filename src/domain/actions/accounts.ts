@@ -1,9 +1,11 @@
+import { validateGoalFunds } from "../goalFunds";
 import { CURRENCY_CODES, currencyRate, type CurrencyCode } from "../currency";
 import { accountBalance, localDate, MAX_MONEY, uid } from "../finance";
 import type { Account, FinanceState } from "../types";
 import { validateCreditAccounts } from "../debts";
 import { isPosted } from "../transactionStatus";
 import { validateAccountArchives } from "../accountArchive";
+import { validDate } from "../../shared/lib/dates";
 import {
   checkAmount,
   checkCurrencyAmounts,
@@ -21,6 +23,101 @@ export interface AccountInput {
   creditLimit?: number;
   paymentDueDate?: string;
   paymentDueAmount?: number;
+  creditTermsReminderDate?: string;
+}
+
+export interface CreditTermsInput {
+  accountId: string;
+  paymentDueAmount: number;
+  paymentDueDate?: string;
+  reminderDate?: string;
+}
+
+/** An explicit statement confirmation is a new snapshot, even at the same amount. */
+export function confirmCreditTerms(
+  state: FinanceState,
+  input: CreditTermsInput,
+  today = localDate(),
+): FinanceState {
+  const original = state.accounts.find((entry) => entry.id === input.accountId);
+  ensure(
+    original?.kind === "credit" && !original.archived,
+    "Выберите активную кредитную карту.",
+  );
+  checkAmount(input.paymentDueAmount, true);
+  ensure(validDate(today), "Проверьте дату подтверждения выписки.");
+  const reminderDate =
+    input.reminderDate === undefined
+      ? original.creditTermsReminderDate
+      : input.reminderDate || undefined;
+  if (input.reminderDate !== undefined)
+    ensure(
+      !reminderDate || (validDate(reminderDate) && reminderDate >= today),
+      "Выберите дату напоминания не раньше сегодняшней.",
+    );
+  const next: FinanceState = {
+    ...state,
+    version: 7,
+    accounts: state.accounts.map((account) =>
+      account.id === original.id
+        ? {
+            ...account,
+            paymentDueAmount: input.paymentDueAmount,
+            paymentDueDate: input.paymentDueDate || undefined,
+            paymentDueBaselineIds: state.transactions
+              .filter(
+                (transaction) =>
+                  transaction.type === "transfer" &&
+                  isPosted(transaction) &&
+                  transaction.toAccountId === account.id &&
+                  transaction.date <= today,
+              )
+              .map((transaction) => transaction.id),
+            creditTermsConfirmedOn: today,
+            creditTermsReminderDate: reminderDate,
+          }
+        : account,
+    ),
+  };
+  validateCreditAccounts(next, today);
+  validateAccountArchives(next, today);
+  checkCurrencyAmounts(next, today);
+  return next;
+}
+
+export function saveCreditTermsReminder(
+  state: FinanceState,
+  accountId: string,
+  reminderDate: string,
+  today = localDate(),
+): FinanceState {
+  ensure(
+    state.accounts.some(
+      (account) =>
+        account.id === accountId &&
+        account.kind === "credit" &&
+        !account.archived,
+    ),
+    "Выберите активную кредитную карту.",
+  );
+  ensure(
+    !reminderDate || (validDate(reminderDate) && reminderDate >= today),
+    "Выберите дату напоминания не раньше сегодняшней.",
+  );
+  const next: FinanceState = {
+    ...state,
+    version: 7,
+    accounts: state.accounts.map((account) =>
+      account.id === accountId
+        ? {
+            ...account,
+            creditTermsReminderDate: reminderDate || undefined,
+          }
+        : account,
+    ),
+  };
+  validateCreditAccounts(next, today);
+  return next;
 }
 export function saveAccount(
   state: FinanceState,
@@ -107,6 +204,12 @@ export function saveAccount(
                 )
                 .map((transaction) => transaction.id)
             : (original?.paymentDueBaselineIds ?? []),
+          ...(original?.creditTermsConfirmedOn !== undefined
+            ? { creditTermsConfirmedOn: original.creditTermsConfirmedOn }
+            : {}),
+          ...(original?.creditTermsReminderDate !== undefined
+            ? { creditTermsReminderDate: original.creditTermsReminderDate }
+            : {}),
         }
       : {}),
   };
@@ -142,8 +245,24 @@ export function saveAccount(
     );
   }
   checkSavings(next, today);
+  validateGoalFunds(next, today);
   validateAccountArchives(next, today);
   validateCreditAccounts(next, today);
   checkCurrencyAmounts(next, today);
+  if (
+    input.kind === "credit" &&
+    dueChanged &&
+    (input.paymentDueAmount !== undefined || input.paymentDueDate !== undefined)
+  )
+    return confirmCreditTerms(
+      next,
+      {
+        accountId: account.id,
+        paymentDueAmount,
+        paymentDueDate,
+        reminderDate: input.creditTermsReminderDate,
+      },
+      today,
+    );
   return next;
 }

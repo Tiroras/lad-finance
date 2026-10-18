@@ -281,7 +281,7 @@ test("receipt candidates exclude debt movements and refunds and the action uses 
       TODAY,
       TODAY,
     ),
-    false,
+    true, // An existing early expense can satisfy this original occurrence.
   );
   assert.equal(
     canLinkIncome(

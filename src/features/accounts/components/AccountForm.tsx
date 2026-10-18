@@ -8,6 +8,7 @@ import { accountArchiveBlockers } from "../../../domain/accountArchive";
 import type { OpenSheet } from "../../../application/navigation/types";
 import { CurrencyPicker } from "../../currencies";
 import { useActionError } from "../../../shared/lib/useActionError";
+import { dateLabel } from "../../../shared/lib/dates";
 import {
   useFinanceActions,
   useMoney,
@@ -66,6 +67,9 @@ export function AccountForm({
       ? moneyInput(creditPaymentRemaining(state, original, today), currency)
       : "",
   );
+  const [reminderDate, setReminderDate] = useState(
+    original?.creditTermsReminderDate ?? "",
+  );
   const { error, setError, run } = useActionError();
   const archiveBlockers =
     original && !original.archived
@@ -90,7 +94,7 @@ export function AccountForm({
           ? parseMoney(limit.trim() || "0", currency)
           : undefined;
       const paymentDueAmount =
-        kind === "credit"
+        kind === "credit" && !original
           ? parseMoney(dueAmount.trim() || "0", currency)
           : undefined;
       if (creditLimit === null || paymentDueAmount === null)
@@ -102,7 +106,16 @@ export function AccountForm({
         balance: parsed,
         currency,
         ...(kind === "credit"
-          ? { creditLimit, paymentDueAmount, paymentDueDate: dueDate }
+          ? {
+              creditLimit,
+              ...(!original
+                ? {
+                    paymentDueAmount,
+                    paymentDueDate: dueDate,
+                    creditTermsReminderDate: reminderDate,
+                  }
+                : {}),
+            }
           : {}),
       });
       notify("Счёт сохранён");
@@ -189,7 +202,60 @@ export function AccountForm({
             onDueDateChange={setDueDate}
             dueAmount={dueAmount}
             onDueAmountChange={setDueAmount}
+            reminderDate={reminderDate}
+            onReminderDateChange={setReminderDate}
+            existing={!!original}
           />
+          {original && (
+            <>
+              <Notice>
+                {original.creditTermsConfirmedOn
+                  ? `Выписка подтверждена ${dateLabel(original.creditTermsConfirmedOn, { day: "numeric", month: "long", year: "numeric" })}`
+                  : "Дата прежней выписки неизвестна. Сверьте сумму и срок с банком."}{" "}
+                Кнопка «Сохранить счёт» сохраняет название, остаток и лимит.
+                Условия выписки подтвердите отдельно, даже если сумма не
+                изменилась.
+              </Notice>
+              <Button
+                label="Подтвердить условия выписки"
+                onPress={() =>
+                  run(() => {
+                    const parsed = parseMoney(
+                      dueAmount.trim() || "0",
+                      currency,
+                    );
+                    if (parsed === null)
+                      throw new Error(
+                        "Проверьте оставшийся платёж в валюте карты.",
+                      );
+                    actions.confirmCreditTerms({
+                      accountId: original.id,
+                      paymentDueAmount: parsed,
+                      paymentDueDate: dueDate,
+                      reminderDate,
+                    });
+                    notify(
+                      "Условия выписки подтверждены; прежние погашения учтены",
+                    );
+                  })
+                }
+              />
+              <Button
+                label="Сохранить напоминание о выписке"
+                variant="secondary"
+                onPress={() =>
+                  run(() => {
+                    actions.saveCreditTermsReminder(original.id, reminderDate);
+                    notify(
+                      reminderDate
+                        ? "Дата напоминания сохранена"
+                        : "Напоминание о выписке снято",
+                    );
+                  })
+                }
+              />
+            </>
+          )}
         </>
       )}
       <Notice>

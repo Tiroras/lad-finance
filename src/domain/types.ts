@@ -54,6 +54,8 @@ export interface Account {
   paymentDueDate?: string;
   paymentDueAmount?: number;
   paymentDueBaselineIds?: string[];
+  creditTermsConfirmedOn?: string;
+  creditTermsReminderDate?: string;
   openingBalance: number;
   currency?: CurrencyCode;
   icon: IconName;
@@ -73,6 +75,8 @@ export interface Transaction {
   toAmount?: number;
   baseAmount?: number;
   goalId?: string;
+  goalVersionId?: string;
+  goalOccurrenceDate?: string;
   recurringId?: string;
   recurringVersionId?: string;
   occurrenceDate?: string;
@@ -99,6 +103,40 @@ export interface Goal {
   currency?: CurrencyCode;
   icon: IconName;
   color: string;
+  versions?: GoalTermsVersion[];
+}
+
+export interface GoalTermsVersion {
+  id: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  legacy?: true;
+  voided?: true;
+  amount: number;
+  day?: number;
+  schedule?: RecurrenceSchedule;
+  deadline?: string;
+}
+
+export interface GoalFundCycle {
+  id: string;
+  goalId: string;
+  recurringId?: string;
+  recurringVersionId?: string;
+  occurrenceDate: string;
+  status: "active" | "paid" | "cancelled";
+  createdOn: string;
+  paidOn?: string;
+  paymentTransactionId?: string;
+}
+
+export interface GoalRelease {
+  id: string;
+  goalId: string;
+  cycleId: string;
+  date: string;
+  amount: number;
+  transferId: string;
 }
 
 export interface Recurring {
@@ -185,12 +223,14 @@ export interface ForecastPreferences {
 }
 
 export interface FinanceState {
-  version: 2 | 3 | 4 | 5 | 6;
+  version: 2 | 3 | 4 | 5 | 6 | 7;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];
   categories: Category[];
   goals: Goal[];
+  goalFundCycles?: GoalFundCycle[];
+  goalReleases?: GoalRelease[];
   recurring: Recurring[];
   plannedIncomes?: PlannedIncome[];
   scenarios?: SavedScenario[];

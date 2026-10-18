@@ -2,7 +2,7 @@ import { validateScenarioCurrencies } from "../scenarios";
 import { debtBalance, creditPaymentRemaining } from "../debts";
 import { accountToBase, CURRENCY_CODES, MAX_MONEY, toBase } from "../currency";
 import { accountBalances } from "../accountBalances";
-import { goalContributions } from "../goals";
+import { goalSaved } from "../goals";
 import type { FinanceState } from "../types";
 import { validatePaymentCapacity } from "../payments";
 import { validateBudgetCapacity } from "../budgets";
@@ -40,15 +40,10 @@ export function checkDay(value: number) {
 export function checkSavings(state: FinanceState, today: string) {
   const balances = accountBalances(state, today);
   const held = pendingHolds(state);
-  const contributions = goalContributions(state, today);
   for (const currency of CURRENCY_CODES) {
     const allocated = state.goals
       .filter((g) => (g.currency ?? "RUB") === currency)
-      .reduce(
-        (sum, goal) =>
-          sum + goal.initialSaved + (contributions.get(goal.id)?.total ?? 0),
-        0,
-      );
+      .reduce((sum, goal) => sum + goalSaved(state, goal, today), 0);
     const savings = state.accounts
       .filter((a) => a.kind === "savings" && (a.currency ?? "RUB") === currency)
       .reduce(
@@ -93,6 +88,8 @@ export function checkCurrencyAmounts(state: FinanceState, today: string) {
   for (const goal of state.goals) {
     checkAmount(toBase(state, goal.target, goal.currency), true);
     checkAmount(toBase(state, goal.monthly, goal.currency), true);
+    for (const version of goal.versions ?? [])
+      checkAmount(toBase(state, version.amount, goal.currency), true);
   }
   for (const plan of [...state.recurring, ...(state.plannedIncomes ?? [])])
     checkAmount(accountToBase(state, plan.amount, plan.accountId), true);

@@ -8,5 +8,6 @@ export interface PaymentNotification {
   paymentId?: string;
   date?: string;
   versionId?: string;
+  creditAccountId?: string;
 }
 import type { FinanceProfile } from "../../domain/profiles";

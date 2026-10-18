@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
+import { goalFundCycleForPayment } from "../../../domain/goalFunds";
+import { AnnualFundPanel } from "./AnnualFundPanel";
 import { dateLabel, uid } from "../../../domain/finance";
 import {
   canLinkPayment,
@@ -53,6 +55,7 @@ export function PaymentContent({
       </Notice>
     );
   const { payment, versionId } = occurrence;
+  const fund = goalFundCycleForPayment(state, payment.id, date, versionId);
   const skipped = payment.schedule
     ? payment.skippedDates?.includes(date)
     : payment.skippedMonths?.includes(date.slice(0, 7));
@@ -83,10 +86,25 @@ export function PaymentContent({
           )}
         </Txt>
         <Txt style={{ fontSize: 12, color: C.muted }}>
-          По плану — {dateLabel(date)}
+          По плану —{" "}
+          {dateLabel(
+            date,
+            payment.schedule?.unit === "year"
+              ? { day: "numeric", month: "long", year: "numeric" }
+              : undefined,
+          )}
         </Txt>
       </View>
       <ErrorText error={error} />
+      {payment.schedule?.unit === "year" && (!recorded || fund) && (
+        <AnnualFundPanel
+          recurringId={payment.id}
+          date={date}
+          versionId={versionId}
+          open={open}
+          onPaid={close}
+        />
+      )}
       <Notice>
         {skipped && !recorded
           ? "Этот платёж пропущен: сумма не резервируется. Вы можете вернуть его в план."
@@ -106,7 +124,7 @@ export function PaymentContent({
           label="Открыть ожидаемое списание"
           onPress={() => open({ type: "transaction", id: pending.id })}
         />
-      ) : !skipped ? (
+      ) : !skipped && fund?.status !== "active" ? (
         <Button
           label="Я оплатил — записать расход"
           icon="checkmark"
@@ -119,7 +137,7 @@ export function PaymentContent({
           }
         />
       ) : null}
-      {!recorded && !pending && !skipped && (
+      {!recorded && !pending && !skipped && fund?.status !== "active" && (
         <Button
           label="Ожидать списание по плану"
           variant="secondary"
@@ -212,33 +230,38 @@ export function PaymentContent({
           />
         </>
       )}
-      {!recorded && !pending && !skipped && candidates.length > 0 && (
-        <>
-          <Notice>
-            Расход мог уже попасть в учёт из CSV или вручную. Свяжите подходящую
-            запись с этим платежом, чтобы не списывать деньги повторно.
-          </Notice>
-          {candidates.map((transaction) => (
-            <Button
-              key={transaction.id}
-              label={`Связать: ${transaction.title} · ${dateLabel(transaction.date)}`}
-              variant="secondary"
-              onPress={() =>
-                run(() => {
-                  actions.payRecurring(
-                    payment.id,
-                    date,
-                    transaction.id,
-                    versionId,
-                  );
-                  notify("Существующий расход связан с платежом");
-                  close();
-                })
-              }
-            />
-          ))}
-        </>
-      )}
+      {!recorded &&
+        !pending &&
+        !skipped &&
+        fund?.status !== "active" &&
+        candidates.length > 0 && (
+          <>
+            <Notice>
+              Расход мог уже попасть в учёт из CSV или вручную. Свяжите
+              подходящую запись с этим платежом, чтобы не списывать деньги
+              повторно.
+            </Notice>
+            {candidates.map((transaction) => (
+              <Button
+                key={transaction.id}
+                label={`Связать: ${transaction.title} · ${dateLabel(transaction.date)}`}
+                variant="secondary"
+                onPress={() =>
+                  run(() => {
+                    actions.payRecurring(
+                      payment.id,
+                      date,
+                      transaction.id,
+                      versionId,
+                    );
+                    notify("Существующий расход связан с платежом");
+                    close();
+                  })
+                }
+              />
+            ))}
+          </>
+        )}
       <Button
         label="Изменить регулярный платёж"
         variant="secondary"
