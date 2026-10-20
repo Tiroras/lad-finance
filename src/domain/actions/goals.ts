@@ -162,7 +162,9 @@ export function saveGoal(
   };
   const next: FinanceState = {
     ...state,
-    ...(transition ? { version: 7 as const } : {}),
+    ...(transition
+      ? { version: state.version >= 7 ? state.version : (7 as const) }
+      : {}),
     goals: original
       ? state.goals.map((g) => (g.id === goal.id ? goal : g))
       : [...state.goals, goal],
@@ -189,6 +191,19 @@ export function deleteGoal(state: FinanceState, id: string): FinanceState {
         }
       : {}),
     goals: state.goals.filter((g) => g.id !== id),
+    ...(state.settings.forecast?.goalAccounts
+      ? {
+          settings: {
+            ...state.settings,
+            forecast: {
+              ...state.settings.forecast,
+              goalAccounts: state.settings.forecast.goalAccounts.filter(
+                (item) => item.goalId !== id,
+              ),
+            },
+          },
+        }
+      : {}),
     transactions: state.transactions.map((t) =>
       t.goalId === id
         ? {
@@ -267,5 +282,7 @@ export function fundGoal(
     today,
   );
   validateGoalSchedules(next);
-  return identity ? { ...next, version: 7 } : next;
+  return identity
+    ? { ...next, version: state.version >= 7 ? state.version : 7 }
+    : next;
 }

@@ -13,7 +13,14 @@ import type { FinanceState } from "./types";
 export const activeAccounts = (state: FinanceState) =>
   state.accounts.filter((account) => !account.archived);
 export interface AccountArchiveBlocker {
-  code: "balance" | "pending" | "payment" | "income" | "debt" | "credit";
+  code:
+    | "balance"
+    | "pending"
+    | "payment"
+    | "income"
+    | "debt"
+    | "credit"
+    | "forecast";
   message: string;
   entityId?: string;
 }
@@ -25,6 +32,28 @@ export function accountArchiveBlockers(
   const account = state.accounts.find((entry) => entry.id === accountId);
   if (!account) throw new Error("Счёт уже удалён.");
   const blockers: AccountArchiveBlocker[] = [];
+  const preferences = state.settings.forecast;
+  if (
+    preferences?.dailyAccountId === accountId ||
+    preferences?.goalAccounts?.some(
+      (entry) =>
+        entry.fromAccountId === accountId || entry.toAccountId === accountId,
+    ) ||
+    preferences?.repaymentAccounts?.some(
+      (entry) =>
+        entry.accountId === accountId ||
+        (entry.kind === "credit" && entry.sourceId === accountId),
+    ) ||
+    preferences?.transfers?.some(
+      (entry) =>
+        entry.accountId === accountId || entry.toAccountId === accountId,
+    )
+  )
+    blockers.push({
+      code: "forecast",
+      message:
+        "Сначала замените или уберите счёт из назначений и переводов в настройках прогноза.",
+    });
   if (accountBalance(state, accountId, today) !== 0)
     blockers.push({
       code: "balance",

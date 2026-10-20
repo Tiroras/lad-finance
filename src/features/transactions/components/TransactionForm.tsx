@@ -5,7 +5,8 @@ import {
   type TransactionTemplate,
 } from "../../../domain/automation";
 import { refundedAmount } from "../../../domain/transactionAmounts";
-import { currencySymbol } from "../../../domain/currency";
+import { currencySymbol, parseMoney } from "../../../domain/currency";
+import { transactionValuationLabel } from "../../../domain/transactionValuation";
 import { uid } from "../../../domain/finance";
 import { sameTransaction } from "../../../domain/actions/transactions";
 import { transactionStatus } from "../../../domain/transactionStatus";
@@ -40,6 +41,7 @@ import { RefundFields } from "./RefundFields";
 import { TransactionTemplates } from "./TransactionTemplates";
 import { TransactionEntryTools, type EntryTool } from "./TransactionEntryTools";
 import { TransactionDetails } from "./TransactionDetails";
+import { ExchangeFeeFields } from "./ExchangeFeeFields";
 import { usePreventSheetDismiss } from "../../../shared/ui/SheetDismissal";
 import { transactionDraftSnapshot } from "../model/transactionDraftChanges";
 import {
@@ -277,7 +279,13 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
         transactionTemplateInput(state, draft, name, id, original),
       );
       if (!id) auxiliaryDraft.current.savedTemplateName = name.trim();
-      notify(id ? "Шаблон обновлён" : "Шаблон сохранён");
+      notify(
+        foreignTransfer && draft.feeEnabled
+          ? "Шаблон перевода сохранён. Комиссию нужно добавлять отдельно при каждом обмене."
+          : id
+            ? "Шаблон обновлён"
+            : "Шаблон сохранён",
+      );
     });
   const commit = async (change: () => FinanceState, message: string) => {
     if (saving.current) return;
@@ -322,19 +330,37 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
   };
   const save = () =>
     void commit(
-      () =>
-        actions.saveTransaction({
+      () => {
+        const input = {
           ...transactionInput(state, draft, original),
           ...(!original
             ? { createId }
             : { expectedOriginal: baseline ?? original }),
-        }),
+        };
+        return !original &&
+          foreignTransfer &&
+          draftStatus === "posted" &&
+          draft.feeEnabled
+          ? actions.exchangeWithFee({
+              transfer: input,
+              feeAmount:
+                parseMoney(
+                  draft.feeAmount ?? "",
+                  draftAccountCurrency(state, draft.feeAccountId ?? ""),
+                ) ?? NaN,
+              feeAccountId: draft.feeAccountId ?? "",
+              feeCategory: draft.feeCategory ?? "other",
+            })
+          : actions.saveTransaction(input);
+      },
       draftStatus === "pending"
         ? "Операция ожидает проведения"
         : original
           ? "Операция обновлена"
           : type === "transfer"
-            ? "Перевод записан"
+            ? foreignTransfer && draft.feeEnabled
+              ? "Обмен и комиссия записаны"
+              : "Перевод записан"
             : "Операция добавлена",
     );
   if (original?.debtId)
@@ -598,7 +624,7 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
         accessibilityLabel="Сумма операции"
         value={amount}
         onChangeText={(value) => {
-          patch({ amount: value, valuation: null });
+          patch({ amount: value, valuation: null, valuationDate: undefined });
         }}
         placeholder="0"
         style={{ fontSize: 36, fontFamily: font.semibold, paddingVertical: 18 }}
@@ -637,7 +663,12 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
       <AccountPicker
         selected={accountId}
         onChange={(id) => {
-          patch({ accountId: id, valuation: null, received: null });
+          patch({
+            accountId: id,
+            valuation: null,
+            valuationDate: undefined,
+            received: null,
+          });
         }}
         spendingOnly={!!original?.goalId || type === "expense"}
         includeCredit={
@@ -696,13 +727,53 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
               valuation ??
               (historicalValue === null ? "" : moneyInput(historicalValue))
             }
-            onChangeText={(valuation) => patch({ valuation })}
+            onChangeText={(valuation) =>
+              patch({
+                valuation,
+                valuationDate: draft.valuationDate ?? date,
+              })
+            }
           />
           <Notice>
-            Эта оценка сохранится в статистике. Для прошлой операции можно
-            указать сумму по курсу на её дату.
+            Эта оценка сохранится в статистике и не изменится при обновлении
+            курсов. Для прошлой операции можно указать свою сумму и дату
+            основания.
           </Notice>
+          {valuation !== null ? (
+            <DateField
+              label="Дата основания ручной оценки"
+              accessibilityLabel="Дата основания оценки"
+              value={draft.valuationDate ?? date}
+              onChangeText={(valuationDate) => patch({ valuationDate })}
+            />
+          ) : (
+            <>
+              <Notice>
+                {original &&
+                original.accountId === accountId &&
+                original.amount === parsedAmount
+                  ? transactionValuationLabel(original)
+                  : `Оценка по сохранённому курсу на день записи ${today.split("-").reverse().join(".")}. Автоматические исторические курсы не загружаются.`}
+              </Notice>
+              <Button
+                label="Указать основание оценки вручную"
+                variant="secondary"
+                onPress={() =>
+                  patch({
+                    valuation:
+                      historicalValue === null
+                        ? ""
+                        : moneyInput(historicalValue),
+                    valuationDate: draft.valuationDate ?? date,
+                  })
+                }
+              />
+            </>
+          )}
         </>
+      )}
+      {foreignTransfer && !original && draftStatus === "posted" && (
+        <ExchangeFeeFields draft={draft} onChange={patch} />
       )}
       <DateField
         label={draftStatus === "pending" ? "Дата создания ожидания" : "Дата"}
@@ -726,7 +797,9 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
             : draftStatus === "pending"
               ? "Добавить ожидаемую операцию"
               : type === "transfer"
-                ? "Записать перевод"
+                ? foreignTransfer && draft.feeEnabled
+                  ? "Записать обмен и комиссию"
+                  : "Записать перевод"
                 : "Добавить операцию"
         }
         icon="checkmark"

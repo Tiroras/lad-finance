@@ -2,7 +2,8 @@ import { baseCurrency } from "../../../domain/currency";
 import { moneyInput, parseMoney } from "../../../domain/finance";
 import {
   scenarioChangeCurrency,
-  scenarioSchema,
+  scenarioSchemaV8,
+  scenarioValidationMessage,
   validateScenarioCurrencies,
 } from "../../../domain/scenarios";
 import type {
@@ -57,7 +58,7 @@ export function parseScenarioDraft(
   id = "preview",
   state?: FinanceState,
 ): SavedScenario {
-  const result = scenarioSchema.safeParse({
+  const result = scenarioSchemaV8.safeParse({
     ...draft,
     id,
     dailySpending:
@@ -78,10 +79,7 @@ export function parseScenarioDraft(
       amount: parseMoney(e.amount, state ? baseCurrency(state) : "RUB"),
     })),
   });
-  if (!result.success)
-    throw new Error(
-      "Проверьте название, суммы и даты. Сдвиг дохода — целое число от −90 до 90 дней; отрицательное число означает раньше.",
-    );
+  if (!result.success) throw new Error(scenarioValidationMessage(result.error));
   if (state) validateScenarioCurrencies(state, result.data);
   return result.data;
 }

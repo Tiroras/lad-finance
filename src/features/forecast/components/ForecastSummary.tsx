@@ -9,6 +9,12 @@ function status(result: ForecastResult) {
     return `Нехватка с ${dateLabel(result.firstShortfall.date)}`;
   if (result.firstBelowBuffer)
     return `Ниже резерва с ${dateLabel(result.firstBelowBuffer.date)}`;
+  if (result.accounts.some((account) => account.firstShortfall))
+    return "Нехватка на отдельном счёте — проверьте распределение денег";
+  if (result.warnings.length > 0)
+    return "План требует уточнения — проверьте предупреждения";
+  if (result.unallocatedEvents.length > 0)
+    return "Назначьте счета: достаточность каждого счёта пока не подтверждена";
   return "Без нехватки по этому плану";
 }
 
@@ -22,7 +28,12 @@ export function ForecastSummary({
   labels?: { result: string; baseline: string };
 }) {
   const { money } = useMoney();
-  const warning = !!result.firstShortfall || !!result.firstBelowBuffer;
+  const warning =
+    !!result.firstShortfall ||
+    !!result.firstBelowBuffer ||
+    result.accounts.some((account) => account.firstShortfall) ||
+    result.warnings.length > 0 ||
+    result.unallocatedEvents.length > 0;
   return (
     <Card style={{ backgroundColor: C.green, borderColor: C.green, gap: 19 }}>
       <View style={{ gap: 7 }}>

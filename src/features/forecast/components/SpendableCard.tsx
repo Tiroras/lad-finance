@@ -61,6 +61,11 @@ export function SpendableCard({
         </Txt>
       )}
       <View style={st.heroDivider} />
+      {safe.protectionWarning && (
+        <Txt style={{ color: C.lime, fontSize: 12, lineHeight: 19 }}>
+          {safe.protectionWarning}
+        </Txt>
+      )}
       <Row
         style={{
           justifyContent: "space-between",
@@ -95,11 +100,13 @@ export function SpendableCard({
               fontFamily: font.medium,
             }}
           >
-            {safe.raw < 0
-              ? "План требует внимания"
-              : safe.protectedAmount > 0
-                ? "Учтены будущие обязательства"
-                : "Счета и цели учтены"}
+            {safe.protectionWarning
+              ? "Прогноз недоступен"
+              : safe.raw < 0
+                ? "План требует внимания"
+                : safe.protectedAmount > 0
+                  ? "Учтены будущие обязательства"
+                  : "Счета и цели учтены"}
           </Txt>
         </Pressable>
       </Row>

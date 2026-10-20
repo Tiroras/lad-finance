@@ -1,7 +1,8 @@
 import { dateLabel } from "../../../domain/finance";
 import type { ForecastResult } from "../../../domain/forecast";
 import { planPurchase } from "../../../domain/purchasePlanner";
-import { useMoney } from "../../../state/finance";
+import { useFinance, useMoney } from "../../../state/finance";
+import { accountCurrency } from "../../../domain/currency";
 import { Button, Card, Notice, Txt, font } from "../../../shared/ui";
 
 export function PurchasePlanner({
@@ -10,21 +11,36 @@ export function PurchasePlanner({
   baseline,
   setDate,
   setAmount,
+  accountId,
 }: {
   amount: number;
   date: string;
   baseline: ForecastResult;
   setDate: (date: string) => void;
   setAmount: (value: string) => void;
+  accountId: string;
 }) {
   const { money, moneyInput } = useMoney();
-  const plan = planPurchase(baseline, amount, date);
+  const { state } = useFinance();
+  const currency = accountCurrency(state, accountId);
+  const plan = planPurchase(baseline, amount, date, { state, accountId });
   return (
     <Card style={{ gap: 14 }}>
       <Txt style={{ fontFamily: font.bold, fontSize: 17 }}>
         Когда покупка впишется в план
       </Txt>
-      {plan.existingShortfall ? (
+      {plan.unallocated || plan.warnings.length > 0 ? (
+        <Notice tone="warning">
+          Покупку пока нельзя подтвердить. Назначьте счета для всех событий и
+          устраните предупреждения прогноза.
+        </Notice>
+      ) : plan.accountShortfall ? (
+        <Notice tone="warning">
+          На выбранном счёте уже ожидается нехватка{" "}
+          {dateLabel(plan.accountShortfall.date)}. Добавьте своевременный
+          перевод или скорректируйте его расходы.
+        </Notice>
+      ) : plan.existingShortfall ? (
         <Notice>
           Даже без покупки остаток опустится ниже резерва{" "}
           {dateLabel(plan.existingShortfall.date)}. Сначала скорректируйте этот
@@ -34,18 +50,26 @@ export function PurchasePlanner({
         <>
           <Txt testID="purchase-maximum">
             На {dateLabel(date)} можно запланировать до{" "}
-            {money(plan.maximum, true)}.
+            {money(plan.maximum, true, currency)}.
           </Txt>
+          {plan.accountMinimum && (
+            <Txt>
+              Минимум выбранного счёта в исходном плане с этой даты:{" "}
+              {money(plan.accountMinimum.available, true, currency)} ·{" "}
+              {dateLabel(plan.accountMinimum.date)}.
+            </Txt>
+          )}
           <Txt>
-            Сумму ограничивает остаток {dateLabel(plan.limitingDay.date)}:{" "}
-            {money(plan.limitingDay.balance, true)} при резерве{" "}
+            В исходном плане с выбранной даты общий минимум:{" "}
+            {money(plan.limitingDay.available, true)} ·{" "}
+            {dateLabel(plan.limitingDay.date)}. Общий резерв:{" "}
             {money(baseline.buffer)}.
           </Txt>
           {plan.maximum > 0 && (
             <Button
               label="Подставить доступную сумму"
               variant="secondary"
-              onPress={() => setAmount(moneyInput(plan.maximum))}
+              onPress={() => setAmount(moneyInput(plan.maximum, currency))}
             />
           )}
           {amount > 0 &&

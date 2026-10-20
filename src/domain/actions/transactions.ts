@@ -8,7 +8,12 @@ import { validateTransactionAmountsState } from "../transactionAmounts";
 import { accountBalances } from "../accountBalances";
 import { validateAccountArchives } from "../accountArchive";
 import { validateDebts, validateCreditAccounts } from "../debts";
-import { accountCurrency, accountToBase, MAX_MONEY } from "../currency";
+import {
+  accountCurrency,
+  accountToBase,
+  baseCurrency,
+  MAX_MONEY,
+} from "../currency";
 import { localDate, uid, validateTransaction } from "../finance";
 import type { FinanceState, Transaction } from "../types";
 import {
@@ -49,6 +54,7 @@ function prepareTransaction(
   transaction: Transaction,
   today: string,
   allowArchived: boolean,
+  preserveValuation = false,
 ): Transaction {
   ensure(
     transactionStatus(transaction) !== "cancelled",
@@ -88,11 +94,17 @@ function prepareTransaction(
       ),
     "Категория части в архиве. Выберите активную категорию.",
   );
-  const valued = {
+  const valued: Transaction & { baseAmount: number } = {
     ...transaction,
     baseAmount:
       transaction.baseAmount ??
       accountToBase(state, transaction.amount, transaction.accountId),
+    ...(!preserveValuation &&
+    transaction.type !== "transfer" &&
+    accountCurrency(state, transaction.accountId) !== baseCurrency(state) &&
+    !transaction.valuation
+      ? { valuation: { date: today, source: "current" as const } }
+      : {}),
   };
   ensure(
     valued.baseAmount <= MAX_MONEY,
@@ -117,27 +129,36 @@ export function appendTransaction(
   transaction: Transaction,
   today = localDate(),
   allowArchived = false,
+  preserveValuation = false,
 ): FinanceState {
   ensure(
     state.transactions.length < 20000,
-    "В учёте допустимо не более 20 000 операций.",
+    "В учёте допустимо не более 20 000 операций. Сохраните резервную копию и начните отдельный профиль либо удалите ненужные записи.",
   );
   ensure(
     !state.transactions.some((t) => t.id === transaction.id),
     "Операция с таким ID уже существует.",
   );
-  const valued = prepareTransaction(state, transaction, today, allowArchived);
+  const valued = prepareTransaction(
+    state,
+    transaction,
+    today,
+    allowArchived,
+    preserveValuation,
+  );
   const next: FinanceState = {
     ...state,
-    ...(valued.goalVersionId !== undefined ||
-    valued.goalOccurrenceDate !== undefined
-      ? { version: 7 as const }
-      : valued.recurringVersionId !== undefined ||
-          valued.incomeVersionId !== undefined
-        ? { version: state.version >= 6 ? state.version : (6 as const) }
-        : valued.status !== undefined || valued.expectedDate !== undefined
-          ? { version: state.version >= 5 ? state.version : (5 as const) }
-          : {}),
+    ...(valued.valuation !== undefined
+      ? { version: 8 as const }
+      : valued.goalVersionId !== undefined ||
+          valued.goalOccurrenceDate !== undefined
+        ? { version: state.version >= 7 ? state.version : (7 as const) }
+        : valued.recurringVersionId !== undefined ||
+            valued.incomeVersionId !== undefined
+          ? { version: state.version >= 6 ? state.version : (6 as const) }
+          : valued.status !== undefined || valued.expectedDate !== undefined
+            ? { version: state.version >= 5 ? state.version : (5 as const) }
+            : {}),
     transactions: [valued, ...state.transactions],
   };
   checkSavings(next, today);
@@ -154,7 +175,7 @@ export function appendTransactions(
   if (!transactions.length) return state;
   ensure(
     state.transactions.length + transactions.length <= 20000,
-    "В учёте допустимо не более 20 000 операций.",
+    "В учёте допустимо не более 20 000 операций. Сохраните резервную копию и начните отдельный профиль либо уменьшите пакет импорта.",
   );
   const spendingAccounts = new Set(
     state.accounts
@@ -207,24 +228,27 @@ export function appendTransactions(
   }
   next = {
     ...next,
-    ...(transactions.some(
-      (entry) =>
-        entry.goalVersionId !== undefined ||
-        entry.goalOccurrenceDate !== undefined,
-    )
-      ? { version: 7 as const }
+    ...([...added.values()].some((entry) => entry.valuation !== undefined)
+      ? { version: 8 as const }
       : transactions.some(
             (entry) =>
-              entry.recurringVersionId !== undefined ||
-              entry.incomeVersionId !== undefined,
+              entry.goalVersionId !== undefined ||
+              entry.goalOccurrenceDate !== undefined,
           )
-        ? { version: state.version >= 6 ? state.version : (6 as const) }
+        ? { version: state.version >= 7 ? state.version : (7 as const) }
         : transactions.some(
               (entry) =>
-                entry.status !== undefined || entry.expectedDate !== undefined,
+                entry.recurringVersionId !== undefined ||
+                entry.incomeVersionId !== undefined,
             )
-          ? { version: state.version >= 5 ? state.version : (5 as const) }
-          : {}),
+          ? { version: state.version >= 6 ? state.version : (6 as const) }
+          : transactions.some(
+                (entry) =>
+                  entry.status !== undefined ||
+                  entry.expectedDate !== undefined,
+              )
+            ? { version: state.version >= 5 ? state.version : (5 as const) }
+            : {}),
     transactions: [
       ...transactions.map((transaction) => added.get(transaction.id)!),
       ...state.transactions,
@@ -313,6 +337,12 @@ export function saveTransaction(
         ? ("posted" as const)
         : undefined
       : requestedStatus;
+  const previous = original ?? existingCreate;
+  const sameValuation =
+    previous?.amount === input.amount &&
+    previous?.accountId === input.accountId &&
+    (input.baseAmount === undefined ||
+      input.baseAmount === previous.baseAmount);
   const transaction: Transaction = {
     ...fields,
     id: original?.id ?? createId ?? uid(),
@@ -323,6 +353,11 @@ export function saveTransaction(
       (original ?? existingCreate)?.accountId === input.accountId
         ? (original ?? existingCreate)?.baseAmount
         : undefined),
+    valuation:
+      input.type === "transfer"
+        ? undefined
+        : (input.valuation ??
+          (sameValuation ? previous?.valuation : undefined)),
     toAmount: input.type === "transfer" ? input.toAmount : undefined,
     title:
       input.title.trim() ||
@@ -409,10 +444,79 @@ export function saveTransaction(
     transaction,
     today,
     original?.category === transaction.category,
+    !!original && sameValuation && input.valuation === undefined,
   );
   assertGoalFundTransactionsUnchanged(state, next);
   if (original) checkSavings(next, today);
   return next;
+}
+
+export type ExchangeWithFeeInput = {
+  transfer: TransactionInput;
+  feeAmount: number;
+  feeAccountId: string;
+  feeCategory: string;
+};
+
+/** Both facts are returned together. A failed fee never exposes a partial transfer. */
+export function exchangeWithFee(
+  state: FinanceState,
+  input: ExchangeWithFeeInput,
+  today = localDate(),
+): FinanceState {
+  const { transfer } = input;
+  ensure(
+    transfer.type === "transfer" &&
+      !transfer.id &&
+      !transfer.expectedOriginal &&
+      !transfer.goalId &&
+      !transfer.debtId &&
+      !transfer.recurringId &&
+      !transfer.plannedIncomeId &&
+      (transfer.status === undefined || transfer.status === "posted"),
+    "Обмен с комиссией записывается как новый проведённый перевод без связи с планом или целью.",
+  );
+  ensure(
+    accountCurrency(state, transfer.accountId) !==
+      accountCurrency(state, transfer.toAccountId),
+    "Для обмена выберите счета в разных валютах.",
+  );
+  const createId = transfer.createId ?? uid();
+  const feeId = `${createId}:fee`;
+  ensure(
+    feeId.length <= 100,
+    "ID обмена слишком длинный. Откройте новую форму.",
+  );
+  const savedTransfer = state.transactions.some(
+    (entry) => entry.id === createId,
+  );
+  const savedFee = state.transactions.some((entry) => entry.id === feeId);
+  ensure(
+    savedTransfer === savedFee,
+    "Часть обмена уже изменена или удалена. Проверьте обе записи в истории; повтор не добавит второе списание.",
+  );
+  ensure(
+    savedTransfer || state.transactions.length + 2 <= 20000,
+    "Для обмена с комиссией нужны две свободные записи из лимита 20 000 операций. Экспортируйте историю и освободите место либо исправьте существующую запись.",
+  );
+  const withTransfer = saveTransaction(state, { ...transfer, createId }, today);
+  const next = saveTransaction(
+    withTransfer,
+    {
+      createId: feeId,
+      type: "expense",
+      title: `Комиссия: ${transfer.title.trim() || "обмен валют"}`.slice(
+        0,
+        120,
+      ),
+      amount: input.feeAmount,
+      date: transfer.date,
+      accountId: input.feeAccountId,
+      category: input.feeCategory,
+    },
+    today,
+  );
+  return next === state ? state : { ...next, version: 8 };
 }
 
 export function deleteTransaction(
@@ -467,6 +571,7 @@ export function postPendingTransaction(
   const {
     expectedDate: _expectedDate,
     baseAmount: _baseAmount,
+    valuation: _valuation,
     ...fields
   } = original;
   const withoutOriginal = {

@@ -196,7 +196,24 @@ export function deleteDebt(state: FinanceState, id: string): FinanceState {
     !state.transactions.some((transaction) => transaction.debtId === id),
     "У долга есть движения денег. Сначала удалите связанные операции; закрытый долг можно оставить в истории.",
   );
-  return { ...state, debts: state.debts!.filter((debt) => debt.id !== id) };
+  return {
+    ...state,
+    debts: state.debts!.filter((debt) => debt.id !== id),
+    ...(state.settings.forecast?.repaymentAccounts
+      ? {
+          settings: {
+            ...state.settings,
+            forecast: {
+              ...state.settings.forecast,
+              repaymentAccounts:
+                state.settings.forecast.repaymentAccounts.filter(
+                  (item) => item.kind !== "debt" || item.sourceId !== id,
+                ),
+            },
+          },
+        }
+      : {}),
+  };
 }
 
 export interface DebtTransactionInput {
@@ -265,6 +282,10 @@ export function editDebtTransaction(
       accountId: account.id,
       amount: input.amount,
       date: input.date,
+      valuation:
+        original.amount === input.amount && original.accountId === account.id
+          ? original.valuation
+          : undefined,
       baseAmount:
         original.amount === input.amount && original.accountId === account.id
           ? original.baseAmount
@@ -272,6 +293,7 @@ export function editDebtTransaction(
     },
     today,
     true,
+    original.amount === input.amount && original.accountId === account.id,
   );
   // appendTransaction checked every debt's dated balance, account limits and
   // savings without exposing the invalid intermediate state to the store.

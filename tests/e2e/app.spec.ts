@@ -156,11 +156,52 @@ test("purchase simulation updates risk without mutating the ledger", async ({
     .getByRole("button", { name: "Проверить покупку", exact: true })
     .click();
   await page.getByLabel("Стоимость покупки", { exact: true }).fill("100");
+  await expect(page.getByText(/Покупку пока нельзя подтвердить/)).toBeVisible();
+  await expect(page.getByText("Вписывается в ваш план")).toHaveCount(0);
+  await closeSheet(page);
+  expect(await getState(page)).toEqual(before);
+  await page
+    .getByRole("button", { name: "Прогноз по дням", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Настроить прогноз", exact: true })
+    .click();
+  for (const goal of before.goals) {
+    await page
+      .getByRole("button", { name: `Откуда взнос: ${goal.name}`, exact: true })
+      .click();
+    await page
+      .getByRole("radio", { name: "Основная карта · RUB", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: `Куда взнос: ${goal.name}`, exact: true })
+      .click();
+    await page
+      .getByRole("radio", { name: "Накопления · RUB", exact: true })
+      .click();
+  }
+  await page
+    .getByRole("button", { name: "Сохранить прогноз", exact: true })
+    .click();
+  await expect
+    .poll(
+      async () =>
+        (await getState(page)).settings.forecast?.goalAccounts?.length,
+    )
+    .toBe(before.goals.length);
+  const assigned = await getState(page);
+  expect(assigned.accounts).toEqual(before.accounts);
+  expect(assigned.transactions).toEqual(before.transactions);
+  expect(assigned.goals).toEqual(before.goals);
+  await page
+    .getByRole("button", { name: "Примерить покупку", exact: true })
+    .click();
+  await page.getByLabel("Стоимость покупки", { exact: true }).fill("100");
   await expect(page.getByText("Вписывается в ваш план")).toBeVisible();
   await page.getByLabel("Стоимость покупки", { exact: true }).fill("1000000");
   await expect(page.getByText("Плану понадобится место")).toBeVisible();
   await closeSheet(page);
-  expect(await getState(page)).toEqual(before);
+  expect(await getState(page)).toEqual(assigned);
 });
 
 test("goal contributions are transfers; savings persist after reload", async ({

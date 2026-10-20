@@ -283,7 +283,7 @@ function firstPaymentDate(state: FinanceState, today: string) {
     );
 }
 
-export function validatePaymentCapacity(state: FinanceState, today: string) {
+export function paymentCapacityCount(state: FinanceState, today: string) {
   let count = 0;
   visitPaymentOccurrences(
     state,
@@ -296,6 +296,11 @@ export function validatePaymentCapacity(state: FinanceState, today: string) {
       if (++count > MAX_PAYMENT_OCCURRENCES) throw capacityError();
     },
   );
+  return count;
+}
+
+export function validatePaymentCapacity(state: FinanceState, today: string) {
+  paymentCapacityCount(state, today);
 }
 
 /** Compatibility accessor. Event operations must use resolvePaymentOccurrence. */

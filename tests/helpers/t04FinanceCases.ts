@@ -1589,7 +1589,7 @@ export const t04FinanceCases: readonly {
     },
   },
   {
-    name: "base currency change never downcasts a v5 state",
+    name: "base currency change upgrades v5 to v8 and preserves pending semantics",
     run() {
       const start = ledger();
       start.settings.exchange = {
@@ -1598,13 +1598,27 @@ export const t04FinanceCases: readonly {
           USD: { value: 10_000_000_000, source: "manual", date: TODAY },
         },
       };
-      const state = changeBaseCurrency(pending(start), "USD", TODAY);
-      equal(state.version, 5, "Currency action downgraded format");
+      const original = pending(start);
+      const before = JSON.stringify(original);
+      equal(original.version, 5, "Expected a v5 source");
+      const state = changeBaseCurrency(original, "USD", TODAY);
+      equal(state.version, 8, "Valuation basis requires format 8");
+      equal(JSON.stringify(original), before, "Currency action mutated source");
+      const restored = validateBackupValue(
+        JSON.parse(encodeBackup(state)),
+        TODAY,
+      );
+      equal(restored.version, 8, "Valuation format lost in roundtrip");
+      for (const result of [state, restored]) {
+        equal(result.transactions[0].status, "pending", "Pending status lost");
+        equal(result.transactions[0].expectedDate, NEXT, "Expected date lost");
+        equal(result.transactions[0].amount, 200_000, "Native amount changed");
+        equal(result.transactions[0].baseAmount, 2_000, "Wrong USD valuation");
+      }
       equal(
-        validateBackupValue(JSON.parse(encodeBackup(state)), TODAY)
-          .transactions[0].status,
-        "pending",
-        "Pending lost in currency roundtrip",
+        restored.transactions[0].valuation,
+        { date: TODAY, source: "current" },
+        "Valuation basis lost in currency roundtrip",
       );
     },
   },

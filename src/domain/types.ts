@@ -74,6 +74,7 @@ export interface Transaction {
   toAccountId?: string;
   toAmount?: number;
   baseAmount?: number;
+  valuation?: TransactionValuation;
   goalId?: string;
   goalVersionId?: string;
   goalOccurrenceDate?: string;
@@ -92,6 +93,11 @@ export interface Transaction {
   debtAction?: "issue" | "repay";
   status?: "posted" | "pending" | "cancelled";
   expectedDate?: string;
+}
+
+export interface TransactionValuation {
+  date: string;
+  source: "manual" | "imported" | "current";
 }
 
 export interface Goal {
@@ -220,10 +226,32 @@ export interface IncomeOccurrenceOverride {
 export interface ForecastPreferences {
   dailySpending: number;
   goalDay: number;
+  dailyAccountId?: string;
+  goalAccounts?: {
+    goalId: string;
+    fromAccountId: string;
+    toAccountId: string;
+  }[];
+  repaymentAccounts?: {
+    kind: "credit" | "debt";
+    sourceId: string;
+    accountId: string;
+  }[];
+  transfers?: ForecastTransfer[];
+}
+
+export interface ForecastTransfer {
+  id: string;
+  name: string;
+  date: string;
+  accountId: string;
+  toAccountId: string;
+  amount: number;
+  toAmount?: number;
 }
 
 export interface FinanceState {
-  version: 2 | 3 | 4 | 5 | 6 | 7;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];
@@ -255,6 +283,7 @@ export interface FinanceState {
 }
 
 export interface ScenarioChange {
+  enabled?: boolean;
   currency?: CurrencyCode;
   source: "income" | "payment" | "goal";
   sourceId: string;
@@ -264,6 +293,8 @@ export interface ScenarioChange {
 }
 
 export interface ScenarioEvent {
+  enabled?: boolean;
+  accountId?: string;
   id: string;
   name: string;
   type: "income" | "expense";

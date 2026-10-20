@@ -549,7 +549,7 @@ test("old RUB backups migrate without reinterpreting money and invalid foreign d
   assert.throws(() => decodeBackup(JSON.stringify(bad)), /курс USD/);
   const noValuation = JSON.parse(encodeBackup(state));
   delete noValuation.transactions[0].baseAmount;
-  assert.throws(() => decodeBackup(JSON.stringify(noValuation)), /оценка/);
+  assert.throws(() => decodeBackup(JSON.stringify(noValuation)), /оценк/);
 });
 
 test("scenario drafts preserve 3-digit source amounts and base-currency event amounts across save and rebase", () => {
@@ -650,6 +650,8 @@ test("version 3 multicurrency backup upgrades to 4 without changing valuations o
   const state = saveTransaction(fixture(), expense, TODAY);
   const legacy = JSON.parse(encodeBackup(state));
   legacy.version = 3;
+  // v3 contained the saved value, but had no field describing its basis.
+  for (const transaction of legacy.transactions) delete transaction.valuation;
   const restored = decodeBackup(JSON.stringify(legacy));
   assert.equal(restored.version, 4);
   assert.deepEqual(restored.accounts, legacy.accounts);

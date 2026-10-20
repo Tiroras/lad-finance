@@ -31,7 +31,11 @@ import {
 } from "./currency";
 import { currencySchema, exchangeSchema } from "./currencySchema";
 import { localDate, MAX_MONEY, validDate } from "./finance";
-import { scenarioSchema } from "./scenarios";
+import {
+  scenarioSchema,
+  scenarioSchemaV8,
+  validateScenarioCurrencies,
+} from "./scenarios";
 import { ICON_NAMES, type FinanceState } from "./types";
 import {
   assertFinanceVersion,
@@ -47,6 +51,8 @@ import {
 } from "./planHistory";
 import { validateGoalSchedules } from "./goals";
 import { validateGoalFunds } from "./goalFunds";
+import { validateAccountForecast } from "./accountForecastSettings";
+import { transactionValuationError } from "./transactionValuation";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const positiveAmount = amount.min(1);
@@ -382,6 +388,66 @@ const schemaV7 = schemaV6.extend({
     .optional(),
 });
 
+const schemaV8 = schemaV7.extend({
+  version: z.literal(8),
+  settings: schema.shape.settings.extend({
+    forecast: z
+      .object({
+        dailySpending: amount,
+        goalDay: day,
+        dailyAccountId: id.optional(),
+        goalAccounts: z
+          .array(
+            z.object({
+              goalId: id,
+              fromAccountId: id,
+              toAccountId: id,
+            }),
+          )
+          .max(100)
+          .optional(),
+        repaymentAccounts: z
+          .array(
+            z.object({
+              kind: z.enum(["credit", "debt"]),
+              sourceId: id,
+              accountId: id,
+            }),
+          )
+          .max(230)
+          .optional(),
+        transfers: z
+          .array(
+            z.object({
+              id,
+              name,
+              date,
+              accountId: id,
+              toAccountId: id,
+              amount: positiveAmount,
+              toAmount: positiveAmount.optional(),
+            }),
+          )
+          .max(200)
+          .optional(),
+      })
+      .optional(),
+  }),
+  transactions: z
+    .array(
+      schemaV7.shape.transactions.element.extend({
+        valuation: z
+          .object({
+            date,
+            source: z.enum(["manual", "imported", "current"]),
+          })
+          .optional(),
+      }),
+    )
+    .max(20000),
+  scenarios: z.array(scenarioSchemaV8).max(20).default([]),
+});
+
 export function decodeBackup(raw: string, today = localDate()): FinanceState {
   // Keep reading older snapshots whose limit was measured in UTF-16 characters.
   // Portable files and new ledgers use the UTF-8 byte limit below. Existing
@@ -420,8 +486,45 @@ export function validateBackupValue(
                 (entry as Record<string, unknown>)[field] !== undefined,
             ),
         );
+      const forecast = (
+        raw.settings as { forecast?: Record<string, unknown> } | undefined
+      )?.forecast;
+      const scenarioFields =
+        Array.isArray(raw.scenarios) &&
+        raw.scenarios.some(
+          (scenario) =>
+            scenario &&
+            typeof scenario === "object" &&
+            ["changes", "events"].some(
+              (field) =>
+                Array.isArray(scenario[field]) &&
+                scenario[field].some(
+                  (row: Record<string, unknown>) =>
+                    row &&
+                    typeof row === "object" &&
+                    (row.enabled !== undefined ||
+                      (field === "events" && row.accountId !== undefined)),
+                ),
+            ),
+        );
+      if (
+        value.version !== 8 &&
+        (contains("transactions", ["valuation"]) ||
+          scenarioFields ||
+          (forecast &&
+            [
+              "dailyAccountId",
+              "goalAccounts",
+              "repaymentAccounts",
+              "transfers",
+            ].some((key) => forecast[key] !== undefined)))
+      )
+        throw new Error(
+          "Account forecasts and valuation provenance require format 8",
+        );
       if (
         value.version !== 7 &&
+        value.version !== 8 &&
         (raw.goalFundCycles !== undefined ||
           raw.goalReleases !== undefined ||
           contains("goals", ["versions"]) ||
@@ -435,6 +538,7 @@ export function validateBackupValue(
       if (
         value.version !== 6 &&
         value.version !== 7 &&
+        value.version !== 8 &&
         (contains("recurring", ["versions"]) ||
           contains("plannedIncomes", [
             "versions",
@@ -450,12 +554,17 @@ export function validateBackupValue(
       value &&
       typeof value === "object" &&
       "version" in value &&
-      (value.version === 5 || value.version === 6 || value.version === 7)
-        ? value.version === 7
-          ? schemaV7
-          : value.version === 6
-            ? schemaV6
-            : schemaV5
+      (value.version === 5 ||
+        value.version === 6 ||
+        value.version === 7 ||
+        value.version === 8)
+        ? value.version === 8
+          ? schemaV8
+          : value.version === 7
+            ? schemaV7
+            : value.version === 6
+              ? schemaV6
+              : schemaV5
         : schema
     ).parse(value);
     if (state.transactions.some((entry) => entry.date > today))
@@ -499,6 +608,9 @@ export function validateBackupValue(
   validateBudgetPlans(state);
   validateDebts(state, today);
   validateCreditAccounts(state, today);
+  validateAccountForecast(state);
+  for (const scenario of state.scenarios ?? [])
+    validateScenarioCurrencies(state, scenario);
   if (
     state.settings.spendableIncomeId &&
     !state.plannedIncomes?.some(
@@ -544,6 +656,8 @@ export function validateBackupValue(
   )
     throw new Error("В истории платежа повторяется месяц изменения условий.");
   for (const t of state.transactions) {
+    const valuationError = transactionValuationError(t, today);
+    if (valuationError) throw new Error(valuationError);
     const statusError = transactionStatusError(t);
     if (statusError) throw new Error(statusError);
     const linkError = pendingLinkError(state, t);

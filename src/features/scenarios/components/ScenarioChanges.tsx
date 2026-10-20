@@ -12,8 +12,14 @@ import {
   Txt,
   font,
   AmountField,
+  Toggle,
 } from "../../../shared/ui";
 import type { ScenarioDraft } from "../model/scenarioDraft";
+import {
+  capacityMessage,
+  MAX_SCENARIO_CHANGES,
+  nearCapacity,
+} from "../../../domain/dataLimits";
 
 export function ScenarioChanges({
   draft,
@@ -96,32 +102,46 @@ export function ScenarioChanges({
         повторяется. Просроченные счета сохраняют прежнюю сумму. Ноль отменяет
         будущий платёж или взнос только в сценарии.
       </Notice>
+      {nearCapacity(draft.changes.length, MAX_SCENARIO_CHANGES) && (
+        <Notice tone="warning">
+          {capacityMessage({
+            key: "changes",
+            name: "изменения плана",
+            used: draft.changes.length,
+            limit: MAX_SCENARIO_CHANGES,
+            remedy: "Удалите ненужные строки; выключенные тоже занимают место.",
+          })}
+        </Notice>
+      )}
       <Row style={{ flexWrap: "wrap" }}>
-        {available.map((s) => (
-          <Chip
-            key={`${s.source}:${s.sourceId}`}
-            label={`${s.label}: ${s.name}`}
-            onPress={() =>
-              onChange({
-                ...draft,
-                changes: [
-                  ...draft.changes,
-                  {
-                    source: s.source,
-                    sourceId: s.sourceId,
-                    name: s.name,
-                    currency: scenarioChangeCurrency(state, s),
-                    amount: moneyInput(
-                      s.amount,
-                      scenarioChangeCurrency(state, s),
-                    ),
-                    delayDays: "0",
-                  },
-                ],
-              })
-            }
-          />
-        ))}
+        {(draft.changes.length < MAX_SCENARIO_CHANGES ? available : []).map(
+          (s) => (
+            <Chip
+              key={`${s.source}:${s.sourceId}`}
+              label={`${s.label}: ${s.name}`}
+              onPress={() =>
+                onChange({
+                  ...draft,
+                  changes: [
+                    ...draft.changes,
+                    {
+                      source: s.source,
+                      sourceId: s.sourceId,
+                      name: s.name,
+                      currency: scenarioChangeCurrency(state, s),
+                      amount: moneyInput(
+                        s.amount,
+                        scenarioChangeCurrency(state, s),
+                      ),
+                      delayDays: "0",
+                      enabled: true,
+                    },
+                  ],
+                })
+              }
+            />
+          ),
+        )}
       </Row>
       {sources.length === 0 && (
         <Txt>
@@ -140,6 +160,18 @@ export function ScenarioChanges({
         return (
           <Card key={`${c.source}:${c.sourceId}`} style={{ gap: 12 }}>
             <Txt style={{ fontFamily: font.bold }}>{c.name}</Txt>
+            <Row>
+              <Txt style={{ flex: 1 }}>
+                {c.enabled === false
+                  ? "Изменение выключено"
+                  : "Участвует в расчёте"}
+              </Txt>
+              <Toggle
+                accessibilityLabel={`Учитывать изменение: ${c.name}`}
+                value={c.enabled !== false}
+                onValueChange={(enabled) => patch({ enabled })}
+              />
+            </Row>
             <AmountField
               label={`${c.source === "goal" ? "Взнос по графику" : "Новая сумма"}, ${scenarioChangeCurrency(state, c)}`}
               accessibilityLabel={`Сумма в сценарии: ${c.name}`}

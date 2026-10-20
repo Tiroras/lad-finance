@@ -151,7 +151,7 @@ export function changeBaseCurrency(
   };
   const next: FinanceState = {
     ...state,
-    version: state.version >= 5 ? state.version : 4,
+    version: 8,
     settings: {
       ...state.settings,
       baseCurrency: currency,
@@ -195,6 +195,9 @@ export function changeBaseCurrency(
     })),
     transactions: state.transactions.map((t) => ({
       ...t,
+      ...(t.type !== "transfer"
+        ? { valuation: { source: "current" as const, date: today } }
+        : {}),
       baseAmount:
         accountCurrency(state, t.accountId) === currency
           ? t.amount

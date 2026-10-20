@@ -10,6 +10,10 @@ import type {
 } from "../types";
 import { checkAmount, checkDay, ensure } from "./validation";
 import { saveBudgetPlan } from "./budgets";
+import {
+  hasAccountForecast,
+  validateAccountForecast,
+} from "../accountForecastSettings";
 
 export function saveSettings(
   state: FinanceState,
@@ -71,7 +75,12 @@ export function saveForecastPreferences(
 ): FinanceState {
   checkAmount(preferences.dailySpending, true);
   checkDay(preferences.goalDay);
-  return { ...state, settings: { ...state.settings, forecast: preferences } };
+  validateAccountForecast(state, preferences);
+  return {
+    ...state,
+    version: hasAccountForecast(preferences) ? 8 : state.version,
+    settings: { ...state.settings, forecast: preferences },
+  };
 }
 export function saveReminderPreferences(
   state: FinanceState,

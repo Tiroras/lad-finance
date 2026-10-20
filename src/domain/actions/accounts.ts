@@ -57,7 +57,7 @@ export function confirmCreditTerms(
     );
   const next: FinanceState = {
     ...state,
-    version: 7,
+    version: state.version >= 7 ? state.version : 7,
     accounts: state.accounts.map((account) =>
       account.id === original.id
         ? {
@@ -106,7 +106,7 @@ export function saveCreditTermsReminder(
   );
   const next: FinanceState = {
     ...state,
-    version: 7,
+    version: state.version >= 7 ? state.version : 7,
     accounts: state.accounts.map((account) =>
       account.id === accountId
         ? {

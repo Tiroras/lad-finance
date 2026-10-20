@@ -1,3 +1,4 @@
+import { transactionValuationError } from "./transactionValuation";
 import { paymentLinkValid, incomeLinkValid } from "./planHistory";
 import { accountBalance, accountBalances } from "./accountBalances";
 import { goalContributionLinkError, goalReserve, goalSaved } from "./goals";
@@ -192,9 +193,18 @@ export function spendable(state: FinanceState, today = localDate()) {
   const protection = income
     ? spendableProtection(state, today, payday, days)
     : undefined;
+  const protectionWarning =
+    protection?.warning ??
+    (income && !protection
+      ? "Проверка будущих обязательств выходит за 2100 год. Доступная сумма не подтверждена; полный горизонт прогноза недоступен."
+      : undefined);
   // Both calculations already account for bills, goals and the buffer. Compare
   // their limits rather than subtracting the forecast's obligations a second time.
-  const raw = Math.min(beforeProtection, protection?.limit ?? beforeProtection);
+  const raw = Math.min(
+    beforeProtection,
+    protection?.limit ?? beforeProtection,
+    protectionWarning ? 0 : Infinity,
+  );
   return {
     liquid,
     held,
@@ -215,6 +225,7 @@ export function spendable(state: FinanceState, today = localDate()) {
     beforeProtection,
     protectedAmount: beforeProtection - raw,
     protection,
+    protectionWarning,
   };
 }
 
@@ -225,31 +236,19 @@ function spendableProtection(
   days: number,
 ) {
   const horizon: ForecastHorizon = days < 30 ? 30 : days < 60 ? 60 : 90;
+  if (today < "2000-01-01" || shiftDate(today, horizon - 1) > "2100-12-31")
+    return undefined;
   const dailySpending = state.settings.forecast?.dailySpending ?? 0;
-  const withoutDailySpending = forecast(
-    {
-      ...state,
-      settings: {
-        ...state.settings,
-        forecast: {
-          goalDay: state.settings.forecast?.goalDay ?? 31,
-          dailySpending: 0,
-        },
-      },
-    },
-    horizon,
-    today,
-  );
   // The allowance funds everyday spending before the chosen income. Reserving
   // that spending here too would double-count it. From the income date onward,
   // retain the user's forecast assumption; today's actual spending is in balance.
   const dailyStart = payday === today ? shiftDate(today, 1) : payday;
-  const checked = withoutDailySpending.days.map((day) => ({
+  const projection = forecast(state, horizon, today, undefined, undefined, {
+    dailyStart,
+  });
+  const checked = projection.days.map((day) => ({
     date: day.date,
-    available:
-      day.available -
-      state.settings.buffer -
-      Math.max(0, daysBetween(dailyStart, day.date) + 1) * dailySpending,
+    available: day.available - state.settings.buffer,
   }));
   const minimum = checked.reduce((min, day) =>
     day.available < min.available ? day : min,
@@ -261,6 +260,9 @@ function spendableProtection(
     date: minimum.date,
     dailySpending,
     dailyStart,
+    warning: projection.warnings.length
+      ? `Доступная сумма не подтверждена. ${projection.warnings.join(" ")}`
+      : undefined,
   };
 }
 
@@ -329,6 +331,8 @@ export function validateTransaction(
   transaction: Transaction,
   today = localDate(),
 ): string | null {
+  const valuationError = transactionValuationError(transaction, today);
+  if (valuationError) return valuationError;
   const statusError = transactionStatusError(transaction);
   if (statusError) return statusError;
   const linkError = pendingLinkError(state, transaction);

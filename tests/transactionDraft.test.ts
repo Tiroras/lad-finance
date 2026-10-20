@@ -263,18 +263,23 @@ test("editing preserves historical valuation, while repeating uses today's rate 
     ...createTransactionDraft(state, TODAY, original),
     title: "Новое название",
   };
-  assert.equal(transactionInput(state, draft, original).baseAmount, 22_500);
+  // An untouched valuation is resolved from the latest state by the action.
+  assert.equal(transactionInput(state, draft, original).baseAmount, undefined);
   const repeated = transactionInput(
     state,
     repeatTransaction(draft, TODAY),
     original,
   );
-  assert.equal(repeated.baseAmount, 25_000);
+  assert.equal(repeated.baseAmount, undefined);
   assert.equal(repeated.id, undefined);
   assert.equal(repeated.date, TODAY);
   assert.equal(repeated.recurringId, undefined);
   assert.equal(repeated.occurrenceDate, undefined);
   assert.equal(state.transactions[0].baseAmount, 22_500);
+  const saved = saveTransaction({ ...state, transactions: [] }, repeated, TODAY)
+    .transactions[0];
+  assert.equal(saved.baseAmount, 25_000);
+  assert.deepEqual(saved.valuation, { source: "current", date: TODAY });
 });
 
 test("transaction and template use the same precise KWD debit and JPY credit", () => {

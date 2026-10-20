@@ -1,0 +1,654 @@
+{
+  "baseCommit": "f0bdfd9",
+  "normalizationDate": "2026-10-20",
+  "cases": [
+    {
+      "version": 4,
+      "raw": "{\"version\":4,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"forecast\":{\"dailySpending\":1000,\"goalDay\":31},\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[{\"id\":\"legacy\",\"title\":\"Пример\",\"type\":\"expense\",\"amount\":12345,\"baseAmount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}]}",
+      "encoded": "{\"version\":4,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}},\"forecast\":{\"dailySpending\":1000,\"goalDay\":31}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"goals\":[],\"recurring\":[],\"transactions\":[{\"id\":\"legacy\",\"type\":\"expense\",\"title\":\"Пример\",\"amount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\",\"baseAmount\":12345}]}",
+      "fingerprint": {
+        "sha256": "66cd432a9c26ecb2ff8c1ed624565c6b9acca718355d4809dcbd90d946458227",
+        "utf16Units": 1780,
+        "utf8Bytes": 1909
+      },
+      "balances": [
+        {
+          "date": "2026-10-20",
+          "balance": 987655,
+          "available": 987655
+        },
+        {
+          "date": "2026-10-21",
+          "balance": 986655,
+          "available": 986655
+        },
+        {
+          "date": "2026-10-22",
+          "balance": 985655,
+          "available": 985655
+        },
+        {
+          "date": "2026-10-23",
+          "balance": 984655,
+          "available": 984655
+        },
+        {
+          "date": "2026-10-24",
+          "balance": 983655,
+          "available": 983655
+        },
+        {
+          "date": "2026-10-25",
+          "balance": 982655,
+          "available": 982655
+        },
+        {
+          "date": "2026-10-26",
+          "balance": 981655,
+          "available": 981655
+        },
+        {
+          "date": "2026-10-27",
+          "balance": 980655,
+          "available": 980655
+        },
+        {
+          "date": "2026-10-28",
+          "balance": 979655,
+          "available": 979655
+        },
+        {
+          "date": "2026-10-29",
+          "balance": 978655,
+          "available": 978655
+        },
+        {
+          "date": "2026-10-30",
+          "balance": 977655,
+          "available": 977655
+        },
+        {
+          "date": "2026-10-31",
+          "balance": 976655,
+          "available": 976655
+        },
+        {
+          "date": "2026-11-01",
+          "balance": 975655,
+          "available": 975655
+        },
+        {
+          "date": "2026-11-02",
+          "balance": 974655,
+          "available": 974655
+        },
+        {
+          "date": "2026-11-03",
+          "balance": 973655,
+          "available": 973655
+        },
+        {
+          "date": "2026-11-04",
+          "balance": 972655,
+          "available": 972655
+        },
+        {
+          "date": "2026-11-05",
+          "balance": 971655,
+          "available": 971655
+        },
+        {
+          "date": "2026-11-06",
+          "balance": 970655,
+          "available": 970655
+        },
+        {
+          "date": "2026-11-07",
+          "balance": 969655,
+          "available": 969655
+        },
+        {
+          "date": "2026-11-08",
+          "balance": 968655,
+          "available": 968655
+        },
+        {
+          "date": "2026-11-09",
+          "balance": 967655,
+          "available": 967655
+        },
+        {
+          "date": "2026-11-10",
+          "balance": 966655,
+          "available": 966655
+        },
+        {
+          "date": "2026-11-11",
+          "balance": 965655,
+          "available": 965655
+        },
+        {
+          "date": "2026-11-12",
+          "balance": 964655,
+          "available": 964655
+        },
+        {
+          "date": "2026-11-13",
+          "balance": 963655,
+          "available": 963655
+        },
+        {
+          "date": "2026-11-14",
+          "balance": 962655,
+          "available": 962655
+        },
+        {
+          "date": "2026-11-15",
+          "balance": 961655,
+          "available": 961655
+        },
+        {
+          "date": "2026-11-16",
+          "balance": 960655,
+          "available": 960655
+        },
+        {
+          "date": "2026-11-17",
+          "balance": 959655,
+          "available": 959655
+        },
+        {
+          "date": "2026-11-18",
+          "balance": 958655,
+          "available": 958655
+        }
+      ]
+    },
+    {
+      "version": 5,
+      "raw": "{\"version\":5,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"forecast\":{\"dailySpending\":1000,\"goalDay\":31},\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[{\"id\":\"legacy\",\"title\":\"Пример\",\"type\":\"expense\",\"amount\":12345,\"baseAmount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\"},{\"id\":\"pending\",\"title\":\"Ожидает\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-20\",\"expectedDate\":\"2026-10-25\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}]}",
+      "encoded": "{\"version\":5,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}},\"forecast\":{\"dailySpending\":1000,\"goalDay\":31}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"goals\":[],\"recurring\":[],\"transactions\":[{\"id\":\"legacy\",\"type\":\"expense\",\"title\":\"Пример\",\"amount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\",\"baseAmount\":12345},{\"id\":\"pending\",\"type\":\"expense\",\"title\":\"Ожидает\",\"amount\":10000,\"date\":\"2026-10-20\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\",\"expectedDate\":\"2026-10-25\"}]}",
+      "fingerprint": {
+        "sha256": "a6b1216c6e0551d6a13383d374c6d6aae2919b39d325a508b59d4c82d745dcbe",
+        "utf16Units": 1952,
+        "utf8Bytes": 2088
+      },
+      "balances": [
+        {
+          "date": "2026-10-20",
+          "balance": 987655,
+          "available": 977655
+        },
+        {
+          "date": "2026-10-21",
+          "balance": 986655,
+          "available": 976655
+        },
+        {
+          "date": "2026-10-22",
+          "balance": 985655,
+          "available": 975655
+        },
+        {
+          "date": "2026-10-23",
+          "balance": 984655,
+          "available": 974655
+        },
+        {
+          "date": "2026-10-24",
+          "balance": 983655,
+          "available": 973655
+        },
+        {
+          "date": "2026-10-25",
+          "balance": 972655,
+          "available": 972655
+        },
+        {
+          "date": "2026-10-26",
+          "balance": 971655,
+          "available": 971655
+        },
+        {
+          "date": "2026-10-27",
+          "balance": 970655,
+          "available": 970655
+        },
+        {
+          "date": "2026-10-28",
+          "balance": 969655,
+          "available": 969655
+        },
+        {
+          "date": "2026-10-29",
+          "balance": 968655,
+          "available": 968655
+        },
+        {
+          "date": "2026-10-30",
+          "balance": 967655,
+          "available": 967655
+        },
+        {
+          "date": "2026-10-31",
+          "balance": 966655,
+          "available": 966655
+        },
+        {
+          "date": "2026-11-01",
+          "balance": 965655,
+          "available": 965655
+        },
+        {
+          "date": "2026-11-02",
+          "balance": 964655,
+          "available": 964655
+        },
+        {
+          "date": "2026-11-03",
+          "balance": 963655,
+          "available": 963655
+        },
+        {
+          "date": "2026-11-04",
+          "balance": 962655,
+          "available": 962655
+        },
+        {
+          "date": "2026-11-05",
+          "balance": 961655,
+          "available": 961655
+        },
+        {
+          "date": "2026-11-06",
+          "balance": 960655,
+          "available": 960655
+        },
+        {
+          "date": "2026-11-07",
+          "balance": 959655,
+          "available": 959655
+        },
+        {
+          "date": "2026-11-08",
+          "balance": 958655,
+          "available": 958655
+        },
+        {
+          "date": "2026-11-09",
+          "balance": 957655,
+          "available": 957655
+        },
+        {
+          "date": "2026-11-10",
+          "balance": 956655,
+          "available": 956655
+        },
+        {
+          "date": "2026-11-11",
+          "balance": 955655,
+          "available": 955655
+        },
+        {
+          "date": "2026-11-12",
+          "balance": 954655,
+          "available": 954655
+        },
+        {
+          "date": "2026-11-13",
+          "balance": 953655,
+          "available": 953655
+        },
+        {
+          "date": "2026-11-14",
+          "balance": 952655,
+          "available": 952655
+        },
+        {
+          "date": "2026-11-15",
+          "balance": 951655,
+          "available": 951655
+        },
+        {
+          "date": "2026-11-16",
+          "balance": 950655,
+          "available": 950655
+        },
+        {
+          "date": "2026-11-17",
+          "balance": 949655,
+          "available": 949655
+        },
+        {
+          "date": "2026-11-18",
+          "balance": 948655,
+          "available": 948655
+        }
+      ]
+    },
+    {
+      "version": 6,
+      "raw": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"forecast\":{\"dailySpending\":1000,\"goalDay\":31},\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[{\"id\":\"legacy\",\"title\":\"Пример\",\"type\":\"expense\",\"amount\":12345,\"baseAmount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\"},{\"id\":\"pending\",\"title\":\"Ожидает\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-20\",\"expectedDate\":\"2026-10-25\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[],\"recurring\":[],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"plannedIncomes\":[{\"id\":\"income\",\"name\":\"Доход\",\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"versions\":[{\"id\":\"legacy\",\"legacy\":true,\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"effectiveFrom\":\"2026-10-25\"}]}]}",
+      "encoded": "{\"version\":6,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}},\"forecast\":{\"dailySpending\":1000,\"goalDay\":31}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"goals\":[],\"recurring\":[],\"plannedIncomes\":[{\"id\":\"income\",\"name\":\"Доход\",\"amount\":200000,\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"accountId\":\"card\",\"versions\":[{\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"id\":\"legacy\",\"effectiveFrom\":\"2026-10-25\",\"legacy\":true}]}],\"transactions\":[{\"id\":\"legacy\",\"type\":\"expense\",\"title\":\"Пример\",\"amount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\",\"baseAmount\":12345},{\"id\":\"pending\",\"type\":\"expense\",\"title\":\"Ожидает\",\"amount\":10000,\"date\":\"2026-10-20\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\",\"expectedDate\":\"2026-10-25\"}]}",
+      "fingerprint": {
+        "sha256": "baf965d1c6219ac27f0b87d33039840a62a980c6c156b4a5ebebbf029e1945e8",
+        "utf16Units": 2222,
+        "utf8Bytes": 2363
+      },
+      "balances": [
+        {
+          "date": "2026-10-20",
+          "balance": 987655,
+          "available": 977655
+        },
+        {
+          "date": "2026-10-21",
+          "balance": 986655,
+          "available": 976655
+        },
+        {
+          "date": "2026-10-22",
+          "balance": 985655,
+          "available": 975655
+        },
+        {
+          "date": "2026-10-23",
+          "balance": 984655,
+          "available": 974655
+        },
+        {
+          "date": "2026-10-24",
+          "balance": 983655,
+          "available": 973655
+        },
+        {
+          "date": "2026-10-25",
+          "balance": 1172655,
+          "available": 1172655
+        },
+        {
+          "date": "2026-10-26",
+          "balance": 1171655,
+          "available": 1171655
+        },
+        {
+          "date": "2026-10-27",
+          "balance": 1170655,
+          "available": 1170655
+        },
+        {
+          "date": "2026-10-28",
+          "balance": 1169655,
+          "available": 1169655
+        },
+        {
+          "date": "2026-10-29",
+          "balance": 1168655,
+          "available": 1168655
+        },
+        {
+          "date": "2026-10-30",
+          "balance": 1167655,
+          "available": 1167655
+        },
+        {
+          "date": "2026-10-31",
+          "balance": 1166655,
+          "available": 1166655
+        },
+        {
+          "date": "2026-11-01",
+          "balance": 1165655,
+          "available": 1165655
+        },
+        {
+          "date": "2026-11-02",
+          "balance": 1164655,
+          "available": 1164655
+        },
+        {
+          "date": "2026-11-03",
+          "balance": 1163655,
+          "available": 1163655
+        },
+        {
+          "date": "2026-11-04",
+          "balance": 1162655,
+          "available": 1162655
+        },
+        {
+          "date": "2026-11-05",
+          "balance": 1161655,
+          "available": 1161655
+        },
+        {
+          "date": "2026-11-06",
+          "balance": 1160655,
+          "available": 1160655
+        },
+        {
+          "date": "2026-11-07",
+          "balance": 1159655,
+          "available": 1159655
+        },
+        {
+          "date": "2026-11-08",
+          "balance": 1158655,
+          "available": 1158655
+        },
+        {
+          "date": "2026-11-09",
+          "balance": 1157655,
+          "available": 1157655
+        },
+        {
+          "date": "2026-11-10",
+          "balance": 1156655,
+          "available": 1156655
+        },
+        {
+          "date": "2026-11-11",
+          "balance": 1155655,
+          "available": 1155655
+        },
+        {
+          "date": "2026-11-12",
+          "balance": 1154655,
+          "available": 1154655
+        },
+        {
+          "date": "2026-11-13",
+          "balance": 1153655,
+          "available": 1153655
+        },
+        {
+          "date": "2026-11-14",
+          "balance": 1152655,
+          "available": 1152655
+        },
+        {
+          "date": "2026-11-15",
+          "balance": 1151655,
+          "available": 1151655
+        },
+        {
+          "date": "2026-11-16",
+          "balance": 1150655,
+          "available": 1150655
+        },
+        {
+          "date": "2026-11-17",
+          "balance": 1149655,
+          "available": 1149655
+        },
+        {
+          "date": "2026-11-18",
+          "balance": 1148655,
+          "available": 1148655
+        }
+      ]
+    },
+    {
+      "version": 7,
+      "raw": "{\"version\":7,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"forecast\":{\"dailySpending\":1000,\"goalDay\":31},\"exchange\":{\"automatic\":false,\"rates\":{}}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"transactions\":[{\"id\":\"legacy\",\"title\":\"Пример\",\"type\":\"expense\",\"amount\":12345,\"baseAmount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\"},{\"id\":\"pending\",\"title\":\"Ожидает\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-20\",\"expectedDate\":\"2026-10-25\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"goals\":[{\"id\":\"goal\",\"name\":\"Цель\",\"target\":200000,\"initialSaved\":0,\"monthly\":20000,\"icon\":\"wallet-outline\",\"color\":\"#254D3E\",\"versions\":[{\"id\":\"gv\",\"effectiveFrom\":\"2026-10-01\",\"amount\":20000,\"day\":25,\"deadline\":\"2027-01-25\"}]}],\"recurring\":[],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"plannedIncomes\":[{\"id\":\"income\",\"name\":\"Доход\",\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"versions\":[{\"id\":\"legacy\",\"legacy\":true,\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"effectiveFrom\":\"2026-10-25\"}]}]}",
+      "encoded": "{\"version\":7,\"demo\":false,\"settings\":{\"name\":\"\",\"payday\":25,\"buffer\":0,\"exchange\":{\"automatic\":false,\"rates\":{}},\"forecast\":{\"dailySpending\":1000,\"goalDay\":31}},\"accounts\":[{\"id\":\"card\",\"name\":\"Основная карта\",\"kind\":\"spending\",\"openingBalance\":1000000,\"icon\":\"card-outline\",\"color\":\"#254D3E\"},{\"id\":\"cash\",\"name\":\"Наличные\",\"kind\":\"spending\",\"openingBalance\":0,\"icon\":\"cash-outline\",\"color\":\"#AB8659\"},{\"id\":\"savings\",\"name\":\"Накопления\",\"kind\":\"savings\",\"openingBalance\":0,\"icon\":\"wallet-outline\",\"color\":\"#8984AD\"}],\"categories\":[{\"id\":\"groceries\",\"name\":\"Продукты\",\"icon\":\"leaf-outline\",\"color\":\"#537967\",\"background\":\"#EAF0E8\",\"budget\":0},{\"id\":\"cafe\",\"name\":\"Кафе и рестораны\",\"icon\":\"cafe-outline\",\"color\":\"#B97A49\",\"background\":\"#F8EEE2\",\"budget\":0},{\"id\":\"transport\",\"name\":\"Транспорт\",\"icon\":\"car-outline\",\"color\":\"#7C7CAF\",\"background\":\"#EEEFFA\",\"budget\":0},{\"id\":\"shopping\",\"name\":\"Покупки\",\"icon\":\"bag-handle-outline\",\"color\":\"#B77F8A\",\"background\":\"#F6E9EE\",\"budget\":0},{\"id\":\"fun\",\"name\":\"Впечатления\",\"icon\":\"sparkles-outline\",\"color\":\"#A39255\",\"background\":\"#F4F0DE\",\"budget\":0},{\"id\":\"health\",\"name\":\"Здоровье\",\"icon\":\"heart-outline\",\"color\":\"#609F9A\",\"background\":\"#E5F1EF\",\"budget\":0},{\"id\":\"home\",\"name\":\"Дом\",\"icon\":\"home-outline\",\"color\":\"#8294A2\",\"background\":\"#EDF1F4\",\"budget\":0},{\"id\":\"other\",\"name\":\"Другое\",\"icon\":\"grid-outline\",\"color\":\"#929184\",\"background\":\"#EFEFEA\",\"budget\":0}],\"scenarios\":[{\"id\":\"scenario\",\"name\":\"Старый вариант\",\"horizon\":30,\"changes\":[],\"events\":[{\"id\":\"once\",\"name\":\"Разовый расход\",\"type\":\"expense\",\"amount\":10000,\"date\":\"2026-10-25\"}]}],\"goals\":[{\"id\":\"goal\",\"name\":\"Цель\",\"target\":200000,\"initialSaved\":0,\"monthly\":20000,\"icon\":\"wallet-outline\",\"color\":\"#254D3E\",\"versions\":[{\"id\":\"gv\",\"effectiveFrom\":\"2026-10-01\",\"amount\":20000,\"day\":25,\"deadline\":\"2027-01-25\"}]}],\"recurring\":[],\"plannedIncomes\":[{\"id\":\"income\",\"name\":\"Доход\",\"amount\":200000,\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"accountId\":\"card\",\"versions\":[{\"amount\":200000,\"accountId\":\"card\",\"date\":\"2026-10-25\",\"repeat\":\"monthly\",\"id\":\"legacy\",\"effectiveFrom\":\"2026-10-25\",\"legacy\":true}]}],\"transactions\":[{\"id\":\"legacy\",\"type\":\"expense\",\"title\":\"Пример\",\"amount\":12345,\"date\":\"2026-10-18\",\"category\":\"other\",\"accountId\":\"card\",\"baseAmount\":12345},{\"id\":\"pending\",\"type\":\"expense\",\"title\":\"Ожидает\",\"amount\":10000,\"date\":\"2026-10-20\",\"category\":\"other\",\"accountId\":\"card\",\"status\":\"pending\",\"expectedDate\":\"2026-10-25\"}]}",
+      "fingerprint": {
+        "sha256": "1dba993fb6022209f6f2921e90aff9eb814029cae80176a9ab93d42e1533f6e9",
+        "utf16Units": 2442,
+        "utf8Bytes": 2587
+      },
+      "balances": [
+        {
+          "date": "2026-10-20",
+          "balance": 987655,
+          "available": 977655
+        },
+        {
+          "date": "2026-10-21",
+          "balance": 986655,
+          "available": 976655
+        },
+        {
+          "date": "2026-10-22",
+          "balance": 985655,
+          "available": 975655
+        },
+        {
+          "date": "2026-10-23",
+          "balance": 984655,
+          "available": 974655
+        },
+        {
+          "date": "2026-10-24",
+          "balance": 983655,
+          "available": 973655
+        },
+        {
+          "date": "2026-10-25",
+          "balance": 1152655,
+          "available": 1152655
+        },
+        {
+          "date": "2026-10-26",
+          "balance": 1151655,
+          "available": 1151655
+        },
+        {
+          "date": "2026-10-27",
+          "balance": 1150655,
+          "available": 1150655
+        },
+        {
+          "date": "2026-10-28",
+          "balance": 1149655,
+          "available": 1149655
+        },
+        {
+          "date": "2026-10-29",
+          "balance": 1148655,
+          "available": 1148655
+        },
+        {
+          "date": "2026-10-30",
+          "balance": 1147655,
+          "available": 1147655
+        },
+        {
+          "date": "2026-10-31",
+          "balance": 1146655,
+          "available": 1146655
+        },
+        {
+          "date": "2026-11-01",
+          "balance": 1145655,
+          "available": 1145655
+        },
+        {
+          "date": "2026-11-02",
+          "balance": 1144655,
+          "available": 1144655
+        },
+        {
+          "date": "2026-11-03",
+          "balance": 1143655,
+          "available": 1143655
+        },
+        {
+          "date": "2026-11-04",
+          "balance": 1142655,
+          "available": 1142655
+        },
+        {
+          "date": "2026-11-05",
+          "balance": 1141655,
+          "available": 1141655
+        },
+        {
+          "date": "2026-11-06",
+          "balance": 1140655,
+          "available": 1140655
+        },
+        {
+          "date": "2026-11-07",
+          "balance": 1139655,
+          "available": 1139655
+        },
+        {
+          "date": "2026-11-08",
+          "balance": 1138655,
+          "available": 1138655
+        },
+        {
+          "date": "2026-11-09",
+          "balance": 1137655,
+          "available": 1137655
+        },
+        {
+          "date": "2026-11-10",
+          "balance": 1136655,
+          "available": 1136655
+        },
+        {
+          "date": "2026-11-11",
+          "balance": 1135655,
+          "available": 1135655
+        },
+        {
+          "date": "2026-11-12",
+          "balance": 1134655,
+          "available": 1134655
+        },
+        {
+          "date": "2026-11-13",
+          "balance": 1133655,
+          "available": 1133655
+        },
+        {
+          "date": "2026-11-14",
+          "balance": 1132655,
+          "available": 1132655
+        },
+        {
+          "date": "2026-11-15",
+          "balance": 1131655,
+          "available": 1131655
+        },
+        {
+          "date": "2026-11-16",
+          "balance": 1130655,
+          "available": 1130655
+        },
+        {
+          "date": "2026-11-17",
+          "balance": 1129655,
+          "available": 1129655
+        },
+        {
+          "date": "2026-11-18",
+          "balance": 1128655,
+          "available": 1128655
+        }
+      ]
+    }
+  ]
+}

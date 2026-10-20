@@ -469,7 +469,7 @@ export const t05BudgetCases: readonly { name: string; run(): void }[] = [
     },
   },
   {
-    name: "base currency conversion converts every conditions version",
+    name: "base currency conversion upgrades to v8 and converts every conditions version",
     run() {
       const state = scheduleBudgetTransition(original(), input(), TODAY);
       state.settings.exchange = {
@@ -478,6 +478,7 @@ export const t05BudgetCases: readonly { name: string; run(): void }[] = [
           USD: { value: 100 * RATE_SCALE, date: TODAY, source: "manual" },
         },
       };
+      const before = encodeBackup(state);
       const next = changeBaseCurrency(state, "USD", TODAY);
       equal(
         [
@@ -485,8 +486,12 @@ export const t05BudgetCases: readonly { name: string; run(): void }[] = [
           next.budgetPlans![0].changes.at(-1)!.amount,
           next.budgetPlans![0].versions![0].changes[0].amount,
         ],
-        [6, 10_000, 3_000],
+        [8, 10_000, 3_000],
       );
+      equal(encodeBackup(state), before, "Source budget history changed");
+      const restored = decodeBackup(encodeBackup(next), TODAY);
+      equal(restored.version, 8);
+      equal(restored.budgetPlans, next.budgetPlans, "Converted history lost");
     },
   },
   {

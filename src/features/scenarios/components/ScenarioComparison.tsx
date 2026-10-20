@@ -14,14 +14,24 @@ export function ScenarioComparison({ scenario }: { scenario: SavedScenario }) {
   const other = state.scenarios?.find(
     (s) => s.id === compareId && s.id !== scenario.id,
   );
-  const result = useMemo(
-    () => forecast(state, scenario.horizon, today, undefined, scenario),
-    [state, scenario, today],
-  );
-  const baseline = useMemo(
-    () => forecast(state, scenario.horizon, today, undefined, other),
-    [state, scenario.horizon, today, other],
-  );
+  const calculated = useMemo(() => {
+    try {
+      return {
+        result: forecast(state, scenario.horizon, today, undefined, scenario),
+        baseline: forecast(state, scenario.horizon, today, undefined, other),
+      };
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Не удалось рассчитать сценарий. Проверьте суммы и даты.",
+      };
+    }
+  }, [state, scenario, today, other]);
+  if ("error" in calculated)
+    return <Notice tone="warning">{calculated.error}</Notice>;
+  const { result, baseline } = calculated;
   const warnings = [
     ...scenarioWarnings(state, scenario, today),
     ...(other
@@ -30,7 +40,7 @@ export function ScenarioComparison({ scenario }: { scenario: SavedScenario }) {
   ];
   const delta = result.closingAvailable - baseline.closingAvailable;
   const outside = scenario.events.filter(
-    (e) => e.date > result.days.at(-1)!.date,
+    (e) => e.enabled !== false && e.date > result.days.at(-1)!.date,
   );
   return (
     <View style={{ gap: 18 }}>

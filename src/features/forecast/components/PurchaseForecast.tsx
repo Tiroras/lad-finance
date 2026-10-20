@@ -13,16 +13,23 @@ export function PurchaseForecast({
   date,
   horizon,
   baseline,
+  accountId,
 }: {
   amount: number;
   date: string;
   horizon: ForecastHorizon;
   baseline: ForecastResult;
+  accountId: string;
 }) {
   const { state, today } = useFinance();
   const result = useMemo(
-    () => forecast(state, horizon, today, { amount, date }),
-    [state, horizon, today, amount, date],
+    () =>
+      forecast({ ...state, version: 8 }, horizon, today, {
+        amount,
+        date,
+        accountId,
+      }),
+    [state, horizon, today, amount, date, accountId],
   );
   return (
     <>

@@ -14,6 +14,8 @@ import {
   useMoney,
   useFinance,
 } from "../../../state/finance";
+import { ForecastAccountSettings } from "./ForecastAccountSettings";
+import { ForecastTransfers } from "./ForecastTransfers";
 
 export function ForecastSettingsForm({ close }: { close: () => void }) {
   const { moneyInput, parseMoney, symbol: baseSymbol } = useMoney();
@@ -22,6 +24,7 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
   const preferences = state.settings.forecast ?? DEFAULT_FORECAST;
   const [daily, setDaily] = useState(moneyInput(preferences.dailySpending));
   const [goalDay, setGoalDay] = useState(String(preferences.goalDay));
+  const [assignments, setAssignments] = useState(preferences);
   const { error, run } = useActionError();
   return (
     <>
@@ -36,6 +39,11 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
         Укажите её без регулярных платежей и взносов на цели: они уже учтены
         отдельно. При нуле ежедневные траты в прогноз не добавляются.
       </Notice>
+      <ForecastAccountSettings value={assignments} onChange={setAssignments} />
+      <ForecastTransfers
+        transfers={assignments.transfers ?? []}
+        onChange={(transfers) => setAssignments({ ...assignments, transfers })}
+      />
       <DailySpendingEstimate
         onApply={(amount) => setDaily(moneyInput(amount))}
       />
@@ -65,6 +73,10 @@ export function ForecastSettingsForm({ close }: { close: () => void }) {
                 "Введите расходы в основной валюте, в пределах допустимого лимита.",
               );
             actions.saveForecastPreferences({
+              ...assignments,
+              goalAccounts: assignments.goalAccounts?.filter(
+                (entry) => entry.fromAccountId || entry.toAccountId,
+              ),
               dailySpending,
               goalDay: Number(goalDay),
             });

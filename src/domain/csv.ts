@@ -5,6 +5,7 @@ import {
   CURRENCIES,
   accountCurrency,
   accountToBase,
+  baseCurrency,
   receivedAmount,
   type CurrencyCode,
 } from "./currency";
@@ -430,6 +431,11 @@ export function previewCsv(
         transaction.amount,
         transaction.accountId,
       );
+      if (
+        transaction.type !== "transfer" &&
+        accountCurrency(state, transaction.accountId) !== baseCurrency(state)
+      )
+        transaction.valuation = { date: today, source: "imported" };
     } catch (e) {
       return fail(
         e instanceof Error ? e.message : "Не удалось пересчитать валюту.",

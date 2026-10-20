@@ -8,52 +8,78 @@ import {
 import { currencySchema } from "./currencySchema";
 import { validDate } from "../shared/lib/dates";
 import type { FinanceState, SavedScenario } from "./types";
+import { MAX_SCENARIO_CHANGES, MAX_SCENARIO_EVENTS } from "./dataLimits";
 
 const amount = z.number().int().min(0).max(MAX_MONEY);
 const id = z.string().min(1).max(100);
 const name = z.string().trim().min(1).max(120);
-export const scenarioSchema = z
-  .object({
-    id,
-    name,
-    horizon: z.union([z.literal(30), z.literal(60), z.literal(90)]),
-    dailySpending: amount.optional(),
+const changeSchema = z.object({
+  source: z.enum(["income", "payment", "goal"]),
+  sourceId: id,
+  currency: currencySchema.optional(),
+  name,
+  amount,
+  delayDays: z.number().int().min(-90).max(90),
+});
+const eventSchema = z.object({
+  id,
+  name,
+  type: z.enum(["income", "expense"]),
+  amount: amount.min(1),
+  date: z
+    .string()
+    .refine((d) => validDate(d) && d >= "2000-01-01" && d <= "2100-12-31"),
+});
+const scenarioObject = z.object({
+  id,
+  name,
+  horizon: z.union([z.literal(30), z.literal(60), z.literal(90)]),
+  dailySpending: amount.optional(),
+  changes: z
+    .array(
+      changeSchema.refine((c) => c.source === "income" || c.delayDays === 0),
+    )
+    .max(MAX_SCENARIO_CHANGES),
+  events: z.array(eventSchema).max(MAX_SCENARIO_EVENTS),
+});
+const uniqueRows = (s: SavedScenario) =>
+  new Set(s.changes.map((c) => `${c.source}:${c.sourceId}`)).size ===
+    s.changes.length &&
+  new Set(s.events.map((e) => e.id)).size === s.events.length;
+// Do not add defaults to this schema: old recovery fingerprints must stay stable.
+export const scenarioSchema = scenarioObject.refine(uniqueRows);
+export const scenarioSchemaV8 = scenarioObject
+  .extend({
     changes: z
       .array(
-        z
-          .object({
-            source: z.enum(["income", "payment", "goal"]),
-            sourceId: id,
-            currency: currencySchema.optional(),
-            name,
-            amount,
-            delayDays: z.number().int().min(-90).max(90),
-          })
+        changeSchema
+          .extend({ enabled: z.boolean().optional() })
           .refine((c) => c.source === "income" || c.delayDays === 0),
       )
-      .max(500),
+      .max(MAX_SCENARIO_CHANGES),
     events: z
       .array(
-        z.object({
-          id,
-          name,
-          type: z.enum(["income", "expense"]),
-          amount: amount.min(1),
-          date: z
-            .string()
-            .refine(
-              (d) => validDate(d) && d >= "2000-01-01" && d <= "2100-12-31",
-            ),
+        eventSchema.extend({
+          enabled: z.boolean().optional(),
+          accountId: id.optional(),
         }),
       )
-      .max(100),
+      .max(MAX_SCENARIO_EVENTS),
   })
-  .refine(
-    (s) =>
-      new Set(s.changes.map((c) => `${c.source}:${c.sourceId}`)).size ===
-        s.changes.length &&
-      new Set(s.events.map((e) => e.id)).size === s.events.length,
-  );
+  .refine(uniqueRows);
+
+export function scenarioValidationMessage(error: z.ZodError): string {
+  const issue = error.issues[0];
+  if (issue?.path[0] === "changes" && issue.path.length === 1)
+    return `В сценарии допустимо до ${MAX_SCENARIO_CHANGES} изменений плана. Удалите ненужные строки; выключенные тоже занимают место.`;
+  if (issue?.path[0] === "events" && issue.path.length === 1)
+    return `В сценарии допустимо до ${MAX_SCENARIO_EVENTS} разовых событий. Удалите ненужные строки; выключенные тоже занимают место.`;
+  if (issue?.path.includes("amount") || issue?.path[0] === "dailySpending")
+    return `Проверьте сумму сценария: она должна быть целым числом минимальных единиц валюты от 0 до ${MAX_MONEY.toLocaleString("ru-RU")}; сумма разового события — больше нуля.`;
+  if (issue?.path.includes("date"))
+    return "Введите дату события от 01.01.2000 до 31.12.2100.";
+  return "Проверьте название, суммы и даты сценария. Сдвиг дохода — целое число от −90 до 90 дней; отрицательное число означает раньше.";
+}
 
 // Removed sources remain visible in a saved experiment; they never recreate real plans.
 export function scenarioWarnings(
@@ -63,6 +89,7 @@ export function scenarioWarnings(
 ) {
   const warnings: string[] = [];
   for (const c of scenario.changes) {
+    if (c.enabled === false) continue;
     const source =
       c.source === "income"
         ? (state.plannedIncomes ?? [])
@@ -81,11 +108,20 @@ export function scenarioWarnings(
         `«${c.name}»: будущие события остановлены. Сохранённые обязательства учитываются по прежним условиям.`,
       );
   }
-  for (const event of scenario.events)
+  for (const event of scenario.events) {
+    if (event.enabled === false) continue;
     if (event.date < today)
       warnings.push(
         `«${event.name}»: дата уже прошла. Обновите её для нового расчёта.`,
       );
+    if (
+      event.accountId &&
+      state.accounts.find((a) => a.id === event.accountId)?.archived
+    )
+      warnings.push(
+        `«${event.name}»: счёт в архиве. Выберите действующий повседневный счёт для проверки его достаточности.`,
+      );
+  }
   return warnings;
 }
 
@@ -115,6 +151,18 @@ export function validateScenarioCurrencies(
   state: FinanceState,
   scenario: SavedScenario,
 ) {
+  for (const event of scenario.events) {
+    if (
+      event.accountId &&
+      !state.accounts.some(
+        (account) =>
+          account.id === event.accountId && account.kind === "spending",
+      )
+    )
+      throw new Error(
+        `«${event.name}»: выберите существующий повседневный счёт или уберите назначение.`,
+      );
+  }
   for (const change of scenario.changes) {
     const sources =
       change.source === "goal"

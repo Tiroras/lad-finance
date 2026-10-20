@@ -38,6 +38,11 @@ export interface TransactionDraft {
   toAccountId: string;
   received: string | null;
   valuation: string | null;
+  valuationDate?: string;
+  feeEnabled?: boolean;
+  feeAmount?: string;
+  feeAccountId?: string;
+  feeCategory?: string;
   date: string;
   status: "posted" | "pending";
   expectedDate: string;
@@ -79,6 +84,7 @@ export function createTransactionDraft(
           )
         : null,
     valuation: null,
+    valuationDate: original?.valuation?.date,
     date: original?.date ?? today,
     status:
       original && transactionStatus(original) === "pending"
@@ -131,6 +137,8 @@ export function applyQuickEntry(
     manualCategory: false,
     templateId: undefined,
     valuation: null,
+    valuationDate: undefined,
+    feeEnabled: false,
     received: null,
     refundOf: undefined,
     refundSource: "",
@@ -197,6 +205,8 @@ export function selectRefund(
       accountCurrency(state, expense.accountId),
     ),
     valuation: null,
+    valuationDate: undefined,
+    feeEnabled: false,
     received: null,
     title: `Возврат: ${expense.title}`.slice(0, 120),
   };
@@ -213,6 +223,8 @@ export function repeatTransaction(
     status: "posted",
     expectedDate: "",
     valuation: null,
+    valuationDate: undefined,
+    feeEnabled: false,
     templateId: undefined,
   };
 }
@@ -335,11 +347,7 @@ export function transactionInput(
   original?: Transaction,
 ): TransactionInput {
   if (draft.repeating) original = undefined;
-  const { sourceCurrency, historicalValue } = transactionDraftAmounts(
-    state,
-    draft,
-    original,
-  );
+  const { sourceCurrency } = transactionDraftAmounts(state, draft, original);
   const baseCode = baseCurrency(state);
   const purchase = state.transactions.find(
     (entry) => entry.id === draft.refundOf,
@@ -352,14 +360,16 @@ export function transactionInput(
     expectedDate:
       draft.status === "pending" ? draft.expectedDate || undefined : undefined,
     baseAmount:
-      draft.type !== "transfer" && sourceCurrency !== baseCode
-        ? (parseMoney(
-            draft.valuation ??
-              (historicalValue === null
-                ? ""
-                : moneyInput(historicalValue, baseCode)),
-            baseCode,
-          ) ?? NaN)
+      draft.type !== "transfer" &&
+      sourceCurrency !== baseCode &&
+      draft.valuation !== null
+        ? (parseMoney(draft.valuation, baseCode) ?? NaN)
+        : undefined,
+    valuation:
+      draft.type !== "transfer" &&
+      sourceCurrency !== baseCode &&
+      draft.valuation !== null
+        ? { date: draft.valuationDate ?? draft.date, source: "manual" }
         : undefined,
     refundOf: draft.type === "income" ? draft.refundOf : undefined,
     refundSourceAmount:

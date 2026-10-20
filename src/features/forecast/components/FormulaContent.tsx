@@ -85,6 +85,9 @@ export function FormulaContent() {
           будущие платежи и взносы на цели.
         </Notice>
       )}
+      {safe.protectionWarning && (
+        <Notice tone="warning">{safe.protectionWarning}</Notice>
+      )}
       {safe.protection && (
         <Notice tone={safe.protectedAmount > 0 ? "warning" : "normal"}>
           Дополнительно проверены {safe.protection.horizon} дней до{" "}

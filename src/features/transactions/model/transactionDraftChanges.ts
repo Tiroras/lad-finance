@@ -57,6 +57,30 @@ export function transactionDraftSnapshot(
             base,
           )
         : undefined,
+    valuationBasis:
+      draft.type !== "transfer" && sourceCurrency !== base
+        ? draft.valuation !== null
+          ? { source: "manual", date: draft.valuationDate ?? draft.date }
+          : original &&
+              !draft.repeating &&
+              original.accountId === draft.accountId &&
+              original.amount === parseMoney(draft.amount, sourceCurrency)
+            ? original.valuation
+            : undefined
+        : undefined,
+    fee:
+      foreignTransfer && draft.status === "posted" && draft.feeEnabled
+        ? {
+            amount: amountValue(
+              draft.feeAmount ?? "",
+              state.accounts.some((a) => a.id === draft.feeAccountId)
+                ? accountCurrency(state, draft.feeAccountId)
+                : sourceCurrency,
+            ),
+            accountId: draft.feeAccountId,
+            category: draft.feeCategory,
+          }
+        : undefined,
     splits:
       draft.type === "expense" && draft.splitEnabled
         ? draft.parts.map((part) => ({

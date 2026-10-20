@@ -76,10 +76,13 @@ export function useFinanceActions() {
         update((s) => actions.setCategoryArchived(s, id, archived)),
       saveScenario: (input: actions.ScenarioInput) =>
         update((s) => actions.saveScenario(s, input)),
+      copyScenario: (id: string) => update((s) => actions.copyScenario(s, id)),
       deleteScenario: (id: string) =>
         update((s) => actions.deleteScenario(s, id)),
       saveTransaction: (input: actions.TransactionInput) =>
         update((s) => actions.saveTransaction(s, input, today)),
+      exchangeWithFee: (input: actions.ExchangeWithFeeInput) =>
+        update((s) => actions.exchangeWithFee(s, input, today)),
       deleteTransaction: (id: string) =>
         update((s) => actions.deleteTransaction(s, id, today)),
       postPendingTransaction: (id: string, date: string) =>

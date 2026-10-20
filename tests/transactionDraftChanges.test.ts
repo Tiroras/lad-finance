@@ -77,13 +77,28 @@ test("currency precision and the saved historical valuation are respected when c
   };
   const purchase = { ...original, amount: 1234, baseAmount: 35000 };
   const draft = createTransactionDraft(state, TODAY, purchase);
-  assert.equal(
+  // Explicit entry now records a manual basis: a legacy unknown valuation
+  // gains meaningful information even when its amount is unchanged.
+  assert.notEqual(
     transactionDraftSnapshot(
       state,
       { ...draft, amount: "1.234", valuation: "350,00" },
       purchase,
     ),
     transactionDraftSnapshot(state, draft, purchase),
+  );
+  const known = {
+    ...purchase,
+    valuation: { source: "manual" as const, date: "2026-10-01" },
+  };
+  const knownDraft = createTransactionDraft(state, TODAY, known);
+  assert.equal(
+    transactionDraftSnapshot(
+      state,
+      { ...knownDraft, amount: "1.234", valuation: "350,00" },
+      known,
+    ),
+    transactionDraftSnapshot(state, knownDraft, known),
   );
   assert.notEqual(
     transactionDraftSnapshot(state, { ...draft, amount: "1.235" }, purchase),

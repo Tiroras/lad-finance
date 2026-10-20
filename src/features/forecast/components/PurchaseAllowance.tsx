@@ -13,41 +13,53 @@ import {
   Txt,
 } from "../../../shared/ui";
 
-export function PurchaseAllowance({ amount }: { amount: number }) {
+export function PurchaseAllowance({
+  amount,
+  accountAffordable = true,
+}: {
+  amount: number;
+  accountAffordable?: boolean;
+}) {
   const { money } = useMoney();
   const { state, today } = useFinance();
   const result = useMemo(
     () => simulatePurchase(state, amount, today),
     [state, amount, today],
   );
+  const affordable = result.affordable && accountAffordable;
   return (
     <>
+      {result.protectionWarning && (
+        <Notice tone="warning">{result.protectionWarning}</Notice>
+      )}
       <Txt style={{ fontFamily: font.bold, fontSize: 15 }}>
         Если купить сегодня · до {dateLabel(result.payday)}
       </Txt>
       <Card
         style={{
-          backgroundColor: result.affordable ? "#EAF0E4" : "#FAEEE5",
-          borderColor: result.affordable ? "#DFE8D6" : "#F0DFD1",
+          backgroundColor: affordable ? "#EAF0E4" : "#FAEEE5",
+          borderColor: affordable ? "#DFE8D6" : "#F0DFD1",
           gap: 20,
         }}
       >
         <Row>
           <IconTile
-            name={result.affordable ? "checkmark-outline" : "alert-outline"}
-            background={result.affordable ? "#D9E6CB" : "#F3DCC9"}
-            color={result.affordable ? C.green : C.orange}
+            name={affordable ? "checkmark-outline" : "alert-outline"}
+            background={affordable ? "#D9E6CB" : "#F3DCC9"}
+            color={affordable ? C.green : C.orange}
           />
           <View style={{ flex: 1, gap: 6 }}>
             <Txt style={{ fontFamily: font.bold, fontSize: 18 }}>
-              {result.affordable
+              {affordable
                 ? "Вписывается в ваш план"
                 : "Плану понадобится место"}
             </Txt>
             <Txt style={{ color: "#7D8574", fontSize: 11, lineHeight: 18 }}>
-              {result.affordable
+              {affordable
                 ? "Платежи, резерв и взносы на цели сохраняются."
-                : `Для сохранения плана не хватает ${money(result.shortfall)}.`}
+                : !accountAffordable
+                  ? "Проверьте остаток выбранного счёта, назначения и предупреждения прогноза."
+                  : `Для сохранения плана не хватает ${money(result.shortfall)}.`}
             </Txt>
           </View>
         </Row>
@@ -66,7 +78,7 @@ export function PurchaseAllowance({ amount }: { amount: number }) {
               style={{
                 fontFamily: font.bold,
                 fontSize: 27,
-                color: result.affordable ? C.green : C.orange,
+                color: affordable ? C.green : C.orange,
               }}
             >
               {money(result.dailyAfter)}
@@ -82,7 +94,7 @@ export function PurchaseAllowance({ amount }: { amount: number }) {
           {money(Math.max(0, result.after))}
         </Txt>
       </Row>
-      {!result.affordable && (
+      {!affordable && (
         <Notice tone="warning">
           Можно уменьшить стоимость покупки или пересмотреть план вручную. Лад
           не забирает деньги из ваших целей автоматически.

@@ -1,6 +1,6 @@
 import { accountAvailability } from "../accountBalances";
 import { validateAccountArchives } from "../accountArchive";
-import { accountCurrency, accountToBase } from "../currency";
+import { accountCurrency, accountToBase, baseCurrency } from "../currency";
 import { validateCreditAccounts, validateDebts } from "../debts";
 import { uid, validateTransaction } from "../finance";
 import { goalSaved } from "../goals";
@@ -158,7 +158,7 @@ export function createAnnualFund(
   );
   const next: FinanceState = {
     ...nextGoalState,
-    version: 7,
+    version: state.version >= 7 ? state.version : 7,
     goalFundCycles: [...(state.goalFundCycles ?? []), cycle],
   };
   checkSavings(next, today);
@@ -178,7 +178,7 @@ export function cancelAnnualFund(
   );
   const next: FinanceState = {
     ...state,
-    version: 7,
+    version: state.version >= 7 ? state.version : 7,
     goalFundCycles: state.goalFundCycles!.map((entry) =>
       entry.id === cycleId ? { ...entry, status: "cancelled" } : entry,
     ),
@@ -274,6 +274,9 @@ export function payFundedPayment(
     title: occurrence.payment.name,
     amount: occurrence.payment.amount,
     baseAmount: accountToBase(state, occurrence.payment.amount, spending.id),
+    ...(accountCurrency(state, spending.id) !== baseCurrency(state)
+      ? { valuation: { source: "current" as const, date: today } }
+      : {}),
     date: today,
     category: occurrence.payment.category,
     accountId: spending.id,
@@ -299,7 +302,7 @@ export function payFundedPayment(
   const facts = transfer ? [payment, transfer] : [payment];
   const next: FinanceState = {
     ...state,
-    version: 7,
+    version: payment.valuation ? 8 : state.version >= 7 ? state.version : 7,
     transactions: [...facts, ...state.transactions],
     goalFundCycles: state.goalFundCycles!.map((entry) =>
       entry.id === cycle.id

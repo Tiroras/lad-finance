@@ -1,6 +1,7 @@
 import { validDate } from "../shared/lib/dates";
 import type { FinanceState, Transaction } from "./types";
 import { accountToBase } from "./currency";
+import { hasAccountForecast } from "./accountForecastSettings";
 
 export type TransactionStatus = "posted" | "pending" | "cancelled";
 export const transactionStatus = (
@@ -53,6 +54,22 @@ export function transactionStatusError(
 
 /** Old readers must reject new semantics, rather than silently post a pending row. */
 export function assertFinanceVersion(state: FinanceState) {
+  if (
+    state.version < 8 &&
+    (hasAccountForecast(state.settings.forecast) ||
+      state.transactions.some((entry) => entry.valuation !== undefined) ||
+      state.scenarios?.some(
+        (scenario) =>
+          scenario.changes.some((change) => change.enabled !== undefined) ||
+          scenario.events.some(
+            (event) =>
+              event.enabled !== undefined || event.accountId !== undefined,
+          ),
+      ))
+  )
+    throw new Error(
+      "Прогноз по счетам, происхождение оценок и переключатели сценария требуют финансовый формат версии 8.",
+    );
   if (
     state.version < 7 &&
     (state.goals.some((goal) => goal.versions !== undefined) ||

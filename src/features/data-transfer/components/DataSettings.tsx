@@ -3,6 +3,7 @@ import { canStartOnboarding } from "../../../domain/onboarding";
 import { useFinance, useFinanceStatus } from "../../../state/finance";
 import { Button, Section } from "../../../shared/ui";
 import { DataManagement } from "./DataManagement";
+import { DataCapacityNotice } from "./DataCapacityNotice";
 
 export function DataSettings({
   open,
@@ -16,6 +17,7 @@ export function DataSettings({
   const blocked = switching || financeWriteBlocked;
   return (
     <>
+      <DataCapacityNotice />
       <Section title="Импорт и экспорт" style={{ marginBottom: 0 }} />
       <Button
         tourId="data.csv"

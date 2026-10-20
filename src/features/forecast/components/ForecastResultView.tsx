@@ -7,6 +7,7 @@ import { ForecastSummary } from "./ForecastSummary";
 import { ForecastChart } from "./ForecastChart";
 import { ForecastCalendar } from "./ForecastCalendar";
 import { ForecastDayDetails } from "./ForecastDayDetails";
+import { AccountForecastDetails } from "./AccountForecastDetails";
 
 export function ForecastResultView({
   result,
@@ -36,6 +37,7 @@ export function ForecastResultView({
         <Card>
           <ForecastChart result={result} baseline={baseline} labels={labels} />
         </Card>
+        <AccountForecastDetails result={result} date={day.date} />
       </View>
       <Card
         style={[
