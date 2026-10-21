@@ -1,9 +1,10 @@
 import { useFinanceActions, useFinance } from "../../../state/finance";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Linking, Platform, View } from "react-native";
 import { DEFAULT_REMINDERS } from "../../../domain/reminders";
 import { requestReminderPermission } from "../../../infrastructure/notifications/notifications";
 import { useReminders } from "../model/ReminderProvider";
+import { ReminderQueueStatus } from "./ReminderQueueStatus";
 import {
   Button,
   C,
@@ -16,15 +17,7 @@ import {
 } from "../../../shared/ui";
 
 export function ReminderSettings() {
-  const { state } = useFinance();
-  const actions = useFinanceActions();
-  const preferences = state.settings.reminders ?? DEFAULT_REMINDERS;
-  const { result, error, retry } = useReminders();
-  const [busy, setBusy] = useState(false);
-  const [failure, setFailure] = useState("");
-  const [hour, setHour] = useState(String(preferences.hour));
-  const change = (patch: Partial<typeof preferences>) =>
-    actions.saveReminderPreferences(patch);
+  const { profile } = useFinance();
   if (Platform.OS === "web")
     return (
       <Notice>
@@ -32,20 +25,60 @@ export function ReminderSettings() {
         доступен календарь платежей.
       </Notice>
     );
+  return <ReminderSettingsForm key={profile} />;
+}
+
+function ReminderSettingsForm() {
+  const { state, activeProfile } = useFinance();
+  const actions = useFinanceActions();
+  const preferences = state.settings.reminders ?? DEFAULT_REMINDERS;
+  const { result, error, updating, lastSuccessAt, retry } = useReminders();
+  const [busy, setBusy] = useState(false);
+  const [failure, setFailure] = useState("");
+  const [permissionFailure, setPermissionFailure] = useState(false);
+  const [hour, setHour] = useState(String(preferences.hour));
+  const active = useRef(true);
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
+  useEffect(() => setHour(String(preferences.hour)), [preferences.hour]);
+  const change = (patch: Partial<typeof preferences>) => {
+    try {
+      actions.saveReminderPreferences(patch);
+      setFailure("");
+    } catch (cause) {
+      setFailure(
+        cause instanceof Error
+          ? cause.message
+          : "Не удалось сохранить настройки.",
+      );
+    }
+  };
   const toggle = async () => {
     setBusy(true);
     setFailure("");
+    setPermissionFailure(false);
     try {
       if (preferences.enabled) change({ enabled: false });
-      else if (await requestReminderPermission()) change({ enabled: true });
-      else
-        setFailure(
-          "Уведомления не разрешены. Включите их в настройках телефона и повторите попытку.",
-        );
+      else {
+        const allowed = await requestReminderPermission();
+        if (!active.current) return;
+        if (allowed) change({ enabled: true });
+        else {
+          setPermissionFailure(true);
+          setFailure(
+            "Уведомления не разрешены. Проверьте разрешение и канал напоминаний в настройках телефона.",
+          );
+        }
+      }
     } catch {
-      setFailure("Не удалось включить напоминания. Повторите попытку.");
+      if (active.current)
+        setFailure("Не удалось включить напоминания. Повторите попытку.");
     } finally {
-      setBusy(false);
+      if (active.current) setBusy(false);
     }
   };
   return (
@@ -93,26 +126,21 @@ export function ReminderSettings() {
                 return;
               }
               change({ hour: Number(hour) });
-              setFailure("");
             }}
           />
-          {result?.status === "ready" && (
-            <Txt style={{ fontSize: 11, color: C.muted }}>
-              В очереди: {result.count}. Планируем ближайшие 60 уведомлений на
-              срок до 60 дней и обновляем при открытии приложения. О просрочках
-              напомним раз в день в течение недели.
-              {result.truncated
-                ? " Часть дат будет добавлена при следующих открытиях."
-                : ""}
-            </Txt>
-          )}
         </>
       )}
-      {(!!failure || result?.status === "denied") && (
+      {!!failure && <Notice tone="warning">{failure}</Notice>}
+      <ReminderQueueStatus
+        profileName={activeProfile.name}
+        result={result}
+        error={error}
+        updating={updating}
+        lastSuccessAt={lastSuccessAt}
+        retry={retry}
+      />
+      {(permissionFailure || result?.status === "denied") && (
         <View style={{ gap: 12 }}>
-          <Notice tone="warning">
-            {failure || "Разрешение на уведомления отключено в системе."}
-          </Notice>
           <Button
             label="Настройки телефона"
             variant="secondary"
@@ -122,13 +150,13 @@ export function ReminderSettings() {
               )
             }
           />
+          <Button
+            label="Проверить разрешение снова"
+            variant="secondary"
+            onPress={preferences.enabled ? retry : () => void toggle()}
+            disabled={busy}
+          />
         </View>
-      )}
-      {!!error && (
-        <>
-          <Notice tone="warning">{error}</Notice>
-          <Button label="Повторить настройку напоминаний" onPress={retry} />
-        </>
       )}
     </Card>
   );

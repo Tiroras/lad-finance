@@ -430,7 +430,7 @@ export const t06DebtCases = [
       state.settings.reminders = { enabled: true, hour: 9, daysBefore: 1 };
       equal(reminderPlan(state, now).items, [
         {
-          id: "lad.credit-terms.credit.2026-10-20",
+          id: "lad.credit-terms.%5B%22credit%22%2C%222026-10-20%22%5D",
           at: new Date("2026-10-20T09:00:00").getTime(),
           creditAccountId: "credit",
           date: "2026-10-20",
@@ -493,7 +493,7 @@ export const t06DebtCases = [
       const changes = reminderChanges(items, [], "personal");
       equal(
         changes.schedule[0].id,
-        "lad.personal.credit-terms.credit.2026-10-20",
+        "lad.personal.credit-terms.%5B%22credit%22%2C%222026-10-20%22%5D",
       );
       const existing = changes.schedule.map((item) => ({
         identifier: item.id,

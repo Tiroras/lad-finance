@@ -16,6 +16,7 @@ export default defineConfig({
     "**/annual-funds.spec.ts",
     "**/t06-*.spec.ts",
     "**/t07-*.spec.ts",
+    "**/t08-*.spec.ts",
     "**/daily-accounting.spec.ts",
     "**/onboarding-draft.spec.ts",
     "**/import-result-csv.spec.ts",

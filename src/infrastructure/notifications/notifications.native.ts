@@ -22,10 +22,15 @@ import { setNotificationHandler } from "expo-notifications/build/NotificationsHa
 import { SchedulableTriggerInputTypes } from "expo-notifications/build/Notifications.types";
 import { scheduleNotificationAsync } from "expo-notifications/build/scheduleNotificationAsync";
 import { setNotificationChannelAsync } from "expo-notifications/build/setNotificationChannelAsync";
-import { reminderPlan } from "../../domain/reminders";
+import { getNotificationChannelAsync } from "expo-notifications/build/getNotificationChannelAsync";
+import type { PlannedReminder } from "../../domain/reminders";
 import type { FinanceState } from "../../domain/types";
 import type { FinanceProfile } from "../../domain/profiles";
-import { readPaymentNotification, reminderChanges } from "./notificationPlan";
+import { readPaymentNotification, reminderData } from "./notificationPlan";
+import {
+  createReminderSynchronizer,
+  type ReminderAccess,
+} from "./reminderSynchronizer";
 import type {
   PaymentNotification,
   ReminderStatus,
@@ -53,85 +58,87 @@ function permitted(value: Notifications.NotificationPermissionsStatus) {
     value.granted || value.ios?.status === IosAuthorizationStatus.PROVISIONAL
   );
 }
+async function channelAllowed() {
+  if (Platform.OS !== "android" || Number(Platform.Version) < 26) return true;
+  const channel = await getNotificationChannelAsync(CHANNEL);
+  if (!channel) throw new Error("Канал напоминаний недоступен.");
+  return channel.importance !== AndroidImportance.NONE;
+}
+async function reminderAccess(): Promise<ReminderAccess> {
+  await prepareChannel();
+  if (!permitted(await getPermissionsAsync())) return "permission";
+  return (await channelAllowed()) ? "allowed" : "channel";
+}
 export async function requestReminderPermission() {
   await prepareChannel();
   const existing = await getPermissionsAsync();
-  return permitted(existing) || permitted(await requestPermissionsAsync());
+  const allowed =
+    permitted(existing) || permitted(await requestPermissionsAsync());
+  return allowed && (await channelAllowed());
 }
 
-let queue: Promise<unknown> = Promise.resolve();
-export async function clearPaymentNotifications() {
-  await queue.catch(() => undefined);
-  const changes = reminderChanges(
-    [],
-    await getAllScheduledNotificationsAsync(),
-    "personal",
-  );
-  for (const identifier of changes.cancel)
-    await cancelScheduledNotificationAsync(identifier);
-  if (
-    getLastNotificationResponse()?.notification.request.content.data?.source ===
-    "lad"
-  )
-    await clearLastNotificationResponseAsync();
+function trigger(
+  item: PlannedReminder,
+): Notifications.NotificationTriggerInput {
+  const date = new Date(item.at);
+  // SDK 57 converts iOS DATE to a time interval whose readback has no absolute
+  // date. A full UTC calendar trigger stays one-off and can be verified exactly.
+  if (Platform.OS === "ios")
+    return {
+      type: SchedulableTriggerInputTypes.CALENDAR,
+      repeats: false,
+      timezone: "UTC",
+      year: date.getUTCFullYear(),
+      month: date.getUTCMonth() + 1,
+      day: date.getUTCDate(),
+      hour: date.getUTCHours(),
+      minute: date.getUTCMinutes(),
+      second: date.getUTCSeconds(),
+    };
+  return {
+    type: SchedulableTriggerInputTypes.DATE,
+    date,
+    channelId: CHANNEL,
+  };
+}
+
+const synchronizer = createReminderSynchronizer({
+  access: reminderAccess,
+  read: getAllScheduledNotificationsAsync,
+  cancel: cancelScheduledNotificationAsync,
+  schedule: (item, profile) =>
+    scheduleNotificationAsync({
+      identifier: item.id,
+      content: {
+        title: "Лад · проверьте план",
+        body: item.creditAccountId
+          ? "Пора сверить условия кредитной карты с выпиской. Откройте Лад, чтобы обновить сумму и срок."
+          : item.paymentId
+            ? "Приближается запланированный платёж. Откройте Лад, чтобы посмотреть детали."
+            : "В плане остались неоплаченные платежи. Отметьте оплату или пропустите ненужные.",
+        data: reminderData(item, profile),
+      },
+      trigger: trigger(item),
+    }),
+  clearResponse: async () => {
+    if (
+      getLastNotificationResponse()?.notification.request.content.data
+        ?.source === "lad"
+    )
+      await clearLastNotificationResponseAsync();
+  },
+  now: () => new Date(),
+});
+
+export function clearPaymentNotifications() {
+  return synchronizer.clear();
 }
 
 export function synchronizeReminders(
   state: FinanceState,
   profile: FinanceProfile,
 ): Promise<ReminderStatus> {
-  const task = queue
-    .catch(() => undefined)
-    .then(async (): Promise<ReminderStatus> => {
-      await prepareChannel();
-      const enabled = state.settings.reminders?.enabled ?? false;
-      const allowed = enabled && permitted(await getPermissionsAsync());
-      const plan = allowed
-        ? reminderPlan(state)
-        : { items: [], truncated: false };
-      const changes = reminderChanges(
-        plan.items,
-        await getAllScheduledNotificationsAsync(),
-        profile,
-      );
-      for (const identifier of changes.cancel) {
-        await cancelScheduledNotificationAsync(identifier);
-      }
-      for (const item of changes.schedule) {
-        await scheduleNotificationAsync({
-          identifier: item.id,
-          content: {
-            title: "Лад · проверьте план",
-            body: item.creditAccountId
-              ? "Пора сверить условия кредитной карты с выпиской. Откройте Лад, чтобы обновить сумму и срок."
-              : item.paymentId
-                ? "Приближается запланированный платёж. Откройте Лад, чтобы посмотреть детали."
-                : "В плане остались неоплаченные платежи. Отметьте оплату или пропустите ненужные.",
-            data: {
-              source: "lad",
-              profile,
-              at: item.at,
-              paymentId: item.paymentId ?? null,
-              date: item.date ?? null,
-              versionId: item.versionId ?? null,
-              creditAccountId: item.creditAccountId ?? null,
-            },
-          },
-          trigger: {
-            type: SchedulableTriggerInputTypes.DATE,
-            date: new Date(item.at),
-            channelId: CHANNEL,
-          },
-        });
-      }
-      return {
-        status: !enabled ? "off" : allowed ? "ready" : "denied",
-        count: plan.items.length,
-        truncated: plan.truncated,
-      };
-    });
-  queue = task;
-  return task;
+  return synchronizer.synchronize(state, profile);
 }
 
 export function observePaymentNotifications(

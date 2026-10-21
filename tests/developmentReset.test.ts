@@ -5,6 +5,7 @@ import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import * as profiles from "../src/domain/profiles";
 import * as notificationPlan from "../src/infrastructure/notifications/notificationPlan";
+import * as reminderSynchronizer from "../src/infrastructure/notifications/reminderSynchronizer";
 import { VAULT_STORAGE_KEY } from "../src/infrastructure/storage/vault";
 import * as draftStore from "../src/infrastructure/storage/draftStore";
 
@@ -103,6 +104,7 @@ function fixture(dev: boolean, flag: string | undefined) {
     "../../domain/profiles": profiles,
     "../../domain/reminders": {},
     "./notificationPlan": notificationPlan,
+    "./reminderSynchronizer": reminderSynchronizer,
     "./vault": { VAULT_STORAGE_KEY },
     "./draftStore": draftStore,
     "./ciphertextFiles.native": {

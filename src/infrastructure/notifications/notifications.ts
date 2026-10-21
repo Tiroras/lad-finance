@@ -11,9 +11,9 @@ export async function requestReminderPermission() {
 export async function clearPaymentNotifications() {}
 export async function synchronizeReminders(
   _state: FinanceState,
-  _profile: FinanceProfile,
+  profile: FinanceProfile,
 ): Promise<ReminderStatus> {
-  return { status: "unsupported", count: 0, truncated: false };
+  return { status: "unsupported", profile, count: null, truncated: false };
 }
 export function observePaymentNotifications(
   _callback: (data: PaymentNotification) => void,

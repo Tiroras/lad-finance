@@ -5,6 +5,7 @@ import { createInitialState } from "../src/domain/seed";
 import {
   readPaymentNotification,
   reminderChanges,
+  reminderData,
 } from "../src/infrastructure/notifications/notificationPlan";
 import type { PaymentNotification } from "../src/infrastructure/notifications/notifications.types";
 import { createDismissalController } from "../src/shared/lib/dismissal";
@@ -191,7 +192,8 @@ test("only current profile notifications with matching metadata are retained", (
   const id = `lad.personal.payment.shared-payment.${date}`;
   const current = {
     identifier: id,
-    content: { data: { profile: "personal", at: reminder.at } },
+    content: { data: reminderData(reminder, "personal") },
+    trigger: { type: "date", value: reminder.at, repeats: false },
   };
   assert.deepEqual(reminderChanges([reminder], [current], "personal"), {
     cancel: [],

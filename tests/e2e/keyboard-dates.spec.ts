@@ -117,8 +117,14 @@ test("fields inserted after choosing a credit account join the keyboard order", 
   await expect(field(page, "Обязательный платёж по карте")).toBeFocused();
   await expect(field(page, "Обязательный платёж по карте")).toHaveAttribute(
     "enterkeyhint",
-    "done",
+    "next",
   );
+  await field(page, "Обязательный платёж по карте").press("Enter");
+  const reminderDate = field(page, "Дата напоминания об условиях карты");
+  await expect(reminderDate).toBeFocused();
+  await expect(reminderDate).toHaveAttribute("enterkeyhint", "done");
+  await reminderDate.press("Enter");
+  await expect(reminderDate).not.toBeFocused();
   await page.getByRole("tab", { name: "Повседневный", exact: true }).click();
   await field(page, "Остаток на счёте").click();
   await expect(field(page, "Остаток на счёте")).toHaveAttribute(

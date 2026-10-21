@@ -63,4 +63,6 @@
 
 Порядок в [AppProviders.tsx](../src/application/providers/AppProviders.tsx): `SecurityProvider` → `FinanceProvider` → `ReminderProvider` → `ExchangeRateProvider`. Реализации находятся соответственно в `features/security/model/`, `state/finance/`, `features/payments/model/`, `features/currencies/model/`. Изменение порядка требует проверки загрузки под блокировкой и планирования уведомлений.
 
+Напоминания сохраняют это разделение: [domain/reminders.ts](../src/domain/reminders.ts) вычисляет даты и идентичность событий; [reminderSynchronizer.ts](../src/infrastructure/notifications/reminderSynchronizer.ts) управляет последовательностью чтения, отмены, планирования и очистки через переданные порты. Только `notifications.native.ts` обращается к Expo Notifications. Итоговый статус сверяется с фактически прочитанными триггерами через `notificationTrigger.ts`; результат не подтверждает доставку ОС. `ReminderProvider` связывает отображаемый результат с текущими состоянием, профилем и запросом, а `ReminderQueueStatus` показывает его внутри настроек. Финансовое состояние и порядок провайдеров от работы очереди не меняются.
+
 Новые окна подключайте через `src/application/navigation/types.ts`, `src/application/shell/AppSheet.tsx` и `src/application/shell/SheetContent.tsx`, сохраняя существующий механизм навигации.
