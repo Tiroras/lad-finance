@@ -9,13 +9,14 @@ import {
   Animated,
   View,
   Pressable,
-  ScrollView,
   Modal,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
   StyleSheet,
   useWindowDimensions,
+  type ScrollViewInstance,
+  type ViewInstance,
 } from "react-native";
 import { C, font } from "./theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -79,12 +80,12 @@ export function Sheet({
   const tourFrame = useRef<TourFrameHandle>(null);
   const revealTour = useCallback(() => tourFrame.current?.reveal(), []);
   const insets = useSafeAreaInsets();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const scrollToStart = useCallback(() => {
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, []);
-  const contentRef = useRef<View>(null);
-  const reveal = useCallback((target: View) => {
+  const contentRef = useRef<ViewInstance>(null);
+  const reveal = useCallback((target: ViewInstance) => {
     target.measureInWindow((_x, targetY, _width, targetHeight) => {
       if (!targetHeight) return;
       scrollRef.current

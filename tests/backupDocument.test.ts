@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { setImmediate } from "node:timers/promises";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import * as contracts from "../src/infrastructure/files/backupDocumentReader";
@@ -82,7 +83,8 @@ function nativeFixture() {
         get size() {
           return state.handleSize;
         },
-        readBytes(length: number) {
+        async readBytes(length: number) {
+          await setImmediate();
           state.reads.push([this.offset, length]);
           if (state.failRead) throw new Error("read failed");
           return bytes.slice(

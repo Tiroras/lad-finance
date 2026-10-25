@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { setImmediate } from "node:timers/promises";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 
@@ -42,7 +43,9 @@ function loadAdapter(
   return exports.shareFile;
 }
 
-function nativeFixture() {
+function nativeFixture(
+  options: { beforeTextWrite?: () => Promise<void> } = {},
+) {
   const directories = new Set<string>();
   const files = new Map<string, Uint8Array>();
   files.set("file:///cache/unrelated/keep.json", new Uint8Array([99]));
@@ -92,7 +95,8 @@ function nativeFixture() {
     create() {
       files.set(this.uri, new Uint8Array());
     }
-    write(value: string) {
+    async write(value: string) {
+      await options.beforeTextWrite?.();
       if (state.fail === "write") throw new Error("write failed");
       files.set(this.uri, new TextEncoder().encode(value));
     }
@@ -101,7 +105,8 @@ function nativeFixture() {
       if (state.fail === "open") throw new Error("open failed");
       const uri = this.uri;
       return {
-        writeBytes(bytes: Uint8Array) {
+        async writeBytes(bytes: Uint8Array) {
+          await setImmediate();
           if (state.fail === "write") throw new Error("write failed");
           state.writes.push({ uri, bytes: new Uint8Array(bytes) });
           files.set(
@@ -231,6 +236,47 @@ test("concurrent native exports with the same filename own separate directories 
   await first;
   assert.equal(state.directories.size, 0);
   assert.equal(state.deleted.length, 2);
+});
+
+test("native text export waits for asynchronous writing before sharing the complete file", async () => {
+  let finishWrite!: () => void;
+  let startWrite!: () => void;
+  const writing = new Promise<void>((resolve) => {
+    finishWrite = resolve;
+  });
+  const started = new Promise<void>((resolve) => {
+    startWrite = resolve;
+  });
+  const { state, share, waitForShares } = nativeFixture({
+    beforeTextWrite: () => {
+      startWrite();
+      return writing;
+    },
+  });
+  const content = "Дата;Описание\n2026-10-25;Пример";
+  const pending = share(content, "file.csv", "text/csv");
+  await started;
+  assert.equal(state.requests.length, 0);
+  assert.equal(state.directories.size, 1);
+  assert.deepEqual(state.deleted, []);
+  finishWrite();
+  await waitForShares(1);
+  const request = state.requests[0];
+  assert.equal(new TextDecoder().decode(state.files.get(request.uri)), content);
+  request.resolve();
+  await pending;
+  assert.equal(state.files.has(request.uri), false);
+  assert.equal(state.directories.size, 0);
+});
+
+test("native text export propagates an asynchronous write failure without opening sharing and cleans its files", async () => {
+  const { state, share } = nativeFixture();
+  state.fail = "write";
+  await assert.rejects(share("csv", "file.csv", "text/csv"), /write failed/);
+  assert.equal(state.requests.length, 0);
+  assert.equal(state.directories.size, 0);
+  assert.equal(state.files.size, 1);
+  assert.equal(state.files.has("file:///cache/unrelated/keep.json"), true);
 });
 
 test("native unavailable sharing and all write/open/share failures release only resources created by that export", async () => {

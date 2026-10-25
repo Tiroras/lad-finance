@@ -103,11 +103,33 @@ async function activate(target: Locator) {
 }
 
 async function expectSpotlightFollowsScroll(page: Page, target: Locator) {
-  await target.hover();
+  const gesture = await target.evaluate((node) => {
+    let scroll = node.parentElement;
+    while (scroll && !/auto|scroll/.test(getComputedStyle(scroll).overflowY))
+      scroll = scroll.parentElement;
+    if (!scroll) throw new Error("The tour target needs a scroll viewport");
+    const viewport = scroll.getBoundingClientRect();
+    const bounds = node.getBoundingClientRect();
+    // Resize can leave the target at the bottom edge. Keep it visible while
+    // scrolling, and send the wheel inside the viewport rather than its edge.
+    const delta =
+      scroll.scrollTop >= 24 && bounds.bottom + 24 <= viewport.bottom
+        ? -24
+        : 24;
+    return {
+      x: viewport.x + viewport.width / 2,
+      y: viewport.y + viewport.height / 2,
+      delta,
+    };
+  });
+  await page.mouse.move(gesture.x, gesture.y);
   const before = (await target.boundingBox())!;
-  await page.mouse.wheel(0, -24);
+  await page.mouse.wheel(0, gesture.delta);
   await expect
-    .poll(async () => (await target.boundingBox())!.y - before.y)
+    .poll(
+      async () =>
+        (before.y - (await target.boundingBox())!.y) * Math.sign(gesture.delta),
+    )
     .toBeGreaterThan(10);
   await expectSpotlight(page, target);
 }
@@ -710,6 +732,7 @@ test("the tour visits every real tab, plan section and settings screen without c
         });
       }
       await page.setViewportSize({ width: 390, height: 844 });
+      await expectSpotlight(page, target);
     }
     if (["home-accounts", "open-securitySettings"].includes(step.id))
       await expectSpotlightFollowsScroll(page, target);

@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ScrollView, Platform, BackHandler, Keyboard } from "react-native";
+import {
+  Platform,
+  BackHandler,
+  Keyboard,
+  type ScrollViewInstance,
+} from "react-native";
 import { useFinance, useFinanceStatus } from "../../state/finance";
 import { observePaymentNotifications } from "../../infrastructure/notifications/notifications";
 import { useSecurity } from "../../features/security";
@@ -27,7 +32,7 @@ export function useAppNavigation() {
     parents: [],
   });
   const sheet = sheets.current;
-  const scroll = useRef<ScrollView>(null);
+  const scroll = useRef<ScrollViewInstance>(null);
   const backOverride = useRef<(() => boolean) | null>(null);
   const setBackOverride = useCallback((handler: (() => boolean) | null) => {
     backOverride.current = handler;

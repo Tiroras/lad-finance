@@ -4,7 +4,7 @@
 
 ## Запуск
 
-Требуется Node.js 22.13 или новее. Проект использует Expo SDK 57, React Native 0.86 и TypeScript. Зависимости зафиксированы в `package-lock.json`.
+Проект использует Expo SDK 58, React Native 0.88, React 19.3 и TypeScript. Зависимости зафиксированы в `package-lock.json`. Используйте Node.js 22.21.1 из `.nvmrc`, совместимый с SDK 58.
 
 В CI используется Node.js из `.nvmrc` (22.21.1). При установленном nvm ту же версию можно выбрать командой `nvm install && nvm use`.
 
@@ -13,15 +13,17 @@ npm ci
 npm start
 ```
 
-Откройте QR-код в совместимой с SDK 57 версии Expo Go на iOS или Android. Компьютер и телефон должны находиться в одной сети. Если ваша версия Expo Go не поддерживает SDK проекта, используйте сборку приложения.
+Откройте QR-код в совместимой с SDK 58 версии Expo Go на iOS или Android. Компьютер и телефон должны находиться в одной сети. Если ваша версия Expo Go не поддерживает SDK проекта, используйте сборку приложения.
 
-Для проверки Face ID нужна собственная development/preview-сборка: Face ID недоступен в Expo Go. Локальные напоминания не требуют сервера push-уведомлений. После добавления нативных модулей пересоберите установленное приложение. [Ограничение Expo Go](https://docs.expo.dev/versions/v57.0.0/sdk/local-authentication/) и [локальные уведомления](https://docs.expo.dev/versions/v57.0.0/sdk/notifications/).
+Для проверки Face ID нужна собственная development/preview-сборка: Face ID недоступен в Expo Go. Локальные напоминания не требуют сервера push-уведомлений. После добавления нативных модулей пересоберите установленное приложение. [Ограничение Expo Go](https://docs.expo.dev/versions/v58.0.0/sdk/local-authentication/) и [локальные уведомления](https://docs.expo.dev/versions/v58.0.0/sdk/notifications/).
 
 ```sh
 npm run ios       # нативная сборка; установленный Xcode и iOS Simulator
 npm run android   # нативная сборка; настроенный Android SDK и эмулятор
 npm run web       # предпросмотр в браузере
 ```
+
+После перехода с SDK 57 сохраните ручные изменения сгенерированных каталогов `ios/` и `android/`, затем выполните `npx expo prebuild --no-install` и пересоберите приложение. Эта команда заново создаёт нативные проекты; установленная сборка SDK 57 не подходит для JavaScript SDK 58. Для Android нужны SDK Platform 37 и Build Tools 37.0.0. [Порядок обновления Expo](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/) и [изменения SDK 58](https://expo.dev/changelog/sdk-58).
 
 Для установки собственного APK или iOS-сборки подготовлены профили `eas.json`:
 

@@ -7,6 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  type ScrollViewInstance,
+  type ViewInstance,
 } from "react-native";
 import { canStartOnboarding } from "../../../domain/onboarding";
 import { useFinance, useFinanceStatus } from "../../../state/finance";
@@ -33,8 +35,8 @@ export function FirstRunFlow({
   const [error, setError] = useState("");
   const learning = useLearningProgress();
   const saving = useRef(false);
-  const scroll = useRef<ScrollView>(null);
-  const content = useRef<View>(null);
+  const scroll = useRef<ScrollViewInstance>(null);
+  const content = useRef<ViewInstance>(null);
   const offer = !needsIntroduction && !canStartOnboarding(state);
   const showWelcome = welcome && !offer;
   const run = async (action: () => Promise<void>) => {

@@ -16,8 +16,9 @@ import {
   Platform,
   Pressable,
   View,
-  type ScrollView,
-  type TextInput,
+  type ScrollViewInstance,
+  type TextInputInstance,
+  type ViewInstance,
 } from "react-native";
 import { Txt } from "./Txt";
 import { C, font } from "./theme";
@@ -25,7 +26,7 @@ import { C, font } from "./theme";
 type FormNavigation = {
   accessoryID?: string;
   active?: { id: string; hasNext: boolean };
-  register: (id: string, input: TextInput) => () => void;
+  register: (id: string, input: TextInputInstance) => () => void;
   focus: (id: string) => void;
   blur: (id: string) => void;
   refresh: () => void;
@@ -45,11 +46,11 @@ export function FormFields({
 }: {
   children: (onViewportLayout: () => void) => ReactNode;
   disabled: boolean;
-  scrollRef: RefObject<ScrollView | null>;
-  contentRef: RefObject<View | null>;
+  scrollRef: RefObject<ScrollViewInstance | null>;
+  contentRef: RefObject<ViewInstance | null>;
 }) {
   const accessoryID = useId();
-  const inputs = useRef(new Map<string, TextInput>());
+  const inputs = useRef(new Map<string, TextInputInstance>());
   const focused = useRef<string | undefined>(undefined);
   const enabled = useRef(!disabled);
   const revision = useRef(0);
@@ -61,7 +62,7 @@ export function FormFields({
         ([id, input]) =>
           new Promise<{
             id: string;
-            input: TextInput;
+            input: TextInputInstance;
             x: number;
             y: number;
             width: number;
@@ -148,7 +149,7 @@ export function FormFields({
   }, [scrollRef, contentRef]);
 
   const register = useCallback(
-    (id: string, input: TextInput) => {
+    (id: string, input: TextInputInstance) => {
       inputs.current.set(id, input);
       refresh();
       return () => {

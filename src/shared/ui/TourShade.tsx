@@ -4,6 +4,7 @@ import {
   View,
   useWindowDimensions,
   type Animated,
+  type ViewInstance,
 } from "react-native";
 import type { TourAnchor } from "./TourContext";
 import { sameTourRect, type TourRect } from "./tourGeometry";
@@ -27,8 +28,8 @@ export function TourShade({
 }: {
   target: string | null;
   anchor: TourAnchor | null;
-  frameRef: RefObject<View | null>;
-  coachRef: RefObject<View | null>;
+  frameRef: RefObject<ViewInstance | null>;
+  coachRef: RefObject<ViewInstance | null>;
   refreshRef: RefObject<(immediate?: boolean) => void>;
   scrollY: Animated.Value;
   extendShade: boolean;

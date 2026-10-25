@@ -19,6 +19,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { setImmediate } from "node:timers/promises";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import * as profiles from "../src/domain/profiles";
@@ -105,12 +106,14 @@ function fixture() {
         get size() {
           return fstatSync(fd).size;
         },
-        writeBytes(bytes: Uint8Array) {
+        async writeBytes(bytes: Uint8Array) {
+          await setImmediate();
           assert.equal(mode, "w");
           if (faults.write) throw new Error("disk full");
           offset += writeSync(fd, bytes, 0, bytes.length, offset);
         },
-        readBytes(length: number) {
+        async readBytes(length: number) {
+          await setImmediate();
           assert.equal(mode, "r");
           const bytes = Buffer.alloc(length);
           const read = readSync(fd, bytes, 0, length, offset);

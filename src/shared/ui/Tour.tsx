@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
   type StyleProp,
   type ViewStyle,
+  type ViewInstance,
 } from "react-native";
 import { useSheetTourScroll } from "./SheetScroll";
 import {
@@ -22,7 +23,7 @@ import {
 
 const ScrollContext = createContext<
   | (TourScrollScope & {
-      reveal: (target: View) => void;
+      reveal: (target: ViewInstance) => void;
     })
   | undefined
 >(undefined);
@@ -52,7 +53,7 @@ export function TourScrollProvider({
   contentInsetTop,
   children,
 }: {
-  reveal: (target: View) => void;
+  reveal: (target: ViewInstance) => void;
   children: ReactNode;
 } & TourScrollScope) {
   const context = useMemo(
@@ -88,7 +89,7 @@ export function TourTarget({
   const { target } = useContext(TourContext);
   const frame = useContext(TourFrameContext);
   const active = target === id;
-  const ref = useRef<View>(null);
+  const ref = useRef<ViewInstance>(null);
   const sheetScroll = useSheetTourScroll();
   const pageScroll = useContext(ScrollContext);
   const scope = sheetScroll ?? pageScroll;

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
-import type { ScrollView, View } from "react-native";
+import type { ScrollViewInstance, ViewInstance } from "react-native";
 import ts from "typescript";
 import type { TourAnchor, TourScrollScope } from "../src/shared/ui/TourContext";
 import * as tourGeometry from "../src/shared/ui/tourGeometry";
@@ -28,7 +28,7 @@ function fixture(
   scrollMounted = true,
 ) {
   const pending: (() => void)[] = [];
-  const relativeCalls: { node: View; parent: unknown }[] = [];
+  const relativeCalls: { node: ViewInstance; parent: unknown }[] = [];
   const deliver = (callback: () => void) => {
     if (platform === "web") pending.push(callback);
     else callback();
@@ -50,7 +50,7 @@ function fixture(
           else callback(...measurement.coordinates);
         });
       },
-    } as unknown as View;
+    } as unknown as ViewInstance;
     return { view, measurement };
   };
   const frame = node([12, 48, 390, 844]);
@@ -60,7 +60,7 @@ function fixture(
   const element = node([15, 920, 100, 44]);
   const scrollView = {
     getNativeScrollRef: () => viewport.view,
-  } as unknown as ScrollView;
+  } as unknown as ScrollViewInstance;
   const scope: TourScrollScope = {
     scrollRef: { current: scrollMounted ? scrollView : null },
     contentRef: { current: scrollMounted ? content.view : null },

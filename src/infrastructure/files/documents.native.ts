@@ -22,7 +22,7 @@ export async function pickDocument(extensions: string[], limit: number) {
           handle = file.open(FileMode.ReadOnly);
           if (handle.size !== size)
             throw new Error("Размер файла изменился. Выберите его ещё раз.");
-          const bytes = handle.readBytes(size);
+          const bytes = await handle.readBytes(size);
           if (handle.size !== size)
             throw new Error("Размер файла изменился. Выберите его ещё раз.");
           return bytes;

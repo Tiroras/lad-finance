@@ -16,6 +16,7 @@ import {
   type ScrollViewProps,
   type StyleProp,
   type ViewStyle,
+  type ViewInstance,
 } from "react-native";
 import { TourContext, TourFrameContext, type TourAnchor } from "./TourContext";
 import { TourShade } from "./TourShade";
@@ -45,8 +46,8 @@ export function TourFrame({
   scrollKey?: string;
 }) {
   const { target } = useContext(TourContext);
-  const frameRef = useRef<View>(null);
-  const coachRef = useRef<View>(null);
+  const frameRef = useRef<ViewInstance>(null);
+  const coachRef = useRef<ViewInstance>(null);
   const refreshRef = useRef<(immediate?: boolean) => void>(() => undefined);
   const scrollY = useRef(new Animated.Value(0)).current;
   const onScroll = useMemo(

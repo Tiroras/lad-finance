@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View, Animated, StyleSheet, useWindowDimensions } from "react-native";
+import {
+  View,
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+  type ViewInstance,
+} from "react-native";
 import { useFinanceStatus } from "../../state/finance";
 import {
   C,
@@ -53,11 +59,11 @@ export function AppShell() {
     shownImport.current = latestImportResultId;
     navigation.open({ type: "importResult", id: latestImportResultId });
   }, [ready, latestImportResultId, navigation.open]);
-  const content = useRef<View>(null);
+  const content = useRef<ViewInstance>(null);
   const { width } = useWindowDimensions();
   const wide = width >= 900;
   const reveal = useCallback(
-    (target: View) => {
+    (target: ViewInstance) => {
       target.measureInWindow((_x, targetY, _width, targetHeight) => {
         if (!targetHeight) return;
         scroll.current

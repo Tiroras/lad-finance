@@ -43,7 +43,7 @@ export async function pickBackupDocument(): Promise<BackupDocument | null> {
         if (handle.size !== size)
           throw new Error("Размер файла изменился. Выберите копию ещё раз.");
         handle.offset = offset;
-        const bytes = handle.readBytes(length);
+        const bytes = await handle.readBytes(length);
         if (bytes.length !== length)
           throw new Error("Не удалось полностью прочитать файл копии.");
         return bytes;

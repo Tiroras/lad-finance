@@ -1,9 +1,4 @@
-import {
-  PixelRatio,
-  Platform,
-  type NativeMethods,
-  type View,
-} from "react-native";
+import { PixelRatio, Platform, type ViewInstance } from "react-native";
 import type { TourAnchor, TourMeasurable } from "./TourContext";
 import { tourHole, tourScrollingGeometry, type TourRect } from "./tourGeometry";
 
@@ -42,7 +37,7 @@ function measure(node: TourMeasurable, onMeasured: Measured): void {
 
 function relative(
   node: TourMeasurable | null | undefined,
-  parent: Parameters<NativeMethods["measureLayout"]>[0],
+  parent: Parameters<TourMeasurable["measureLayout"]>[0],
   onMeasured: Measured,
 ): void {
   if (!node) return onMeasured(null);
@@ -55,8 +50,8 @@ function relative(
 
 /** Measure a stable layout once. Scroll offsets are consumed only by native Animated nodes. */
 export function measureTourLayout(
-  frameNode: View | null,
-  coachNode: View | null,
+  frameNode: ViewInstance | null,
+  coachNode: ViewInstance | null,
   anchor: TourAnchor | null,
 ): TourLayout | null | Promise<TourLayout | null> {
   if (!frameNode || !coachNode) return null;

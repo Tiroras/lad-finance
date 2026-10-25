@@ -1,11 +1,11 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { View } from "react-native";
+import type { ViewInstance } from "react-native";
 import type { TourScrollScope } from "./TourContext";
 
 const Context = createContext<
   | (TourScrollScope & {
       scrollToStart: () => void;
-      reveal: (target: View) => void;
+      reveal: (target: ViewInstance) => void;
     })
   | undefined
 >(undefined);
@@ -19,7 +19,7 @@ export function SheetScrollProvider({
 }: {
   children: ReactNode;
   scrollToStart: () => void;
-  reveal: (target: View) => void;
+  reveal: (target: ViewInstance) => void;
 } & Omit<TourScrollScope, "contentInsetTop">) {
   return (
     <Context

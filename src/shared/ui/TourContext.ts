@@ -1,23 +1,23 @@
 import { createContext } from "react";
 import type { RefObject } from "react";
-import type { NativeMethods, ScrollView, View } from "react-native";
+import type { ScrollViewInstance, ViewInstance } from "react-native";
 
 export type TourMeasurable = Pick<
-  NativeMethods,
+  ViewInstance,
   "measureInWindow" | "measureLayout"
 >;
 
 export interface TourScrollScope {
-  scrollRef: RefObject<ScrollView | null>;
-  contentRef: RefObject<View | null>;
+  scrollRef: RefObject<ScrollViewInstance | null>;
+  contentRef: RefObject<ViewInstance | null>;
   contentInsetTop: number;
 }
 
 export interface TourAnchor {
   id: string;
-  node: View;
+  node: ViewInstance;
   scroll?: TourScrollScope;
-  reveal?: (node: View) => void;
+  reveal?: (node: ViewInstance) => void;
 }
 
 export const TourContext = createContext<{

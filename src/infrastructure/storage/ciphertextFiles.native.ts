@@ -48,7 +48,7 @@ export function createNativeEncryptedFileStorage(
           // Vault envelopes are ASCII. Bound each temporary byte buffer.
           const encoder = new TextEncoder();
           for (let offset = 0; offset < value.length; offset += 262_144)
-            handle.writeBytes(
+            await handle.writeBytes(
               encoder.encode(value.slice(offset, offset + 262_144)),
             );
           if (handle.size !== value.length)
@@ -75,7 +75,7 @@ export function createNativeEncryptedFileStorage(
           const decoder = new TextDecoder("utf-8", { fatal: true });
           for (let offset = 0; offset < expectedBytes; offset += 262_144) {
             const length = Math.min(262_144, expectedBytes - offset);
-            const bytes = handle.readBytes(length);
+            const bytes = await handle.readBytes(length);
             if (bytes.length !== length)
               throw new Error("Не удалось полностью прочитать учёт.");
             parts.push(decoder.decode(bytes));

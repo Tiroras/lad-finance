@@ -14,11 +14,11 @@ export async function shareFile(
   try {
     directory.create();
     file.create();
-    if (typeof content === "string") file.write(content);
+    if (typeof content === "string") await file.write(content);
     else {
       const handle = file.open(FileMode.WriteOnly);
       try {
-        for (const part of content) handle.writeBytes(part);
+        for (const part of content) await handle.writeBytes(part);
       } finally {
         handle.close();
       }

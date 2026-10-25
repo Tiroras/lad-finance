@@ -43,7 +43,8 @@ RUN curl --fail --location --retry 3 \
     && mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest" \
     && rm /tmp/android-tools.zip \
     && yes | sdkmanager --licenses > /dev/null \
-    && sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" \
+    && sdkmanager "platform-tools" "platforms;android-37" "build-tools;37.0.0" \
+        "platforms;android-36" "build-tools;36.0.0" \
         "ndk;27.1.12297006" "cmake;3.22.1"
 RUN curl --fail --location --retry 3 \
         "https://github.com/mobile-dev-inc/Maestro/releases/download/cli-${MAESTRO_VERSION}/maestro.zip" \

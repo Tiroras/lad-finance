@@ -6,6 +6,7 @@ import {
   type StyleProp,
   type ViewStyle,
   type TextInputProps,
+  type TextInputInstance,
 } from "react-native";
 import { C, font } from "./theme";
 import { Txt } from "./Txt";
@@ -28,7 +29,7 @@ export function Field({
   containerStyle?: StyleProp<ViewStyle>;
   trailing?: ReactNode;
 }) {
-  const input = useRef<TextInput>(null);
+  const input = useRef<TextInputInstance>(null);
   const id = useId();
   const form = useFormFields();
   const register = form?.register;

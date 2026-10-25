@@ -1,5 +1,10 @@
 import { useRef, useState } from "react";
-import { Keyboard, Pressable, View } from "react-native";
+import {
+  Keyboard,
+  Pressable,
+  View,
+  type PressableInstance,
+} from "react-native";
 import { validDate } from "../lib/dates";
 import { createDateInputController, dateInputText } from "../lib/dateInput";
 import { DatePicker } from "./DatePicker";
@@ -28,7 +33,7 @@ export function DateField({
 }) {
   const [open, setOpen] = useState(false);
   const [touched, setTouched] = useState(false);
-  const trigger = useRef<View>(null);
+  const trigger = useRef<PressableInstance>(null);
   const displayed = dateInputText(value);
   const input = useFormattedInput({
     value,
