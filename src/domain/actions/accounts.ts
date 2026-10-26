@@ -1,6 +1,7 @@
 import { validateGoalFunds } from "../goalFunds";
 import { CURRENCY_CODES, currencyRate, type CurrencyCode } from "../currency";
 import { accountBalance, localDate, MAX_MONEY, uid } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import type { Account, FinanceState } from "../types";
 import { validateCreditAccounts } from "../debts";
 import { isPosted } from "../transactionStatus";
@@ -57,7 +58,7 @@ export function confirmCreditTerms(
     );
   const next: FinanceState = {
     ...state,
-    version: state.version >= 7 ? state.version : 7,
+    version: promoteFinanceVersion(state.version, 7),
     accounts: state.accounts.map((account) =>
       account.id === original.id
         ? {
@@ -106,7 +107,7 @@ export function saveCreditTermsReminder(
   );
   const next: FinanceState = {
     ...state,
-    version: state.version >= 7 ? state.version : 7,
+    version: promoteFinanceVersion(state.version, 7),
     accounts: state.accounts.map((account) =>
       account.id === accountId
         ? {

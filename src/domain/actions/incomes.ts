@@ -2,6 +2,7 @@ import { validatePlanHistory } from "../planHistory";
 import { validateAccountArchives } from "../accountArchive";
 import { accountCurrency } from "../currency";
 import { localDate, shiftDate, uid, validDate } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import {
   canLinkIncome,
   incomeOccurrenceKey,
@@ -36,9 +37,7 @@ function changed(
 ): FinanceState {
   const next: FinanceState = {
     ...state,
-    ...(history
-      ? { version: state.version >= 6 ? state.version : (6 as const) }
-      : {}),
+    ...(history ? { version: promoteFinanceVersion(state.version, 6) } : {}),
     plannedIncomes: (state.plannedIncomes ?? []).map((entry) =>
       entry.id === plan.id ? plan : entry,
     ),

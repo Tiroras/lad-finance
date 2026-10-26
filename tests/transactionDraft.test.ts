@@ -14,6 +14,7 @@ import {
   changeTransactionType,
   createTransactionDraft,
   repeatTransaction,
+  selectTransactionAccount,
   selectRefund,
   transactionInput,
   transactionTemplateInput,
@@ -43,6 +44,46 @@ const template: TransactionTemplate = {
     { category: "cafe", amount: 10_000 },
   ],
 };
+
+test("selecting a transfer destination as source swaps accounts and resets currency estimates", () => {
+  const state = createInitialState(false, TODAY);
+  const draft = {
+    ...createTransactionDraft(state, TODAY, undefined, "transfer"),
+    amount: "125",
+    title: "Мой перевод",
+    received: "10",
+    valuation: "20",
+    valuationDate: TODAY,
+  };
+  const next = selectTransactionAccount(state, draft, draft.toAccountId);
+  assert.equal(next.accountId, draft.toAccountId);
+  assert.equal(next.toAccountId, draft.accountId);
+  assert.equal(next.amount, "125");
+  assert.equal(next.title, "Мой перевод");
+  assert.equal(next.received, null);
+  assert.equal(next.valuation, null);
+  assert.equal(next.valuationDate, undefined);
+  assert.notEqual(draft.accountId, next.accountId);
+});
+
+test("source changes preserve another destination and never select an archived fallback", () => {
+  const state = createInitialState(false, TODAY);
+  const draft = createTransactionDraft(state, TODAY, undefined, "transfer");
+  assert.equal(
+    selectTransactionAccount(state, draft, "cash").toAccountId,
+    "savings",
+  );
+  state.accounts.find((account) => account.id === "card")!.archived = true;
+  assert.equal(
+    selectTransactionAccount(state, draft, "savings").toAccountId,
+    "cash",
+  );
+  state.accounts.find((account) => account.id === "cash")!.archived = true;
+  assert.equal(
+    selectTransactionAccount(state, draft, "savings").toAccountId,
+    "",
+  );
+});
 
 test("quick entry replaces template splits and clears its selection without changing finance state", () => {
   const state = createInitialState(false, TODAY);

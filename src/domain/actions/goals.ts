@@ -1,5 +1,6 @@
-import { currencyRate, type CurrencyCode } from "../currency";
+import { accountCurrency, currencyRate, type CurrencyCode } from "../currency";
 import { localDate, shiftDate, shiftMonth, uid, validDate } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import {
   goalContributionIdentity,
   goalSaved,
@@ -162,9 +163,7 @@ export function saveGoal(
   };
   const next: FinanceState = {
     ...state,
-    ...(transition
-      ? { version: state.version >= 7 ? state.version : (7 as const) }
-      : {}),
+    ...(transition ? { version: promoteFinanceVersion(state.version, 7) } : {}),
     goals: original
       ? state.goals.map((g) => (g.id === goal.id ? goal : g))
       : [...state.goals, goal],
@@ -283,6 +282,76 @@ export function fundGoal(
   );
   validateGoalSchedules(next);
   return identity
-    ? { ...next, version: state.version >= 7 ? state.version : 7 }
+    ? { ...next, version: promoteFinanceVersion(next.version, 7) }
     : next;
+}
+
+export type GoalWithdrawalInput = {
+  goalId: string;
+  amount: number;
+  accountId: string;
+  toAccountId: string;
+  toAmount?: number;
+};
+
+/** Release the allocation and record the actual return transfer atomically. */
+export function withdrawGoal(
+  state: FinanceState,
+  input: GoalWithdrawalInput,
+  today = localDate(),
+): FinanceState {
+  const goal = state.goals.find((entry) => entry.id === input.goalId);
+  ensure(goal, "Цель уже удалена.");
+  checkAmount(input.amount);
+  ensure(
+    input.amount <= goalSaved(state, goal, today),
+    "Нельзя вывести больше, чем накоплено в цели.",
+  );
+  const source = state.accounts.find((entry) => entry.id === input.accountId);
+  const destination = state.accounts.find(
+    (entry) => entry.id === input.toAccountId,
+  );
+  ensure(
+    source?.kind === "savings" &&
+      !source.archived &&
+      accountCurrency(state, source.id) === (goal.currency ?? "RUB"),
+    "Выберите активный накопительный счёт в валюте цели.",
+  );
+  ensure(
+    destination?.kind === "spending" && !destination.archived,
+    "Выберите активный повседневный счёт для зачисления.",
+  );
+  ensure(
+    (state.goalReleases?.length ?? 0) < 500,
+    "В учёте уже 500 возвратов из целей.",
+  );
+  const transferId = uid();
+  return saveTransaction(
+    {
+      ...state,
+      version: promoteFinanceVersion(state.version, 9),
+      goalReleases: [
+        ...(state.goalReleases ?? []),
+        {
+          id: uid(),
+          goalId: goal.id,
+          amount: input.amount,
+          date: today,
+          transferId,
+        },
+      ],
+    },
+    {
+      createId: transferId,
+      type: "transfer",
+      title: `Из цели: ${goal.name}`.slice(0, 120),
+      amount: input.amount,
+      toAmount: input.toAmount,
+      accountId: source.id,
+      toAccountId: destination.id,
+      date: today,
+      category: "other",
+    },
+    today,
+  );
 }

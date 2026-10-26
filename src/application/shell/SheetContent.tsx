@@ -28,7 +28,7 @@ import {
   ReconciliationForm,
 } from "../../features/accounts";
 import { BudgetForm } from "../../features/budgets";
-import { FundGoalForm, GoalForm } from "../../features/goals";
+import { FundGoalForm, GoalForm, WithdrawGoalForm } from "../../features/goals";
 import {
   PaymentContent,
   RecurringForm,
@@ -208,6 +208,14 @@ export const SheetContent = memo(function SheetContent({
       );
     case "goal":
       return <GoalForm id={sheet.id} close={returnToList ?? close} />;
+    case "withdrawGoal":
+      return (
+        <WithdrawGoalForm
+          id={sheet.id}
+          close={returnToList ?? close}
+          open={open}
+        />
+      );
     case "fund":
       return (
         <FundGoalForm id={sheet.id} close={returnToList ?? close} open={open} />

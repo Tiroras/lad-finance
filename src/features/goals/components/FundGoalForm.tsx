@@ -214,6 +214,13 @@ function FundGoalFormFields({
           новую мечту.
         </Notice>
       )}
+      {saved > 0 && (
+        <Button
+          label="Вывести из цели"
+          variant="secondary"
+          onPress={() => open({ type: "withdrawGoal", id: goal.id })}
+        />
+      )}
       <Button
         label="Изменить цель"
         variant="secondary"

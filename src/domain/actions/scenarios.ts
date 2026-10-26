@@ -1,4 +1,5 @@
 import { uid } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import {
   scenarioChangeCurrency,
   scenarioSchemaV8,
@@ -43,7 +44,7 @@ export function saveScenario(
       scenario.events.some(
         (row) => row.enabled !== undefined || row.accountId !== undefined,
       )
-        ? 8
+        ? promoteFinanceVersion(state.version, 8)
         : state.version,
     scenarios: input.id
       ? list.map((s) => (s.id === input.id ? scenario : s))
@@ -79,7 +80,7 @@ export function copyScenario(state: FinanceState, id: string): FinanceState {
   );
   return {
     ...state,
-    version: 8,
+    version: promoteFinanceVersion(state.version, 8),
     scenarios: [...(state.scenarios ?? []), copy],
   };
 }

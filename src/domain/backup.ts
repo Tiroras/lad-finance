@@ -448,6 +448,18 @@ const schemaV8 = schemaV7.extend({
   scenarios: z.array(scenarioSchemaV8).max(20).default([]),
 });
 
+const schemaV9 = schemaV8.extend({
+  version: z.literal(9),
+  goalReleases: z
+    .array(
+      schemaV7.shape.goalReleases.unwrap().element.extend({
+        cycleId: id.optional(),
+      }),
+    )
+    .max(5000)
+    .optional(),
+});
+
 export function decodeBackup(raw: string, today = localDate()): FinanceState {
   // Keep reading older snapshots whose limit was measured in UTF-16 characters.
   // Portable files and new ledgers use the UTF-8 byte limit below. Existing
@@ -509,6 +521,7 @@ export function validateBackupValue(
         );
       if (
         value.version !== 8 &&
+        value.version !== 9 &&
         (contains("transactions", ["valuation"]) ||
           scenarioFields ||
           (forecast &&
@@ -525,6 +538,7 @@ export function validateBackupValue(
       if (
         value.version !== 7 &&
         value.version !== 8 &&
+        value.version !== 9 &&
         (raw.goalFundCycles !== undefined ||
           raw.goalReleases !== undefined ||
           contains("goals", ["versions"]) ||
@@ -539,6 +553,7 @@ export function validateBackupValue(
         value.version !== 6 &&
         value.version !== 7 &&
         value.version !== 8 &&
+        value.version !== 9 &&
         (contains("recurring", ["versions"]) ||
           contains("plannedIncomes", [
             "versions",
@@ -557,14 +572,17 @@ export function validateBackupValue(
       (value.version === 5 ||
         value.version === 6 ||
         value.version === 7 ||
-        value.version === 8)
-        ? value.version === 8
-          ? schemaV8
-          : value.version === 7
-            ? schemaV7
-            : value.version === 6
-              ? schemaV6
-              : schemaV5
+        value.version === 8 ||
+        value.version === 9)
+        ? value.version === 9
+          ? schemaV9
+          : value.version === 8
+            ? schemaV8
+            : value.version === 7
+              ? schemaV7
+              : value.version === 6
+                ? schemaV6
+                : schemaV5
         : schema
     ).parse(value);
     if (state.transactions.some((entry) => entry.date > today))

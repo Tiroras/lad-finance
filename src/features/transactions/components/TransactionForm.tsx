@@ -55,6 +55,7 @@ import {
   createTransactionDraft,
   draftAccountCurrency,
   repeatTransaction,
+  selectTransactionAccount,
   selectRefund as selectRefundDraft,
   toggleTransactionSplits,
   transactionDraftAmounts,
@@ -149,6 +150,14 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
     refundSource,
   } = draft;
   const original = repeating ? undefined : sourceOriginal;
+  const withdrawal =
+    original &&
+    state.goalReleases?.find(
+      (release) =>
+        release.transferId === original.id && release.cycleId === undefined,
+    );
+  const withdrawalGoal =
+    withdrawal && state.goals.find((goal) => goal.id === withdrawal.goalId);
   const {
     sourceCurrency,
     targetCurrency,
@@ -243,6 +252,11 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
         account.id === toAccountId &&
         account.id !== accountId &&
         !account.archived,
+    );
+  const originalTargetArchived =
+    original?.toAccountId &&
+    state.accounts.some(
+      (account) => account.id === original.toAccountId && account.archived,
     );
   const {
     error: entryError,
@@ -575,7 +589,12 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
           для трат.
         </Notice>
       )}
-      {original?.goalId ? (
+      {withdrawalGoal ? (
+        <Notice>
+          Это вывод из цели «{withdrawalGoal.name}». Изменение суммы или
+          удаление операции пересчитает накопления цели и остатки счетов.
+        </Notice>
+      ) : original?.goalId ? (
         <Notice>
           Это пополнение цели «
           {state.goals.find((g) => g.id === original.goalId)?.name}». Изменения
@@ -663,14 +682,13 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
       <AccountPicker
         selected={accountId}
         onChange={(id) => {
-          patch({
-            accountId: id,
-            valuation: null,
-            valuationDate: undefined,
-            received: null,
-          });
+          setDraft((current) => selectTransactionAccount(state, current, id));
         }}
         spendingOnly={!!original?.goalId || type === "expense"}
+        savingsOnly={!!withdrawalGoal}
+        currency={
+          withdrawalGoal?.currency ?? (withdrawalGoal ? "RUB" : undefined)
+        }
         includeCredit={
           type === "expense" && !original?.goalId && !original?.debtId
         }
@@ -693,12 +711,25 @@ function TransactionFormFields({ sheet, close, open }: TransactionFormProps) {
             onSourceAmount={(refundSource) => patch({ refundSource })}
           />
         )}
-      {!validTarget && <AccountChoiceEmpty open={open} />}
+      {(!validTarget || originalTargetArchived) &&
+        (!originalTargetArchived &&
+        !original?.goalId &&
+        state.accounts.some(
+          (account) =>
+            !account.archived &&
+            account.id !== accountId &&
+            (!withdrawalGoal || account.kind === "spending"),
+        ) ? (
+          <Notice>Выберите другой активный счёт в поле «Куда».</Notice>
+        ) : (
+          <AccountChoiceEmpty open={open} />
+        ))}
       {type === "transfer" && !original?.goalId && (
         <AccountPicker
           label="Куда"
-          selected={toAccountId}
+          selected={toAccountId === accountId ? "" : toAccountId}
           exclude={accountId}
+          spendingOnly={!!withdrawalGoal}
           onChange={(id) => {
             patch({ toAccountId: id, received: null });
           }}

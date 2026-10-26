@@ -75,6 +75,7 @@ export function createTransactionDraft(
     toAccountId:
       original?.toAccountId ??
       state.accounts.find((a) => !a.archived && a.kind === "savings")?.id ??
+      state.accounts.find((a) => !a.archived && a.id !== accountId)?.id ??
       "",
     received:
       original?.type === "transfer"
@@ -111,6 +112,36 @@ export function createTransactionDraft(
                 ?.accountId,
             ),
           ),
+  };
+}
+
+/** A source selection must not leave the transfer pointing to itself. */
+export function selectTransactionAccount(
+  state: FinanceState,
+  draft: TransactionDraft,
+  accountId: string,
+): TransactionDraft {
+  const collision =
+    draft.type === "transfer" && draft.toAccountId === accountId;
+  const previousSource = state.accounts.find(
+    (account) =>
+      account.id === draft.accountId &&
+      !account.archived &&
+      account.id !== accountId,
+  );
+  return {
+    ...draft,
+    accountId,
+    toAccountId: collision
+      ? (previousSource?.id ??
+        state.accounts.find(
+          (account) => !account.archived && account.id !== accountId,
+        )?.id ??
+        "")
+      : draft.toAccountId,
+    received: null,
+    valuation: null,
+    valuationDate: undefined,
   };
 }
 

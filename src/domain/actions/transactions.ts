@@ -1,4 +1,4 @@
-import { validateGoalSchedules } from "../goals";
+import { goalSaved, validateGoalSchedules } from "../goals";
 import {
   assertGoalFundTransactionsUnchanged,
   validateGoalFunds,
@@ -15,6 +15,7 @@ import {
   MAX_MONEY,
 } from "../currency";
 import { localDate, uid, validateTransaction } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import type { FinanceState, Transaction } from "../types";
 import {
   isPosted,
@@ -149,15 +150,15 @@ export function appendTransaction(
   const next: FinanceState = {
     ...state,
     ...(valued.valuation !== undefined
-      ? { version: 8 as const }
+      ? { version: promoteFinanceVersion(state.version, 8) }
       : valued.goalVersionId !== undefined ||
           valued.goalOccurrenceDate !== undefined
-        ? { version: state.version >= 7 ? state.version : (7 as const) }
+        ? { version: promoteFinanceVersion(state.version, 7) }
         : valued.recurringVersionId !== undefined ||
             valued.incomeVersionId !== undefined
-          ? { version: state.version >= 6 ? state.version : (6 as const) }
+          ? { version: promoteFinanceVersion(state.version, 6) }
           : valued.status !== undefined || valued.expectedDate !== undefined
-            ? { version: state.version >= 5 ? state.version : (5 as const) }
+            ? { version: promoteFinanceVersion(state.version, 5) }
             : {}),
     transactions: [valued, ...state.transactions],
   };
@@ -229,25 +230,25 @@ export function appendTransactions(
   next = {
     ...next,
     ...([...added.values()].some((entry) => entry.valuation !== undefined)
-      ? { version: 8 as const }
+      ? { version: promoteFinanceVersion(next.version, 8) }
       : transactions.some(
             (entry) =>
               entry.goalVersionId !== undefined ||
               entry.goalOccurrenceDate !== undefined,
           )
-        ? { version: state.version >= 7 ? state.version : (7 as const) }
+        ? { version: promoteFinanceVersion(next.version, 7) }
         : transactions.some(
               (entry) =>
                 entry.recurringVersionId !== undefined ||
                 entry.incomeVersionId !== undefined,
             )
-          ? { version: state.version >= 6 ? state.version : (6 as const) }
+          ? { version: promoteFinanceVersion(next.version, 6) }
           : transactions.some(
                 (entry) =>
                   entry.status !== undefined ||
                   entry.expectedDate !== undefined,
               )
-            ? { version: state.version >= 5 ? state.version : (5 as const) }
+            ? { version: promoteFinanceVersion(next.version, 5) }
             : {}),
     transactions: [
       ...transactions.map((transaction) => added.get(transaction.id)!),
@@ -437,6 +438,19 @@ export function saveTransaction(
   );
   const withoutOriginal = {
     ...state,
+    ...(state.goalReleases
+      ? {
+          goalReleases: state.goalReleases.map((release) =>
+            release.transferId === original?.id && release.cycleId === undefined
+              ? {
+                  ...release,
+                  amount: transaction.amount,
+                  date: transaction.date,
+                }
+              : release,
+          ),
+        }
+      : {}),
     transactions: state.transactions.filter((t) => t.id !== original?.id),
   };
   const next = appendTransaction(
@@ -516,7 +530,9 @@ export function exchangeWithFee(
     },
     today,
   );
-  return next === state ? state : { ...next, version: 8 };
+  return next === state
+    ? state
+    : { ...next, version: promoteFinanceVersion(next.version, 8) };
 }
 
 export function deleteTransaction(
@@ -542,8 +558,26 @@ export function deleteTransaction(
   );
   const next = {
     ...state,
+    ...(state.goalReleases
+      ? {
+          goalReleases: state.goalReleases.filter(
+            (release) =>
+              release.transferId !== id || release.cycleId !== undefined,
+          ),
+        }
+      : {}),
     transactions: state.transactions.filter((t) => t.id !== id),
   };
+  const withdrawal = state.goalReleases?.find(
+    (release) => release.transferId === id && release.cycleId === undefined,
+  );
+  if (withdrawal) {
+    const goal = next.goals.find((entry) => entry.id === withdrawal.goalId)!;
+    ensure(
+      goalSaved(next, goal, today) <= goal.target,
+      "Удаление вернёт в цель больше её суммы. Сначала увеличьте сумму цели или исправьте последующие пополнения.",
+    );
+  }
   assertGoalFundTransactionsUnchanged(state, next);
   validateGoalSchedules(next);
   validateGoalFunds(next, today);
@@ -602,7 +636,7 @@ export function cancelPendingTransaction(
   );
   const next: FinanceState = {
     ...state,
-    version: state.version >= 5 ? state.version : 5,
+    version: promoteFinanceVersion(state.version, 5),
     transactions: state.transactions.map((entry) =>
       entry.id === id ? { ...entry, status: "cancelled" } : entry,
     ),

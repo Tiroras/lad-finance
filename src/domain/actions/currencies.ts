@@ -10,6 +10,7 @@ import {
   type ExchangeRate,
 } from "../currency";
 import { localDate, validDate } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import type { FinanceState } from "../types";
 import { checkAmount, checkCurrencyAmounts, ensure } from "./validation";
 
@@ -151,7 +152,7 @@ export function changeBaseCurrency(
   };
   const next: FinanceState = {
     ...state,
-    version: 8,
+    version: promoteFinanceVersion(state.version, 8),
     settings: {
       ...state.settings,
       baseCurrency: currency,

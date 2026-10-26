@@ -9,6 +9,7 @@ import {
   type BudgetVersion,
 } from "../budgets";
 import { localDate, shiftDate, validDate } from "../../shared/lib/dates";
+import { promoteFinanceVersion } from "../financeVersion";
 import type { FinanceState } from "../types";
 import { checkAmount, ensure } from "./validation";
 
@@ -186,7 +187,7 @@ export function scheduleBudgetTransition(
   };
   const next: FinanceState = {
     ...state,
-    version: state.version >= 6 ? state.version : 6,
+    version: promoteFinanceVersion(state.version, 6),
     budgetPlans: state.budgetPlans!.map((entry) =>
       entry === original
         ? { ...entry, versions: [...(entry.versions ?? []), version] }

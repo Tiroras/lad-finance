@@ -62,6 +62,7 @@ export function AppSheet({
     currencies: "Валюты и курсы",
     goal: id ? "Настроить цель" : "Новая мечта",
     fund: "Ближе к цели",
+    withdrawGoal: "Вывести из цели",
     recurring: id ? "Настроить платёж" : "Новый платёж",
     budget: "Бюджет категории",
     payment: "Запланированный платёж",

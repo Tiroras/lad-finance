@@ -1,5 +1,6 @@
 import { assertGoalFundPlansPreserved, validateGoalFunds } from "../goalFunds";
 import { accountCurrency } from "../currency";
+import { promoteFinanceVersion } from "../financeVersion";
 import { validateAccountArchives } from "../accountArchive";
 import {
   dateInMonth,
@@ -173,9 +174,7 @@ function finish(
 ) {
   const next: FinanceState = {
     ...state,
-    ...(promote
-      ? { version: state.version >= 6 ? state.version : (6 as const) }
-      : {}),
+    ...(promote ? { version: promoteFinanceVersion(state.version, 6) } : {}),
     recurring: state.recurring.some((entry) => entry.id === payment.id)
       ? state.recurring.map((entry) =>
           entry.id === payment.id ? payment : entry,

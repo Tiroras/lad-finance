@@ -1,6 +1,7 @@
 import type { CurrencyCode } from "../currency";
 import { currencyRate } from "../currency";
 import { createInitialState } from "../seed";
+import { promoteFinanceVersion } from "../financeVersion";
 import { canStartOnboarding } from "../onboarding";
 import type { FinanceState } from "../types";
 import { localDate, validDate } from "../../shared/lib/dates";
@@ -63,7 +64,7 @@ export function completeOnboarding(
   let next = createInitialState(false, today);
   next = {
     ...next,
-    version: state.version >= 5 ? state.version : next.version,
+    version: promoteFinanceVersion(state.version, next.version),
     accounts: next.accounts.map((a) => ({
       ...a,
       currency: input.currency,

@@ -15,6 +15,7 @@ export default defineConfig({
     "**/regular-payments.spec.ts",
     "**/list-previews.spec.ts",
     "**/goals-schedule.spec.ts",
+    "**/goal-withdrawals.spec.ts",
     "**/goals-debts.spec.ts",
     "**/annual-funds.spec.ts",
     "**/t06-*.spec.ts",

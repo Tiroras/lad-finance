@@ -113,7 +113,7 @@ export function dataCapacity(state: FinanceState): DataCapacity[] {
     ],
     [
       "goalReleases",
-      "освобождения фондов",
+      "возвраты из целей",
       state.goalReleases?.length ?? 0,
       500,
       "Сохраните копию. Новую историю можно вести в отдельном профиле.",

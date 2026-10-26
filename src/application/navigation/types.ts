@@ -47,7 +47,13 @@ export type SheetState =
   | { type: "onboarding"; startWithAccounts?: boolean }
   | { type: "debt" | "goal" | "category" | "scenario"; id?: string }
   | {
-      type: "reconcile" | "repayDebt" | "repayCredit" | "fund" | "budget";
+      type:
+        | "reconcile"
+        | "repayDebt"
+        | "repayCredit"
+        | "fund"
+        | "budget"
+        | "withdrawGoal";
       id: string;
     }
   | { type: "transaction"; id?: string; transactionType?: Transaction["type"] }

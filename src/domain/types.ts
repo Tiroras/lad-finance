@@ -139,7 +139,8 @@ export interface GoalFundCycle {
 export interface GoalRelease {
   id: string;
   goalId: string;
-  cycleId: string;
+  /** Absent for a standalone withdrawal from the goal (format 9). */
+  cycleId?: string;
   date: string;
   amount: number;
   transferId: string;
@@ -252,7 +253,7 @@ export interface ForecastTransfer {
 }
 
 export interface FinanceState {
-  version: 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  version: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   demo: boolean;
   accounts: Account[];
   transactions: Transaction[];

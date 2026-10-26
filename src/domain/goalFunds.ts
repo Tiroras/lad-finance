@@ -95,7 +95,7 @@ export function goalFundCoverage(
   };
 }
 
-/** Validate references and all three facts of a paid cycle together. */
+/** Validate goal withdrawals and all three facts of a paid annual cycle. */
 export function validateGoalFunds(state: FinanceState, today: string) {
   const cycles = state.goalFundCycles ?? [];
   const releases = state.goalReleases ?? [];
@@ -254,15 +254,19 @@ export function validateGoalFunds(state: FinanceState, today: string) {
     const payment = state.transactions.find(
       (entry) => entry.id === cycle?.paymentTransactionId,
     );
-    requireFund(
-      cycle?.status === "paid" && goal && cycle.goalId === goal.id,
-      "Освобождение должно принадлежать оплаченному циклу цели.",
-    );
+    requireFund(goal, "Цель возврата накоплений не найдена.");
+    if (release.cycleId !== undefined)
+      requireFund(
+        cycle?.status === "paid" && cycle.goalId === goal.id,
+        "Освобождение должно принадлежать оплаченному циклу цели.",
+      );
+    else requireFund(state.version >= 9, "Вывод из цели требует формат 9.");
     requireFund(
       Number.isSafeInteger(release.amount) &&
         release.amount > 0 &&
         validDate(release.date) &&
-        release.date === cycle.paidOn,
+        release.date <= today &&
+        (!cycle || release.date === cycle.paidOn),
       "Некорректные сумма или дата освобождения фонда.",
     );
     requireFund(
@@ -270,7 +274,7 @@ export function validateGoalFunds(state: FinanceState, today: string) {
         isPosted(transfer) &&
         transfer.type === "transfer" &&
         transfer.amount === release.amount &&
-        receivedAmount(transfer) === release.amount &&
+        (!cycle || receivedAmount(transfer) === release.amount) &&
         transfer.date === release.date &&
         !transfer.goalId &&
         !transfer.debtId &&
@@ -283,21 +287,22 @@ export function validateGoalFunds(state: FinanceState, today: string) {
         "savings" &&
         state.accounts.find((entry) => entry.id === transfer.toAccountId)
           ?.kind === "spending" &&
-        payment?.accountId === transfer.toAccountId &&
+        (!cycle || payment?.accountId === transfer.toAccountId) &&
         accountCurrency(state, transfer.accountId) ===
           (goal.currency ?? "RUB") &&
-        accountCurrency(state, transfer.toAccountId) ===
-          (goal.currency ?? "RUB"),
-      "Перевод фонда должен идти с накопительного на счёт оплаты в валюте цели.",
+        (!cycle ||
+          accountCurrency(state, transfer.toAccountId) ===
+            (goal.currency ?? "RUB")),
+      "Возврат из цели должен идти с накопительного счёта в валюте цели на повседневный счёт.",
     );
     requireFund(
       !transferIds.has(transfer.id),
-      "Один перевод освобождает несколько фондов.",
+      "Один перевод освобождает накопления нескольких целей.",
     );
     transferIds.add(transfer.id);
     requireFund(
       goalSaved(state, goal, release.date) >= 0,
-      "Освобождение фонда превышает накопленные средства цели.",
+      "Вывод превышает накопленные средства цели.",
     );
   }
   // Later edits must retain the backing of every recorded release. Validate
@@ -332,7 +337,9 @@ export function validateGoalFunds(state: FinanceState, today: string) {
         .reduce((sum, account) => sum + (balances.get(account.id) ?? 0), 0);
       requireFund(
         savings >= amount,
-        "Изменение оставляет оплату фонда без обеспеченных накоплений на дату возврата.",
+        releases.some((release) => release.cycleId && release.date === date)
+          ? "Изменение оставляет оплату фонда без обеспеченных накоплений на дату возврата."
+          : "Изменение оставляет цели без обеспеченных накоплений на дату возврата.",
       );
     }
     for (const release of releases.filter((entry) => entry.date === date)) {
@@ -341,15 +348,23 @@ export function validateGoalFunds(state: FinanceState, today: string) {
       )!.accountId;
       requireFund(
         (balances.get(source) ?? 0) >= 0,
-        "На дату возврата фонда недостаточно денег на накопительном счёте.",
+        "На дату возврата недостаточно денег на накопительном счёте.",
       );
     }
   }
-  for (const goal of state.goals)
+  for (const goal of state.goals) {
     requireFund(
       goalSaved(state, goal, today) >= 0,
-      "Освобождение фонда превышает накопленные средства цели.",
+      "Вывод превышает накопленные средства цели.",
     );
+    if (
+      releases.some((release) => release.goalId === goal.id && !release.cycleId)
+    )
+      requireFund(
+        goalSaved(state, goal, today) <= goal.target,
+        "Изменение возвращает в цель больше её суммы. Сначала увеличьте сумму цели или исправьте последующие пополнения.",
+      );
+  }
 }
 
 /** Ordinary edits may keep metadata but must not change or delete a linked fact. */
@@ -361,7 +376,9 @@ export function assertGoalFundTransactionsUnchanged(
     ...(before.goalFundCycles ?? []).flatMap((cycle) =>
       cycle.paymentTransactionId ? [cycle.paymentTransactionId] : [],
     ),
-    ...(before.goalReleases ?? []).map((release) => release.transferId),
+    ...(before.goalReleases ?? [])
+      .filter((release) => release.cycleId !== undefined)
+      .map((release) => release.transferId),
   ]);
   for (const id of ids) {
     const original = before.transactions.find((entry) => entry.id === id);

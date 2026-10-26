@@ -10,7 +10,7 @@ test.beforeAll(async () => {
   bundle = await bundleBrowserModule("tests/helpers/t07FxCases.ts");
 });
 for (const [suite, count] of Object.entries({
-  transactionDraft: 10,
+  transactionDraft: 12,
   transactionDraftChanges: 3,
   currency: 17,
 })) {

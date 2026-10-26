@@ -104,6 +104,14 @@ export function GoalCard({ goal, open }: { goal: Goal; open: OpenSheet }) {
         icon="add"
         onPress={() => open({ type: "fund", id: goal.id })}
       />
+      {saved > 0 && (
+        <Button
+          label="Вывести из цели"
+          variant="secondary"
+          icon="arrow-down-outline"
+          onPress={() => open({ type: "withdrawGoal", id: goal.id })}
+        />
+      )}
     </Card>
   );
 }

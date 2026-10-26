@@ -55,6 +55,11 @@ export function transactionStatusError(
 /** Old readers must reject new semantics, rather than silently post a pending row. */
 export function assertFinanceVersion(state: FinanceState) {
   if (
+    state.version < 9 &&
+    state.goalReleases?.some((release) => release.cycleId === undefined)
+  )
+    throw new Error("Вывод денег из цели требует финансовый формат версии 9.");
+  if (
     state.version < 8 &&
     (hasAccountForecast(state.settings.forecast) ||
       state.transactions.some((entry) => entry.valuation !== undefined) ||

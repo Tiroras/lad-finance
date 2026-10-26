@@ -106,6 +106,8 @@ export function useFinanceActions() {
         input: Parameters<typeof actions.payFundedPayment>[1],
       ) => update((s) => actions.payFundedPayment(s, input, today)),
       deleteGoal: (id: string) => update((s) => actions.deleteGoal(s, id)),
+      withdrawGoal: (input: actions.GoalWithdrawalInput) =>
+        update((s) => actions.withdrawGoal(s, input, today)),
       fundGoal: (input: {
         goalId: string;
         amount: number;

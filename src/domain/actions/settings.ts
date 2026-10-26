@@ -1,5 +1,6 @@
 import { budgetTermsAt } from "../budgets";
 import { localDate } from "../finance";
+import { promoteFinanceVersion } from "../financeVersion";
 import { DEFAULT_REMINDERS } from "../reminders";
 import { createInitialState } from "../seed";
 import { decodeBackup, encodeBackup } from "../backup";
@@ -78,7 +79,9 @@ export function saveForecastPreferences(
   validateAccountForecast(state, preferences);
   return {
     ...state,
-    version: hasAccountForecast(preferences) ? 8 : state.version,
+    version: hasAccountForecast(preferences)
+      ? promoteFinanceVersion(state.version, 8)
+      : state.version,
     settings: { ...state.settings, forecast: preferences },
   };
 }
@@ -107,7 +110,7 @@ export function resetFinance(
   const next = createInitialState(demo, today);
   return {
     ...next,
-    version: state.version >= 5 ? state.version : next.version,
+    version: promoteFinanceVersion(state.version, next.version),
     settings: { ...next.settings, name: state.settings.name },
   };
 }

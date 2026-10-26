@@ -1,4 +1,5 @@
 import { accountArchiveBlockers } from "../accountArchive";
+import { promoteFinanceVersion } from "../financeVersion";
 import type { FinanceState } from "../types";
 import { ensure } from "./validation";
 
@@ -14,7 +15,7 @@ export function archiveAccount(
   ensure(!blocker, blocker?.message ?? "Счёт пока нельзя архивировать.");
   return {
     ...state,
-    version: state.version >= 5 ? state.version : 5,
+    version: promoteFinanceVersion(state.version, 5),
     accounts: state.accounts.map((entry) =>
       entry.id === id ? { ...entry, archived: true } : entry,
     ),
@@ -27,7 +28,7 @@ export function restoreAccount(state: FinanceState, id: string): FinanceState {
   if (!account.archived) return state;
   return {
     ...state,
-    version: state.version >= 5 ? state.version : 5,
+    version: promoteFinanceVersion(state.version, 5),
     accounts: state.accounts.map((entry) =>
       entry.id === id ? { ...entry, archived: false } : entry,
     ),
