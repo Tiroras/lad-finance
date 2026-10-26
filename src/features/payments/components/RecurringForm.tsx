@@ -23,7 +23,6 @@ import {
   Button,
   Field,
   Notice,
-  Segments,
   DeleteButton,
   ErrorText,
   AmountField,
@@ -35,13 +34,11 @@ import { CategoryPicker } from "../../categories";
 function RecurringFormFields({
   id,
   sourceTransactionId,
-  defaultKind,
   close,
   open,
 }: {
   id?: string;
   sourceTransactionId?: string;
-  defaultKind?: "bill" | "subscription";
   close: () => void;
   open: OpenSheet;
 }) {
@@ -66,9 +63,6 @@ function RecurringFormFields({
   );
   const [day, setDay] = useState(
     String(original?.day ?? (source ? Number(source.date.slice(-2)) : 15)),
-  );
-  const [kind, setKind] = useState<"bill" | "subscription">(
-    original?.kind ?? defaultKind ?? "subscription",
   );
   const [category, setCategory] = useState<CategoryId>(
     original?.category ??
@@ -105,7 +99,6 @@ function RecurringFormFields({
         name,
         amount: parsed,
         day: Number(day),
-        kind,
         category,
         accountId,
         startsOn,
@@ -126,17 +119,6 @@ function RecurringFormFields({
       : undefined;
   return (
     <>
-      <Segments
-        value={kind}
-        onChange={(value) => {
-          setKind(value);
-          setProposed(null);
-        }}
-        options={[
-          { value: "subscription", label: "Подписка" },
-          { value: "bill", label: "Обязательный платёж" },
-        ]}
-      />
       <Field
         label="Название"
         accessibilityLabel="Название платежа"
@@ -275,7 +257,7 @@ function RecurringFormFields({
       {original && (
         <DeleteButton
           label="Удалить из плана"
-          explanation="Платёж исчезнет из прогноза. Записанные расходы останутся в истории. Подписка в самом сервисе продолжит действовать."
+          explanation="Платёж исчезнет из прогноза. Записанные расходы останутся в истории. Реальные списания у поставщика продолжат действовать."
           onDelete={() =>
             run(() => {
               actions.deleteRecurring(original.id);

@@ -45,7 +45,6 @@ export type SheetState =
       type: "recurring";
       id?: string;
       sourceTransactionId?: string;
-      kind?: "bill" | "subscription";
     }
   | { type: "income"; id?: string; date?: string; versionId?: string }
   | { type: "payment"; id: string; date: string; versionId?: string };

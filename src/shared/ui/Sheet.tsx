@@ -114,6 +114,17 @@ export function Sheet({
     height,
     onClose: requestClose,
   });
+  const sheetStyle = [
+    s.sheet,
+    {
+      maxHeight: height - Math.max(insets.top, 24),
+      paddingBottom: Math.max(insets.bottom, 20),
+    },
+    width > 700 && {
+      borderRadius: 28,
+      maxHeight: Math.min(860, height - 64),
+    },
+  ];
   return (
     <Modal
       transparent
@@ -162,19 +173,15 @@ export function Sheet({
           />
         </Animated.View>
         <Animated.View
-          testID="sheet"
-          accessibilityViewIsModal
+          testID={blocked ? undefined : "sheet"}
+          accessibilityViewIsModal={!blocked}
+          pointerEvents={blocked ? "none" : "auto"}
+          aria-hidden={blocked}
+          importantForAccessibility={blocked ? "no-hide-descendants" : "auto"}
           style={[
-            s.sheet,
-            {
-              maxHeight: height - Math.max(insets.top, 24),
-              paddingBottom: Math.max(insets.bottom, 20),
-              transform: [{ translateY }],
-            },
-            width > 700 && {
-              borderRadius: 28,
-              maxHeight: Math.min(860, height - 64),
-            },
+            sheetStyle,
+            { transform: [{ translateY }] },
+            blocked && { display: "none" },
           ]}
         >
           <TourFrame
@@ -189,7 +196,6 @@ export function Sheet({
           >
             {({ coach, onScroll, onLayout }) => (
               <>
-                {!!cover && cover}
                 <View
                   {...panHandlers}
                   testID="sheet-drag-area"
@@ -298,6 +304,19 @@ export function Sheet({
             )}
           </TourFrame>
         </Animated.View>
+        {!!cover && (
+          // Keep confirmations and the lock outside the native drag transform.
+          // Their layout and removal must not depend on animation completion;
+          // the hidden form stays mounted so cancelling preserves its draft.
+          <View
+            testID="sheet"
+            collapsable={false}
+            accessibilityViewIsModal
+            style={sheetStyle}
+          >
+            {cover}
+          </View>
+        )}
       </KeyboardAvoidingView>
     </Modal>
   );

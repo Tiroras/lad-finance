@@ -115,7 +115,6 @@ export function completeOnboarding(
         name: input.billName,
         amount: input.billAmount,
         day: Number(input.billDate.slice(-2)),
-        kind: "bill",
         category: "home",
         accountId: "card",
         startsOn: input.billDate,

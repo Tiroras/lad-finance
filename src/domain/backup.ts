@@ -148,7 +148,7 @@ const schema = z.object({
         name,
         amount: positiveAmount,
         day,
-        kind: z.enum(["bill", "subscription"]),
+        kind: z.enum(["bill", "subscription"]).optional(),
         active: z.boolean(),
         icon,
         color,

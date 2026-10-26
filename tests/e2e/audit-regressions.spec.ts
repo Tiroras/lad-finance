@@ -86,7 +86,6 @@ test("payment linking excludes debt principal and records no second expense", as
       name: "Интернет",
       amount: 5_000,
       day: 10,
-      kind: "bill",
       category: "home",
       accountId: "card",
       startsOn: TODAY,

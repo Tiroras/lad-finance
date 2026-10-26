@@ -52,7 +52,7 @@ test("browser assertion adapter rejects unequal financial records", async ({
 for (const [suite, count] of Object.entries({
   actions: 11,
   recurrence: 10,
-  payments: 7,
+  payments: 9,
   forecast: 10,
   spendable: 12,
   budgets: 14,

@@ -117,7 +117,7 @@ for (const width of [320, 390, 1440]) {
     await page.screenshot({
       path: info.outputPath(`delete-profile-${width}.png`),
     });
-    await button(page, "Отмена удаления").click();
+    await button(page, "Отмена").click();
     expect(await data(page)).toEqual(before);
     await expect(button(page, `Удалить профиль: ${otherName}`)).toBeVisible();
     await button(page, "Удалить все профили и данные").click();
@@ -128,7 +128,7 @@ for (const width of [320, 390, 1440]) {
       page.getByText(/Ранее экспортированные файлы останутся у вас/),
     ).toBeVisible();
     await page.screenshot({ path: info.outputPath(`delete-all-${width}.png`) });
-    await button(page, "Отмена удаления").click();
+    await button(page, "Отмена").click();
     expect(await data(page)).toEqual(before);
     await expect(button(page, `Удалить профиль: ${otherName}`)).toBeVisible();
     await button(page, "Назад").click();
@@ -225,9 +225,7 @@ test("deleting the last profile returns welcome without an automatic replacement
   await start(page, "personal", true);
   await openProfiles(page);
   await button(page, "Удалить профиль: Личный").click();
-  await expect(
-    page.getByText(/После удаления последнего профиля/),
-  ).toBeVisible();
+  await expect(page.getByText(/Все данные профиля «Личный»/)).toBeVisible();
   await confirm(page, false);
   await expect(welcome(page)).toBeVisible();
   const remaining = await data(page);

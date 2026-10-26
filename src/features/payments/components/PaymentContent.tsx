@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
+import { categoryLabel } from "../../../domain/categories";
 import { goalFundCycleForPayment } from "../../../domain/goalFunds";
 import { AnnualFundPanel } from "./AnnualFundPanel";
 import { dateLabel, uid } from "../../../domain/finance";
@@ -77,6 +78,9 @@ export function PaymentContent({
         <IconTile name={payment.icon} background={payment.color} size={64} />
         <Txt style={{ fontSize: 21, fontFamily: font.bold }}>
           {payment.name}
+        </Txt>
+        <Txt style={{ fontSize: 12, color: C.muted }}>
+          {categoryLabel(state, payment.category)}
         </Txt>
         <Txt style={{ fontSize: 37, fontFamily: font.semibold }}>
           {money(

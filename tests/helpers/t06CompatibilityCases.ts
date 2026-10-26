@@ -427,7 +427,6 @@ export const t06CompatibilityCases: readonly Case[] = [
           name: "Связь",
           amount: 1_000,
           day: 19,
-          kind: "bill",
           category: "home",
           accountId: "card",
           startsOn: "2026-10-01",

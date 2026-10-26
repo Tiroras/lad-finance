@@ -208,7 +208,6 @@ export const SheetContent = memo(function SheetContent({
           open={open}
           id={sheet.id}
           sourceTransactionId={sheet.sourceTransactionId}
-          defaultKind={sheet.kind}
           close={returnToGuide ?? close}
         />
       );

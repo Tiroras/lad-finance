@@ -3,7 +3,6 @@ import type { FinanceProfile } from "../../../domain/profiles";
 import { useFinance, useFinanceStatus } from "../../../state/finance";
 import {
   Button,
-  Card,
   ErrorText,
   Field,
   Notice,
@@ -27,7 +26,6 @@ export function DeleteDataConfirmation({
   const target = profiles.find((profile) => profile.id === profileId);
   const all = profileId === undefined;
   const blocked = financeWriteBlocked || busy;
-  const last = !all && profiles.filter((p) => p.id !== "demo").length === 1;
   const remove = async () => {
     if (blocked || running.current || confirmation.trim() !== "УДАЛИТЬ") return;
     running.current = true;
@@ -69,15 +67,6 @@ export function DeleteDataConfirmation({
           : `Если данные нужны, сначала откройте профиль «${target?.name ?? "не найден"}» и сохраните его резервную копию в разделе «Данные и копии».`}{" "}
         Ранее экспортированные файлы останутся у вас — приложение их не удаляет.
       </Txt>
-      {(all || last) && (
-        <Card>
-          <Txt style={{ lineHeight: 22 }}>
-            {all ? "После сброса" : "После удаления последнего профиля"}{" "}
-            откроется «Добро пожаловать в Лад». Можно будет заново пройти
-            настройку и обучение.
-          </Txt>
-        </Card>
-      )}
       <Field
         label="Для подтверждения введите УДАЛИТЬ"
         accessibilityLabel="Для подтверждения введите УДАЛИТЬ"
@@ -103,7 +92,7 @@ export function DeleteDataConfirmation({
         onPress={() => void remove()}
       />
       <Button
-        label="Отмена удаления"
+        label="Отмена"
         variant="secondary"
         disabled={busy}
         onPress={cancel}

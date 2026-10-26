@@ -150,7 +150,8 @@ export interface Recurring {
   name: string;
   amount: number;
   day: number;
-  kind: "bill" | "subscription";
+  /** Legacy metadata retained for backup compatibility; all payments share one model. */
+  kind?: "bill" | "subscription";
   active: boolean;
   icon: IconName;
   color: string;

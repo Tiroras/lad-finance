@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { accountCurrency } from "../../../domain/currency";
+import { categoryLabel } from "../../../domain/categories";
 import type { Recurring } from "../../../domain/types";
 import { goalFundCycleForPayment } from "../../../domain/goalFunds";
 import { scheduleLabel } from "../../../domain/recurrence";
@@ -78,6 +79,7 @@ export function RecurringPaymentCard({
           <View style={{ flex: 1, gap: 5 }}>
             <Txt style={{ fontFamily: font.bold, fontSize: 13 }}>{p.name}</Txt>
             <Txt style={{ color: C.muted, fontSize: 10 }}>
+              {categoryLabel(state, p.category)} ·{" "}
               {p.active
                 ? p.schedule
                   ? scheduleLabel(p.schedule)

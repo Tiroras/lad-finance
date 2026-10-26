@@ -131,6 +131,64 @@ test("dragging a filled transaction asks before discarding and restores the shee
 });
 
 for (const width of [320, 390, 1440]) {
+  test(`income swipe confirmation disappears after either action at ${width}px`, async ({
+    page,
+  }, testInfo) => {
+    const initial = fixture();
+    await page.setViewportSize({ width, height: 900 });
+    await startApp(page, TODAY, initial);
+    await button(page, "Добавить операцию").tap();
+    await page.getByRole("tab", { name: "Доход", exact: true }).tap();
+    await expect(
+      page.getByRole("tab", { name: "Проведена", exact: true }),
+    ).toHaveAttribute("aria-selected", "true");
+    const amount = page.getByLabel("Сумма операции", { exact: true });
+    const title = page.getByLabel("Название операции", { exact: true });
+    await amount.fill("1234");
+    await title.fill("Доход для проверки свайпа");
+    const confirmation = page.getByRole("heading", {
+      name: "Сбросить изменения?",
+      exact: true,
+    });
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const release = await touchDrag(page, await handlePosition(page), {
+        x: 0,
+        y: 180,
+      });
+      await release();
+      await expect(confirmation).toBeVisible();
+      await expect(title).not.toBeVisible();
+      if (attempt === 0)
+        await page.screenshot({
+          path: testInfo.outputPath("income-confirmation.png"),
+          animations: "disabled",
+        });
+      await button(page, "Продолжить ввод").tap();
+      await expect(confirmation).toHaveCount(0);
+      await expect(title).toHaveValue("Доход для проверки свайпа");
+      await expect(amount).toHaveValue("1 234");
+    }
+    await page.screenshot({
+      path: testInfo.outputPath("income-resumed.png"),
+      animations: "disabled",
+    });
+    const release = await touchDrag(page, await handlePosition(page), {
+      x: 0,
+      y: 180,
+    });
+    await release();
+    await button(page, "Сбросить и закрыть").tap();
+    await expect(confirmation).toHaveCount(0);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(await readState(page)).toEqual(initial);
+    await button(page, "Добавить операцию").tap();
+    await expect(title).toHaveValue("");
+    await expect(amount).toHaveValue("");
+    await expect(button(page, "Восстановить черновик операции")).toHaveCount(0);
+    await button(page, "Закрыть").tap();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  });
+
   test(`touch dragging the payment handle dismisses the sheet at ${width}px`, async ({
     page,
   }, testInfo) => {

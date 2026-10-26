@@ -113,7 +113,11 @@ export function useSheetDrag({
             Keyboard.dismiss();
             if (current.current.onClose() === false) {
               dismissing.current = false;
-              restore();
+              // A confirmation has replaced the form. Do not start another
+              // native animation while React hides its original touch surface.
+              moving.current = false;
+              translateY.stopAnimation();
+              translateY.setValue(0);
             }
           }
         });

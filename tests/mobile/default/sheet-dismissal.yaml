@@ -1,0 +1,62 @@
+# Режим default, изолированный профиль с завершённой настройкой и RUB-счётом.
+# Подготовка и ожидаемый результат: ../plans/sheet-dismissal.md.
+appId: app.lad.finance
+name: Закрытие подтверждения после свайпа формы дохода
+---
+- launchApp
+- tapOn: Добавить операцию
+- assertVisible: Проведена
+- tapOn: Доход
+- tapOn: Сумма операции
+- inputText: "1234"
+- tapOn: Название операции
+- inputText: Swipe-Income
+# Первый жест выполняется с открытой клавиатурой.
+- swipe:
+    from:
+      id: sheet-drag-area
+    direction: DOWN
+    duration: 300
+- assertVisible: Сбросить изменения[?]
+- takeScreenshot: test-results/mobile/sheet-dismissal/confirmation
+- tapOn:
+    text: Продолжить ввод
+    retryTapIfNoChange: false
+- assertNotVisible: Сбросить изменения[?]
+- assertVisible: Swipe-Income
+- assertVisible: "1 234"
+- takeScreenshot: test-results/mobile/sheet-dismissal/resumed
+# Повторный жест после восстановления формы, уже без клавиатуры.
+- swipe:
+    from:
+      id: sheet-drag-area
+    direction: DOWN
+    duration: 600
+- assertVisible: Сбросить изменения[?]
+- tapOn:
+    text: Продолжить ввод
+    retryTapIfNoChange: false
+- assertNotVisible: Сбросить изменения[?]
+- assertVisible: Swipe-Income
+- assertVisible: "1 234"
+- swipe:
+    from:
+      id: sheet-drag-area
+    direction: DOWN
+    duration: 300
+- assertVisible: Сбросить изменения[?]
+- tapOn:
+    text: Сбросить и закрыть
+    retryTapIfNoChange: false
+- assertNotVisible: Сбросить изменения[?]
+- assertNotVisible: Новая операция
+- assertVisible: Обзор
+- takeScreenshot: test-results/mobile/sheet-dismissal/closed
+- tapOn: Добавить операцию
+- assertVisible: Проведена
+- assertNotVisible: Swipe-Income
+- assertNotVisible: "1 234"
+- assertNotVisible: Восстановить черновик операции
+- tapOn: Закрыть
+- assertNotVisible: Сбросить изменения[?]
+- assertNotVisible: Новая операция

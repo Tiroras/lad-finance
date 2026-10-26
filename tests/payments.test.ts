@@ -10,6 +10,8 @@ import {
   upcoming,
 } from "../src/domain/finance";
 import { reminderPlan } from "../src/domain/reminders";
+import { payRecurring, saveRecurring } from "../src/domain/actions/recurring";
+import { accountBalance } from "../src/domain/accountBalances";
 
 const TODAY = "2026-09-10";
 function fixture() {
@@ -38,6 +40,75 @@ function fixture() {
   ];
   return state;
 }
+test("new regular payments retain their category, schedule and payment history without a legacy kind", () => {
+  const initial = fixture();
+  const before = structuredClone(initial);
+  const planned = saveRecurring(
+    initial,
+    {
+      name: "Занятия",
+      amount: 20_000,
+      day: 15,
+      category: "health",
+      accountId: "card",
+      startsOn: TODAY,
+    },
+    TODAY,
+  );
+  const payment = planned.recurring.at(-1)!;
+  assert.equal(Object.hasOwn(payment, "kind"), false);
+  assert.deepEqual(initial, before);
+  assert.deepEqual(planned.transactions, initial.transactions);
+  const restored = decodeBackup(encodeBackup(planned), TODAY);
+  assert.deepEqual(restored.recurring, planned.recurring);
+  assert.equal(
+    upcoming(restored, TODAY).find((entry) => entry.payment.id === payment.id)
+      ?.date,
+    "2026-09-15",
+  );
+  const paid = payRecurring(restored, payment.id, "2026-09-15", TODAY);
+  assert.equal(paid.transactions[0].category, "health");
+  assert.equal(paid.transactions[0].recurringId, payment.id);
+  assert.equal(accountBalance(paid, "card", TODAY), 980_000);
+  assert.equal(payRecurring(paid, payment.id, "2026-09-15", TODAY), paid);
+  assert.deepEqual(
+    decodeBackup(encodeBackup(paid), TODAY),
+    JSON.parse(encodeBackup(paid)),
+  );
+});
+
+test("backups 1–8 retain both legacy payment kinds alongside unified payments", () => {
+  const initial = fixture();
+  initial.recurring.push(
+    {
+      ...initial.recurring[0],
+      id: "old-subscription",
+      name: "Музыка",
+      category: "fun",
+      kind: "subscription",
+    },
+    {
+      ...initial.recurring[0],
+      id: "unified",
+      name: "Занятия",
+      category: "health",
+      kind: undefined,
+    },
+  );
+  const json = encodeBackup(initial);
+  for (const version of [1, 2, 3, 4, 5, 6, 7, 8]) {
+    const restored = decodeBackup(
+      JSON.stringify({ ...initial, version }),
+      TODAY,
+    );
+    assert.equal(restored.version, Math.max(4, version));
+    assert.deepEqual(restored.recurring, JSON.parse(json).recurring);
+    assert.equal(spendable(restored, TODAY).available, 550_000);
+    assert.deepEqual(decodeBackup(encodeBackup(restored), TODAY), restored);
+  }
+  assert.equal(encodeBackup(initial), json);
+});
+
 test("unpaid months remain reserved after their due date and across month boundaries", () => {
   const state = fixture();
   assert.deepEqual(

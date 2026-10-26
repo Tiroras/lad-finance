@@ -76,7 +76,6 @@ function input(
     name: payment.name,
     amount: payment.amount,
     day: payment.day,
-    kind: payment.kind,
     category: payment.category,
     accountId: payment.accountId,
     startsOn: payment.startsOn,

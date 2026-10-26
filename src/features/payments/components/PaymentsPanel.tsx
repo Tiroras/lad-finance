@@ -4,17 +4,17 @@ import type { OpenSheet } from "../../../application/navigation/types";
 import { useFinance } from "../../../state/finance";
 import { Empty, Notice, Section } from "../../../shared/ui";
 import { RecurringPaymentCard } from "./RecurringPaymentCard";
-import { SubscriptionSummary } from "./SubscriptionSummary";
+import { PaymentsSummary } from "./PaymentsSummary";
 import { shiftDate } from "../../../shared/lib/dates";
 import { upcoming } from "../../../domain/payments";
 
 export function PaymentsPanel({ open }: { open: OpenSheet }) {
   const { state, today } = useFinance();
-  const subscriptions = upcoming(state, today, shiftDate(today, 365)).filter(
-    (o) => o.payment.kind === "subscription" && !o.paid && !o.skipped,
+  const payments = upcoming(state, today, shiftDate(today, 365)).filter(
+    (o) => !o.paid && !o.skipped,
   );
   const sum = (days: number) =>
-    subscriptions
+    payments
       .filter((o) => o.date < shiftDate(today, days))
       .reduce(
         (total, { payment }) =>
@@ -24,7 +24,7 @@ export function PaymentsPanel({ open }: { open: OpenSheet }) {
   return (
     <>
       <PaymentAgenda open={open} />
-      <SubscriptionSummary monthly={sum(30)} yearly={sum(365)} />
+      <PaymentsSummary monthly={sum(30)} yearly={sum(365)} />
       <Section
         title="Регулярные платежи"
         action="Добавить"
@@ -34,7 +34,7 @@ export function PaymentsPanel({ open }: { open: OpenSheet }) {
         Остановка прекращает новые обязательства с завтрашнего дня. Уже
         возникшие платежи сохраняются до оплаты или отдельного пропуска.
         Возобновление действует с сегодняшнего дня и не заполняет паузу.
-        Отменить реальную подписку нужно в самом сервисе.
+        Реальные списания нужно отменять у поставщика.
       </Notice>
       {state.recurring.length ? (
         state.recurring.map((p) => (

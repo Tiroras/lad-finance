@@ -37,7 +37,6 @@ export type RecurringInput = Pick<
   | "name"
   | "amount"
   | "day"
-  | "kind"
   | "category"
   | "accountId"
   | "startsOn"
@@ -237,14 +236,12 @@ export function saveRecurring(
     ),
     "Выберите повседневный счёт.",
   );
-  ensure(
-    state.categories.some(
-      (category) =>
-        category.id === input.category &&
-        (!category.archived || original?.category === category.id),
-    ),
-    "Выберите активную категорию.",
+  const category = state.categories.find(
+    (entry) =>
+      entry.id === input.category &&
+      (!entry.archived || original?.category === entry.id),
   );
+  ensure(category, "Выберите активную категорию.");
   if (!original) {
     ensure(
       !input.schedule ||
@@ -260,8 +257,8 @@ export function saveRecurring(
         id: uid(),
         name: input.name.trim(),
         active: true,
-        icon: input.kind === "bill" ? "home-outline" : "musical-notes-outline",
-        color: "#EEEBF5",
+        icon: category.icon,
+        color: category.background,
       },
       today,
       false,
@@ -306,7 +303,6 @@ export function saveRecurring(
       {
         ...original,
         name: input.name.trim(),
-        kind: input.kind,
         ...(original.versions
           ? {
               versions: original.versions.map((version) =>
@@ -352,7 +348,6 @@ export function saveRecurring(
     {
       ...original,
       name: input.name.trim(),
-      kind: input.kind,
       amount: input.amount,
       day: input.day,
       accountId: input.accountId,
