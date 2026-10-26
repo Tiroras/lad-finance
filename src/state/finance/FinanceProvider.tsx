@@ -16,6 +16,7 @@ import {
   addProfile,
   createDefaultProfiles,
   renameProfile as renameProfileEntry,
+  type DataDeletionRequest,
   type LedgerProfile,
 } from "../../domain/profiles";
 import { getLedgerStorage } from "../../infrastructure/storage/ledgerStorage";
@@ -107,6 +108,7 @@ interface StatusValue extends ImportControllerView {
   switchProfile: (profile: FinanceProfile) => Promise<FinanceState>;
   createProfile: (name: string) => Promise<FinanceState>;
   renameProfile: (profile: FinanceProfile, name: string) => Promise<void>;
+  deleteData: (request: DataDeletionRequest) => Promise<void>;
   canRecover: boolean;
   loadError: string;
   saveError: boolean;
@@ -171,7 +173,13 @@ async function savedRecoveryAllowance(
   return source.status === "readable" ? source.recovery?.allowance : undefined;
 }
 
-export function FinanceProvider({ children }: { children: ReactNode }) {
+export function FinanceProvider({
+  children,
+  onDeleteData,
+}: {
+  children: ReactNode;
+  onDeleteData: (request: DataDeletionRequest) => void;
+}) {
   const [profile, setProfile] = useState<FinanceProfile>("personal");
   const [catalog, setCatalog] = useState(createDefaultProfiles);
   const catalogRef = useRef(catalog);
@@ -479,7 +487,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       setCatalogRecovery(false);
       catalogRef.current = entries;
       setCatalog(entries);
-      if (!(await hasStoredProfiles())) {
+      if (entries.length === 0 || !(await hasStoredProfiles())) {
         // A fresh installation stays read-only until the welcome flow is finished.
         loaded.current = false;
         setReady(false);
@@ -887,7 +895,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     try {
       // Read again on retry: a previous attempt may have saved the ledger but
       // failed to save metadata. Never replace that ledger or an existing registry.
-      const entries = await readProfiles();
+      const savedEntries = await readProfiles();
+      const entries = savedEntries.length
+        ? savedEntries
+        : createDefaultProfiles();
       const storage = getLedgerStorage("personal");
       const saved = await storage.load();
       if (saved) assertProfileState(saved, "personal");
@@ -1007,6 +1018,37 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     },
     [imports],
   );
+  const deleteData = useCallback(
+    async (request: DataDeletionRequest) => {
+      if (imports.hasPending()) throw new Error(pendingImportMessage);
+      if (!loaded.current || operation.current)
+        throw new Error("Дождитесь открытия профиля и повторите попытку.");
+      if (
+        request.type === "profile" &&
+        request.profile !== "demo" &&
+        !catalogRef.current.some((entry) => entry.id === request.profile)
+      )
+        throw new Error("Профиль не найден. Откройте список заново.");
+      operation.current = true;
+      setSwitching(true);
+      try {
+        if (
+          request.type === "profile" &&
+          request.profile !== profileRef.current
+        )
+          await flushCurrentProfile();
+        else await queue.flush();
+        // The application unmounts every writer before touching storage. Keep
+        // this provider locked until it is discarded, including async callbacks.
+        onDeleteData(request);
+      } catch (failure) {
+        operation.current = false;
+        setSwitching(false);
+        throw failure;
+      }
+    },
+    [imports, flushCurrentProfile, queue, onDeleteData],
+  );
   useEffect(() => {
     if (
       ready &&
@@ -1057,7 +1099,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     [catalog],
   );
   const activeProfile =
-    profiles.find((entry) => entry.id === profile) ?? profiles[0];
+    profiles.find((entry) => entry.id === profile) ??
+    profiles[0] ??
+    createDefaultProfiles()[0];
   const value = useMemo(
     () => ({ profile, profiles, activeProfile, state, today, update, notify }),
     [profile, profiles, activeProfile, state, today, update, notify],
@@ -1078,6 +1122,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       switchProfile,
       createProfile,
       renameProfile,
+      deleteData,
       canRecover,
       loadError,
       saveError,
@@ -1106,6 +1151,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       switchProfile,
       createProfile,
       renameProfile,
+      deleteData,
       canRecover,
       loadError,
       saveError,

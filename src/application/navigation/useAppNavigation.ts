@@ -64,11 +64,11 @@ export function useAppNavigation() {
   }, [locked]);
   useEffect(() => {
     const continueSetup =
-      previousProfile.current === "demo" && profile === "personal";
+      previousProfile.current === "demo" && profile !== "demo";
     previousProfile.current = profile;
     navigate("home");
     Keyboard.dismiss();
-    // The setup wizard intentionally continues after opening the personal profile.
+    // Setup continues in the first user profile, even after personal was deleted.
     setSheets((current) =>
       continueSetup && current.current?.type === "onboarding"
         ? current

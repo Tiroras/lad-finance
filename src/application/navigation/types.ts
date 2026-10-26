@@ -1,6 +1,7 @@
 import type { Transaction } from "../../domain/types";
 import type { CurrencyCode } from "../../domain/currency";
 import type { LessonId } from "../../features/settings";
+import type { FinanceProfile } from "../../domain/profiles";
 
 export type Tab = "home" | "transactions" | "plan" | "analytics";
 type SimpleSheetName =
@@ -25,6 +26,7 @@ type SimpleSheetName =
 export type SheetState =
   | { type: SimpleSheetName }
   | { type: "importResult"; id?: string }
+  | { type: "deleteData"; profileId?: FinanceProfile }
   | { type: "guide"; journey?: boolean; lesson?: LessonId }
   | { type: "onboarding"; startWithAccounts?: boolean }
   | { type: "debt" | "goal" | "category" | "scenario"; id?: string }

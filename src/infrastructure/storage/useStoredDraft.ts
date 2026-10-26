@@ -13,6 +13,13 @@ const serial = (value: unknown) => JSON.stringify(checkedDraftPayload(value));
 const failureText = (failure: unknown) =>
   failure instanceof Error ? failure.message : "Не удалось сохранить черновик.";
 
+const pendingDrafts = new Set<Promise<void>>();
+
+/** Drain complete form operations, including claim → save and unmount flushes. */
+export async function settleStoredDrafts() {
+  while (pendingDrafts.size) await Promise.allSettled([...pendingDrafts]);
+}
+
 /** Fields remain feature-owned; no draft is applied without the restore action. */
 export function useStoredDraft<T extends object>(input: {
   profileId: FinanceProfile;
@@ -164,6 +171,8 @@ export function useStoredDraft<T extends object>(input: {
           }
         });
       pending.current = next;
+      pendingDrafts.add(next);
+      void next.finally(() => pendingDrafts.delete(next)).catch(() => {});
       // A UI caller can await/retry the actual rejection. Keep autosave/unmount safe.
       void next.catch(() => {});
       return next;

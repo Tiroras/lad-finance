@@ -11,6 +11,7 @@ import {
   CsvExportSheet,
   CsvImportSheet,
   DataSettings,
+  DeleteDataConfirmation,
   ImportResults,
 } from "../../features/data-transfer";
 import {
@@ -51,12 +52,14 @@ import type { OpenSheet, SheetState } from "../navigation/types";
 export const SheetContent = memo(function SheetContent({
   sheet,
   close,
+  back,
   open,
   returnToGuide,
   startTour,
 }: {
   sheet: SheetState | null;
   close: () => void;
+  back?: () => void;
   open: OpenSheet;
   returnToGuide?: () => void;
   startTour: (id?: string) => void;
@@ -157,7 +160,14 @@ export const SheetContent = memo(function SheetContent({
     case "settings":
       return <SettingsMenu open={open} />;
     case "profiles":
-      return <ProfilesSettings close={close} />;
+      return <ProfilesSettings close={close} open={open} />;
+    case "deleteData":
+      return (
+        <DeleteDataConfirmation
+          profileId={sheet.profileId}
+          cancel={back ?? close}
+        />
+      );
     case "profileSettings":
       return (
         <SettingsForm

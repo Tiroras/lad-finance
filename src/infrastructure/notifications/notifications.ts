@@ -8,7 +8,7 @@ import type {
 export async function requestReminderPermission() {
   return false;
 }
-export async function clearPaymentNotifications() {}
+export async function clearPaymentNotifications(_profile?: FinanceProfile) {}
 export async function synchronizeReminders(
   _state: FinanceState,
   profile: FinanceProfile,

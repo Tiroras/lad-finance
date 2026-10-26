@@ -15,7 +15,7 @@ export interface ReminderQueuePorts {
   read(): Promise<ScheduledReminder[]>;
   cancel(identifier: string): Promise<void>;
   schedule(item: PlannedReminder, profile: FinanceProfile): Promise<unknown>;
-  clearResponse(): Promise<void>;
+  clearResponse(profile?: FinanceProfile): Promise<void>;
   now(): Date;
 }
 
@@ -149,18 +149,23 @@ export function createReminderSynchronizer(ports: ReminderQueuePorts) {
     });
   }
 
-  function clear(): Promise<void> {
+  function clear(profile?: FinanceProfile): Promise<void> {
     clearGeneration++;
     return enqueue(async () => {
+      const selected = (item: ScheduledReminder) =>
+        isLadReminder(item) &&
+        (!profile ||
+          item.content.data?.profile === profile ||
+          item.identifier.startsWith(`lad.${profile}.`));
       const existing = await ports.read();
       for (const identifier of new Set(
-        existing.filter(isLadReminder).map((item) => item.identifier),
+        existing.filter(selected).map((item) => item.identifier),
       ))
         await ports.cancel(identifier);
       const remaining = await ports.read();
-      if (remaining.some(isLadReminder))
+      if (remaining.some(selected))
         throw new Error("Не удалось полностью очистить напоминания Лада.");
-      await ports.clearResponse();
+      await ports.clearResponse(profile);
     });
   }
 

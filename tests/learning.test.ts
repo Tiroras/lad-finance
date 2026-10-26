@@ -6,6 +6,40 @@ import {
   initialLearningProgress,
 } from "../src/features/settings/model/learningProgress";
 
+test("reset waits for pending progress writes and reloads from cleared storage", async () => {
+  let raw: string | null = null;
+  let release!: () => void;
+  let started!: () => void;
+  const writing = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const store = createLearningProgressStore({
+    read: async () => raw,
+    async write(value) {
+      started();
+      await gate;
+      raw = value;
+    },
+  });
+  const update = store.update((value) => ({ ...value, status: "completed" }));
+  await writing;
+  let reset = false;
+  const clearing = store.resetMemory().then(() => {
+    reset = true;
+  });
+  await Promise.resolve();
+  assert.equal(reset, false);
+  release();
+  await update;
+  await clearing;
+  raw = null;
+  await store.load();
+  assert.deepEqual(store.getSnapshot().progress, initialLearningProgress());
+});
+
 test("tour metadata rejects malformed records and contains no financial drafts", () => {
   for (const raw of [
     null,

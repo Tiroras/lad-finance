@@ -47,6 +47,7 @@ export function AppSheet({
     account: id ? "Настроить счёт" : "Новый счёт",
     settings: "Ваш Лад",
     profiles: "Профили",
+    deleteData: "Удаление данных",
     profileSettings: "Профиль и планирование",
     reminderSettings: "Напоминания",
     securitySettings: "Защита данных",
@@ -86,6 +87,7 @@ export function AppSheet({
         <SheetContent
           sheet={sheet}
           close={close}
+          back={back}
           open={open}
           returnToGuide={returnToGuide}
           startTour={startTour}

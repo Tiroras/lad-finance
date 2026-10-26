@@ -120,18 +120,17 @@ const synchronizer = createReminderSynchronizer({
       },
       trigger: trigger(item),
     }),
-  clearResponse: async () => {
-    if (
-      getLastNotificationResponse()?.notification.request.content.data
-        ?.source === "lad"
-    )
+  clearResponse: async (profile) => {
+    const data =
+      getLastNotificationResponse()?.notification.request.content.data;
+    if (data?.source === "lad" && (!profile || data.profile === profile))
       await clearLastNotificationResponseAsync();
   },
   now: () => new Date(),
 });
 
-export function clearPaymentNotifications() {
-  return synchronizer.clear();
+export function clearPaymentNotifications(profile?: FinanceProfile) {
+  return synchronizer.clear(profile);
 }
 
 export function synchronizeReminders(

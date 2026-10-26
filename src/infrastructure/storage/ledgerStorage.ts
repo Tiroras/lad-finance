@@ -10,6 +10,9 @@ const ledgers = new Map<
   ReturnType<typeof createPlainLedgerStorage>
 >();
 
+/** Call only after providers and their writers have stopped. */
+export const clearLedgerStorageCache = () => ledgers.clear();
+
 export function getLedgerStorage(profile: FinanceProfile) {
   assertProfileId(profile);
   let ledger = ledgers.get(profile);

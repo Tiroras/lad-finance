@@ -95,17 +95,19 @@ export function createNativeEncryptedFileStorage(
   });
 }
 
-/** Fresh alone may enumerate and remove orphan generations; never read their contents. */
-export function listCiphertextKeysForReset(): {
+/** Explicit deletion may enumerate orphan generations; never read their contents. */
+export function listCiphertextKeysForReset(target?: FinanceProfile): {
   profile: FinanceProfile;
   keyId: string | null;
 }[] {
+  if (target !== undefined) assertProfileId(target);
   const directory = root();
   if (!directory.exists) return [];
   const result: { profile: FinanceProfile; keyId: string | null }[] = [];
   for (const profile of directory.list()) {
     if (!(profile instanceof Directory) || !isFinanceProfile(profile.name))
       continue;
+    if (target && profile.name !== target) continue;
     result.push({ profile: profile.name, keyId: null });
     for (const file of profile.list()) {
       if (!(file instanceof File)) continue;
@@ -116,8 +118,9 @@ export function listCiphertextKeysForReset(): {
   return result;
 }
 
-export function removeCiphertextFilesForReset() {
+export function removeCiphertextFilesForReset(target?: FinanceProfile) {
   // Fixed app-owned root; no path is obtained from untrusted pointer metadata.
-  const directory = root();
+  const directory = target ? profileDirectory(target) : root();
   if (directory.exists) directory.delete();
+  if (directory.exists) throw new Error("Не удалось удалить файлы учёта.");
 }

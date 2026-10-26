@@ -119,10 +119,7 @@ test("reset failure blocks profile loading and can be retried", async ({
   }, PROFILE_REGISTRY_KEY);
   await page.goto("/");
   await expect(
-    page.getByText(
-      "Не удалось очистить данные приложения. Повторите запуск с нуля.",
-      { exact: true },
-    ),
+    page.getByText(/Не удалось завершить подготовку или удаление данных/),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Профиль и настройки", exact: true }),
@@ -132,7 +129,7 @@ test("reset failure blocks profile loading and can be retried", async ({
   ).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath("fresh-retry-320.png") });
   await page
-    .getByRole("button", { name: "Повторить очистку", exact: true })
+    .getByRole("button", { name: "Повторить попытку", exact: true })
     .click();
   await expect(
     page.getByText("Добро пожаловать в Лад", { exact: true }),

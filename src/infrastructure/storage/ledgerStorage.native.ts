@@ -82,6 +82,9 @@ const ledgers = new Map<
   ReturnType<typeof createProfileVault>
 >();
 
+/** Forget cached vault keys after the writers have stopped and before reopening. */
+export const clearLedgerStorageCache = () => ledgers.clear();
+
 export function getLedgerStorage(profile: FinanceProfile) {
   assertProfileId(profile);
   let ledger = ledgers.get(profile);

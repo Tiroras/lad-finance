@@ -44,7 +44,7 @@ export function OnboardingFlow({
   onStepChange?: () => void;
   active?: boolean;
 }) {
-  const { state, today, notify, profile } = useFinance();
+  const { state, today, notify, profile, profiles } = useFinance();
   const { switching, switchProfile, confirmCurrentSave } = useFinanceStatus();
   const { locked } = useSecurity();
   const actions = useFinanceActions();
@@ -177,7 +177,10 @@ export function OnboardingFlow({
       return;
     }
     try {
-      const personal = await switchProfile("personal");
+      const target = profiles.find((p) => p.id !== "demo");
+      if (!target)
+        throw new Error("Сначала создайте профиль в разделе «Профили».");
+      const personal = await switchProfile(target.id);
       if (canStartOnboarding(personal)) {
         setName(personal.settings.name);
         changeStep(1);

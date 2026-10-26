@@ -6,6 +6,7 @@ export default defineConfig({
   testMatch: [
     "**/demo-disabled.spec.ts",
     "**/profiles.spec.ts",
+    "**/data-deletion.spec.ts",
     "**/profile-recovery.spec.ts",
     "**/backup-verification.spec.ts",
     "**/import-export-calculations.spec.ts",

@@ -50,6 +50,13 @@ export function DataSettings({
           onPress={() => open({ type: "onboarding" })}
         />
       )}
+      <Section title="Удаление данных" style={{ marginBottom: 0 }} />
+      <Button
+        label="Удалить все профили и данные"
+        variant="danger"
+        disabled={blocked}
+        onPress={() => open({ type: "deleteData" })}
+      />
     </>
   );
 }

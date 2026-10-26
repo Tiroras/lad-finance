@@ -4,6 +4,8 @@ import {
   addProfile,
   assertProfileId,
   createDefaultProfiles,
+  decodeProfileRegistry,
+  encodeProfileRegistry,
   isFinanceProfile,
   renameProfile,
   validateProfiles,
@@ -94,8 +96,6 @@ test("registry validation rejects damaged identities and names instead of droppi
   for (const profiles of [
     null,
     {},
-    [],
-    [familyProfile],
     [familyProfile, personal],
     [personal, { id: "demo", name: "Демо" }],
     [personal, personal],
@@ -112,4 +112,21 @@ test("registry validation rejects damaged identities and names instead of droppi
   const checked = validateProfiles(valid);
   checked[1].name = "Новая семья";
   assert.equal(valid[1].name, "Семья");
+});
+
+test("registry v2 permits deleting personal and the last profile; v1 still rejects missing personal", () => {
+  for (const entries of [[], [{ id: family, name: "Семья" }]] as const) {
+    assert.deepEqual(
+      decodeProfileRegistry(encodeProfileRegistry(entries)),
+      entries,
+    );
+    assert.equal(JSON.parse(encodeProfileRegistry(entries)).version, 2);
+    assert.throws(() =>
+      decodeProfileRegistry(JSON.stringify({ version: 1, profiles: entries })),
+    );
+  }
+  assert.equal(
+    JSON.parse(encodeProfileRegistry(createDefaultProfiles())).version,
+    1,
+  );
 });

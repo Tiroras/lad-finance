@@ -108,11 +108,14 @@ function fixture(dev: boolean, flag: string | undefined) {
     "./vault": { VAULT_STORAGE_KEY },
     "./draftStore": draftStore,
     "./ciphertextFiles.native": {
-      listCiphertextKeysForReset: () => ciphertextKeys,
-      removeCiphertextFilesForReset() {
+      listCiphertextKeysForReset: (target?: profiles.FinanceProfile) =>
+        ciphertextKeys.filter((item) => !target || item.profile === target),
+      removeCiphertextFilesForReset(target?: profiles.FinanceProfile) {
         calls.push("files:remove-owned-root");
         if (failures.files) throw new Error("files unavailable");
-        ciphertextKeys.length = 0;
+        for (let i = ciphertextKeys.length - 1; i >= 0; i--)
+          if (!target || ciphertextKeys[i].profile === target)
+            ciphertextKeys.splice(i, 1);
       },
     },
   };
@@ -145,6 +148,12 @@ function fixture(dev: boolean, flag: string | undefined) {
     ciphertextKeys,
     notifications,
     restart,
+    resetProfile: async (profile: profiles.FinanceProfile) => {
+      const native = modules[
+        "./resetDeviceData"
+      ] as typeof import("../src/infrastructure/storage/resetDeviceData.native");
+      await native.resetDeviceData([...items], profile);
+    },
     getResponse: () => response,
   };
 }
@@ -160,6 +169,47 @@ test("reset requires literal true and development mode; release never touches st
       assert.deepEqual(calls, []);
     }
   }
+});
+
+test("single-profile native deletion keeps other keys, files, reminders and app lock", async () => {
+  const { items, secrets, notifications, ciphertextKeys, calls, resetProfile } =
+    fixture(false, undefined);
+  for (const profile of ["personal", "demo"] as const) {
+    items.set(
+      `lad-profile-${profile}:${VAULT_STORAGE_KEY}`,
+      JSON.stringify({ keyId: "key" }),
+    );
+    secrets.set(
+      `app.lad.finance.vault.${profile}:lad-${profile}-vault-key-key`,
+      "secret",
+    );
+    secrets.set(
+      `${draftStore.draftKeyService(profile)}:${draftStore.draftKeyName(profile)}`,
+      "draft secret",
+    );
+    ciphertextKeys.push({ profile, keyId: "key" });
+  }
+  secrets.set("app.lad.finance.lock:lad-app-lock-v1", "on");
+  await resetProfile("personal");
+  assert.equal(
+    secrets.has("app.lad.finance.vault.personal:lad-personal-vault-key-key"),
+    false,
+  );
+  assert.equal(
+    secrets.has(
+      `${draftStore.draftKeyService("personal")}:${draftStore.draftKeyName("personal")}`,
+    ),
+    false,
+  );
+  assert.equal(
+    secrets.get("app.lad.finance.vault.demo:lad-demo-vault-key-key"),
+    "secret",
+  );
+  assert.equal(secrets.get("app.lad.finance.lock:lad-app-lock-v1"), "on");
+  assert.deepEqual(ciphertextKeys, [{ profile: "demo", keyId: "key" }]);
+  assert.equal(notifications.has("lad.personal.payment"), false);
+  assert.equal(notifications.has("lad.demo.payment"), true);
+  assert.equal(calls.includes("screen:allow:lad-lock"), false);
 });
 
 test("fresh launch clears every Lad profile, old shared data and metadata, preserving unrelated keys", async () => {

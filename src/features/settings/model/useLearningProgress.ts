@@ -10,6 +10,7 @@ const store = createLearningProgressStore({
   write: writeLearningProgress,
 });
 const skip = () => store.update((value) => ({ ...value, status: "skipped" }));
+export const resetLearningProgressMemory = store.resetMemory;
 
 export function useLearningProgress() {
   const snapshot = useSyncExternalStore(

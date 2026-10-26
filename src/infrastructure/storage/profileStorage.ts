@@ -14,8 +14,8 @@ import { LEGACY_STORAGE_KEY, VAULT_STORAGE_KEY } from "./vault";
 
 export type { FinanceProfile, LedgerProfile } from "../../domain/profiles";
 
-const ACTIVE_PROFILE_KEY = "lad-active-profile-v1";
-const PROFILES_KEY = "lad-profiles-v1";
+export const ACTIVE_PROFILE_KEY = "lad-active-profile-v1";
+export const PROFILES_KEY = "lad-profiles-v1";
 const RECOVERY_KEY = "lad-profile-recovery-v1";
 
 /** Raw metadata only. The recovery protocol never receives a ledger writer here. */
@@ -117,12 +117,13 @@ export async function readActiveProfile(
   const knownProfiles =
     profiles === undefined ? await readProfiles() : validateProfiles(profiles);
   const profile = await AsyncStorage.getItem(ACTIVE_PROFILE_KEY);
+  const fallback = knownProfiles[0]?.id ?? "personal";
   // An absent or invalid preference has no financial data to recover.
-  if (profile === "demo") return demoEnabled ? "demo" : "personal";
+  if (profile === "demo") return demoEnabled ? "demo" : fallback;
   return isFinanceProfile(profile) &&
     knownProfiles.some((p) => p.id === profile)
     ? profile
-    : "personal";
+    : fallback;
 }
 
 export function writeActiveProfile(profile: FinanceProfile) {

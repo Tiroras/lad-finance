@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { Button, C, Txt } from "../shared/ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,18 +10,41 @@ import { Manrope_700Bold } from "@expo-google-fonts/manrope/700Bold";
 import { Manrope_800ExtraBold } from "@expo-google-fonts/manrope/800ExtraBold";
 import { AppProviders } from "./providers/AppProviders";
 import { AppShell } from "./shell/AppShell";
-import { FRESH_START_ENABLED } from "../shared/lib/buildOptions";
 import { resetDevelopmentData } from "../infrastructure/storage/developmentReset";
+import type { DataDeletionRequest } from "../domain/profiles";
+import { appDataDeletion } from "../infrastructure/storage/appDataDeletion";
+import { clearLedgerStorageCache } from "../infrastructure/storage/ledgerStorage";
+import { settleStoredDrafts } from "../infrastructure/storage/useStoredDraft";
+import { resetLearningProgressMemory } from "../features/settings";
 
 export default function App() {
-  const [startupReady, setStartupReady] = useState(!FRESH_START_ENABLED);
+  const [startupReady, setStartupReady] = useState(false);
   const [startupError, setStartupError] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [deletion, setDeletion] = useState<DataDeletionRequest>();
+  const deleteData = useCallback((request: DataDeletionRequest) => {
+    setStartupReady(false);
+    setStartupError(false);
+    setDeletion(request);
+  }, []);
   useEffect(() => {
+    // Fast Refresh can repeat effects while preserving state. Preparation must
+    // never run over a mounted session, or replay a previously confirmed reset.
+    if (startupReady) return;
     let active = true;
-    void resetDevelopmentData().then(
+    const prepare = async () => {
+      await settleStoredDrafts();
+      await resetLearningProgressMemory();
+      clearLedgerStorageCache();
+      await appDataDeletion.run(deletion);
+      await resetDevelopmentData();
+    };
+    void prepare().then(
       () => {
-        if (active) setStartupReady(true);
+        if (active) {
+          setDeletion(undefined);
+          setStartupReady(true);
+        }
       },
       () => {
         if (active) setStartupError(true);
@@ -30,7 +53,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [attempt]);
+  }, [attempt, deletion, startupReady]);
   const [loaded, error] = useFonts({
     Manrope_400Regular,
     Manrope_500Medium,
@@ -45,10 +68,12 @@ export default function App() {
           {startupError ? (
             <>
               <Txt style={{ textAlign: "center" }}>
-                Не удалось очистить данные приложения. Повторите запуск с нуля.
+                Не удалось завершить подготовку или удаление данных. Учёт
+                закрыт, чтобы не записать данные поверх незавершённого удаления.
+                Повторите попытку.
               </Txt>
               <Button
-                label="Повторить очистку"
+                label="Повторить попытку"
                 onPress={() => {
                   setStartupError(false);
                   setAttempt((value) => value + 1);
@@ -56,11 +81,14 @@ export default function App() {
               />
             </>
           ) : (
-            <ActivityIndicator color={C.green} />
+            <>
+              <ActivityIndicator color={C.green} />
+              {deletion && <Txt>Удаляем данные…</Txt>}
+            </>
           )}
         </View>
       ) : (
-        <AppProviders>
+        <AppProviders onDeleteData={deleteData}>
           <AppShell />
         </AppProviders>
       )}

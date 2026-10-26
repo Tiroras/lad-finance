@@ -107,6 +107,18 @@ export function createLearningProgressStore(storage: {
       };
     },
     load,
+    async resetMemory() {
+      // The application calls this after unmounting the learning UI.
+      await loading?.catch(() => undefined);
+      await queue.catch(() => undefined);
+      savedRaw = undefined;
+      publish({
+        ready: false,
+        saving: false,
+        error: "",
+        progress: initialLearningProgress(),
+      });
+    },
     update(change: (value: LearningProgress) => LearningProgress) {
       const task = queue
         .catch(() => undefined)

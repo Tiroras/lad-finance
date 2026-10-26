@@ -316,7 +316,7 @@ test("damaged registry and failed metadata writes preserve all previous records"
     "broken json",
     "null",
     JSON.stringify({
-      version: 2,
+      version: 3,
       profiles: profileDomain.createDefaultProfiles(),
     }),
     JSON.stringify({ version: 1, profiles: [] }),
@@ -333,7 +333,9 @@ test("damaged registry and failed metadata writes preserve all previous records"
   const initial = profileDomain.createDefaultProfiles();
   await profiles.writeProfiles(initial);
   const previous = items.get(registryKey);
-  await assert.rejects(profiles.writeProfiles([]));
+  await assert.rejects(
+    profiles.writeProfiles([{ id: "personal", name: "Other" }]),
+  );
   assert.equal(items.get(registryKey), previous);
   const added = profileDomain.addProfile(
     initial,
@@ -347,6 +349,19 @@ test("damaged registry and failed metadata writes preserve all previous records"
   failures.key = "lad-active-profile-v1";
   await assert.rejects(profiles.writeActiveProfile(added[1].id), /disk full/);
   assert.equal(items.get("lad-active-profile-v1"), "personal");
+});
+
+test("deleted personal is not recreated by a missing or disabled profile preference", async () => {
+  const { profiles } = fixture();
+  const custom = "profile-550e8400-e29b-41d4-a716-446655440000";
+  await profiles.writeProfiles([{ id: custom, name: "Рабочий" }]);
+  assert.equal(await profiles.readActiveProfile(false), custom);
+  await profiles.writeActiveProfile("personal");
+  assert.equal(await profiles.readActiveProfile(false), custom);
+  await profiles.writeActiveProfile("demo");
+  assert.equal(await profiles.readActiveProfile(false), custom);
+  await profiles.writeProfiles([]);
+  assert.deepEqual(await profiles.readProfiles(), []);
 });
 
 test("custom web ledgers keep data and backup dates isolated through failures, reset and recovery", async () => {

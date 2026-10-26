@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import type { FinanceProfile, LedgerProfile } from "../../../domain/profiles";
+import type { OpenSheet } from "../../../application/navigation/types";
 import {
   ProfileReadError,
   useFinance,
@@ -23,7 +24,13 @@ import {
 
 type ProfileEditor = { id: FinanceProfile } | "create" | null;
 
-export function ProfilesSettings({ close }: { close: () => void }) {
+export function ProfilesSettings({
+  close,
+  open,
+}: {
+  close: () => void;
+  open: OpenSheet;
+}) {
   const { profile, profiles, notify } = useFinance();
   const {
     switching,
@@ -179,6 +186,31 @@ export function ProfilesSettings({ close }: { close: () => void }) {
                   <Icon name="pencil-outline" size={19} color={C.green} />
                 </Pressable>
               )}
+              {item.id !== "demo" && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Удалить профиль: ${item.name}`}
+                  accessibilityState={{ disabled: blocked }}
+                  disabled={blocked}
+                  onPress={() =>
+                    open({ type: "deleteData", profileId: item.id })
+                  }
+                  style={({ pressed }) => [
+                    {
+                      width: 44,
+                      height: 44,
+                      marginRight: 8,
+                      borderRadius: 22,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                    blocked && { opacity: 0.5 },
+                    pressed && interactionStyles.pressed,
+                  ]}
+                >
+                  <Icon name="trash-outline" size={19} color={C.red} />
+                </Pressable>
+              )}
             </View>
           );
         })}
@@ -260,6 +292,12 @@ export function ProfilesSettings({ close }: { close: () => void }) {
           />
         </View>
       )}
+      <Button
+        label="Удалить все профили и данные"
+        variant="danger"
+        disabled={blocked}
+        onPress={() => open({ type: "deleteData" })}
+      />
     </>
   );
 }

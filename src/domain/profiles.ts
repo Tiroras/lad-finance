@@ -5,6 +5,9 @@ export type LedgerProfile = {
   name: string;
 };
 
+export type DataDeletionRequest =
+  { type: "all" } | { type: "profile"; profile: FinanceProfile };
+
 const CUSTOM_PROFILE_ID =
   /^profile-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f-\u009f]/;
@@ -62,8 +65,11 @@ function uniqueProfileName(
   return name;
 }
 
-export function validateProfiles(value: unknown): LedgerProfile[] {
-  if (!Array.isArray(value) || value.length === 0) {
+export function validateProfiles(
+  value: unknown,
+  requirePersonal = false,
+): LedgerProfile[] {
+  if (!Array.isArray(value)) {
     throw new Error("Список профилей повреждён: отсутствует личный профиль.");
   }
   const result: LedgerProfile[] = [];
@@ -87,7 +93,10 @@ export function validateProfiles(value: unknown): LedgerProfile[] {
     ids.add(id);
     result.push({ id, name });
   }
-  if (result[0]?.id !== "personal") {
+  if (
+    (requirePersonal && result[0]?.id !== "personal") ||
+    (ids.has("personal") && result[0]?.id !== "personal")
+  ) {
     throw new Error("Список профилей повреждён: отсутствует личный профиль.");
   }
   return result;
@@ -99,17 +108,21 @@ export function decodeProfileRegistry(raw: string): LedgerProfile[] {
     !value ||
     typeof value !== "object" ||
     !("version" in value) ||
-    value.version !== 1 ||
+    (value.version !== 1 && value.version !== 2) ||
     !("profiles" in value)
   )
     throw new Error("Неизвестный формат списка профилей.");
-  return validateProfiles(value.profiles);
+  return validateProfiles(value.profiles, value.version === 1);
 }
 
 export function encodeProfileRegistry(
   profiles: readonly LedgerProfile[],
 ): string {
-  return JSON.stringify({ version: 1, profiles: validateProfiles(profiles) });
+  const checked = validateProfiles(profiles);
+  return JSON.stringify({
+    version: checked[0]?.id === "personal" ? 1 : 2,
+    profiles: checked,
+  });
 }
 
 /** Salvage only independently valid names; namespaces, never financial names, define IDs. */
@@ -120,7 +133,10 @@ export function recoveredProfileEntries(
   let records: unknown[] = [];
   try {
     const value = raw === null ? null : JSON.parse(raw);
-    if (value?.version === 1 && Array.isArray(value.profiles))
+    if (
+      (value?.version === 1 || value?.version === 2) &&
+      Array.isArray(value.profiles)
+    )
       records = value.profiles;
   } catch {
     /* Invalid metadata does not make a financial namespace disappear. */

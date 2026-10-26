@@ -1,5 +1,9 @@
 import * as SecureStore from "expo-secure-store";
-import { isFinanceProfile, type FinanceProfile } from "../../domain/profiles";
+import {
+  assertProfileId,
+  isFinanceProfile,
+  type FinanceProfile,
+} from "../../domain/profiles";
 import { clearAppLock } from "../device/deviceSecurity";
 import { clearPaymentNotifications } from "../notifications/notifications";
 import { VAULT_STORAGE_KEY } from "./vault";
@@ -11,21 +15,27 @@ import { draftKeyName, draftKeyService } from "./draftStore";
 
 export async function resetDeviceData(
   entries: readonly (readonly [string, string | null])[],
+  target?: FinanceProfile,
 ) {
-  await clearPaymentNotifications();
-  const profiles = new Set<FinanceProfile>(["personal", "demo"]);
+  if (target !== undefined) assertProfileId(target);
+  await clearPaymentNotifications(target);
+  const profiles = new Set<FinanceProfile>(
+    target ? [target] : ["personal", "demo"],
+  );
   const keyIds = new Map<string, { profile?: FinanceProfile; keyId: string }>();
   const addKey = (profile: FinanceProfile | undefined, keyId: unknown) => {
+    if (target && profile !== target) return;
     if (typeof keyId === "string" && /^[a-zA-Z0-9-]{1,80}$/.test(keyId))
       keyIds.set(`${profile ?? "shared"}:${keyId}`, { profile, keyId });
   };
-  for (const item of listCiphertextKeysForReset()) {
+  for (const item of listCiphertextKeysForReset(target)) {
     profiles.add(item.profile);
     addKey(item.profile, item.keyId);
   }
   for (const [storageKey, raw] of entries) {
     const match = /^lad-profile-([^:]+):(.+)$/.exec(storageKey);
     const profile = match?.[1];
+    if (target && profile !== target) continue;
     if (isFinanceProfile(profile)) profiles.add(profile);
     if (
       storageKey === "lad-profiles-v1" ||
@@ -94,6 +104,6 @@ export async function resetDeviceData(
       keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
     });
   }
-  removeCiphertextFilesForReset();
-  await clearAppLock();
+  removeCiphertextFilesForReset(target);
+  if (!target) await clearAppLock();
 }
