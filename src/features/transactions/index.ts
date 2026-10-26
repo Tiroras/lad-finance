@@ -8,3 +8,5 @@ export { CategoryRuleSuggestion } from "./components/CategoryRuleSuggestion";
 export { TransactionListDetails } from "./components/TransactionListDetails";
 export { TransactionListEmpty } from "./components/TransactionListEmpty";
 export { TransactionEvidence } from "./components/TransactionEvidence";
+export { CategoryRulesPanel } from "./components/CategoryRulesPanel";
+export { TemplateManager } from "./components/TemplateManager";

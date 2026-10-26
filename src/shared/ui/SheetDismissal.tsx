@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useLayoutEffect,
   useRef,
@@ -40,6 +41,18 @@ export function usePreventSheetDismiss(guard: DismissalGuard) {
         onDiscard: () => latest.current.onDiscard?.(),
       }),
     [controller, guard.description],
+  );
+}
+
+export function useRequestSheetDismiss() {
+  const controller = useContext(DismissalContext);
+  return useCallback(
+    (action: () => void) => {
+      if (controller) return controller.request(action);
+      action();
+      return true;
+    },
+    [controller],
   );
 }
 

@@ -4,6 +4,21 @@ import type { LessonId } from "../../features/settings";
 import type { FinanceProfile } from "../../domain/profiles";
 
 export type Tab = "home" | "transactions" | "plan" | "analytics";
+export type ListPageName =
+  | "paymentAgenda"
+  | "recurring"
+  | "goals"
+  | "budgets"
+  | "incomes"
+  | "accounts"
+  | "archivedAccounts"
+  | "negativeAccounts"
+  | "debts"
+  | "creditCards"
+  | "spendingCategories"
+  | "spendingChanges"
+  | "categoryRules"
+  | "templates";
 type SimpleSheetName =
   | "automation"
   | "simulate"
@@ -25,6 +40,7 @@ type SimpleSheetName =
   | "export";
 export type SheetState =
   | { type: SimpleSheetName }
+  | { type: "list"; list: ListPageName; month?: string }
   | { type: "importResult"; id?: string }
   | { type: "deleteData"; profileId?: FinanceProfile }
   | { type: "guide"; journey?: boolean; lesson?: LessonId }

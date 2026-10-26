@@ -20,7 +20,6 @@ import {
   TourTarget,
   useTourAction,
 } from "../../shared/ui";
-import { CategoryBreakdown } from "./CategoryBreakdown";
 import { MonthlyTotals } from "./MonthlyTotals";
 import { SavingsSummary } from "./SavingsSummary";
 import { SpendingChart } from "./SpendingChart";
@@ -29,6 +28,7 @@ import {
   ForecastRiskInsight,
   RecurringSuggestions,
   SpendingComparison,
+  CategoryBreakdown,
 } from "../../features/insights";
 
 export function AnalyticsScreen({ open }: { open: OpenSheet }) {
@@ -78,10 +78,7 @@ export function AnalyticsScreen({ open }: { open: OpenSheet }) {
         income={monthTotals.income}
         expense={monthTotals.expense}
       />
-      <SpendingComparison
-        month={month}
-        onOpenTransaction={(id) => open({ type: "transaction", id })}
-      />
+      <SpendingComparison month={month} open={open} />
       <SpendingChart month={month} end={end} />
       {biggest && (
         <Notice>
@@ -91,7 +88,7 @@ export function AnalyticsScreen({ open }: { open: OpenSheet }) {
           {money(daily)}.
         </Notice>
       )}
-      <CategoryBreakdown spending={spending} expense={monthTotals.expense} />
+      <CategoryBreakdown month={month} open={open} />
       <SavingsSummary
         income={monthTotals.income}
         expense={monthTotals.expense}

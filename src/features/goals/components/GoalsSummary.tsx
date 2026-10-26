@@ -1,26 +1,17 @@
 import { View } from "react-native";
 import { useFinance } from "../../../state/finance";
 import { Card, Section, Empty } from "../../../shared/ui";
-import type {
-  OpenSheet,
-  Navigate,
-} from "../../../application/navigation/types";
+import type { OpenSheet } from "../../../application/navigation/types";
 import { GoalPreview } from "./GoalPreview";
 
-export function GoalsSummary({
-  open,
-  navigate,
-}: {
-  open: OpenSheet;
-  navigate: Navigate;
-}) {
+export function GoalsSummary({ open }: { open: OpenSheet }) {
   const { state } = useFinance();
   return (
     <View>
       <Section
         title="Ближе к мечте"
         action="Все цели"
-        onPress={() => navigate("plan")}
+        onPress={() => open({ type: "list", list: "goals" })}
       />
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
         {state.goals.length ? (

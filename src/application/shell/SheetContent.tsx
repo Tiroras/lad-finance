@@ -48,6 +48,7 @@ import {
   AutomationSettings,
 } from "../../features/transactions";
 import type { OpenSheet, SheetState } from "../navigation/types";
+import { ListPageContent } from "./ListPageContent";
 
 export const SheetContent = memo(function SheetContent({
   sheet,
@@ -55,6 +56,7 @@ export const SheetContent = memo(function SheetContent({
   back,
   open,
   returnToGuide,
+  returnToList,
   startTour,
 }: {
   sheet: SheetState | null;
@@ -62,16 +64,19 @@ export const SheetContent = memo(function SheetContent({
   back?: () => void;
   open: OpenSheet;
   returnToGuide?: () => void;
+  returnToList?: () => void;
   startTour: (id?: string) => void;
 }) {
   if (!sheet) return null;
   switch (sheet.type) {
+    case "list":
+      return <ListPageContent sheet={sheet} open={open} />;
     case "debt":
       return (
         <DebtForm
           id={sheet.id}
           open={open}
-          close={() => open({ type: "accounts" })}
+          close={returnToList ?? (() => open({ type: "accounts" }))}
         />
       );
     case "repayDebt":
@@ -79,7 +84,7 @@ export const SheetContent = memo(function SheetContent({
         <DebtRepaymentForm
           open={open}
           id={sheet.id}
-          close={() => open({ type: "accounts" })}
+          close={returnToList ?? (() => open({ type: "accounts" }))}
         />
       );
     case "repayCredit":
@@ -87,7 +92,7 @@ export const SheetContent = memo(function SheetContent({
         <CreditRepaymentForm
           open={open}
           id={sheet.id}
-          close={() => open({ type: "accounts" })}
+          close={returnToList ?? (() => open({ type: "accounts" }))}
         />
       );
     case "onboarding":
@@ -100,12 +105,12 @@ export const SheetContent = memo(function SheetContent({
     case "guide":
       return <AppGuide close={close} onStart={startTour} />;
     case "automation":
-      return <AutomationSettings />;
+      return <AutomationSettings open={open} />;
     case "reconcile":
       return (
         <ReconciliationForm
           id={sheet.id}
-          close={() => open({ type: "accounts" })}
+          close={returnToList ?? (() => open({ type: "accounts" }))}
           open={open}
         />
       );
@@ -119,7 +124,7 @@ export const SheetContent = memo(function SheetContent({
       return (
         <CategoryForm
           id={sheet.id}
-          close={() => open({ type: "categories" })}
+          close={returnToList ?? (() => open({ type: "categories" }))}
         />
       );
     case "scenarios":
@@ -132,7 +137,7 @@ export const SheetContent = memo(function SheetContent({
       return (
         <TransactionForm
           sheet={sheet}
-          close={returnToGuide ?? close}
+          close={returnToGuide ?? returnToList ?? close}
           open={open}
         />
       );
@@ -151,9 +156,10 @@ export const SheetContent = memo(function SheetContent({
       return (
         <AccountForm
           id={sheet.id}
-          close={returnToGuide ?? close}
+          close={returnToGuide ?? returnToList ?? close}
           defaultCurrency={sheet.currency}
           defaultKind={sheet.accountKind}
+          onArchiveChange={returnToList}
           open={open}
         />
       );
@@ -194,26 +200,36 @@ export const SheetContent = memo(function SheetContent({
       return (
         <IncomePlanForm
           sheet={sheet}
-          close={returnToGuide ?? (() => open({ type: "forecast" }))}
+          close={
+            returnToGuide ?? returnToList ?? (() => open({ type: "forecast" }))
+          }
           open={open}
         />
       );
     case "goal":
-      return <GoalForm id={sheet.id} close={close} />;
+      return <GoalForm id={sheet.id} close={returnToList ?? close} />;
     case "fund":
-      return <FundGoalForm id={sheet.id} close={close} open={open} />;
+      return (
+        <FundGoalForm id={sheet.id} close={returnToList ?? close} open={open} />
+      );
     case "recurring":
       return (
         <RecurringForm
           open={open}
           id={sheet.id}
           sourceTransactionId={sheet.sourceTransactionId}
-          close={returnToGuide ?? close}
+          close={returnToGuide ?? returnToList ?? close}
         />
       );
     case "budget":
-      return <BudgetForm id={sheet.id} close={close} />;
+      return <BudgetForm id={sheet.id} close={returnToList ?? close} />;
     case "payment":
-      return <PaymentContent sheet={sheet} close={close} open={open} />;
+      return (
+        <PaymentContent
+          sheet={sheet}
+          close={returnToList ?? close}
+          open={open}
+        />
+      );
   }
 });

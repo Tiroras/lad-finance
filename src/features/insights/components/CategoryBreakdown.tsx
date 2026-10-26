@@ -1,6 +1,8 @@
+import { useMemo } from "react";
+import type { OpenSheet } from "../../../application/navigation/types";
 import { View } from "react-native";
-import { categorySpending } from "../../domain/finance";
-import { useMoney } from "../../state/finance";
+import { categorySpending, totals } from "../../../domain/finance";
+import { useFinance, useMoney } from "../../../state/finance";
 import {
   C,
   Card,
@@ -9,19 +11,32 @@ import {
   font,
   IconTile,
   Progress,
+  RecordList,
   Row,
   Section,
   Txt,
-} from "../../shared/ui";
+} from "../../../shared/ui";
 
 export function CategoryBreakdown({
-  spending,
-  expense,
+  month,
+  open,
+  full = false,
 }: {
-  spending: ReturnType<typeof categorySpending>;
-  expense: number;
+  month: string;
+  open: OpenSheet;
+  full?: boolean;
 }) {
   const { money } = useMoney();
+  const { state, today } = useFinance();
+  const spending = useMemo(
+    () =>
+      categorySpending(state, month, today).sort((a, b) => b.spent - a.spent),
+    [state, month, today],
+  );
+  const expense = useMemo(
+    () => totals(state, month, today).expense,
+    [state, month, today],
+  );
   const positiveTotal = spending.reduce(
     (sum, category) => sum + Math.max(0, category.spent),
     0,
@@ -43,10 +58,17 @@ export function CategoryBreakdown({
             />
           </View>
           <View style={{ marginTop: 20, gap: 22 }}>
-            {spending
-              .filter((c) => c.spent !== 0)
-              .map((c) => (
-                <View key={c.id} style={{ gap: 10 }}>
+            <RecordList
+              items={spending.filter((c) => c.spent !== 0)}
+              full={full}
+              keyExtractor={(c) => c.id}
+              showAllLabel="Все расходы по категориям"
+              onShowAll={() =>
+                open({ type: "list", list: "spendingCategories", month })
+              }
+              testID="spending-categories-list"
+              renderItem={(c) => (
+                <View style={{ gap: 10 }}>
                   <Row>
                     <IconTile
                       name={c.icon}
@@ -83,7 +105,8 @@ export function CategoryBreakdown({
                     <Progress value={c.spent / positiveTotal} color={c.color} />
                   )}
                 </View>
-              ))}
+              )}
+            />
           </View>
           {hasRefundCredit && (
             <Txt

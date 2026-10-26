@@ -1,7 +1,12 @@
+import type { OpenSheet } from "../../../application/navigation/types";
 import { useState } from "react";
 import type { TransactionTemplate } from "../../../domain/automation";
 import { templateProblem } from "../../../domain/automation";
 import { useActionError } from "../../../shared/lib/useActionError";
+import {
+  usePreventSheetDismiss,
+  useRequestSheetDismiss,
+} from "../../../shared/ui/SheetDismissal";
 import {
   Button,
   Card,
@@ -9,6 +14,7 @@ import {
   ErrorText,
   Field,
   Notice,
+  RecordList,
   Section,
   Txt,
 } from "../../../shared/ui";
@@ -23,6 +29,10 @@ function TemplateItem({ template }: { template: TransactionTemplate }) {
   const { money } = useMoney();
   const actions = useFinanceActions();
   const [name, setName] = useState(template.name);
+  usePreventSheetDismiss({
+    hasChanges: () => name.trim() !== template.name,
+    description: "Несохранённые названия шаблонов будут потеряны.",
+  });
   const { error, run } = useActionError();
   const problem = templateProblem(state, template);
   return (
@@ -57,8 +67,15 @@ function TemplateItem({ template }: { template: TransactionTemplate }) {
     </Card>
   );
 }
-export function TemplateManager() {
+export function TemplateManager({
+  open,
+  full = false,
+}: {
+  open: OpenSheet;
+  full?: boolean;
+}) {
   const { state } = useFinance();
+  const requestDismiss = useRequestSheetDismiss();
   return (
     <>
       <Section title="Избранные шаблоны" />
@@ -67,9 +84,17 @@ export function TemplateManager() {
         сегодня. Проверьте сумму, валюту и дату перед добавлением. Изменить
         содержимое можно в черновике и нажать «Обновить шаблон».
       </Notice>
-      {(state.transactionTemplates ?? []).map((template) => (
-        <TemplateItem key={template.id} template={template} />
-      ))}
+      <RecordList
+        items={state.transactionTemplates ?? []}
+        full={full}
+        keyExtractor={(template) => template.id}
+        showAllLabel="Все шаблоны"
+        onShowAll={() =>
+          requestDismiss(() => open({ type: "list", list: "templates" }))
+        }
+        testID="templates-list"
+        renderItem={(template) => <TemplateItem template={template} />}
+      />
       {!state.transactionTemplates?.length && <Txt>Шаблонов пока нет.</Txt>}
     </>
   );

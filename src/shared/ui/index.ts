@@ -8,6 +8,7 @@ export * from "./IconTile";
 export * from "./IconButton";
 export * from "./Button";
 export * from "./Section";
+export { RecordList } from "./RecordList";
 export * from "./Chip";
 export * from "./Segments";
 export * from "./Field";

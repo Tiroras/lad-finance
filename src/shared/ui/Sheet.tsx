@@ -45,6 +45,7 @@ export function Sheet({
   contentKey,
   headerAccessory,
   dismissal,
+  fullScreen = false,
 }: {
   title: string;
   subtitle?: string;
@@ -56,6 +57,7 @@ export function Sheet({
   contentKey?: string;
   headerAccessory?: ReactNode;
   dismissal: DismissalController;
+  fullScreen?: boolean;
 }) {
   const pending = useSyncExternalStore(
     dismissal.subscribe,
@@ -109,7 +111,7 @@ export function Sheet({
   }, []);
   const { translateY, panHandlers } = useSheetDrag({
     visible,
-    blocked,
+    blocked: blocked || fullScreen,
     contentKey,
     height,
     onClose: requestClose,
@@ -123,6 +125,14 @@ export function Sheet({
     width > 700 && {
       borderRadius: 28,
       maxHeight: Math.min(860, height - 64),
+    },
+    fullScreen && {
+      height: height - insets.top,
+      maxHeight: height - insets.top,
+      maxWidth: 960,
+      borderRadius: 0,
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0,
     },
   ];
   return (
@@ -149,6 +159,11 @@ export function Sheet({
           s.overlay,
           { paddingTop: Math.max(insets.top, 24) },
           width > 700 && { justifyContent: "center" },
+          fullScreen && {
+            paddingTop: insets.top,
+            backgroundColor: C.bg,
+            justifyContent: "flex-start",
+          },
         ]}
       >
         <Animated.View
@@ -169,7 +184,10 @@ export function Sheet({
             onPress={requestClose}
             disabled={blocked}
             aria-hidden={blocked}
-            style={[StyleSheet.absoluteFill, s.backdrop]}
+            style={[
+              StyleSheet.absoluteFill,
+              fullScreen ? { backgroundColor: C.bg } : s.backdrop,
+            ]}
           />
         </Animated.View>
         <Animated.View
@@ -192,12 +210,19 @@ export function Sheet({
             // Yoga still resolves a positive `flex` to a zero basis when
             // flexBasis is auto. Clear the frame's flex: 1 so this sheet can
             // measure its contents instead of collapsing to bottom padding.
-            style={{ flex: 0, flexGrow: 0, flexShrink: 1, flexBasis: "auto" }}
+            style={{
+              // Keep the shorthand stable: changing it on Web resets the
+              // unchanged flexBasis longhand and collapses the next form.
+              flex: 0,
+              flexGrow: fullScreen ? 1 : 0,
+              flexShrink: 1,
+              flexBasis: "auto",
+            }}
           >
             {({ coach, onScroll, onLayout }) => (
               <>
                 <View
-                  {...panHandlers}
+                  {...(fullScreen ? {} : panHandlers)}
                   testID="sheet-drag-area"
                   style={[s.header, blocked && { display: "none" }]}
                   aria-hidden={blocked}
@@ -205,12 +230,13 @@ export function Sheet({
                     blocked ? "no-hide-descendants" : "auto"
                   }
                 >
-                  <View style={s.handle} />
+                  {!fullScreen && <View style={s.handle} />}
                   <Row
                     style={{
                       justifyContent: "space-between",
                       paddingHorizontal: 24,
                       marginBottom: 20,
+                      gap: 12,
                     }}
                   >
                     {onBack && (

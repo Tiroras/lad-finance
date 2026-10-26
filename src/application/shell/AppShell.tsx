@@ -198,6 +198,7 @@ export function AppShell() {
               open={open}
               back={tour.active || back ? tour.backSheet : undefined}
               returnToGuide={returnToGuide}
+              returnToList={navigation.returnToList}
               tourCoach={sheet ? coach : undefined}
               startTour={tour.start}
             />

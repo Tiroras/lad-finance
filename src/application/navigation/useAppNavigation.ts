@@ -13,6 +13,7 @@ import {
   openSheet,
   previousSheet,
   returnToLearning,
+  returnToListPage,
   type SheetNavigation,
 } from "./sheets";
 import { notificationTarget } from "./notificationTarget";
@@ -59,6 +60,7 @@ export function useAppNavigation() {
   );
   const back = useCallback(() => setSheets(previousSheet), []);
   const finishLearningForm = useCallback(() => setSheets(returnToLearning), []);
+  const finishListForm = useCallback(() => setSheets(returnToListPage), []);
   useEffect(() => {
     if (locked) Keyboard.dismiss();
   }, [locked]);
@@ -139,6 +141,9 @@ export function useAppNavigation() {
     back: sheets.parents.length ? back : undefined,
     returnToGuide: sheets.parents.some((parent) => parent.type === "guide")
       ? finishLearningForm
+      : undefined,
+    returnToList: sheets.parents.some((parent) => parent.type === "list")
+      ? finishListForm
       : undefined,
   };
 }

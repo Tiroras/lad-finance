@@ -13,6 +13,7 @@ export default defineConfig({
     "**/daily-accounting-calculations.spec.ts",
     "**/plan-history-*.spec.ts",
     "**/regular-payments.spec.ts",
+    "**/list-previews.spec.ts",
     "**/goals-schedule.spec.ts",
     "**/goals-debts.spec.ts",
     "**/annual-funds.spec.ts",

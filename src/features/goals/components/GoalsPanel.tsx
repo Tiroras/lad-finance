@@ -1,9 +1,15 @@
 import { useFinance } from "../../../state/finance";
-import { Section, Empty, Notice } from "../../../shared/ui";
+import { Section, Empty, Notice, RecordList } from "../../../shared/ui";
 import type { OpenSheet } from "../../../application/navigation/types";
 import { GoalCard } from "./GoalCard";
 
-export function GoalsPanel({ open }: { open: OpenSheet }) {
+export function GoalsPanel({
+  open,
+  full = false,
+}: {
+  open: OpenSheet;
+  full?: boolean;
+}) {
   const { state } = useFinance();
   return (
     <>
@@ -13,9 +19,15 @@ export function GoalsPanel({ open }: { open: OpenSheet }) {
         onPress={() => open({ type: "goal" })}
       />
       {state.goals.length ? (
-        state.goals.map((goal) => (
-          <GoalCard key={goal.id} goal={goal} open={open} />
-        ))
+        <RecordList
+          items={state.goals}
+          full={full}
+          keyExtractor={(goal) => goal.id}
+          renderItem={(goal) => <GoalCard goal={goal} open={open} />}
+          showAllLabel="Все цели"
+          onShowAll={() => open({ type: "list", list: "goals" })}
+          testID="goals-list"
+        />
       ) : (
         <Empty
           icon="flag-outline"

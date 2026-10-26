@@ -6,6 +6,7 @@ import type { SheetState, OpenSheet } from "../navigation/types";
 import { SheetContent } from "./SheetContent";
 import { SheetToast } from "./AppToast";
 import type { DismissalController } from "../../shared/lib/dismissal";
+import { listPageTitles } from "../navigation/listPages";
 
 export function AppSheet({
   sheet,
@@ -13,6 +14,7 @@ export function AppSheet({
   open,
   back,
   returnToGuide,
+  returnToList,
   tourCoach,
   startTour,
   dismissal,
@@ -22,6 +24,7 @@ export function AppSheet({
   open: OpenSheet;
   back?: () => void;
   returnToGuide?: () => void;
+  returnToList?: () => void;
   tourCoach?: ReactNode;
   startTour: (id?: string) => void;
   dismissal: DismissalController;
@@ -29,10 +32,13 @@ export function AppSheet({
   const security = useSecurity();
   const id = sheet && "id" in sheet ? sheet.id : undefined;
   const contentKey =
-    sheet?.type === "guide"
-      ? `guide-${sheet.journey ? "journey" : (sheet.lesson ?? "catalog")}`
-      : `${sheet?.type}-${id ?? "new"}`;
+    sheet?.type === "list"
+      ? `list-${sheet.list}-${sheet.month ?? "current"}`
+      : sheet?.type === "guide"
+        ? `guide-${sheet.journey ? "journey" : (sheet.lesson ?? "catalog")}`
+        : `${sheet?.type}-${id ?? "new"}`;
   const titles: Record<SheetState["type"], string> = {
+    list: sheet?.type === "list" ? listPageTitles[sheet.list] : "Полный список",
     transaction: id ? "Детали операции" : "Новая операция",
     automation: "Правила и шаблоны",
     reconcile: "Сверка счёта",
@@ -78,8 +84,9 @@ export function AppSheet({
       contentKey={contentKey}
       blockingContent={security.locked ? <LockScreen compact /> : undefined}
       title={sheet ? titles[sheet.type] : ""}
+      fullScreen={sheet?.type === "list"}
       onClose={close}
-      onBack={back}
+      onBack={back ?? (sheet?.type === "list" ? close : undefined)}
       headerAccessory={tourCoach}
     >
       {/* Keep drafts mounted while the lock screen covers the form. */}
@@ -90,6 +97,7 @@ export function AppSheet({
           back={back}
           open={open}
           returnToGuide={returnToGuide}
+          returnToList={returnToList}
           startTour={startTour}
         />
         <SheetToast />

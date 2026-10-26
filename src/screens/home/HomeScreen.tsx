@@ -42,7 +42,7 @@ export function HomeScreen({
             onPress={() => open({ type: "forecast" })}
           />
           <SpendingSummary navigate={navigate} hidden={hidden} />
-          <GoalsSummary open={open} navigate={navigate} />
+          <GoalsSummary open={open} />
         </View>
       </View>
       {!wide && <RecentTransactions open={open} navigate={navigate} />}

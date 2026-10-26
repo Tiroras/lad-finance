@@ -12,6 +12,7 @@ import {
   IconTile,
   Row,
   Notice,
+  RecordList,
   TourTarget,
   Txt,
   useTourAction,
@@ -68,21 +69,34 @@ export function AccountsSummary({
           </Row>
         </Card>
       </Pressable>
-      {!hidden &&
-        negativeAccounts.map((account) => (
-          <View key={account.id} style={{ gap: 8, marginTop: 8 }}>
-            <Notice>
-              Остаток «{account.name}» ниже нуля. Расходы сохранены. Если сумма
-              отличается от фактической, можно сверить счёт; корректировка
-              выполняется только после вашего подтверждения.
-            </Notice>
-            <Button
-              label={`Сверить отрицательный остаток: ${account.name}`}
-              variant="secondary"
-              onPress={() => open({ type: "reconcile", id: account.id })}
-            />
-          </View>
-        ))}
+      {!hidden && negativeAccounts.length > 0 && (
+        <View style={{ gap: 8, marginTop: 8 }}>
+          <Txt style={{ color: C.muted, fontSize: 12 }}>
+            Счетов с отрицательным остатком: {negativeAccounts.length}
+          </Txt>
+          <RecordList
+            items={negativeAccounts}
+            testID="negative-accounts-preview"
+            keyExtractor={(account) => account.id}
+            showAllLabel="Все счета с отрицательным остатком"
+            onShowAll={() => open({ type: "list", list: "negativeAccounts" })}
+            renderItem={(account) => (
+              <View style={{ gap: 8 }}>
+                <Notice>
+                  Остаток «{account.name}» ниже нуля. Расходы сохранены. Если
+                  сумма отличается от фактической, можно сверить счёт;
+                  корректировка выполняется только после вашего подтверждения.
+                </Notice>
+                <Button
+                  label={`Сверить отрицательный остаток: ${account.name}`}
+                  variant="secondary"
+                  onPress={() => open({ type: "reconcile", id: account.id })}
+                />
+              </View>
+            )}
+          />
+        </View>
+      )}
     </TourTarget>
   );
 }

@@ -39,6 +39,8 @@ export function openSheet(
       current &&
       (current.type === "settings" ||
         current.type === "guide" ||
+        current.type === "list" ||
+        next.type === "list" ||
         parents.length > 0)
         ? [...parents, current]
         : settingsSections.includes(next.type) &&
@@ -48,9 +50,12 @@ export function openSheet(
   };
 }
 
-export function returnToLearning(navigation: SheetNavigation): SheetNavigation {
+function returnToAncestor(
+  navigation: SheetNavigation,
+  type: "guide" | "list",
+): SheetNavigation {
   const index = navigation.parents.findLastIndex(
-    (parent) => parent.type === "guide",
+    (parent) => parent.type === type,
   );
   return index < 0
     ? navigation
@@ -60,9 +65,17 @@ export function returnToLearning(navigation: SheetNavigation): SheetNavigation {
       };
 }
 
+export function returnToLearning(navigation: SheetNavigation): SheetNavigation {
+  return returnToAncestor(navigation, "guide");
+}
+
 export function previousSheet(navigation: SheetNavigation): SheetNavigation {
   return {
     current: navigation.parents.at(-1) ?? null,
     parents: navigation.parents.slice(0, -1),
   };
+}
+
+export function returnToListPage(navigation: SheetNavigation): SheetNavigation {
+  return returnToAncestor(navigation, "list");
 }

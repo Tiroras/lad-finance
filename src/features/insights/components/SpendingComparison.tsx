@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { OpenSheet } from "../../../application/navigation/types";
 import { View } from "react-native";
 import {
   spendingComparison,
@@ -12,6 +13,7 @@ import {
   Card,
   font,
   Notice,
+  RecordList,
   Section,
   Txt,
 } from "../../../shared/ui";
@@ -79,16 +81,17 @@ function CategoryChange({
 
 export function SpendingComparison({
   month,
-  onOpenTransaction,
+  open,
+  full = false,
 }: {
   month: string;
-  onOpenTransaction: (id: string) => void;
+  open: OpenSheet;
+  full?: boolean;
 }) {
   const { state, today } = useFinance();
   const { money } = useMoney();
   const comparison = spendingComparison(state, month, today);
   const difference = comparison.current - comparison.previous;
-  const [showAll, setShowAll] = useState(false);
   return (
     <Card>
       <Section title="Что изменилось" />
@@ -119,25 +122,22 @@ export function SpendingComparison({
                 : ""}
               Сравнение учитывает только записанные операции.
             </Notice>
-            {(showAll
-              ? comparison.changes
-              : comparison.changes.slice(0, 3)
-            ).map((change) => (
-              <CategoryChange
-                key={`${month}-${change.categoryId}`}
-                change={change}
-                onOpen={onOpenTransaction}
-              />
-            ))}
-            {comparison.changes.length > 3 && (
-              <Button
-                variant="secondary"
-                label={
-                  showAll ? "Свернуть категории" : "Все изменения по категориям"
-                }
-                onPress={() => setShowAll(!showAll)}
-              />
-            )}
+            <RecordList
+              items={comparison.changes}
+              full={full}
+              keyExtractor={(change) => `${month}-${change.categoryId}`}
+              showAllLabel="Все изменения по категориям"
+              onShowAll={() =>
+                open({ type: "list", list: "spendingChanges", month })
+              }
+              testID="spending-changes-list"
+              renderItem={(change) => (
+                <CategoryChange
+                  change={change}
+                  onOpen={(id) => open({ type: "transaction", id })}
+                />
+              )}
+            />
           </>
         )}
       </View>

@@ -21,10 +21,20 @@ export function Section({
   style?: StyleProp<ViewStyle>;
 }) {
   return (
-    <Row style={[{ justifyContent: "space-between", marginBottom: 15 }, style]}>
+    <Row
+      style={[
+        { justifyContent: "space-between", marginBottom: 15, gap: 12 },
+        style,
+      ]}
+    >
       <Txt style={s.sectionTitle}>{title}</Txt>
       {action && (
-        <Pressable accessibilityRole="button" onPress={onPress} hitSlop={12}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onPress}
+          hitSlop={12}
+          style={{ flexShrink: 0 }}
+        >
           <Row style={{ gap: 4 }}>
             <Txt style={s.link}>{action}</Txt>
             <Icon name="arrow-forward" size={14} color={C.green} />
@@ -36,6 +46,11 @@ export function Section({
 }
 
 const s = StyleSheet.create({
-  sectionTitle: { fontFamily: font.bold, fontSize: 18, letterSpacing: -0.45 },
+  sectionTitle: {
+    fontFamily: font.bold,
+    fontSize: 18,
+    letterSpacing: -0.45,
+    flexShrink: 1,
+  },
   link: { fontFamily: font.semibold, color: C.green, fontSize: 12 },
 });

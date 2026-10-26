@@ -4,10 +4,41 @@ import {
   openSheet,
   previousSheet,
   returnToLearning,
+  returnToListPage,
   type SheetNavigation,
 } from "../src/application/navigation/sheets";
 
 const empty = (): SheetNavigation => ({ current: null, parents: [] });
+
+test("full lists return through their overview and nested edits keep their origin", () => {
+  const accounts = openSheet(empty(), { type: "accounts" });
+  const list = openSheet(accounts, { type: "list", list: "accounts" });
+  const edit = openSheet(list, { type: "account", id: "sixth" });
+  const reconcile = openSheet(edit, { type: "reconcile", id: "sixth" });
+  assert.deepEqual(previousSheet(edit), list);
+  assert.deepEqual(returnToListPage(reconcile), list);
+  assert.deepEqual(previousSheet(list), accounts);
+  assert.deepEqual(previousSheet(accounts), empty());
+  assert.equal(returnToListPage(accounts), accounts);
+});
+
+test("list navigation retains the selected analytics month and distinguishes lists", () => {
+  const list = openSheet(empty(), {
+    type: "list",
+    list: "spendingChanges",
+    month: "2026-09",
+  });
+  const transaction = openSheet(list, { type: "transaction", id: "sixth" });
+  assert.deepEqual(returnToListPage(transaction), list);
+  const next = openSheet(list, {
+    type: "list",
+    list: "spendingCategories",
+    month: "2026-09",
+  });
+  assert.deepEqual(previousSheet(next), list);
+  assert.deepEqual(previousSheet(list), empty());
+  assert.equal(openSheet(list, list.current!), list);
+});
 
 test("settings navigation returns through the data section before closing", () => {
   const root = openSheet(empty(), { type: "settings" });

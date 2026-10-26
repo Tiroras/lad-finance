@@ -2,8 +2,7 @@ import { accountToBase } from "../../../domain/currency";
 import { PaymentAgenda } from "./PaymentAgenda";
 import type { OpenSheet } from "../../../application/navigation/types";
 import { useFinance } from "../../../state/finance";
-import { Empty, Notice, Section } from "../../../shared/ui";
-import { RecurringPaymentCard } from "./RecurringPaymentCard";
+import { RecurringPaymentsList } from "./RecurringPaymentsList";
 import { PaymentsSummary } from "./PaymentsSummary";
 import { shiftDate } from "../../../shared/lib/dates";
 import { upcoming } from "../../../domain/payments";
@@ -25,30 +24,7 @@ export function PaymentsPanel({ open }: { open: OpenSheet }) {
     <>
       <PaymentAgenda open={open} />
       <PaymentsSummary monthly={sum(30)} yearly={sum(365)} />
-      <Section
-        title="Регулярные платежи"
-        action="Добавить"
-        onPress={() => open({ type: "recurring" })}
-      />
-      <Notice>
-        Остановка прекращает новые обязательства с завтрашнего дня. Уже
-        возникшие платежи сохраняются до оплаты или отдельного пропуска.
-        Возобновление действует с сегодняшнего дня и не заполняет паузу.
-        Реальные списания нужно отменять у поставщика.
-      </Notice>
-      {state.recurring.length ? (
-        state.recurring.map((p) => (
-          <RecurringPaymentCard key={p.id} payment={p} open={open} />
-        ))
-      ) : (
-        <Empty
-          icon="calendar-outline"
-          title="Без неожиданных платежей"
-          description="Добавьте аренду, интернет или подписку. Лад учтёт их при расчёте доступных денег."
-          action="Добавить платёж"
-          onPress={() => open({ type: "recurring" })}
-        />
-      )}
+      <RecurringPaymentsList open={open} />
     </>
   );
 }

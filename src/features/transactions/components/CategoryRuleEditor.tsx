@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CategoryRule } from "../../../domain/automation";
 import { useActionError } from "../../../shared/lib/useActionError";
+import { usePreventSheetDismiss } from "../../../shared/ui/SheetDismissal";
 import {
   Button,
   Card,
@@ -24,6 +25,13 @@ export function CategoryRuleEditor({
     rule?.match ?? "exact",
   );
   const [category, setCategory] = useState(rule?.category ?? "other");
+  usePreventSheetDismiss({
+    hasChanges: () =>
+      pattern.trim() !== (rule?.pattern ?? "") ||
+      match !== (rule?.match ?? "exact") ||
+      category !== (rule?.category ?? "other"),
+    description: "Несохранённые изменения правила будут потеряны.",
+  });
   const actions = useFinanceActions();
   const { notify } = useFinance();
   const { error, run } = useActionError();

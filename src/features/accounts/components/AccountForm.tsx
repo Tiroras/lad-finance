@@ -32,12 +32,14 @@ export function AccountForm({
   defaultCurrency,
   defaultKind,
   open,
+  onArchiveChange,
 }: {
   id?: string;
   close: () => void;
   defaultCurrency?: CurrencyCode;
   defaultKind?: Account["kind"];
   open: OpenSheet;
+  onArchiveChange?: () => void;
 }) {
   const { moneyInput, parseMoney, currency: baseCode } = useMoney();
   const { state, today, notify } = useFinance();
@@ -135,7 +137,8 @@ export function AccountForm({
             run(() => {
               actions.restoreAccount(original.id);
               notify("Счёт восстановлен");
-              open({ type: "accounts" });
+              if (onArchiveChange) onArchiveChange();
+              else open({ type: "accounts" });
             })
           }
         />
@@ -290,7 +293,8 @@ export function AccountForm({
               run(() => {
                 actions.archiveAccount(original.id);
                 notify("Счёт перемещён в архив; история сохранена");
-                open({ type: "accounts" });
+                if (onArchiveChange) onArchiveChange();
+                else open({ type: "accounts" });
               })
             }
           />

@@ -14,12 +14,14 @@ export interface PendingDismissal {
 
 /** A transient confirmation: no draft values or navigation state are persisted. */
 export function createDismissalController() {
-  let guard: DismissalGuard | undefined;
+  const guards = new Set<DismissalGuard>();
+  let pendingGuards: DismissalGuard[] = [];
   let pending: PendingDismissal | null = null;
   let accepting = false;
   const listeners = new Set<() => void>();
   const publish = (value: PendingDismissal | null) => {
     pending = value;
+    if (!value) pendingGuards = [];
     listeners.forEach((listener) => listener());
   };
   return {
@@ -31,11 +33,10 @@ export function createDismissalController() {
     },
     getSnapshot: () => pending,
     register(value: DismissalGuard) {
-      guard = value;
+      guards.add(value);
       return () => {
-        if (guard !== value) return;
-        guard = undefined;
-        if (pending) publish(null);
+        guards.delete(value);
+        if (pendingGuards.includes(value)) publish(null);
       };
     },
     request(action: () => void): boolean {
@@ -44,11 +45,23 @@ export function createDismissalController() {
         return true;
       }
       if (pending) return false;
-      if (guard?.hasChanges()) {
+      const changed = [...guards].filter((guard) => guard.hasChanges());
+      if (changed.length) {
+        pendingGuards = changed;
         publish({
-          description: guard.description,
+          description: [
+            ...new Set(changed.map((guard) => guard.description)),
+          ].join("\n\n"),
           action,
-          onDiscard: guard.onDiscard,
+          onDiscard: () => {
+            let result: Promise<void> | undefined;
+            for (const guard of changed) {
+              result = result
+                ? result.then(() => guard.onDiscard?.())
+                : (guard.onDiscard?.() ?? undefined);
+            }
+            return result;
+          },
         });
         return false;
       }

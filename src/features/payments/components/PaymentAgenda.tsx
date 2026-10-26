@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { accountCurrency, accountToBase } from "../../../domain/currency";
 import {
@@ -11,20 +10,25 @@ import { useMoney, useFinance } from "../../../state/finance";
 import { paymentPending } from "../../../domain/payments";
 import type { OpenSheet } from "../../../application/navigation/types";
 import {
-  Button,
   C,
   font,
   Icon,
   Notice,
+  RecordList,
   Row,
   Section,
   Txt,
 } from "../../../shared/ui";
 
-export function PaymentAgenda({ open }: { open: OpenSheet }) {
+export function PaymentAgenda({
+  open,
+  full = false,
+}: {
+  open: OpenSheet;
+  full?: boolean;
+}) {
   const { money } = useMoney();
   const { state, today } = useFinance();
-  const [limit, setLimit] = useState(30);
   const overdue = overduePayments(state, today);
   const occurrences = [...overdue, ...upcoming(state, today)];
   return (
@@ -48,9 +52,16 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
       {occurrences.length === 0 && (
         <Txt style={{ color: C.muted }}>На ближайший месяц платежей нет.</Txt>
       )}
-      {occurrences
-        .slice(0, limit)
-        .map(({ payment, date, paid, skipped, versionId }) => {
+      <RecordList
+        items={occurrences}
+        full={full}
+        keyExtractor={({ payment, date, versionId }) =>
+          `${payment.id}-${versionId ?? "legacy"}-${date}`
+        }
+        showAllLabel="Весь календарь платежей"
+        onShowAll={() => open({ type: "list", list: "paymentAgenda" })}
+        testID="payment-agenda-list"
+        renderItem={({ payment, date, paid, skipped, versionId }) => {
           const pending = paymentPending(state, payment, date, versionId);
           const late = date < today && !paid && !skipped;
           const status = paid
@@ -66,7 +77,6 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
                     : "Запланирован";
           return (
             <Pressable
-              key={`${payment.id}-${versionId ?? "legacy"}-${date}`}
               accessibilityRole="button"
               accessibilityLabel={`${payment.name}, ${dateLabel(date)}, ${status}, ${money(payment.amount, false, accountCurrency(state, payment.accountId))}`}
               onPress={() =>
@@ -110,14 +120,8 @@ export function PaymentAgenda({ open }: { open: OpenSheet }) {
               </Row>
             </Pressable>
           );
-        })}
-      {occurrences.length > limit && (
-        <Button
-          label="Показать ещё платежи"
-          variant="secondary"
-          onPress={() => setLimit(limit + 30)}
-        />
-      )}
+        }}
+      />
     </View>
   );
 }
