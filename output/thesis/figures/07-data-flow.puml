@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 28
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowThickness 1.2
+skinparam ParticipantPadding 0
+skinparam BoxPadding 4
+hide footbox
+
+participant "Форма" as UI
+participant "useFinance\nActions" as A
+participant "Finance\nProvider" as P
+participant "domain" as D
+participant "Очередь\nзаписи" as Q
+participant "Адаптер" as S
+
+UI -> A : ввод
+A -> P : update(fn)
+P -> D : fn(current)
+alt Ошибка проверки
+  D --> P : исключение
+  P --> UI : ошибка; память прежняя
+else Допустимое изменение
+  D --> P : новый снимок
+  P -> P : размер; replace(next)
+  P -> Q : enqueue(профиль,\nснимок)
+  Q -> S : save(снимок)
+  S --> Q : успех / ошибка
+  Q --> P : lastSaved / saveError
+  P --> UI : память обновлена;\nстатус записи
+  note over Q,S : Ошибка записи:\nповтор снимка.
+end
+@enduml

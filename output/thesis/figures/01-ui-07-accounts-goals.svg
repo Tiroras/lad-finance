@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="97.07mm" viewBox="0 0 1200 728">
+<title>Новый счёт и Новая цель</title>
+<desc>Структурные схемы расположения элементов. Области прокрутки показаны условно. Денежные значения и персональные сведения не заполнены. Показаны повседневный счёт и простая новая цель со свёрнутым графиком.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:30px;fill:#000}.bold{font-weight:700}.title{font-size:36px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:2;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="728" style="fill:#fff;stroke:none"/>
+<rect x="624" y="24" width="552" height="680" rx="14"/>
+<rect x="24" y="24" width="552" height="680" rx="14"/>
+<text x="48.0" y="70.0" class="title" text-anchor="start">Новый счёт</text>
+<line x1="527.0" y1="45.0" x2="548.0" y2="66.0" stroke-width="2"/>
+<line x1="548.0" y1="45.0" x2="527.0" y2="66.0" stroke-width="2"/>
+<line x1="40.0" y1="92.0" x2="560.0" y2="92.0" stroke-width="2"/>
+<rect x="48.0" y="110.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="149.0" class="normal" text-anchor="start">Название</text>
+<text x="534.0" y="150.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="182.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="217.0" class="bold" text-anchor="middle">Повседневный</text>
+<rect x="48.0" y="239.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="274.0" class="normal" text-anchor="middle">Накопительный</text>
+<rect x="48.0" y="296.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="331.0" class="normal" text-anchor="middle">Кредитная карта</text>
+<rect x="48.0" y="359.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="398.0" class="normal" text-anchor="start">Валюта</text>
+<text x="534.0" y="399.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="431.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="470.0" class="normal" text-anchor="start">Текущий остаток</text>
+<text x="534.0" y="471.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="503.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="542.0" class="bold" text-anchor="middle">Сохранить счёт</text>
+<text x="648.0" y="70.0" class="title" text-anchor="start">Новая цель</text>
+<line x1="1127.0" y1="45.0" x2="1148.0" y2="66.0" stroke-width="2"/>
+<line x1="1148.0" y1="45.0" x2="1127.0" y2="66.0" stroke-width="2"/>
+<line x1="640.0" y1="92.0" x2="1160.0" y2="92.0" stroke-width="2"/>
+<rect x="648.0" y="110.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="149.0" class="normal" text-anchor="start">Значок</text>
+<text x="1134.0" y="150.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="182.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="221.0" class="normal" text-anchor="start">Название</text>
+<text x="1134.0" y="222.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="254.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="293.0" class="normal" text-anchor="start">Валюта</text>
+<text x="1134.0" y="294.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="326.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="365.0" class="normal" text-anchor="start">Сколько нужно накопить</text>
+<text x="1134.0" y="366.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="398.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="437.0" class="normal" text-anchor="start">Планирую откладывать в</text>
+<text x="664.0" y="476.0" class="normal" text-anchor="start">месяц</text>
+<text x="1134.0" y="477.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="509.0" width="504.0" height="99.0" rx="7"/>
+<text x="900.0" y="548.0" class="bold" text-anchor="middle">Настроить индивидуальный</text>
+<text x="900.0" y="587.0" class="bold" text-anchor="middle">график</text>
+<rect x="648.0" y="620.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="659.0" class="bold" text-anchor="middle">Создать цель</text>
+</svg>

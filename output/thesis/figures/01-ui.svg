@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="165.73mm" viewBox="0 0 1200 1243">
+<title>Обзор и Операции</title>
+<desc>Структурные схемы расположения элементов. Области прокрутки показаны условно. Денежные значения и персональные сведения не заполнены.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:30px;fill:#000}.bold{font-weight:700}.title{font-size:36px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:2;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="1243" style="fill:#fff;stroke:none"/>
+<rect x="624" y="24" width="552" height="1195" rx="14"/>
+<rect x="24" y="24" width="552" height="1195" rx="14"/>
+<text x="48.0" y="70.0" class="title" text-anchor="start">Обзор</text>
+<circle cx="538" cy="47" r="9"/>
+<path d="M 522 73 Q 538 49 554 73"/>
+<line x1="40.0" y1="92.0" x2="560.0" y2="92.0" stroke-width="2"/>
+<rect x="48.0" y="110.0" width="504.0" height="60.0" rx="7" stroke-dasharray="8 6"/>
+<text x="64.0" y="149.0" class="normal" text-anchor="start">Приветствие</text>
+<rect x="48.0" y="182.0" width="504.0" height="138.0" rx="7"/>
+<text x="64.0" y="221.0" class="bold" text-anchor="start">Можно потратить</text>
+<text x="64.0" y="260.0" class="normal" text-anchor="start">Доступная сумма и ориентир на</text>
+<text x="64.0" y="299.0" class="normal" text-anchor="start">день</text>
+<rect x="48.0" y="332.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="367.0" class="normal" text-anchor="middle">Расход</text>
+<rect x="48.0" y="389.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="424.0" class="normal" text-anchor="middle">Перевод</text>
+<rect x="48.0" y="446.0" width="504.0" height="49.0" rx="7"/>
+<text x="300.0" y="481.0" class="normal" text-anchor="middle">Проверить покупку</text>
+<rect x="48.0" y="509.0" width="504.0" height="99.0" rx="7"/>
+<text x="64.0" y="548.0" class="bold" text-anchor="start">Этот месяц</text>
+<text x="64.0" y="587.0" class="normal" text-anchor="start">Доходы / расходы · Подробнее</text>
+<rect x="48.0" y="620.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="659.0" class="bold" text-anchor="start">Счета</text>
+<rect x="48.0" y="692.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="731.0" class="bold" text-anchor="start">Будущая покупка</text>
+<rect x="48.0" y="764.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="803.0" class="bold" text-anchor="middle">Прогноз по дням</text>
+<rect x="48.0" y="836.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="875.0" class="bold" text-anchor="start">Расходы по категориям</text>
+<rect x="48.0" y="908.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="947.0" class="bold" text-anchor="start">Цели</text>
+<rect x="48.0" y="980.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="1019.0" class="bold" text-anchor="start">Последние операции</text>
+<rect x="48.0" y="1052.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="1091.0" class="bold" text-anchor="start">Ближайший платёж</text>
+<text x="648.0" y="70.0" class="title" text-anchor="start">Операции</text>
+<circle cx="1138" cy="47" r="9"/>
+<path d="M 1122 73 Q 1138 49 1154 73"/>
+<line x1="640.0" y1="92.0" x2="1160.0" y2="92.0" stroke-width="2"/>
+<rect x="648.0" y="110.0" width="504.0" height="57.0" rx="7"/>
+<text x="754.8" y="148.0" class="bold" text-anchor="middle">Месяц</text>
+<line x1="659.0" y1="159.0" x2="850.5" y2="159.0" stroke-width="3"/>
+<line x1="861.5" y1="110.0" x2="861.5" y2="167.0" stroke-width="2"/>
+<text x="1006.8" y="148.0" class="normal" text-anchor="middle">Вся история</text>
+<rect x="648.0" y="179.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="218.0" class="bold" text-anchor="middle">Добавить операцию</text>
+<rect x="648.0" y="251.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="290.0" class="normal" text-anchor="start">Выбор месяца</text>
+<text x="1134.0" y="291.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="323.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="362.0" class="normal" text-anchor="start">Поиск</text>
+<text x="1134.0" y="363.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="395.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="434.0" class="bold" text-anchor="start">Фильтры</text>
+<text x="664.0" y="473.0" class="normal" text-anchor="start">Тип / статус / счёт / категория</text>
+<rect x="648.0" y="506.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="545.0" class="bold" text-anchor="start">Итоги</text>
+<text x="664.0" y="584.0" class="normal" text-anchor="start">Доходы / расходы</text>
+<rect x="648.0" y="617.0" width="504.0" height="138.0" rx="7"/>
+<text x="664.0" y="656.0" class="bold" text-anchor="start">Операции по датам</text>
+<text x="664.0" y="695.0" class="normal" text-anchor="start">Дата · название · категория</text>
+<text x="664.0" y="734.0" class="normal" text-anchor="start">Счёт · сумма · статус</text>
+<rect x="648.0" y="767.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="806.0" class="bold" text-anchor="middle">Показать ещё</text>
+<rect x="648.0" y="839.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="878.0" class="bold" text-anchor="middle">Экспортировать операции</text>
+<line x1="30.0" y1="1142.0" x2="570.0" y2="1142.0" stroke-width="2"/>
+<text x="84.5" y="1184.0" class="bold" text-anchor="middle">Обзор</text>
+<line x1="40.0" y1="1196.0" x2="129.0" y2="1196.0" stroke-width="3"/>
+<line x1="139.0" y1="1142.0" x2="139.0" y2="1207.0" stroke-width="2"/>
+<text x="217.5" y="1184.0" class="normal" text-anchor="middle">Операции</text>
+<line x1="296.0" y1="1142.0" x2="296.0" y2="1207.0" stroke-width="2"/>
+<text x="346.5" y="1184.0" class="normal" text-anchor="middle">План</text>
+<line x1="397.0" y1="1142.0" x2="397.0" y2="1207.0" stroke-width="2"/>
+<text x="483.5" y="1184.0" class="normal" text-anchor="middle">Аналитика</text>
+<line x1="630.0" y1="1142.0" x2="1170.0" y2="1142.0" stroke-width="2"/>
+<text x="684.5" y="1184.0" class="normal" text-anchor="middle">Обзор</text>
+<line x1="739.0" y1="1142.0" x2="739.0" y2="1207.0" stroke-width="2"/>
+<text x="817.5" y="1184.0" class="bold" text-anchor="middle">Операции</text>
+<line x1="749.0" y1="1196.0" x2="886.0" y2="1196.0" stroke-width="3"/>
+<line x1="896.0" y1="1142.0" x2="896.0" y2="1207.0" stroke-width="2"/>
+<text x="946.5" y="1184.0" class="normal" text-anchor="middle">План</text>
+<line x1="997.0" y1="1142.0" x2="997.0" y2="1207.0" stroke-width="2"/>
+<text x="1083.5" y="1184.0" class="normal" text-anchor="middle">Аналитика</text>
+</svg>

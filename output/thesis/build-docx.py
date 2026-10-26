@@ -144,6 +144,11 @@ while i<len(lines):
   parts.append(lines[i].strip());i+=1
  text=' '.join(parts)
  p=DOC.add_paragraph();inline(p,text)
+ j=i
+ while j<len(lines) and not lines[j].strip(): j+=1
+ if j<len(lines) and re.match(r'!\[.*\]\(figures/01-ui[^)]*\)',lines[j].strip()):
+  p.paragraph_format.keep_with_next=True
+  p.paragraph_format.keep_together=True
  if p._p.getprevious() is not None and p._p.getprevious().tag==qn('w:tbl'):
   p.paragraph_format.space_before=Pt(6)
  if re.match(r'^\d+\. ',text) and 'дата обращения:' in text:

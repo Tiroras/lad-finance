@@ -1,0 +1,81 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 19
+skinparam classFontSize 20
+skinparam classAttributeFontSize 19
+skinparam ArrowFontSize 19
+skinparam legendFontSize 19
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam ArrowColor black
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 25
+hide circle
+hide methods
+
+class "Категория" as Category {
+  id: ИД
+  название: Строка
+  архив: Логика
+}
+class "Часть расхода" as Split {
+  сумма: Деньги
+}
+class "Долг" as Debt {
+  id: ИД
+  вид: взят / выдан
+  нач. остаток: Деньги
+}
+class "Операция" as Transaction {
+  id: ИД
+  вид: ВидОперации
+  дата: Дата
+  сумма: Деньги
+  зачисление?: Деньги
+  статус?: Статус
+}
+class "Счёт" as Account {
+  id: ИД
+  вид: ВидСчёта
+  валюта: Код
+  нач. остаток: Деньги
+}
+class "Корректировка" as Adjustment {
+  id: ИД
+  дата: Дата
+  сумма: Деньги
+}
+class "Сверка" as Reconciliation {
+  id: ИД
+  дата: Дата
+  остаток: Деньги
+  отпечаток: Строка
+}
+
+Category -[hidden]right- Split
+Split -[hidden]right- Debt
+Category "1" -- "0..*" Transaction
+Category "1" --right-- "0..*" Split : категория
+Transaction "1" *-up- "0..*" Split
+Debt "0..1" -- "0..*" Transaction
+Account "1" -up- "0..*" Transaction : основной
+Account "0..1" -up- "0..*" Transaction : получатель
+Account "1" -- "0..*" Debt
+Account "1" --left-- "0..*" Adjustment : счёт
+Account "1" --right-- "0..*" Reconciliation : счёт
+
+legend bottom
+  Концептуальные типы без методов.
+  Остаток счёта вычисляется.
+  Статус по умолчанию: проведена.
+  Получатель — только у перевода.
+  Родитель категории: 0..1, детей: 0..*.
+  У операции исходная покупка: 0..1.
+  Деньги — целые минимальные единицы.
+  Дата — местный календарный день.
+endlegend
+@enduml

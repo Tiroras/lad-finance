@@ -1,0 +1,26 @@
+@startmindmap
+!pragma layout smetana
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 24
+skinparam ArrowThickness 1.2
+skinparam Padding 8
+skinparam RankSep 16
+skinparam NodeSep 12
+
+* Система
+** Интерфейс
+*** application\nзапуск, навигация, оболочка
+*** screens\nОбзор, Операции, План, Аналитика
+*** features\nпредметные формы и панели
+** Финансовая логика
+*** domain\nмодель, расчёты, проверки, действия
+*** state/finance\nсостояние, очередь, профили, день
+** Платформенные службы
+*** infrastructure\nstorage, crypto, device, files,\nnotifications, exchange-rates
+** Общие средства
+*** shared/ui\nкомпоненты, тема
+*** shared/lib\nдаты и универсальные функции
+@endmindmap

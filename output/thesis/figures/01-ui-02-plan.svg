@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="118.93mm" viewBox="0 0 1200 892">
+<title>План и План</title>
+<desc>Структурные схемы расположения элементов. Области прокрутки показаны условно. Денежные значения и персональные сведения не заполнены.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:30px;fill:#000}.bold{font-weight:700}.title{font-size:36px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:2;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="892" style="fill:#fff;stroke:none"/>
+<rect x="624" y="24" width="552" height="844" rx="14"/>
+<rect x="24" y="24" width="552" height="844" rx="14"/>
+<text x="48.0" y="70.0" class="title" text-anchor="start">План</text>
+<circle cx="538" cy="47" r="9"/>
+<path d="M 522 73 Q 538 49 554 73"/>
+<line x1="40.0" y1="92.0" x2="560.0" y2="92.0" stroke-width="2"/>
+<rect x="48.0" y="110.0" width="504.0" height="57.0" rx="7"/>
+<text x="126.5" y="148.0" class="bold" text-anchor="middle">Бюджеты</text>
+<line x1="59.0" y1="159.0" x2="194.0" y2="159.0" stroke-width="3"/>
+<line x1="205.0" y1="110.0" x2="205.0" y2="167.0" stroke-width="2"/>
+<text x="247.5" y="148.0" class="normal" text-anchor="middle">Цели</text>
+<line x1="290.0" y1="110.0" x2="290.0" y2="167.0" stroke-width="2"/>
+<text x="358.0" y="148.0" class="normal" text-anchor="middle">Платежи</text>
+<line x1="426.0" y1="110.0" x2="426.0" y2="167.0" stroke-width="2"/>
+<text x="489.0" y="148.0" class="normal" text-anchor="middle">Прогноз</text>
+<rect x="48.0" y="179.0" width="504.0" height="99.0" rx="7"/>
+<text x="64.0" y="218.0" class="bold" text-anchor="start">Общие лимиты</text>
+<text x="64.0" y="257.0" class="normal" text-anchor="start">Лимит / расход</text>
+<rect x="48.0" y="290.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="329.0" class="bold" text-anchor="middle">Категории и подкатегории</text>
+<rect x="48.0" y="362.0" width="504.0" height="99.0" rx="7" stroke-dasharray="8 6"/>
+<text x="64.0" y="401.0" class="normal" text-anchor="start">Подкатегории используют общий</text>
+<text x="64.0" y="440.0" class="normal" text-anchor="start">бюджет</text>
+<rect x="48.0" y="473.0" width="504.0" height="177.0" rx="7"/>
+<text x="64.0" y="512.0" class="bold" text-anchor="start">Бюджет категории</text>
+<text x="64.0" y="551.0" class="normal" text-anchor="start">Период</text>
+<text x="64.0" y="590.0" class="normal" text-anchor="start">Потрачено / лимит / остаток</text>
+<text x="64.0" y="629.0" class="normal" text-anchor="start">Индикатор · раскрыть</text>
+<rect x="48.0" y="662.0" width="504.0" height="99.0" rx="7"/>
+<text x="64.0" y="701.0" class="bold" text-anchor="start">Другие категории</text>
+<text x="64.0" y="740.0" class="normal" text-anchor="start">Карточки бюджетов</text>
+<text x="648.0" y="70.0" class="title" text-anchor="start">План</text>
+<circle cx="1138" cy="47" r="9"/>
+<path d="M 1122 73 Q 1138 49 1154 73"/>
+<line x1="640.0" y1="92.0" x2="1160.0" y2="92.0" stroke-width="2"/>
+<rect x="648.0" y="110.0" width="504.0" height="57.0" rx="7"/>
+<text x="721.7" y="148.0" class="normal" text-anchor="middle">Бюджеты</text>
+<line x1="795.5" y1="110.0" x2="795.5" y2="167.0" stroke-width="2"/>
+<text x="840.2" y="148.0" class="bold" text-anchor="middle">Цели</text>
+<line x1="806.5" y1="159.0" x2="874.0" y2="159.0" stroke-width="3"/>
+<line x1="885.0" y1="110.0" x2="885.0" y2="167.0" stroke-width="2"/>
+<text x="954.2" y="148.0" class="normal" text-anchor="middle">Платежи</text>
+<line x1="1023.5" y1="110.0" x2="1023.5" y2="167.0" stroke-width="2"/>
+<text x="1087.7" y="148.0" class="normal" text-anchor="middle">Прогноз</text>
+<rect x="648.0" y="179.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="218.0" class="bold" text-anchor="middle">Новая цель</text>
+<rect x="648.0" y="251.0" width="504.0" height="177.0" rx="7"/>
+<text x="664.0" y="290.0" class="bold" text-anchor="start">Цель</text>
+<text x="664.0" y="329.0" class="normal" text-anchor="start">Название</text>
+<text x="664.0" y="368.0" class="normal" text-anchor="start">Накоплено / требуется</text>
+<text x="664.0" y="407.0" class="normal" text-anchor="start">График и прогресс</text>
+<rect x="648.0" y="440.0" width="504.0" height="57.0" rx="7"/>
+<text x="751.0" y="478.0" class="normal" text-anchor="middle">Изменить</text>
+<line x1="854.0" y1="440.0" x2="854.0" y2="497.0" stroke-width="2"/>
+<text x="1003.0" y="478.0" class="normal" text-anchor="middle">Пополнить цель</text>
+<rect x="648.0" y="509.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="548.0" class="bold" text-anchor="start">Другие цели</text>
+<text x="664.0" y="587.0" class="normal" text-anchor="start">Карточки накоплений</text>
+<line x1="30.0" y1="791.0" x2="570.0" y2="791.0" stroke-width="2"/>
+<text x="84.5" y="833.0" class="normal" text-anchor="middle">Обзор</text>
+<line x1="139.0" y1="791.0" x2="139.0" y2="856.0" stroke-width="2"/>
+<text x="217.5" y="833.0" class="normal" text-anchor="middle">Операции</text>
+<line x1="296.0" y1="791.0" x2="296.0" y2="856.0" stroke-width="2"/>
+<text x="346.5" y="833.0" class="bold" text-anchor="middle">План</text>
+<line x1="306.0" y1="845.0" x2="387.0" y2="845.0" stroke-width="3"/>
+<line x1="397.0" y1="791.0" x2="397.0" y2="856.0" stroke-width="2"/>
+<text x="483.5" y="833.0" class="normal" text-anchor="middle">Аналитика</text>
+<line x1="630.0" y1="791.0" x2="1170.0" y2="791.0" stroke-width="2"/>
+<text x="684.5" y="833.0" class="normal" text-anchor="middle">Обзор</text>
+<line x1="739.0" y1="791.0" x2="739.0" y2="856.0" stroke-width="2"/>
+<text x="817.5" y="833.0" class="normal" text-anchor="middle">Операции</text>
+<line x1="896.0" y1="791.0" x2="896.0" y2="856.0" stroke-width="2"/>
+<text x="946.5" y="833.0" class="bold" text-anchor="middle">План</text>
+<line x1="906.0" y1="845.0" x2="987.0" y2="845.0" stroke-width="3"/>
+<line x1="997.0" y1="791.0" x2="997.0" y2="856.0" stroke-width="2"/>
+<text x="1083.5" y="833.0" class="normal" text-anchor="middle">Аналитика</text>
+</svg>

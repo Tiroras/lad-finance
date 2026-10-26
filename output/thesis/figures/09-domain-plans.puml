@@ -1,0 +1,81 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 18
+skinparam classFontSize 19
+skinparam classAttributeFontSize 18
+skinparam ArrowFontSize 18
+skinparam legendFontSize 18
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam ArrowColor black
+skinparam classAttributeIconSize 0
+skinparam nodesep 22
+skinparam ranksep 25
+hide circle
+hide methods
+
+class "Сценарий" as Scenario {
+  id: ИД
+  горизонт: 30 / 60 / 90
+  изменения: Массив
+  события: Массив
+}
+class "План дохода" as Income {
+  id: ИД
+  название: Строка
+}
+class "План платежа" as Payment {
+  id: ИД
+  вид: платёж / подписка
+}
+class "Цель" as Goal {
+  id: ИД
+  целевая сумма: Деньги
+  валюта: Код
+}
+class "Условия дохода" as IncomeTerms {
+  id: ИД
+  начало, конец?: Дата
+  сумма: Деньги
+}
+class "Условия платежа" as PaymentTerms {
+  id: ИД
+  начало, конец?: Дата
+  сумма: Деньги
+}
+class "Условия цели" as GoalTerms {
+  id: ИД
+  начало, конец?: Дата
+  взнос: Деньги
+  срок: Дата [0..1]
+}
+class "График" as Schedule <<значение>> {
+  единица: Период
+  интервал: Целое
+  начало: Дата
+}
+
+Income -[hidden]right- Payment
+Payment -[hidden]right- Goal
+IncomeTerms -[hidden]right- PaymentTerms
+PaymentTerms -[hidden]right- GoalTerms
+Scenario ..> Income
+Scenario ..> Payment
+Scenario ..> Goal
+Income "1" *-down- "0..*" IncomeTerms
+Payment "1" *-down- "0..*" PaymentTerms
+Goal "1" *-down- "0..*" GoalTerms
+IncomeTerms "0..1" *-down- "0..1" Schedule
+PaymentTerms "0..1" *-down- "0..1" Schedule
+GoalTerms "0..1" *-down- "0..1" Schedule
+
+legend bottom
+  Пунктир: изменение расчётных условий.
+  График — отдельное значение версии.
+  Интервалы версий не пересекаются.
+  У графика один владелец: {xor}.
+endlegend
+@enduml

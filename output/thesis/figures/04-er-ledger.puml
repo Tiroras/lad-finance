@@ -1,0 +1,92 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 19
+skinparam classFontSize 20
+skinparam classAttributeFontSize 19
+skinparam ArrowFontSize 19
+skinparam legendFontSize 19
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam ArrowColor black
+skinparam classAttributeIconSize 0
+skinparam nodesep 30
+skinparam ranksep 25
+hide circle
+
+entity "Категория" as Category {
+  * id
+  --
+  название
+}
+entity "Бюджет\nкатегории" as Budget {
+  * categoryId
+  --
+  период
+}
+entity "Цель" as Goal {
+  * id
+  --
+  валюта
+}
+entity "Часть\nрасхода" as Split {
+  * операция, №
+  --
+  сумма
+}
+entity "Операция" as Transaction {
+  * id
+  --
+  вид, дата
+  сумма, статус
+}
+entity "Долг" as Debt {
+  * id
+  --
+  направление
+  валюта
+}
+entity "Корректировка" as Adjustment {
+  * id
+  --
+  дата, сумма
+}
+entity "Счёт" as Account {
+  * id
+  --
+  вид
+  валюта
+  нач. остаток
+}
+entity "Сверка" as Reconciliation {
+  * id
+  --
+  дата
+  остаток
+}
+
+Category ||--right--o| Budget : лимит
+Budget -[hidden]right- Goal
+Split -[hidden]right- Transaction
+Transaction -[hidden]right- Debt
+Adjustment -[hidden]right- Account
+Account -[hidden]right- Reconciliation
+Category ||-down-o{ Split
+Category ||--o{ Transaction
+Transaction ||--left--o{ Split : части
+Goal |o-down-o{ Transaction : взнос
+Debt |o-left-o{ Transaction
+Account ||-up-o{ Transaction : основной
+Account |o-up-o{ Transaction : получатель
+Account ||--o{ Debt
+Account ||--left--o{ Adjustment : счёт
+Account ||--right--o{ Reconciliation : счёт
+
+legend bottom
+  Звёздочка — ключ. Часть: операция + №.
+  Получатель обязателен у перевода.
+  Родитель и возврат: самоссылки 0..1.
+endlegend
+@enduml

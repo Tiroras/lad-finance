@@ -1,0 +1,49 @@
+@startuml
+' Render with external Graphviz (not Smetana).
+' Verified: PlantUML 1.2026.1 + Graphviz 16.1.0 (Viz.js 3.31.0 WASM).
+
+top to bottom direction
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 28
+skinparam ArrowThickness 1.2
+skinparam linetype ortho
+skinparam usecaseFontSize 28
+skinparam packageFontSize 28
+skinparam actorFontSize 28
+skinparam nodesep 16
+skinparam ranksep 40
+
+actor "Владелец" as Owner
+rectangle "Система" {
+  usecase "UC-09. Учитывать долги\nи кредитные карты" as U9
+  usecase "UC-10. Оценивать\nдоступные деньги" as U10
+  usecase "UC-11. Строить прогноз\nпо счетам" as U11
+  usecase "UC-12. Проверять\nпокупку" as U12
+
+  usecase "UC-13. Сравнивать\nсохранённые сценарии" as U13
+  usecase "UC-14. Анализировать\nисторию" as U14
+  usecase "UC-15. Импортировать\nи экспортировать\nоперации" as U15
+  usecase "UC-16. Сохранять,\nвосстанавливать\nи защищать учёт" as U16
+  U9 -[hidden]down- U10
+  U10 -[hidden]down- U11
+  U11 -[hidden]down- U12
+  U13 -[hidden]down- U14
+  U14 -[hidden]down- U15
+  U15 -[hidden]down- U16
+  U9 -[hidden]right- U13
+  U10 -[hidden]right- U14
+  U11 -[hidden]right- U15
+  U12 -[hidden]right- U16
+}
+Owner -right- U9
+Owner -right- U10
+Owner -right- U11
+Owner -right- U12
+Owner -right- U13
+Owner -right- U14
+Owner -right- U15
+Owner -right- U16
+@enduml

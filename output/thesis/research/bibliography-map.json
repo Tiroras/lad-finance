@@ -1,0 +1,167 @@
+[
+  {
+    "number": 1,
+    "key": "fincult",
+    "metadata": [
+      "Личный финансовый план. Как копить деньги и планировать свои траты",
+      "Финансовая культура",
+      "https://fincult.info/upload/iblock/5be/Lichny_finansovy_plan.pdf",
+      "2022. 25 с."
+    ]
+  },
+  {
+    "number": 2,
+    "key": "excel",
+    "metadata": [
+      "Manage your household budget in Excel",
+      "Microsoft Support",
+      "https://support.microsoft.com/en-us/excel/manage-your-household-budget-in-excel",
+      ""
+    ]
+  },
+  {
+    "number": 3,
+    "key": "zen",
+    "metadata": [
+      "Дзен-мани — приложение для контроля расходов",
+      "Дзен-мани",
+      "https://zenmoney.ru/",
+      ""
+    ]
+  },
+  {
+    "number": 4,
+    "key": "coin",
+    "metadata": [
+      "CoinKeeper — answers to all your money questions",
+      "CoinKeeper",
+      "https://coinkeeper.me/",
+      ""
+    ]
+  },
+  {
+    "number": 5,
+    "key": "ynab",
+    "metadata": [
+      "The YNAB Method",
+      "YNAB",
+      "https://www.ynab.com/ynab-method",
+      ""
+    ]
+  },
+  {
+    "number": 6,
+    "key": "actual",
+    "metadata": [
+      "Your Finances — made simple",
+      "Actual Budget",
+      "https://actualbudget.org/",
+      ""
+    ]
+  },
+  {
+    "number": 7,
+    "key": "ynab_currency",
+    "metadata": ["Pricing", "YNAB", "https://www.ynab.com/pricing", ""]
+  },
+  {
+    "number": 8,
+    "key": "actual_currency",
+    "metadata": [
+      "Multi-Currency",
+      "Actual Budget",
+      "https://actualbudget.org/docs/budgeting/multi-currency/",
+      ""
+    ]
+  },
+  {
+    "number": 9,
+    "key": "cfpb",
+    "metadata": [
+      "Creating a cash flow budget",
+      "Consumer Financial Protection Bureau",
+      "https://www.consumerfinance.gov/documents/10038/cfpb_creating-cash-flow-budget_tool_2021-08.pdf",
+      "3 p."
+    ]
+  },
+  {
+    "number": 10,
+    "key": "requirements",
+    "metadata": [
+      "System Engineering Handbook: Appendix",
+      "NASA",
+      "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+      "Приложения C, D."
+    ]
+  },
+  {
+    "number": 11,
+    "key": "ynab_export",
+    "metadata": [
+      "How to Export Plan Data",
+      "YNAB",
+      "https://support.ynab.com/en_us/how-to-export-plan-data-Sy_CouWA9",
+      "18.08.2026."
+    ]
+  },
+  {
+    "number": 12,
+    "key": "expo",
+    "metadata": [
+      "Expo SDK reference. SDK 58",
+      "Expo",
+      "https://docs.expo.dev/versions/v58.0.0/",
+      ""
+    ]
+  },
+  {
+    "number": 13,
+    "key": "securestore",
+    "metadata": [
+      "Expo SecureStore. SDK 58",
+      "Expo",
+      "https://docs.expo.dev/versions/v58.0.0/sdk/securestore/",
+      ""
+    ]
+  },
+  {
+    "number": 14,
+    "key": "uml",
+    "metadata": [
+      "Unified Modeling Language. Version 2.5.1",
+      "Object Management Group",
+      "https://www.omg.org/spec/UML/2.5.1/PDF",
+      "2017. Разделы 9.5.3, 11.4.3–11.4.4, 18.1."
+    ]
+  },
+  {
+    "number": 15,
+    "key": "rn",
+    "metadata": [
+      "Core Components and APIs",
+      "React Native",
+      "https://reactnative.dev/docs/components-and-apis",
+      ""
+    ]
+  },
+  {
+    "number": 16,
+    "key": "react",
+    "metadata": [
+      "Thinking in React",
+      "React",
+      "https://react.dev/learn/thinking-in-react",
+      ""
+    ]
+  },
+  {
+    "number": 17,
+    "key": "ts",
+    "metadata": [
+      "The TypeScript Handbook",
+      "TypeScript",
+      "https://www.typescriptlang.org/docs/handbook/intro.html",
+      ""
+    ]
+  }
+]

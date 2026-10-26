@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="131.07mm" viewBox="0 0 1200 983">
+<title>Примерка покупки и Сценарий</title>
+<desc>Структурные схемы расположения элементов. Области прокрутки показаны условно. Денежные значения и персональные сведения не заполнены. В сценарии выбран раздел условий.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:30px;fill:#000}.bold{font-weight:700}.title{font-size:36px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:2;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="983" style="fill:#fff;stroke:none"/>
+<rect x="624" y="24" width="552" height="935" rx="14"/>
+<rect x="24" y="24" width="552" height="935" rx="14"/>
+<text x="48.0" y="70.0" class="title" text-anchor="start">Примерка покупки</text>
+<line x1="527.0" y1="45.0" x2="548.0" y2="66.0" stroke-width="2"/>
+<line x1="548.0" y1="45.0" x2="527.0" y2="66.0" stroke-width="2"/>
+<line x1="40.0" y1="92.0" x2="560.0" y2="92.0" stroke-width="2"/>
+<rect x="48.0" y="110.0" width="504.0" height="60.0" rx="7" stroke-dasharray="8 6"/>
+<text x="64.0" y="149.0" class="normal" text-anchor="start">Расчёт без списания денег</text>
+<rect x="48.0" y="182.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="221.0" class="normal" text-anchor="start">Счёт покупки</text>
+<text x="534.0" y="222.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="254.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="293.0" class="normal" text-anchor="start">Стоимость</text>
+<text x="534.0" y="294.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="326.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="365.0" class="bold" text-anchor="start">Быстрые суммы</text>
+<rect x="48.0" y="398.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="437.0" class="normal" text-anchor="start">Дата покупки</text>
+<text x="534.0" y="438.0" class="normal" text-anchor="end">—</text>
+<rect x="48.0" y="470.0" width="504.0" height="57.0" rx="7"/>
+<text x="133.0" y="508.0" class="bold" text-anchor="middle">30 дней</text>
+<line x1="59.0" y1="519.0" x2="207.0" y2="519.0" stroke-width="3"/>
+<line x1="218.0" y1="470.0" x2="218.0" y2="527.0" stroke-width="2"/>
+<text x="301.5" y="508.0" class="normal" text-anchor="middle">60 дней</text>
+<line x1="385.0" y1="470.0" x2="385.0" y2="527.0" stroke-width="2"/>
+<text x="468.5" y="508.0" class="normal" text-anchor="middle">90 дней</text>
+<rect x="48.0" y="539.0" width="504.0" height="138.0" rx="7"/>
+<text x="64.0" y="578.0" class="bold" text-anchor="start">Возможная покупка</text>
+<text x="64.0" y="617.0" class="normal" text-anchor="start">Допустимая сумма / ближайшая</text>
+<text x="64.0" y="656.0" class="normal" text-anchor="start">дата</text>
+<rect x="48.0" y="689.0" width="504.0" height="57.0" rx="7"/>
+<text x="184.8" y="727.0" class="normal" text-anchor="middle">Подставить</text>
+<line x1="321.5" y1="689.0" x2="321.5" y2="746.0" stroke-width="2"/>
+<text x="436.8" y="727.0" class="normal" text-anchor="middle">Выбрать</text>
+<rect x="48.0" y="758.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="797.0" class="bold" text-anchor="start">Оценка доступности</text>
+<rect x="48.0" y="830.0" width="504.0" height="60.0" rx="7"/>
+<text x="64.0" y="869.0" class="bold" text-anchor="start">Сравнение прогноза</text>
+<text x="648.0" y="70.0" class="title" text-anchor="start">Сценарий</text>
+<line x1="1127.0" y1="45.0" x2="1148.0" y2="66.0" stroke-width="2"/>
+<line x1="1148.0" y1="45.0" x2="1127.0" y2="66.0" stroke-width="2"/>
+<line x1="640.0" y1="92.0" x2="1160.0" y2="92.0" stroke-width="2"/>
+<rect x="648.0" y="110.0" width="504.0" height="99.0" rx="7" stroke-dasharray="8 6"/>
+<text x="664.0" y="149.0" class="normal" text-anchor="start">Отдельный вариант</text>
+<text x="664.0" y="188.0" class="normal" text-anchor="start">планирования</text>
+<rect x="648.0" y="221.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="260.0" class="normal" text-anchor="start">Название</text>
+<text x="1134.0" y="261.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="293.0" width="504.0" height="57.0" rx="7"/>
+<text x="733.0" y="331.0" class="bold" text-anchor="middle">30 дней</text>
+<line x1="659.0" y1="342.0" x2="807.0" y2="342.0" stroke-width="3"/>
+<line x1="818.0" y1="293.0" x2="818.0" y2="350.0" stroke-width="2"/>
+<text x="901.5" y="331.0" class="normal" text-anchor="middle">60 дней</text>
+<line x1="985.0" y1="293.0" x2="985.0" y2="350.0" stroke-width="2"/>
+<text x="1068.5" y="331.0" class="normal" text-anchor="middle">90 дней</text>
+<rect x="648.0" y="362.0" width="504.0" height="57.0" rx="7"/>
+<text x="766.5" y="400.0" class="bold" text-anchor="middle">Условия</text>
+<line x1="659.0" y1="411.0" x2="874.0" y2="411.0" stroke-width="3"/>
+<line x1="885.0" y1="362.0" x2="885.0" y2="419.0" stroke-width="2"/>
+<text x="1018.5" y="400.0" class="normal" text-anchor="middle">Сравнение</text>
+<rect x="648.0" y="431.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="470.0" class="bold" text-anchor="start">Повседневные расходы</text>
+<text x="664.0" y="509.0" class="normal" text-anchor="start">Как в плане / своя сумма</text>
+<rect x="648.0" y="542.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="581.0" class="bold" text-anchor="start">Изменить условия плана</text>
+<text x="664.0" y="620.0" class="normal" text-anchor="start">Суммы · сдвиги · включатели</text>
+<rect x="648.0" y="653.0" width="504.0" height="138.0" rx="7"/>
+<text x="664.0" y="692.0" class="bold" text-anchor="start">Разовые события</text>
+<text x="664.0" y="731.0" class="normal" text-anchor="start">Название · вид · сумма · дата</text>
+<text x="664.0" y="770.0" class="normal" text-anchor="start">Счёт · участие в расчёте</text>
+<rect x="648.0" y="803.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="842.0" class="bold" text-anchor="middle">Сравнить с планом</text>
+<rect x="648.0" y="875.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="914.0" class="bold" text-anchor="middle">Сохранить сценарий</text>
+</svg>
