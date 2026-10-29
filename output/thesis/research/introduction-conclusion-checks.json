@@ -1,0 +1,48 @@
+{
+  "checked_on": "2026-10-29",
+  "documents": {
+    "introduction-conclusion": {
+      "pages": 6,
+      "sha256": "bf10f119993bf3fda575c2489d149ff1db2224b22b02b1683a2679f0710d7691"
+    },
+    "thesis": {
+      "pages": 98,
+      "sha256": "feb9829922348f4f4b72ed40fcb7a73929bd86fd1a23594c9ed94ed2f43a88a7"
+    }
+  },
+  "checks": {
+    "introduction-conclusion:paragraphs_match": true,
+    "introduction-conclusion:a4_margins": true,
+    "introduction-conclusion:body_format": true,
+    "introduction-conclusion:section_headings": true,
+    "introduction-conclusion:page_count": true,
+    "introduction-conclusion:page_numbers": true,
+    "introduction-conclusion:no_blank_pages": true,
+    "introduction-conclusion:within_page_bounds": true,
+    "thesis:paragraphs_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:section_headings": true,
+    "thesis:page_count": true,
+    "thesis:page_numbers": true,
+    "thesis:no_blank_pages": true,
+    "thesis:within_page_bounds": true,
+    "all_previous_tables_preserved": true,
+    "all_18_equations_preserved": true,
+    "all_29_images_preserved": true,
+    "introduction_pages_match": true,
+    "conclusion_pages_match": true,
+    "previous_90_chapter_pages_preserved": true,
+    "previous_bibliography_pages_preserved": true,
+    "seven_tasks_use_hyphens": true
+  },
+  "passed": 24,
+  "total": 24,
+  "visual_review": {
+    "new_pages_reviewed_individually": [1, 2, 3, 4, 5, 6],
+    "changed_pages_reviewed_again": [2, 4, 5],
+    "combined_pages_additionally_opened": [4, 94, 97, 98],
+    "previous_92_pages_preserved_except_footer": true,
+    "unresolved_defects": []
+  }
+}

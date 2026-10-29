@@ -1,0 +1,265 @@
+{
+  "executedOn": "2026-10-29",
+  "calculation": "Actual forecast() results; all amounts in RUB minor units",
+  "report": {
+    "date": "2026-10-20",
+    "units": "RUB minor units (kopecks)",
+    "UC10": {
+      "liquid": 4000000,
+      "payments": 0,
+      "goals": 0,
+      "buffer": 500000,
+      "beforeProtection": 3500000,
+      "protection": {
+        "horizon": 30,
+        "end": "2026-11-18",
+        "limit": 1450000,
+        "date": "2026-11-18",
+        "dailySpending": 50000,
+        "dailyStart": "2026-10-25"
+      },
+      "available": 1450000,
+      "daily": 290000,
+      "days": 5,
+      "payday": "2026-10-25"
+    },
+    "UC11": {
+      "length": 30,
+      "first": "2026-10-20",
+      "last": "2026-11-18",
+      "opening": 4000000,
+      "income": 1000000,
+      "outflow": 3250000,
+      "closing": 1750000,
+      "minimum": {
+        "date": "2026-11-18",
+        "available": 1750000
+      },
+      "accountClosing": [
+        {
+          "id": "a",
+          "amount": 750000
+        },
+        {
+          "id": "b",
+          "amount": 1000000
+        },
+        {
+          "id": "s",
+          "amount": 5000000
+        }
+      ],
+      "unallocated": 0,
+      "warnings": []
+    },
+    "UC12": {
+      "maximum": 750000,
+      "earliest": "2026-10-20",
+      "exactClosing": 1000000,
+      "exactAccountMinimum": 0,
+      "excessFirstShortfall": {
+        "date": "2026-11-18",
+        "balance": -1,
+        "held": 0,
+        "available": -1
+      },
+      "noAssignmentMaximum": 0,
+      "baselineShortfallMaximum": 0
+    },
+    "UC13": {
+      "closing": 1950000,
+      "closingDelta": 200000,
+      "minimum": {
+        "date": "2026-11-03",
+        "available": 1700000
+      },
+      "minimumDelta": -50000,
+      "savedCount": 1,
+      "copiedCount": 2,
+      "financialStateUnchanged": true,
+      "version": 9
+    }
+  },
+  "chart": [
+    {
+      "date": "2026-10-20",
+      "baseline": 4000000,
+      "scenario": 4000000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-21",
+      "baseline": 3950000,
+      "scenario": 3950000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-22",
+      "baseline": 3900000,
+      "scenario": 3900000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-23",
+      "baseline": 3850000,
+      "scenario": 3450000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-24",
+      "baseline": 3800000,
+      "scenario": 3400000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-25",
+      "baseline": 4750000,
+      "scenario": 3350000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-26",
+      "baseline": 4700000,
+      "scenario": 3300000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-27",
+      "baseline": 4650000,
+      "scenario": 3250000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-28",
+      "baseline": 2800000,
+      "scenario": 2000000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-29",
+      "baseline": 2750000,
+      "scenario": 1950000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-30",
+      "baseline": 2700000,
+      "scenario": 1900000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-10-31",
+      "baseline": 2650000,
+      "scenario": 1850000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-01",
+      "baseline": 2600000,
+      "scenario": 1800000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-02",
+      "baseline": 2550000,
+      "scenario": 1750000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-03",
+      "baseline": 2500000,
+      "scenario": 1700000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-04",
+      "baseline": 2450000,
+      "scenario": 2650000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-05",
+      "baseline": 2400000,
+      "scenario": 2600000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-06",
+      "baseline": 2350000,
+      "scenario": 2550000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-07",
+      "baseline": 2300000,
+      "scenario": 2500000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-08",
+      "baseline": 2250000,
+      "scenario": 2450000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-09",
+      "baseline": 2200000,
+      "scenario": 2400000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-10",
+      "baseline": 2150000,
+      "scenario": 2350000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-11",
+      "baseline": 2100000,
+      "scenario": 2300000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-12",
+      "baseline": 2050000,
+      "scenario": 2250000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-13",
+      "baseline": 2000000,
+      "scenario": 2200000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-14",
+      "baseline": 1950000,
+      "scenario": 2150000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-15",
+      "baseline": 1900000,
+      "scenario": 2100000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-16",
+      "baseline": 1850000,
+      "scenario": 2050000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-17",
+      "baseline": 1800000,
+      "scenario": 2000000,
+      "reserve": 500000
+    },
+    {
+      "date": "2026-11-18",
+      "baseline": 1750000,
+      "scenario": 1950000,
+      "reserve": 500000
+    }
+  ]
+}

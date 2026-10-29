@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="760" viewBox="0 0 800 760">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
+<rect width="800" height="760" fill="#fff"/>
+<g fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)">
+<polyline points="280,64 280,92"/>
+<polyline points="280,156 280,186"/>
+<polyline points="280,282 280,314"/>
+<polyline points="280,418 280,450"/>
+<polyline points="280,546 280,578"/>
+<polyline points="280,656 280,690"/>
+<polyline points="505,366 554,366"/>
+<polyline points="660,418 660,712 390,712"/>
+</g>
+<rect x="170" y="24" width="220" height="40" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="51" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
+<polygon points="73,92 505,92 487,156 55,156" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="118" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Категория, лимит,</text>
+<text x="280" y="144" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">новый график и дата</text>
+<rect x="55" y="186" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="215" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Определить прежний период</text>
+<text x="280" y="241" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и ближайшую будущую границу;</text>
+<text x="280" y="267" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">проверить конфликты лимитов</text>
+<polygon points="280,314 505,366 280,418 55,366" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="360" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Переход</text>
+<text x="280" y="386" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">допустим?</text>
+<rect x="55" y="450" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="492" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Добавить версию; перенести остаток</text>
+<text x="280" y="518" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">на границе по прежним условиям</text>
+<polygon points="73,578 505,578 487,656 55,656" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="611" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Период, лимит,</text>
+<text x="280" y="637" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">перенос и расходы</text>
+<rect x="170" y="690" width="220" height="44" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="280" y="719" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+<polygon points="563,314 775,314 757,418 545,418" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="347" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
+<text x="660" y="373" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">историю бюджета</text>
+<text x="660" y="399" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">не изменять</text>
+<text x="526" y="348" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="300" y="440" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+</svg>

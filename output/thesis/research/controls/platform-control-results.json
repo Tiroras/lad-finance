@@ -1,0 +1,48 @@
+{
+  "UC01": {
+    "originalCount": 1,
+    "addedName": "Семейный",
+    "renamedName": "Общие расходы",
+    "idPreserved": true,
+    "duplicateRejected": true,
+    "registryRoundTrip": true
+  },
+  "UC14": {
+    "comparisonDays": 20,
+    "currentExpenseMinor": -4000,
+    "previousExpenseMinor": 10000,
+    "groceriesCurrentMinor": -3200,
+    "septemberIncomeMinor": 0,
+    "septemberExpenseMinor": -4000,
+    "stateUnchanged": true
+  },
+  "UC15": {
+    "summary": {
+      "sourceRows": 5,
+      "added": 2,
+      "skipped": {
+        "invalid": 1,
+        "duplicate": 1,
+        "excluded": 1
+      }
+    },
+    "transactions": 3,
+    "balanceMinor": 102000,
+    "exportParts": 1,
+    "exportRows": 3,
+    "hasBOM": true,
+    "previousStateUnchanged": true
+  },
+  "UC16": {
+    "financialVersion": 4,
+    "envelopeVersion": 1,
+    "cipher": "AES-256-GCM",
+    "kdf": "PBKDF2-SHA256",
+    "iterations": 600000,
+    "roundTrip": true,
+    "wrongPasswordRejected": true,
+    "sourceUnchanged": true,
+    "plaintextNameAbsent": true,
+    "passwordAbsent": true
+  }
+}

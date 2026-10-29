@@ -1,7 +1,8 @@
-"""Build the DOCX from chapters-1-2.md with the supplied thesis formatting rules.
+"""Build selected thesis sections from Markdown with the supplied formatting rules.
 Run with the Codex bundled Python runtime. Does not modify application files.
 """
 from pathlib import Path
+import argparse
 import re
 from docx import Document
 from docx.shared import Mm, Pt, RGBColor
@@ -9,8 +10,27 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from docx.enum.text import WD_TAB_ALIGNMENT
 
 ROOT = Path(__file__).resolve().parent
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--scope',choices=['chapters-1-2','chapter-3','chapters-1-3','introduction-conclusion','thesis'],default='chapters-1-2')
+args=parser.parse_args()
+source=(ROOT/'chapters-1-2.md').read_text()
+if args.scope in ('chapter-3','chapters-1-3','thesis'):
+ chapter3=(ROOT/'chapter-3.md').read_text()
+ if args.scope=='chapter-3': source=chapter3
+ else:
+  body,bibliography=source.split('# Список использованных источников',1)
+  source=body.rstrip()+'\n\n'+chapter3.rstrip()+'\n\n# Список использованных источников'+bibliography
+if args.scope in ('introduction-conclusion','thesis'):
+ introduction=(ROOT/'introduction.md').read_text().rstrip()
+ conclusion=(ROOT/'conclusion.md').read_text().rstrip()
+ if args.scope=='introduction-conclusion': source=introduction+'\n\n'+conclusion
+ else:
+  body,bibliography=source.split('# Список использованных источников',1)
+  source=introduction+'\n\n'+body.rstrip()+'\n\n'+conclusion+'\n\n# Список использованных источников'+bibliography
+in_chapter3=False
 DOC = Document()
 sec=DOC.sections[0]
 sec.page_width=Mm(210); sec.page_height=Mm(297)
@@ -40,7 +60,7 @@ DOC.styles['Caption'].font.italic=False
 DOC.styles['Caption'].paragraph_format.first_line_indent=Mm(0)
 DOC.styles['Caption'].paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER
 DOC.styles['Caption'].paragraph_format.keep_together=True
-DOC.core_properties.title='Главы 1 и 2 ВКР о приложении «Лад»'
+DOC.core_properties.title={'chapters-1-2':'Главы 1 и 2 ВКР о приложении «Лад»','chapter-3':'Глава 3 Реализация прецедентов приложения «Лад»','chapters-1-3':'Главы 1–3 ВКР о приложении «Лад»','introduction-conclusion':'Введение и заключение ВКР о приложении «Лад»','thesis':'Введение главы и заключение ВКР о приложении «Лад»'}[args.scope]
 DOC.core_properties.subject='Требования и проектирование мобильного приложения для учёта и планирования личных финансов'
 DOC.core_properties.author=''
 DOC.core_properties.last_modified_by=''
@@ -58,13 +78,22 @@ r=OxmlElement('w:r');t=OxmlElement('w:t');t.text='1';r.append(t);fld.append(r);r
 
 
 def inline(p,text):
+ if current_heading in ('Введение','Заключение'):
+  text=re.sub(r'^- ', '-\u00a0', text)
+  text=text.replace('В контрольном', 'В\u00a0контрольном')
+ if in_chapter3 or current_heading in ('Введение','Заключение'):
+  text=re.sub(r'(?<=\d) (?=\d{3}(?:\D|$))','\u00a0',text)
+  text=re.sub(r'(?<=\d) (?=(?:RUB|USD|JPY|KWD|байт|копеек)\b)','\u00a0',text)
+  text=re.sub(r'\b(рисун(?:ок|ке|ка)|таблиц[аеы]|подраздел[ае]) (?=\d)',r'\1'+'\u00a0',text,flags=re.I)
  # Keep numeric ranges on one line without changing their visible punctuation.
  text=re.sub(r'(?<=\d)–(?=\d)', '\u2060–\u2060', text)
  # Render simple Markdown emphasis; preserve numbered source references.
  for n,seg in enumerate(re.split(r'(\*\*.*?\*\*|`[^`]+`)',text)):
   if not seg: continue
   if seg.startswith('**'): r=p.add_run(seg[2:-2]); r.bold=True
-  elif seg.startswith('`'): r=p.add_run(seg[1:-1])
+  elif seg.startswith('`'):
+   r=p.add_run(seg[1:-1])
+   if in_chapter3: r.font.name='Courier New';r.font.size=Pt(12)
   else: r=p.add_run(seg)
   r.font.color.rgb=RGBColor(0,0,0)
  for r in list(p.runs):
@@ -76,7 +105,7 @@ def inline(p,text):
  return p
 
 TABLE_WIDTHS={1:[30,28,28,28,28,28],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56],6:[47,65,58]}
-table_no=0
+table_no=6 if args.scope=='chapter-3' else 0
 
 def table(rows, continuation=False):
  global table_no
@@ -101,7 +130,7 @@ def table(rows, continuation=False):
   return tbl
  tbl=DOC.add_table(rows=1,cols=len(rows[0]));tbl.alignment=WD_TABLE_ALIGNMENT.CENTER;tbl.autofit=False
  props=tbl._tbl.tblPr
- widths=TABLE_WIDTHS[table_no]
+ widths=TABLE_WIDTHS.get(table_no,[170/len(rows[0])]*len(rows[0]))
  for col,w in zip(tbl.columns,widths): col.width=Mm(w)
  borders=OxmlElement('w:tblBorders')
  for edge in ['top','left','bottom','right','insideH','insideV']:
@@ -128,16 +157,59 @@ def table(rows, continuation=False):
     shade=OxmlElement('w:shd');shade.set(qn('w:fill'),'F2F2F2');tcpr.append(shade)
  return tbl
 
-lines=(ROOT/'chapters-1-2.md').read_text().splitlines()
+def math_runs(expr):
+ # Small OMML authoring path: literal operators plus braced subscripts/superscripts.
+ # These equations remain editable in Word; no rasterized formulas are inserted.
+ parts=[];i=0
+ while i<len(expr):
+  if expr[i] in '_^':
+   kind=expr[i];i+=1
+   if expr[i]=='{':
+    j=i+1;depth=1
+    while depth:
+     depth+=(expr[j]=='{')-(expr[j]=='}');j+=1
+    script=expr[i+1:j-1];i=j
+   else: script=expr[i];i+=1
+   base=parts.pop()
+   node=OxmlElement('m:sSub' if kind=='_' else 'm:sSup')
+   e=OxmlElement('m:e');e.append(base);node.append(e)
+   sub=OxmlElement('m:sub' if kind=='_' else 'm:sup')
+   for item in math_runs(script):sub.append(item)
+   node.append(sub);parts.append(node)
+  else:
+   r=OxmlElement('m:r');rp=OxmlElement('m:rPr');style=OxmlElement('m:sty');style.set(qn('m:val'),'p');rp.append(style);r.append(rp)
+   wrp=OxmlElement('w:rPr');size=OxmlElement('w:sz');size.set(qn('w:val'),'28');wrp.append(size);r.append(wrp)
+   t=OxmlElement('m:t');t.set(qn('xml:space'),'preserve');t.text=expr[i];r.append(t);parts.append(r);i+=1
+ return parts
+
+def equation(number,expr):
+ p=DOC.add_paragraph();pf=p.paragraph_format
+ pf.first_line_indent=Mm(0);pf.alignment=WD_ALIGN_PARAGRAPH.LEFT
+ pf.space_before=Pt(5);pf.space_after=Pt(5);pf.keep_with_next=True;pf.keep_together=True
+ pf.tab_stops.add_tab_stop(Mm(78),WD_TAB_ALIGNMENT.CENTER)
+ pf.tab_stops.add_tab_stop(Mm(170),WD_TAB_ALIGNMENT.RIGHT)
+ p.add_run('\t');m=OxmlElement('m:oMath')
+ for node in math_runs(expr):m.append(node)
+ p._p.append(m);p.add_run('\t('+number+')')
+
+lines=source.splitlines()
+current_heading=''
 i=0
 while i<len(lines):
  line=lines[i].strip()
  if not line:i+=1;continue
  if line.startswith('#'):
   m=re.match(r'^(#{1,3})\s+(.+)',line)
+  if len(m.group(1))==1:
+   current_heading=m.group(2)
+   in_chapter3=current_heading.startswith('3 ')
   p=DOC.add_paragraph(style=f'Heading {len(m.group(1))}');inline(p,m.group(2))
   if len(DOC.paragraphs)==1:p.paragraph_format.page_break_before=False
   i+=1;continue
+ if line.startswith('$$'):
+  match=re.fullmatch(r'\$\$ (.+) \\tag\{([^}]+)\} \$\$',line)
+  if not match: raise ValueError('Invalid numbered formula: '+line)
+  equation(match[2],match[1]);i+=1;continue
  if line.startswith('|'):
   rows=[]
   while i<len(lines) and lines[i].strip().startswith('|'):
@@ -151,7 +223,8 @@ while i<len(lines):
   p=DOC.add_paragraph();p.paragraph_format.first_line_indent=Mm(0);p.alignment=WD_ALIGN_PARAGRAPH.CENTER
   p.paragraph_format.keep_with_next=True;p.paragraph_format.keep_together=True
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.line_spacing=1
-  shape=p.add_run().add_picture(str(ROOT/path),width=Mm(160))
+  width=72 if 'control-screen' in path else 160
+  shape=p.add_run().add_picture(str(ROOT/path),width=Mm(width))
   shape._inline.docPr.set('descr',caption)
   cap=DOC.add_paragraph(style='Caption');inline(cap,caption);cap.paragraph_format.space_after=Pt(8)
   i+=1;continue
@@ -170,11 +243,14 @@ while i<len(lines):
  if j<len(lines) and re.match(r'!\[.*\]\(figures/01-ui[^)]*\)',lines[j].strip()):
   p.paragraph_format.keep_with_next=True
   p.paragraph_format.keep_together=True
+ if in_chapter3 and j<len(lines) and lines[j].strip().startswith('$$'):
+  p.paragraph_format.keep_with_next=True
  if p._p.getprevious() is not None and p._p.getprevious().tag==qn('w:tbl'):
   p.paragraph_format.space_before=Pt(6)
  if re.match(r'^\d+\. ',text) and 'дата обращения:' in text:
   p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
   p.paragraph_format.space_after=Pt(6);p.paragraph_format.keep_together=True
 
-DOC.save(ROOT/'chapters-1-2.docx')
-print(f'Created {ROOT / "chapters-1-2.docx"}: {len(DOC.paragraphs)} paragraphs, {len(DOC.tables)} tables, {len(DOC.inline_shapes)} figures')
+output=ROOT/(args.scope+'.docx')
+DOC.save(output)
+print(f'Created {output}: {len(DOC.paragraphs)} paragraphs, {len(DOC.tables)} tables, {len(DOC.inline_shapes)} figures')

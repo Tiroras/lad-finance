@@ -208,3 +208,35 @@ JS
 В десятой UI-паре слева показан полный список «Все цели»: условный пример с 60 записями демонстрирует первую порцию из 50 и переход к оставшимся десяти. Повторяющиеся карточки представлены сокращённо. Справа показан вывод с обменом валют: поле фактического зачисления отсутствует при одинаковых валютах. Дата ввода не изображена, поскольку форма записывает вывод сегодняшним днём. Кнопка вывода в карточке цели доступна при положительных накоплениях.
 
 В двух моделях планов категория заменяет устаревший обязательный вид «платёж / подписка». Легенда логической схемы уточняет самостоятельное освобождение накоплений без `cycleId` и обязательную связь с переводом. Условные схемы не являются снимками работающего приложения; их состав сопоставлен с `GoalsPanel`, `GoalCard`, `WithdrawGoalForm`, `RecordList`, `RecurringForm` и `PaymentsPanel`.
+
+## Иллюстрации главы 3 от 29 октября 2026 года
+
+Рисунки **1–18** и средства их подготовки, описанные выше, относятся к главам 1–2. Для [главы 3](../chapter-3.md) добавлены **11 отдельных иллюстраций 19–29**: девять схем алгоритмов, один график по результатам расчёта и один фактический снимок Web-интерфейса. Суммарно объединённые главы содержат 29 рисунков. Нумерация в таблице ниже является печатной и не зависит от имени ресурса.
+
+| № рисунка | Содержание                                       | Источник                                                                                                                     | Изображения                                                                |
+| --------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 19        | Переключение локального профиля                  | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-profiles.svg), [PNG](chapter3-flow-profiles.png)       |
+| 20        | Проверяемое изменение финансового состояния      | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-transaction.svg), [PNG](chapter3-flow-transaction.png) |
+| 21        | Переход на новый график бюджета                  | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-budget.svg), [PNG](chapter3-flow-budget.png)           |
+| 22        | Вывод накоплений из цели                         | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-goal.svg), [PNG](chapter3-flow-goal.png)               |
+| 23        | Отметка факта по событию плана                   | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-occurrence.svg), [PNG](chapter3-flow-occurrence.png)   |
+| 24        | Прогноз по дням и счетам                         | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-forecast.svg), [PNG](chapter3-flow-forecast.png)       |
+| 25        | Траектории базового прогноза и сценария          | [chapter3-forecast-chart.py](chapter3-forecast-chart.py), [JSON расчёта](../research/controls/forecast-control-results.json) | [SVG](chapter3-forecast-chart.svg), [PNG](chapter3-forecast-chart.png)     |
+| 26        | Нехватка на счёте при положительной общей сводке | Целевой [Playwright-сценарий](../../../tests/e2e/t07-forecast.spec.ts)                                                       | [PNG](chapter3-control-screen.png); SVG не создавался                      |
+| 27        | Проверка покупки на всём горизонте               | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-purchase.svg), [PNG](chapter3-flow-purchase.png)       |
+| 28        | Проверка выбранного пакета CSV                   | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-csv.svg), [PNG](chapter3-flow-csv.png)                 |
+| 29        | Проверка копии перед восстановлением             | [chapter3-algorithms.py](chapter3-algorithms.py)                                                                             | [SVG](chapter3-flow-backup.svg), [PNG](chapter3-flow-backup.png)           |
+
+Схемы используют символы начала/конца, процесса, решения и ввода/вывода; детали алгоритмов раскрыты в тексте главы. PNG схем создаются шириной 1889 px. При вставке шириной 160 мм минимальный кегль подписей схем и графика составляет 11,34 пт. График использует 30 вычисленных точек конца дня с 20.10.2026 по 18.11.2026 из воспроизводимого [forecast-control.ts](../research/controls/forecast-control.ts), без подбора точек или сглаживания исходных данных. Линии различаются также штриховкой, что позволяет читать чёрно-белую печать.
+
+Повторная генерация схем и графика из корня репозитория использует Python, Node и Sharp из bundled runtime; зависимости приложения не изменяются:
+
+```sh
+node --import tsx output/thesis/research/controls/forecast-control.ts
+/Users/gamkrelidzetimur/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 output/thesis/figures/chapter3-algorithms.py
+/Users/gamkrelidzetimur/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 output/thesis/figures/chapter3-forecast-chart.py
+```
+
+Рисунок 26 имеет иное происхождение: это копия `local-shortage-summary-320.png` из каталога `test-artifacts/thesis-chapter3-20261029/browser/`. Прогон выполнен 29.10.2026 в Chrome, режиме default, с viewport 320 × 900 и часовым поясом Europe/Samara; контрольная дата — 20.10.2026, данные синтетические. Сценарий `summary warns about local shortage` подтвердил общую сводку 8000 RUB и предупреждение о нехватке на отдельном счёте. Для него использован разрешённый изолированный сервер на 8196 после отказа sandbox открыть 8089. PNG не является UI-макетом; он показывает доступную область прокручиваемого окна, а не все его разделы одновременно. SVG-версия снимка не создавалась.
+
+Все новые схемы и график проверены отдельно, а размещение 11 новых рисунков с подписями проверено на всех страницах итоговой главы. Отдельный документ содержит 42 страницы, объединённый — 92; глава 3 занимает с. 49–90. Исправлены переносы сумм и ссылок на номера рисунков; изменившиеся страницы повторно просмотрены. Подробности — в [отчёте ревью главы 3](../research/chapter3-review.md). Исторические сведения о макетах и 18 рисунках выше сохранены и не считаются подтверждением нового браузерного прогона.
