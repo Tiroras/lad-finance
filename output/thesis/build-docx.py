@@ -58,6 +58,8 @@ r=OxmlElement('w:r');t=OxmlElement('w:t');t.text='1';r.append(t);fld.append(r);r
 
 
 def inline(p,text):
+ # Keep numeric ranges on one line without changing their visible punctuation.
+ text=re.sub(r'(?<=\d)–(?=\d)', '\u2060–\u2060', text)
  # Render simple Markdown emphasis; preserve numbered source references.
  for n,seg in enumerate(re.split(r'(\*\*.*?\*\*|`[^`]+`)',text)):
   if not seg: continue
@@ -73,12 +75,30 @@ def inline(p,text):
     tail=p.add_run(after);s._r.addnext(tail._r)
  return p
 
-TABLE_WIDTHS={1:[26,44,48,52],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56],6:[47,65,58]}
+TABLE_WIDTHS={1:[30,28,28,28,28,28],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56],6:[47,65,58]}
 table_no=0
 
-def table(rows):
+def table(rows, continuation=False):
  global table_no
- table_no+=1
+ if not continuation:
+  table_no+=1
+ # Keep the comparison readable at 12 pt: three parts of one logical table.
+ # Continuations use numbered columns, following the supplied methodology.
+ if table_no==1 and not continuation:
+  numbers=[str(n) for n in range(1,len(rows[0])+1)]
+  body=rows[1:]
+  for part_index,start in enumerate(range(0,len(body),5)):
+   if part_index:
+    p=DOC.add_paragraph()
+    p.paragraph_format.first_line_indent=Mm(0)
+    p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
+    p.paragraph_format.page_break_before=True
+    p.paragraph_format.keep_with_next=True
+    p.paragraph_format.space_after=Pt(4)
+    inline(p,'Продолжение таблицы 1')
+   headers=[rows[0],numbers] if part_index==0 else [numbers]
+   tbl=table(headers+body[start:start+5],continuation=True)
+  return tbl
  tbl=DOC.add_table(rows=1,cols=len(rows[0]));tbl.alignment=WD_TABLE_ALIGNMENT.CENTER;tbl.autofit=False
  props=tbl._tbl.tblPr
  widths=TABLE_WIDTHS[table_no]
@@ -98,7 +118,8 @@ def table(rows):
     el=OxmlElement('w:'+edge);el.set(qn('w:w'),val);el.set(qn('w:type'),'dxa');margins.append(el)
    tcpr.append(margins)
    p=cell.paragraphs[0];p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.line_spacing=1.5
-   p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
+   numbered_header=all(value.isdigit() for value in rowdata)
+   p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER if numbered_header else WD_ALIGN_PARAGRAPH.LEFT
    p.paragraph_format.keep_with_next=(i<len(rows)-1)
    p.paragraph_format.keep_together=True
    inline(p,txt)

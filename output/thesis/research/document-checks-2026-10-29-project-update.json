@@ -1,0 +1,96 @@
+{
+  "checked_on": "2026-10-29",
+  "project_commit": "035f2abdfdb99049a8f3081b032da777685cf095",
+  "docx_sha256": "832abf5f0bb70ea9f4abf192f1e426e719f3436b2beb3fb67531d3c20dc1900d",
+  "pages": 47,
+  "chapter_1_pages": [1, 32],
+  "chapter_2_pages": [33, 45],
+  "bibliography_pages": [46, 47],
+  "tables": 6,
+  "figures": 18,
+  "ui_states": 20,
+  "ui_paired_figures": 10,
+  "sources": 17,
+  "use_cases": 16,
+  "nonfunctional_requirements": 11,
+  "caption_pages": {
+    "1": 18,
+    "2": 19,
+    "3": 20,
+    "4": 21,
+    "5": 22,
+    "6": 23,
+    "7": 24,
+    "8": 25,
+    "9": 26,
+    "10": 27,
+    "11": 34,
+    "12": 34,
+    "13": 35,
+    "14": 37,
+    "15": 39,
+    "16": 41,
+    "17": 43,
+    "18": 44
+  },
+  "pdf_text_fonts": ["TimesNewRomanPS-BoldMT", "TimesNewRomanPSMT"],
+  "structural_checks": {
+    "contiguous_figure_numbers": true,
+    "all_figure_files_exist": true,
+    "16_use_cases": true,
+    "11_nonfunctional_requirements": true,
+    "six_tables": true,
+    "18_images": true,
+    "docx_paragraphs_match_markdown": true,
+    "docx_tables_match_markdown": true,
+    "sources_first_mention_1_to_17": true,
+    "17_bibliography_entries": true,
+    "a4_and_margins": true,
+    "body_tnr14_indent10_1_5": true,
+    "heading_format": true,
+    "table_font12": true,
+    "table_rows_non_splitting": true,
+    "18_alt_descriptions": true,
+    "embedded_images_match": true,
+    "no_tracked_changes": true,
+    "footer_center_page_field": true,
+    "current_financial_format": true,
+    "no_obsolete_payment_type_in_ui": true,
+    "all_pages_rendered": true,
+    "all_captions_in_pdf": true,
+    "figures_and_captions_same_page": true,
+    "only_tnr_text_fonts": true,
+    "no_text_outside_page_bounds": true,
+    "correct_page_numbers": true
+  },
+  "visual_review": {
+    "all_pages_reviewed": true,
+    "dpi": 120,
+    "pages_reviewed_individually": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40, 41, 42, 43, 44, 45, 46, 47
+    ],
+    "unresolved_defects": [],
+    "review_ranges": {
+      "independent_domain": [1, 16],
+      "primary": [17, 31],
+      "independent_docs": [32, 47]
+    },
+    "notes": [
+      "Свободное место перед цельными таблицами допустимо.",
+      "Кратности на рисунках 17–18 близки к линиям, но различимы."
+    ]
+  },
+  "application_checks_run": [],
+  "notes": [
+    "Предел максимального количества страниц не применялся по указанию пользователя.",
+    "Результаты проверок приложения в сопроводительных документах являются историческими."
+  ],
+  "package_checks": {
+    "relative_links": 105,
+    "missing_relative_links": [],
+    "python_json_syntax_check": true,
+    "application_files_changed": false
+  }
+}

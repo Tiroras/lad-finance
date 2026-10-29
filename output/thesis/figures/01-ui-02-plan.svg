@@ -58,9 +58,11 @@
 <text x="751.0" y="478.0" class="normal" text-anchor="middle">Изменить</text>
 <line x1="854.0" y1="440.0" x2="854.0" y2="497.0" stroke-width="2"/>
 <text x="1003.0" y="478.0" class="normal" text-anchor="middle">Пополнить цель</text>
-<rect x="648.0" y="509.0" width="504.0" height="99.0" rx="7"/>
-<text x="664.0" y="548.0" class="bold" text-anchor="start">Другие цели</text>
-<text x="664.0" y="587.0" class="normal" text-anchor="start">Карточки накоплений</text>
+<rect x="648.0" y="509.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="548.0" class="bold" text-anchor="middle">Вывести из цели</text>
+<rect x="648.0" y="581.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="620.0" class="bold" text-anchor="start">Другие цели</text>
+<text x="664.0" y="659.0" class="normal" text-anchor="start">Карточки накоплений</text>
 <line x1="30.0" y1="791.0" x2="570.0" y2="791.0" stroke-width="2"/>
 <text x="84.5" y="833.0" class="normal" text-anchor="middle">Обзор</text>
 <line x1="139.0" y1="791.0" x2="139.0" y2="856.0" stroke-width="2"/>

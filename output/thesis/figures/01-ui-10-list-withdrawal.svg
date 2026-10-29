@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="133.73mm" viewBox="0 0 1200 1003">
+<title>Все цели и Вывести из цели</title>
+<desc>Структурные схемы расположения элементов. Области прокрутки показаны условно. Денежные значения и персональные сведения не заполнены. Показан полный список более 50 целей с условным количеством записей; поле зачисления в выводе доступно только при обмене валют. Дата записи в форме не редактируется.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:30px;fill:#000}.bold{font-weight:700}.title{font-size:36px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:2;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="1003" style="fill:#fff;stroke:none"/>
+<rect x="624" y="24" width="552" height="955" rx="14"/>
+<rect x="24" y="24" width="552" height="955" rx="14"/>
+<text x="48.0" y="70.0" class="title" text-anchor="start">Все цели</text>
+<line x1="527.0" y1="45.0" x2="548.0" y2="66.0" stroke-width="2"/>
+<line x1="548.0" y1="45.0" x2="527.0" y2="66.0" stroke-width="2"/>
+<line x1="40.0" y1="92.0" x2="560.0" y2="92.0" stroke-width="2"/>
+<text x="48.0" y="138.0" class="normal" text-anchor="start">‹ Назад</text>
+<rect x="48.0" y="157.0" width="504.0" height="99.0" rx="7"/>
+<text x="64.0" y="196.0" class="bold" text-anchor="start">То, ради чего</text>
+<text x="64.0" y="235.0" class="normal" text-anchor="start">Новая цель</text>
+<rect x="48.0" y="268.0" width="504.0" height="60.0" rx="7" stroke-dasharray="8 6"/>
+<text x="64.0" y="307.0" class="normal" text-anchor="start">Показано 50 из 60</text>
+<rect x="48.0" y="340.0" width="504.0" height="177.0" rx="7"/>
+<text x="64.0" y="379.0" class="bold" text-anchor="start">Цель</text>
+<text x="64.0" y="418.0" class="normal" text-anchor="start">Название · изменить</text>
+<text x="64.0" y="457.0" class="normal" text-anchor="start">Накоплено / требуется</text>
+<text x="64.0" y="496.0" class="normal" text-anchor="start">График и прогресс</text>
+<rect x="48.0" y="529.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="568.0" class="bold" text-anchor="middle">Пополнить цель</text>
+<rect x="48.0" y="601.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="640.0" class="bold" text-anchor="middle">Вывести из цели</text>
+<rect x="48.0" y="673.0" width="504.0" height="99.0" rx="7"/>
+<text x="64.0" y="712.0" class="bold" text-anchor="start">Другие цели</text>
+<text x="64.0" y="751.0" class="normal" text-anchor="start">Карточки в прежнем порядке</text>
+<rect x="48.0" y="784.0" width="504.0" height="60.0" rx="7"/>
+<text x="300.0" y="823.0" class="bold" text-anchor="middle">Показать ещё (10)</text>
+<rect x="48.0" y="856.0" width="504.0" height="99.0" rx="7" stroke-dasharray="8 6"/>
+<text x="64.0" y="895.0" class="normal" text-anchor="start">Пополнение — перевод между</text>
+<text x="64.0" y="934.0" class="normal" text-anchor="start">своими счетами</text>
+<text x="648.0" y="70.0" class="title" text-anchor="start">Вывести из цели</text>
+<line x1="1127.0" y1="45.0" x2="1148.0" y2="66.0" stroke-width="2"/>
+<line x1="1148.0" y1="45.0" x2="1127.0" y2="66.0" stroke-width="2"/>
+<line x1="640.0" y1="92.0" x2="1160.0" y2="92.0" stroke-width="2"/>
+<rect x="648.0" y="110.0" width="504.0" height="99.0" rx="7"/>
+<text x="664.0" y="149.0" class="bold" text-anchor="start">Название цели</text>
+<text x="664.0" y="188.0" class="normal" text-anchor="start">Накоплено · сумма и валюта</text>
+<rect x="648.0" y="221.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="260.0" class="normal" text-anchor="start">Сколько вывести, валюта</text>
+<text x="1134.0" y="261.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="293.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="332.0" class="bold" text-anchor="middle">Вывести всю сумму</text>
+<rect x="648.0" y="365.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="404.0" class="normal" text-anchor="start">С накопительного счёта</text>
+<text x="1134.0" y="405.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="437.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="476.0" class="normal" text-anchor="start">На повседневный счёт</text>
+<text x="1134.0" y="477.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="509.0" width="504.0" height="60.0" rx="7"/>
+<text x="664.0" y="548.0" class="normal" text-anchor="start">Зачислено, другая валюта</text>
+<text x="1134.0" y="549.0" class="normal" text-anchor="end">—</text>
+<rect x="648.0" y="581.0" width="504.0" height="138.0" rx="7" stroke-dasharray="8 6"/>
+<text x="664.0" y="620.0" class="normal" text-anchor="start">Отмечайте вывод после</text>
+<text x="664.0" y="659.0" class="normal" text-anchor="start">фактического перевода. Это не</text>
+<text x="664.0" y="698.0" class="normal" text-anchor="start">доход и не расход.</text>
+<rect x="648.0" y="731.0" width="504.0" height="60.0" rx="7"/>
+<text x="900.0" y="770.0" class="bold" text-anchor="middle">Записать вывод из цели</text>
+</svg>

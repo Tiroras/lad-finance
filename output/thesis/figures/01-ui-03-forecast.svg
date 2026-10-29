@@ -23,8 +23,8 @@
 <text x="64.0" y="257.0" class="normal" text-anchor="start">Дата · название · сумма</text>
 <text x="64.0" y="296.0" class="normal" text-anchor="start">Статус платежа</text>
 <rect x="48.0" y="329.0" width="504.0" height="99.0" rx="7"/>
-<text x="64.0" y="368.0" class="bold" text-anchor="start">Подписки</text>
-<text x="64.0" y="407.0" class="normal" text-anchor="start">Сводка за 30 / 365 дней</text>
+<text x="64.0" y="368.0" class="bold" text-anchor="start">Платежи в вашем плане</text>
+<text x="64.0" y="407.0" class="normal" text-anchor="start">За 30 / 365 дней по графику</text>
 <rect x="48.0" y="440.0" width="504.0" height="60.0" rx="7"/>
 <text x="64.0" y="479.0" class="bold" text-anchor="start">Регулярные платежи</text>
 <rect x="48.0" y="512.0" width="504.0" height="60.0" rx="7"/>

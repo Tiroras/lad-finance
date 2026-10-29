@@ -50,7 +50,27 @@
     ]
   },
   {
-    "number": 6,
+    "key": "ynab_features",
+    "metadata": ["Features", "YNAB", "https://www.ynab.com/features", ""],
+    "number": 6
+  },
+  {
+    "number": 7,
+    "key": "ynab_currency",
+    "metadata": ["Pricing", "YNAB", "https://www.ynab.com/pricing", ""]
+  },
+  {
+    "key": "ynab_balance",
+    "metadata": [
+      "How Much Money to Keep in Your YNAB Checking Account",
+      "YNAB",
+      "https://support.ynab.com/en_us/how-much-to-keep-in-your-checking-account-a-guide-ryZNWymAc",
+      ""
+    ],
+    "number": 8
+  },
+  {
+    "number": 9,
     "key": "actual",
     "metadata": [
       "Your Finances — made simple",
@@ -60,12 +80,7 @@
     ]
   },
   {
-    "number": 7,
-    "key": "ynab_currency",
-    "metadata": ["Pricing", "YNAB", "https://www.ynab.com/pricing", ""]
-  },
-  {
-    "number": 8,
+    "number": 10,
     "key": "actual_currency",
     "metadata": [
       "Multi-Currency",
@@ -75,7 +90,17 @@
     ]
   },
   {
-    "number": 9,
+    "key": "actual_forecast",
+    "metadata": [
+      "Balance Forecast Report",
+      "Actual Budget",
+      "https://actualbudget.org/docs/experimental/balance-forecast-report/",
+      ""
+    ],
+    "number": 11
+  },
+  {
+    "number": 12,
     "key": "cfpb",
     "metadata": [
       "Creating a cash flow budget",
@@ -85,7 +110,7 @@
     ]
   },
   {
-    "number": 10,
+    "number": 13,
     "key": "requirements",
     "metadata": [
       "System Engineering Handbook: Appendix",
@@ -95,7 +120,7 @@
     ]
   },
   {
-    "number": 11,
+    "number": 14,
     "key": "ynab_export",
     "metadata": [
       "How to Export Plan Data",
@@ -105,7 +130,7 @@
     ]
   },
   {
-    "number": 12,
+    "number": 15,
     "key": "expo",
     "metadata": [
       "Expo SDK reference. SDK 58",
@@ -115,7 +140,7 @@
     ]
   },
   {
-    "number": 13,
+    "number": 16,
     "key": "securestore",
     "metadata": [
       "Expo SecureStore. SDK 58",
@@ -125,7 +150,7 @@
     ]
   },
   {
-    "number": 14,
+    "number": 17,
     "key": "uml",
     "metadata": [
       "Unified Modeling Language. Version 2.5.1",
@@ -135,7 +160,7 @@
     ]
   },
   {
-    "number": 15,
+    "number": 18,
     "key": "rn",
     "metadata": [
       "Core Components and APIs",
@@ -145,7 +170,7 @@
     ]
   },
   {
-    "number": 16,
+    "number": 19,
     "key": "react",
     "metadata": [
       "Thinking in React",
@@ -155,7 +180,7 @@
     ]
   },
   {
-    "number": 17,
+    "number": 20,
     "key": "ts",
     "metadata": [
       "The TypeScript Handbook",
