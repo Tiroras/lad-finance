@@ -113,6 +113,8 @@ def body_hash(path, body_bottom, page_height):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--render-root', type=Path, required=True)
+    parser.add_argument('--output', type=Path, default=OUTPUT)
+    parser.add_argument('--topic', help='Exact thesis topic required in Word metadata')
     args = parser.parse_args()
     checks, reports, bodies = {}, {}, {}
 
@@ -132,6 +134,9 @@ def main():
             reports[scope] = {'error': 'DOCX or PDF is missing'}
             continue
         doc = Document(docx)
+        if args.topic:
+            check(prefix + 'exact_thesis_topic', doc.core_properties.subject == args.topic
+                  and doc.core_properties.title.startswith(args.topic))
         formulas, images, logical_tables = COUNTS[scope]
         source_formulas = re.findall(r'^\$\$ (.+) \\tag\{(3\.\d+)\} \$\$$', md, re.M)
         equations = doc.element.findall('.//' + qn('m:oMath'))
@@ -230,7 +235,7 @@ def main():
     for (scope, section), hashes in bodies.items():
         if scope != 'thesis':
             check(scope + ':' + section + '_body_identical_in_thesis', bool(hashes) and hashes == bodies.get(('thesis', section)))
-    previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
+    previous = json.loads(args.output.read_text()) if args.output.exists() else {}
     same = all(previous.get('documents', {}).get(scope, {}).get('docx_sha256') == data.get('docx_sha256')
                and previous.get('documents', {}).get(scope, {}).get('pdf_sha256') == data.get('pdf_sha256') for scope, data in reports.items())
     result = {'checked_on': '2026-10-29', 'project_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -239,7 +244,7 @@ def main():
         'notes': ['Предел количества страниц не применяется. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.',
                   'Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.',
                   'Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы.']}
-    OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps({'passed': sum(checks.values()), 'total': len(checks), 'pages': {scope: data.get('pages') for scope, data in reports.items()}}, ensure_ascii=False))
     return 0 if all(checks.values()) else 1
 
