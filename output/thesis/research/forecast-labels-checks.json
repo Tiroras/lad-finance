@@ -1,0 +1,119 @@
+{
+  "checked_on": "2026-10-29",
+  "project_commit": "2243682003e534dacb6a5aac5f0d50faff55be52",
+  "documents": {
+    "chapter-3": {
+      "pages": 42,
+      "docx_sha256": "71d5738529be6c7f672ce32b69536e9bb0b1586deda8e926b3e2f515965dab35",
+      "pdf_sha256": "254ba954168326414ed29fd215ff566e765c09d5ccf00c29c16099eb60f7e41f",
+      "changed_archive_entries": ["word/media/image7.png"],
+      "changed_pages": [29],
+      "unchanged_page_images": 41,
+      "pixel_difference_bounds": [184, 184, 891, 507],
+      "figure_bounds_px": [
+        165.554507325048, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    },
+    "chapters-1-3": {
+      "pages": 92,
+      "docx_sha256": "602e6cdcc93199042acdcdc31848878f5057d8c42250dd3827dcb1c04598ec9d",
+      "pdf_sha256": "5c3e0f2696d276aa359b86537c64af826c617eb1c8928b02dd37f23e61194f9e",
+      "changed_archive_entries": ["word/media/image25.png"],
+      "changed_pages": [77],
+      "unchanged_page_images": 91,
+      "pixel_difference_bounds": [184, 184, 891, 507],
+      "figure_bounds_px": [
+        165.554507325048, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    },
+    "thesis": {
+      "pages": 98,
+      "docx_sha256": "4b54c5ef15a512899174bcc31c7e4933d72a9519f144f9082b25b1377e686275",
+      "pdf_sha256": "0fd5d95fec6672501114bec0141c74665060aa9c659c8b91380df13f8be3d275",
+      "changed_archive_entries": ["word/media/image25.png"],
+      "changed_pages": [80],
+      "unchanged_page_images": 97,
+      "pixel_difference_bounds": [184, 184, 891, 507],
+      "figure_bounds_px": [
+        165.554507325048, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    }
+  },
+  "checks": {
+    "chapter-3:baseline_matches_previous_report": true,
+    "chapter-3:same_archive_members": true,
+    "chapter-3:only_one_embedded_image_changed": true,
+    "chapter-3:same_page_set": true,
+    "chapter-3:only_chart_page_changed": true,
+    "chapter-3:pdf_png_page_count": true,
+    "chapter-3:one_image_on_chart_page": true,
+    "chapter-3:pixel_changes_confined_to_figure": true,
+    "chapter-3:caption_on_same_page": true,
+    "chapters-1-3:baseline_matches_previous_report": true,
+    "chapters-1-3:same_archive_members": true,
+    "chapters-1-3:only_one_embedded_image_changed": true,
+    "chapters-1-3:same_page_set": true,
+    "chapters-1-3:only_chart_page_changed": true,
+    "chapters-1-3:pdf_png_page_count": true,
+    "chapters-1-3:one_image_on_chart_page": true,
+    "chapters-1-3:pixel_changes_confined_to_figure": true,
+    "chapters-1-3:caption_on_same_page": true,
+    "thesis:baseline_matches_previous_report": true,
+    "thesis:same_archive_members": true,
+    "thesis:only_one_embedded_image_changed": true,
+    "thesis:same_page_set": true,
+    "thesis:only_chart_page_changed": true,
+    "thesis:pdf_png_page_count": true,
+    "thesis:one_image_on_chart_page": true,
+    "thesis:pixel_changes_confined_to_figure": true,
+    "thesis:caption_on_same_page": true,
+    "chapter_source_unchanged": true,
+    "source_data_unchanged": true,
+    "python_syntax_valid": true,
+    "semantic_labels_present": true,
+    "daily_points_preserved": true,
+    "compact_dimensions": true,
+    "png_dimensions": true
+  },
+  "checks_passed": 34,
+  "checks_total": 34,
+  "prior_full_document_report": "forecast-minimal-checks.json",
+  "prior_full_checks_rerun": false,
+  "visual_review": {
+    "required": false,
+    "pages_opened": {
+      "chapter-3": [29],
+      "chapters-1-3": [77],
+      "thesis": [80]
+    },
+    "figure25_png_opened": true,
+    "unresolved_defects": []
+  },
+  "figure25": {
+    "data_sha256": "1980dcd6d8422076518f461b966cdf030fbda459925fe31b0b70a5e61872ceed",
+    "svg_sha256": "d69cba5ffa02ae10d2984341a47474d13aeaff699801363ac27ce12570a5576d",
+    "png_sha256": "1faffaf67a4a612912b8aa82ad5e790f539cc9177148b71b5f7f501b19ef88bf",
+    "period": ["2026-10-20", "2026-11-18"],
+    "daily_points": 30,
+    "generator_daily_change_assertions_passed": true,
+    "insertion_mm": [160, 83.2],
+    "minimum_font_pt": 11.34,
+    "semantic_labels": [
+      "Прогноз остатка на конец дня, RUB",
+      "2026 год",
+      "Доход +10 000",
+      "Платёж −18 000",
+      "Расходы −500 RUB/день",
+      "Минимум 17 500",
+      "Резерв 5 000"
+    ]
+  },
+  "notes": [
+    "В DOCX изменено только изображение; остальные ZIP-компоненты и пиксели вне рисунка совпали с предыдущей проверенной редакцией.",
+    "Полный набор из 130 структурных проверок предыдущей редакции повторно не запускался; выполнена адресная проверка новой иллюстрации и её встраивания.",
+    "Код приложения, текст главы, расчётные данные и размеры рисунка не менялись. Приложение и его тесты не запускались."
+  ]
+}

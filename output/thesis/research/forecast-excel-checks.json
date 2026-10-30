@@ -1,0 +1,128 @@
+{
+  "checked_on": "2026-10-30",
+  "project_commit": "2243682003e534dacb6a5aac5f0d50faff55be52",
+  "documents": {
+    "chapter-3": {
+      "pages": 42,
+      "docx_sha256": "aec5e7a0cee679af7f5b48940bedd681362eb30b0d5e9b146c1d8f6a70cab6db",
+      "pdf_sha256": "0c6dc0138f58100d3687ef0f050634ca962d3af1d065ede80051d6686855a263",
+      "changed_archive_entries": ["word/media/image7.png"],
+      "changed_pages": [29],
+      "unchanged_page_images": 41,
+      "pixel_difference_bounds": [165, 184, 922, 578],
+      "figure_bounds_px": [
+        165.55450732504804, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    },
+    "chapters-1-3": {
+      "pages": 92,
+      "docx_sha256": "d27a30e4cb6ec9547a708ac903df664913640ef94c322a6fa0977bfb1dc8660e",
+      "pdf_sha256": "729b83c88402ffeaa1da570f75c1422bb556f75a66fbeedd6898e5c2bc6aa9bb",
+      "changed_archive_entries": ["word/media/image25.png"],
+      "changed_pages": [77],
+      "unchanged_page_images": 91,
+      "pixel_difference_bounds": [165, 184, 922, 578],
+      "figure_bounds_px": [
+        165.55450732504804, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    },
+    "thesis": {
+      "pages": 98,
+      "docx_sha256": "9f2818a92f9749638c8b8e0381ed8cbc483e29a0e0a86c9ccccd76281aa639ae",
+      "pdf_sha256": "fb5851c63a4e35483061e095f86af7943171f83f99482f0223fa75e8201ec5de",
+      "changed_archive_entries": ["word/media/image25.png"],
+      "changed_pages": [80],
+      "unchanged_page_images": 97,
+      "pixel_difference_bounds": [165, 184, 922, 578],
+      "figure_bounds_px": [
+        165.55450732504804, 185.03001111111186, 922.1010745520055,
+        578.3515767676772
+      ]
+    }
+  },
+  "checks": {
+    "chapter-3:baseline_matches_previous_report": true,
+    "chapter-3:same_archive_members": true,
+    "chapter-3:only_figure25_image_changed": true,
+    "chapter-3:embedded_image_matches_final_png": true,
+    "chapter-3:same_page_set": true,
+    "chapter-3:only_chart_page_changed": true,
+    "chapter-3:pdf_page_count": true,
+    "chapter-3:one_image_on_chart_page": true,
+    "chapter-3:pixel_changes_confined_to_figure": true,
+    "chapter-3:caption_on_same_page": true,
+    "chapters-1-3:baseline_matches_previous_report": true,
+    "chapters-1-3:same_archive_members": true,
+    "chapters-1-3:only_figure25_image_changed": true,
+    "chapters-1-3:embedded_image_matches_final_png": true,
+    "chapters-1-3:same_page_set": true,
+    "chapters-1-3:only_chart_page_changed": true,
+    "chapters-1-3:pdf_page_count": true,
+    "chapters-1-3:one_image_on_chart_page": true,
+    "chapters-1-3:pixel_changes_confined_to_figure": true,
+    "chapters-1-3:caption_on_same_page": true,
+    "thesis:baseline_matches_previous_report": true,
+    "thesis:same_archive_members": true,
+    "thesis:only_figure25_image_changed": true,
+    "thesis:embedded_image_matches_final_png": true,
+    "thesis:same_page_set": true,
+    "thesis:only_chart_page_changed": true,
+    "thesis:pdf_page_count": true,
+    "thesis:one_image_on_chart_page": true,
+    "thesis:pixel_changes_confined_to_figure": true,
+    "thesis:caption_on_same_page": true,
+    "chapter_source_unchanged": true,
+    "source_data_unchanged": true,
+    "python_syntax_valid": true,
+    "javascript_syntax_valid": true,
+    "svg_xml_valid": true,
+    "png_dimensions_and_rgb": true,
+    "xlsx_dates_preserved": true,
+    "xlsx_values_preserved": true,
+    "xlsx_label_formulas_and_cached_values": true,
+    "native_line_chart_two_series": true,
+    "baseline:native_series_bound_to_cells": true,
+    "baseline:all_thirty_values_and_dates_cached": true,
+    "reserve:native_series_bound_to_cells": true,
+    "reserve:all_thirty_values_and_dates_cached": true,
+    "office_series_colors": true,
+    "solid_balance_and_dashed_reserve": true,
+    "bottom_legend": true,
+    "horizontal_grid_only": true,
+    "scale_from_zero_50000_step_10000": true,
+    "title_and_axis_labels": true,
+    "no_data_callouts_or_smoothed_lines": true
+  },
+  "checks_passed": 51,
+  "checks_total": 51,
+  "prior_document_report": "forecast-labels-checks.json",
+  "prior_full_checks_rerun": false,
+  "visual_review": {
+    "pages_opened": {
+      "chapter-3": [29],
+      "chapters-1-3": [77],
+      "thesis": [80]
+    },
+    "figure25_png_opened": true,
+    "unresolved_defects": []
+  },
+  "figure25": {
+    "data_sha256": "1980dcd6d8422076518f461b966cdf030fbda459925fe31b0b70a5e61872ceed",
+    "xlsx_sha256": "ae6f3ee7a290ba197357f21bbc3289cfba4f5d82e47014d14b9eb61f68212615",
+    "svg_sha256": "c8699d110e4a900428acee4fbc8feef3ab82d9dfde2665cd59765d928cf3f259",
+    "png_sha256": "e95829da367a322f1586419b7c93a1fcb6a60160dfc040ed8e93c8ad38f15641",
+    "period": ["2026-10-20", "2026-11-18"],
+    "daily_points_per_series": 30,
+    "insertion_mm": [160, 83.2],
+    "native_chart": "Excel-compatible XLSX line chart with two cell-bound series",
+    "export": "bundled LibreOffice → PDF → Poppler SVG → Sharp PNG",
+    "generator_daily_change_assertions_passed": true
+  },
+  "notes": [
+    "В DOCX изменено только встроенное изображение рисунка 25; текст и остальные ZIP-компоненты сохранены.",
+    "Изображения остальных 229 страниц совпали с предыдущей проверенной редакцией; различия ограничены областью рисунка.",
+    "Приложение и его тесты не запускались. Проверены документы и диаграмма; Microsoft Excel для экспорта не запускался."
+  ]
+}
