@@ -11,6 +11,7 @@ import hashlib
 import json
 import re
 import subprocess
+from datetime import date
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -115,6 +116,8 @@ def main():
     parser.add_argument('--render-root', type=Path, required=True)
     parser.add_argument('--output', type=Path, default=OUTPUT)
     parser.add_argument('--topic', help='Exact thesis topic required in Word metadata')
+    parser.add_argument('--checked-on', default=date.today().isoformat(), help='Report date in YYYY-MM-DD format')
+    parser.add_argument('--introduction-max-pages', type=int, help='Maximum pages for the introduction only')
     args = parser.parse_args()
     checks, reports, bodies = {}, {}, {}
 
@@ -227,6 +230,9 @@ def main():
                 hashes = page_hashes[start - 1:end]
                 bodies[(scope, key)] = hashes
                 sections[key] = {'pages': [start, end], 'body_sha256': sha(''.join(hashes).encode())}
+            if args.introduction_max_pages is not None and 'introduction' in sections:
+                start, end = sections['introduction']['pages']
+                check(prefix + 'introduction_page_limit', end - start + 1 <= args.introduction_max_pages)
             reports[scope] = {'pages': count, 'docx_sha256': sha(docx.read_bytes()), 'pdf_sha256': sha(pdf_path.read_bytes()),
                 'markdown_sha256': sha(md.encode()), 'figures': len(paths), 'logical_tables': len(numbers), 'table_parts': len(doc.tables),
                 'equations': len(equations), 'sections': sections, 'prose_fonts': sorted(fonts),
@@ -238,10 +244,10 @@ def main():
     previous = json.loads(args.output.read_text()) if args.output.exists() else {}
     same = all(previous.get('documents', {}).get(scope, {}).get('docx_sha256') == data.get('docx_sha256')
                and previous.get('documents', {}).get(scope, {}).get('pdf_sha256') == data.get('pdf_sha256') for scope, data in reports.items())
-    result = {'checked_on': '2026-10-29', 'project_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+    result = {'checked_on': args.checked_on, 'project_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         'documents': reports, 'structural_checks': checks, 'checks_passed': sum(checks.values()), 'checks_total': len(checks),
         'visual_review': previous.get('visual_review', {'required': True}) if same else {'required': True},
-        'notes': ['Предел количества страниц не применяется. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.',
+        'notes': [('Общий предел количества страниц не применяется.' + (f' Введение ограничено {args.introduction_max_pages} страницами по указанию пользователя.' if args.introduction_max_pages is not None else '') + ' Смещения разделов определены по текстовым началам, а не заданным номерам страниц.'),
                   'Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.',
                   'Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы.']}
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
