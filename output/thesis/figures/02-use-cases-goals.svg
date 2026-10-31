@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1380" viewBox="0 0 1200 1380">
+<title>Взнос в цель и вывод накоплений</title>
+<rect width="1200" height="1380" fill="white"/>
+<defs><marker id="open-arrow" markerWidth="18" markerHeight="16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 16 8 L 2 15" fill="none" stroke="#111" stroke-width="2.3"/></marker><marker id="generalization-arrow" markerWidth="23" markerHeight="22" refX="21" refY="11" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 21 11 L 1 21 Z" fill="white" stroke="#111" stroke-width="2.3"/></marker></defs>
+<g font-family="Arial, sans-serif" fill="#111">
+<rect data-role="system-boundary" x="190" y="20" width="1000" height="1340" fill="white" stroke="#111" stroke-width="2"/>
+<text x="210" y="60.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
+<path data-from="Owner" data-to="U3" data-relation="association" d="M 130 600 C 175 600, 175 250, 220 250" fill="none" stroke="#111" stroke-width="2.3"/>
+<path data-from="Owner" data-to="U4" data-relation="association" d="M 130 600 C 175 600, 175 1000, 220 1000" fill="none" stroke="#111" stroke-width="2.3"/>
+<path data-from="U3" data-to="U2" data-relation="include" d="M 430 355 V 440 H 955 V 495" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U3" data-to="H8" data-relation="include" d="M 640 250 H 745" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U4" data-to="U2" data-relation="include" d="M 430 895 V 770 H 955 V 705" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U4" data-to="H9" data-relation="include" d="M 640 1000 H 745" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U2" data-to="H5" data-relation="include" d="M 745 600 H 640" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<g id="U3" data-id="U3" data-role="usecase" data-primary="true" data-title="UC-03 Учесть взнос в цель">
+<ellipse cx="430" cy="250" rx="210" ry="105" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="430" y="241.88" font-size="32" text-anchor="middle">UC-03</text>
+<text x="430" y="279.88" font-size="32" text-anchor="middle">Учесть взнос в цель</text>
+</g>
+<g id="H8" data-id="H8" data-role="usecase" data-primary="false" data-title="Закрепить переведённую сумму за целью">
+<ellipse cx="955" cy="250" rx="210" ry="95" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="955" y="224.2" font-size="30" text-anchor="middle">Закрепить</text>
+<text x="955" y="260.2" font-size="30" text-anchor="middle">переведённую сумму</text>
+<text x="955" y="296.2" font-size="30" text-anchor="middle">за целью</text>
+</g>
+<g id="H5" data-id="H5" data-role="usecase" data-primary="false" data-title="Проверить финансовую согласованность учёта">
+<ellipse cx="430" cy="600" rx="210" ry="110" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="430" y="574.2" font-size="30" text-anchor="middle">Проверить финансовую</text>
+<text x="430" y="610.2" font-size="30" text-anchor="middle">согласованность</text>
+<text x="430" y="646.2" font-size="30" text-anchor="middle">учёта</text>
+</g>
+<g id="U2" data-id="U2" data-role="usecase" data-primary="true" data-title="UC-02 Записать перевод между счетами">
+<ellipse cx="955" cy="600" rx="210" ry="105" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="955" y="572.88" font-size="32" text-anchor="middle">UC-02</text>
+<text x="955" y="610.88" font-size="32" text-anchor="middle">Записать перевод</text>
+<text x="955" y="648.88" font-size="32" text-anchor="middle">между счетами</text>
+</g>
+<g id="U4" data-id="U4" data-role="usecase" data-primary="true" data-title="UC-04 Учесть вывод из цели">
+<ellipse cx="430" cy="1000" rx="210" ry="105" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="430" y="991.88" font-size="32" text-anchor="middle">UC-04</text>
+<text x="430" y="1029.88" font-size="32" text-anchor="middle">Учесть вывод из цели</text>
+</g>
+<g id="H9" data-id="H9" data-role="usecase" data-primary="false" data-title="Освободить сумму из цели">
+<ellipse cx="955" cy="1000" rx="210" ry="95" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="955" y="992.2" font-size="30" text-anchor="middle">Освободить сумму</text>
+<text x="955" y="1028.2" font-size="30" text-anchor="middle">из цели</text>
+</g>
+<g data-role="relation-label" data-from="U3" data-to="U2">
+<text x="700" y="415.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g data-role="relation-label" data-from="U3" data-to="H8">
+<text x="692.5" y="195.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g data-role="relation-label" data-from="U4" data-to="U2">
+<text x="700" y="815.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g data-role="relation-label" data-from="U4" data-to="H9">
+<text x="692.5" y="945.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g data-role="relation-label" data-from="U2" data-to="H5">
+<text x="692.5" y="545.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g id="N1" data-role="note">
+<path d="M 250 1190 H 1130 L 1150 1210 V 1310 H 250 Z M 1130 1190 V 1210 H 1150" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="700" y="1242.2" font-size="30" text-anchor="middle">Перевод и изменение закреплённой суммы</text>
+<text x="700" y="1278.2" font-size="30" text-anchor="middle">образуют одно согласованное действие.</text>
+</g>
+<g id="Owner" data-role="actor">
+<g fill="none" stroke="#111" stroke-width="2.5"><circle cx="90" cy="557" r="20"/><path d="M 90 577 V 645 M 50 600 H 130 M 90 645 L 55 690 M 90 645 L 125 690"/></g>
+<text x="90" y="729.2" font-size="30" text-anchor="middle">Владелец</text>
+<text x="90" y="765.2" font-size="30" text-anchor="middle">учёта</text>
+</g></g></svg>

@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-09\nСравнить\nфинансовые сценарии\n--\nТочки расширения\nпояснение результата;\nсохранение варианта" as U9
+  usecase "UC-07\nПолучить прогноз\nденежных остатков" as U7
+  usecase "Выявить дефицит\nи нарушение резерва" as H11
+  usecase "Пояснить ограничения\nсценария" as H16
+  usecase "Сохранить условия\nсценария" as H17
+  usecase "Проверить допустимость\nусловий сценария" as H15
+}
+Owner -- U9
+Owner -- H17
+U9 ..> U7 : <<include>>
+U7 ..> H11 : <<include>>
+U9 ..> H15 : <<include>>
+H17 ..> U9 : <<extend>>
+note on link
+владелец выбрал сохранение
+end note
+H17 ..> H15 : <<include>>
+H16 ..> U9 : <<extend>>
+note on link
+есть неактуальные или неучтённые условия
+end note
+note "Один текущий учёт\nи одинаковый горизонт\nдля обоих вариантов." as N1
+@enduml

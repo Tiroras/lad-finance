@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-01\nЗаписать финансовую\nоперацию" as U1
+  usecase "Проверить финансовую\nсогласованность\nучёта" as H5
+  usecase "Записать доход" as H1
+  usecase "Записать расход\n--\nТочка расширения\nраспределение\nрасхода" as H2
+  usecase "Учесть возврат\nпокупки" as H3
+  usecase "Разделить расход\nпо категориям" as H4
+}
+Owner -- U1
+H1 --|> U1
+H2 --|> U1
+H3 --|> U1
+U1 ..> H5 : <<include>>
+H4 ..> H2 : <<extend>>
+note on link
+обычный расход без связи с долгом;
+владелец выбрал разделение
+end note
+note "Возврат уменьшает расходы;\nобычным доходом не считается." as N1
+@enduml

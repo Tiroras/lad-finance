@@ -1,0 +1,17 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-07\nПолучить прогноз\nденежных остатков" as U7
+  usecase "UC-08\nОценить возможность\nпокупки" as U8
+  usecase "UC-09\nСравнить финансовые\nсценарии" as U9
+}
+Owner -- U7
+Owner -- U8
+Owner -- U9
+U8 ..> U7 : <<include>>
+U9 ..> U7 : <<include>>
+@enduml

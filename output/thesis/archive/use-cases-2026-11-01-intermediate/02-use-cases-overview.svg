@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1450" viewBox="0 0 1200 1450">
+<title>Прецеденты мобильного приложения «Лад»</title>
+<rect width="1200" height="1450" fill="white"/>
+<defs><marker id="open-arrow" markerWidth="15" markerHeight="13" refX="13" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 13 6.5 L 2 12" fill="none" stroke="#111" stroke-width="2"/></marker><marker id="flow-arrow" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 12 6 L 1 11 Z" fill="#111"/></marker></defs>
+<g font-family="Arial, sans-serif" fill="#111">
+<rect x="10" y="215" width="1180" height="1220" fill="white" stroke="#111" stroke-width="2"/>
+<text x="36" y="257.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
+<path data-from="Owner" data-to="U1" data-relation="association" d="M 550 100 C 520 190, 520 370, 465 370" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U2" data-relation="association" d="M 650 100 C 680 190, 680 370, 735 370" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U3" data-relation="association" d="M 550 100 C 520 190, 520 590, 465 590" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U4" data-relation="association" d="M 650 100 C 680 190, 680 590, 735 590" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U5" data-relation="association" d="M 550 100 C 520 190, 520 810, 465 810" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U6" data-relation="association" d="M 650 100 C 680 190, 680 810, 735 810" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U7" data-relation="association" d="M 550 100 C 520 190, 520 1030, 465 1030" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U10" data-relation="association" d="M 650 100 C 680 190, 680 1030, 735 1030" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U8" data-relation="association" d="M 550 100 C 520 190, 520 1250, 465 1250" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="Owner" data-to="U9" data-relation="association" d="M 650 100 C 680 190, 680 1250, 735 1250" fill="none" stroke="#111" stroke-width="1.8"/>
+<path data-from="U9" data-to="U8" data-relation="include" d="M 950 1350 V 1400 H 250 V 1350" fill="none" stroke="#111" stroke-width="2.2" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<rect x="520.1800000000001" y="1355" width="159.64" height="40" fill="white"/>
+<text x="600" y="1384.52" font-size="28" text-anchor="middle">«include»</text>
+<g id="U1" data-role="usecase" data-title="Организовать и защитить личный учёт">
+<ellipse cx="250" cy="370" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="250" y="326.2" font-size="30" text-anchor="middle">UC-01</text>
+<text x="250" y="362.2" font-size="30" text-anchor="middle">Организовать</text>
+<text x="250" y="398.2" font-size="30" text-anchor="middle">и защитить</text>
+<text x="250" y="434.2" font-size="30" text-anchor="middle">личный учёт</text>
+</g>
+<g id="U2" data-role="usecase" data-title="Поддерживать достоверные остатки счетов">
+<ellipse cx="950" cy="370" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="326.2" font-size="30" text-anchor="middle">UC-02</text>
+<text x="950" y="362.2" font-size="30" text-anchor="middle">Поддерживать</text>
+<text x="950" y="398.2" font-size="30" text-anchor="middle">достоверные остатки</text>
+<text x="950" y="434.2" font-size="30" text-anchor="middle">счетов</text>
+</g>
+<g id="U3" data-role="usecase" data-title="Вести историю финансовых операций">
+<ellipse cx="250" cy="590" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="250" y="564.2" font-size="30" text-anchor="middle">UC-03</text>
+<text x="250" y="600.2" font-size="30" text-anchor="middle">Вести историю</text>
+<text x="250" y="636.2" font-size="30" text-anchor="middle">финансовых операций</text>
+</g>
+<g id="U4" data-role="usecase" data-title="Контролировать расходы по бюджету">
+<ellipse cx="950" cy="590" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="564.2" font-size="30" text-anchor="middle">UC-04</text>
+<text x="950" y="600.2" font-size="30" text-anchor="middle">Контролировать</text>
+<text x="950" y="636.2" font-size="30" text-anchor="middle">расходы по бюджету</text>
+</g>
+<g id="U5" data-role="usecase" data-title="Накапливать средства на финансовую цель">
+<ellipse cx="250" cy="810" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="250" y="784.2" font-size="30" text-anchor="middle">UC-05</text>
+<text x="250" y="820.2" font-size="30" text-anchor="middle">Накапливать средства</text>
+<text x="250" y="856.2" font-size="30" text-anchor="middle">на финансовую цель</text>
+</g>
+<g id="U6" data-role="usecase" data-title="Планировать и учитывать доходы и платежи">
+<ellipse cx="950" cy="810" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="766.2" font-size="30" text-anchor="middle">UC-06</text>
+<text x="950" y="802.2" font-size="30" text-anchor="middle">Планировать</text>
+<text x="950" y="838.2" font-size="30" text-anchor="middle">и учитывать доходы</text>
+<text x="950" y="874.2" font-size="30" text-anchor="middle">и платежи</text>
+</g>
+<g id="U7" data-role="usecase" data-title="Контролировать долги и кредитные обязательства">
+<ellipse cx="250" cy="1030" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="250" y="986.2" font-size="30" text-anchor="middle">UC-07</text>
+<text x="250" y="1022.2" font-size="30" text-anchor="middle">Контролировать долги</text>
+<text x="250" y="1058.2" font-size="30" text-anchor="middle">и кредитные</text>
+<text x="250" y="1094.2" font-size="30" text-anchor="middle">обязательства</text>
+</g>
+<g id="U10" data-role="usecase" data-title="Анализировать финансовую историю">
+<ellipse cx="950" cy="1030" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="1004.2" font-size="30" text-anchor="middle">UC-10</text>
+<text x="950" y="1040.2" font-size="30" text-anchor="middle">Анализировать</text>
+<text x="950" y="1076.2" font-size="30" text-anchor="middle">финансовую историю</text>
+</g>
+<g id="U8" data-role="usecase" data-title="Получать прогноз денежных остатков">
+<ellipse cx="250" cy="1250" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="250" y="1224.2" font-size="30" text-anchor="middle">UC-08</text>
+<text x="250" y="1260.2" font-size="30" text-anchor="middle">Получать прогноз</text>
+<text x="250" y="1296.2" font-size="30" text-anchor="middle">денежных остатков</text>
+</g>
+<g id="U9" data-role="usecase" data-title="Оценивать покупку и изменения финансового плана">
+<ellipse cx="950" cy="1250" rx="215" ry="100" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="1206.2" font-size="30" text-anchor="middle">UC-09</text>
+<text x="950" y="1242.2" font-size="30" text-anchor="middle">Оценивать покупку</text>
+<text x="950" y="1278.2" font-size="30" text-anchor="middle">и изменения</text>
+<text x="950" y="1314.2" font-size="30" text-anchor="middle">финансового плана</text>
+</g>
+<g id="Owner" data-role="actor">
+<text x="600" y="30.880000000000003" font-size="32" text-anchor="middle">Владелец учёта</text>
+<g fill="none" stroke="#111" stroke-width="2.5"><circle cx="600" cy="59" r="20"/><path d="M 600 79 V 137 M 550 100 H 650 M 600 137 L 568 179 M 600 137 L 632 179"/></g></g>
+</g></svg>

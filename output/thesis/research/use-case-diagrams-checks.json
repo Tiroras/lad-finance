@@ -1,0 +1,443 @@
+{
+  "checked_on": "2026-11-01",
+  "scope": "Детализация пункта 2.1 без изменения десяти основных прецедентов",
+  "source": "https://www.omg.org/spec/UML/2.5.1/PDF, разделы 18.1.3.2–18.1.4",
+  "docx_sha256": "d12ac0f79bfc38f64a71cf371109f840e8354b3ec43815728d18809809a26166",
+  "markdown_sha256": "b7bb0000beb68d079aed498bc58f44674474e30d80c4513a1aa2d1f59e31ea4d",
+  "checks": {
+    "prose_outside_2_1_unchanged_except_figure_numbers": true,
+    "ten_requirements_unchanged": true,
+    "all_tables_unchanged": true,
+    "all_18_formula_expressions_unchanged": true,
+    "all_27_other_images_unchanged": true,
+    "accepted_excel_chart_unchanged": true,
+    "no_service_mode_mentions": true,
+    "six_diagrams_cover_exactly_ten_requirements": true,
+    "diagram_text_fits_ellipses_and_group_frames": true,
+    "svg_text_at_least_11_points_at_160_mm": true,
+    "docx_images_match_all_33_sources": true,
+    "all_six_diagrams_with_their_heading_and_caption": true,
+    "pages_input_matches_current_docx": true,
+    "pages_no_empty_pages": true,
+    "pages_six_diagrams_with_heading_and_caption": true,
+    "pages_all_33_figures_captioned_on_same_page": true,
+    "pages_all_18_equation_numbers": true,
+    "pages_table_1_continuations_with_numbered_columns": true,
+    "pages_introduction_two_pages": true,
+    "pages_text_within_page_bounds": true
+  },
+  "passed": 20,
+  "total": 20,
+  "diagrams": [
+    {
+      "asset": "02-use-cases-budgets-goals",
+      "requirements": ["U4", "U5"],
+      "actions": 10,
+      "relations": {
+        "association": 6,
+        "include": 4
+      },
+      "height_mm": 179.33
+    },
+    {
+      "asset": "02-use-cases-ledger",
+      "requirements": ["U2", "U3"],
+      "actions": 10,
+      "relations": {
+        "association": 6,
+        "include": 3,
+        "extend": 1
+      },
+      "height_mm": 179.33
+    },
+    {
+      "asset": "02-use-cases-security",
+      "requirements": ["U1"],
+      "actions": 6,
+      "relations": {
+        "association": 4,
+        "extend": 1,
+        "include": 1
+      },
+      "height_mm": 117.73
+    },
+    {
+      "asset": "03-use-cases-analysis",
+      "requirements": ["U10"],
+      "actions": 6,
+      "relations": {
+        "association": 4,
+        "include": 2
+      },
+      "height_mm": 117.73
+    },
+    {
+      "asset": "03-use-cases-forecast",
+      "requirements": ["U8", "U9"],
+      "actions": 10,
+      "relations": {
+        "association": 5,
+        "include": 5
+      },
+      "height_mm": 161.2
+    },
+    {
+      "asset": "03-use-cases-planning",
+      "requirements": ["U6", "U7"],
+      "actions": 10,
+      "relations": {
+        "association": 6,
+        "include": 4
+      },
+      "height_mm": 179.33
+    }
+  ],
+  "label_bounds_violations": [],
+  "bundled_render": {
+    "pages": 102,
+    "changed_body_pages": [
+      39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 55, 58, 59,
+      61, 65, 68, 69, 70, 73, 74, 76, 78, 79, 86, 87, 89, 90, 91, 93, 94
+    ],
+    "unchanged_body_pages": [
+      {
+        "page": 1,
+        "baseline_page": 1
+      },
+      {
+        "page": 2,
+        "baseline_page": 2
+      },
+      {
+        "page": 3,
+        "baseline_page": 3
+      },
+      {
+        "page": 4,
+        "baseline_page": 4
+      },
+      {
+        "page": 5,
+        "baseline_page": 5
+      },
+      {
+        "page": 6,
+        "baseline_page": 6
+      },
+      {
+        "page": 7,
+        "baseline_page": 7
+      },
+      {
+        "page": 8,
+        "baseline_page": 8
+      },
+      {
+        "page": 9,
+        "baseline_page": 9
+      },
+      {
+        "page": 10,
+        "baseline_page": 10
+      },
+      {
+        "page": 11,
+        "baseline_page": 11
+      },
+      {
+        "page": 12,
+        "baseline_page": 12
+      },
+      {
+        "page": 13,
+        "baseline_page": 13
+      },
+      {
+        "page": 14,
+        "baseline_page": 14
+      },
+      {
+        "page": 15,
+        "baseline_page": 15
+      },
+      {
+        "page": 16,
+        "baseline_page": 16
+      },
+      {
+        "page": 17,
+        "baseline_page": 17
+      },
+      {
+        "page": 18,
+        "baseline_page": 18
+      },
+      {
+        "page": 19,
+        "baseline_page": 19
+      },
+      {
+        "page": 20,
+        "baseline_page": 20
+      },
+      {
+        "page": 21,
+        "baseline_page": 21
+      },
+      {
+        "page": 22,
+        "baseline_page": 22
+      },
+      {
+        "page": 23,
+        "baseline_page": 23
+      },
+      {
+        "page": 24,
+        "baseline_page": 24
+      },
+      {
+        "page": 25,
+        "baseline_page": 25
+      },
+      {
+        "page": 26,
+        "baseline_page": 26
+      },
+      {
+        "page": 27,
+        "baseline_page": 27
+      },
+      {
+        "page": 28,
+        "baseline_page": 28
+      },
+      {
+        "page": 29,
+        "baseline_page": 29
+      },
+      {
+        "page": 30,
+        "baseline_page": 30
+      },
+      {
+        "page": 31,
+        "baseline_page": 31
+      },
+      {
+        "page": 32,
+        "baseline_page": 32
+      },
+      {
+        "page": 33,
+        "baseline_page": 33
+      },
+      {
+        "page": 34,
+        "baseline_page": 34
+      },
+      {
+        "page": 35,
+        "baseline_page": 35
+      },
+      {
+        "page": 36,
+        "baseline_page": 36
+      },
+      {
+        "page": 37,
+        "baseline_page": 37
+      },
+      {
+        "page": 38,
+        "baseline_page": 38
+      },
+      {
+        "page": 53,
+        "baseline_page": 49
+      },
+      {
+        "page": 56,
+        "baseline_page": 52
+      },
+      {
+        "page": 57,
+        "baseline_page": 53
+      },
+      {
+        "page": 60,
+        "baseline_page": 56
+      },
+      {
+        "page": 62,
+        "baseline_page": 58
+      },
+      {
+        "page": 63,
+        "baseline_page": 59
+      },
+      {
+        "page": 64,
+        "baseline_page": 60
+      },
+      {
+        "page": 66,
+        "baseline_page": 62
+      },
+      {
+        "page": 67,
+        "baseline_page": 63
+      },
+      {
+        "page": 71,
+        "baseline_page": 67
+      },
+      {
+        "page": 72,
+        "baseline_page": 68
+      },
+      {
+        "page": 75,
+        "baseline_page": 71
+      },
+      {
+        "page": 77,
+        "baseline_page": 73
+      },
+      {
+        "page": 80,
+        "baseline_page": 76
+      },
+      {
+        "page": 81,
+        "baseline_page": 77
+      },
+      {
+        "page": 82,
+        "baseline_page": 78
+      },
+      {
+        "page": 83,
+        "baseline_page": 79
+      },
+      {
+        "page": 84,
+        "baseline_page": 80
+      },
+      {
+        "page": 85,
+        "baseline_page": 81
+      },
+      {
+        "page": 88,
+        "baseline_page": 84
+      },
+      {
+        "page": 92,
+        "baseline_page": 88
+      },
+      {
+        "page": 95,
+        "baseline_page": 91
+      },
+      {
+        "page": 96,
+        "baseline_page": 92
+      },
+      {
+        "page": 97,
+        "baseline_page": 93
+      },
+      {
+        "page": 98,
+        "baseline_page": 94
+      },
+      {
+        "page": 99,
+        "baseline_page": 95
+      },
+      {
+        "page": 100,
+        "baseline_page": 96
+      },
+      {
+        "page": 101,
+        "baseline_page": 97
+      },
+      {
+        "page": 102,
+        "baseline_page": 98
+      }
+    ]
+  },
+  "pages_export": {
+    "page_count": 102,
+    "pdf_sha256": "95edb5fe611577ba27efbd6878204f7cbaec669e70a9f7a7939a88ebabcbd550",
+    "caption_pages": {
+      "24": ["1"],
+      "25": ["2"],
+      "26": ["3"],
+      "27": ["4"],
+      "28": ["5"],
+      "29": ["6"],
+      "30": ["7"],
+      "31": ["8"],
+      "32": ["9"],
+      "33": ["10"],
+      "39": ["11"],
+      "40": ["12"],
+      "41": ["13"],
+      "42": ["14"],
+      "43": ["15"],
+      "44": ["16"],
+      "46": ["17"],
+      "48": ["18"],
+      "50": ["19"],
+      "52": ["20"],
+      "54": ["21"],
+      "55": ["22"],
+      "59": ["23"],
+      "61": ["24"],
+      "69": ["25"],
+      "70": ["26"],
+      "74": ["27"],
+      "76": ["28"],
+      "79": ["29"],
+      "87": ["30"],
+      "89": ["31"],
+      "91": ["32"],
+      "93": ["33"]
+    },
+    "table_1_continuation_pages": [7, 8],
+    "bounds_violations": []
+  },
+  "visual_review": {
+    "required": false,
+    "status": "passed",
+    "reviewed_on": "2026-11-01",
+    "bundled_render": {
+      "pages": 102,
+      "dpi": 120,
+      "render_directory": "/private/tmp/lad-detailed-use-cases-20261031/render-delivery/thesis",
+      "all_changed_pages_opened": [
+        39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 55, 58, 59,
+        61, 65, 68, 69, 70, 73, 74, 76, 78, 79, 86, 87, 89, 90, 91, 93, 94
+      ],
+      "unchanged_body_pages": 67,
+      "unchanged_baseline": "/private/tmp/lad-ten-use-cases-20261031/render/thesis",
+      "coverage": "Все 35 изменённых тел страниц просмотрены в PNG; остальные 67 побайтно совпадают по пиксельным хешам с ранее просмотренным рендером, без нижнего поля. Нумерация страниц проверена отдельно.",
+      "final_label_fix": "Последняя правка подписи изменила только PNG страницы 42. Остальные 101 PNG побайтно совпали с предыдущей итерацией этой задачи. Страница 42 просмотрена повторно."
+    },
+    "pages_export": {
+      "application": "Pages 14.4",
+      "pages": 102,
+      "pdf": "/private/tmp/lad-detailed-use-cases-20261031/pages-delivery.pdf",
+      "pdf_sha256": "95edb5fe611577ba27efbd6878204f7cbaec669e70a9f7a7939a88ebabcbd550",
+      "opened_pages": [1, 2, 6, 7, 8, 39, 40, 41, 42, 43, 44, 45, 89],
+      "coverage": "Весь экспорт проверен программно. Визуально просмотрены все шесть схем пункта 2.1, переход к 2.2, введение, три части таблицы 1 и сохранённый график прогноза.",
+      "final_label_fix": "В последнем экспорте изменена только страница 42: для остальных страниц совпали текст и его координаты, шрифты, данные и размещение изображений, прямоугольники. Страница 42 отрендерена заново и просмотрена."
+    },
+    "findings": "Подписи читаемы; обрезания и наложения текста на связи новых диаграмм не обнаружены. Каждый подраздел 2.1.1–2.1.6 остаётся с пояснением, рисунком и подписью на одной странице. Пустых страниц нет.",
+    "limits": "Это проверка документов. Приложение, его тесты и сборка не запускались."
+  }
+}

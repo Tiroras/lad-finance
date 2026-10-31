@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-01\nЗаписать финансовую\nоперацию" as U1
+  usecase "Проверить финансовую\nсогласованность\nучёта" as H5
+  usecase "UC-02\nЗаписать перевод\nмежду счетами" as U2
+  usecase "Записать расход" as H2
+  usecase "Записать\nвалютный обмен\n--\nТочка расширения\nучёт комиссии" as H6
+  usecase "Учесть комиссию\nобмена" as H7
+}
+Owner -- U2
+U2 --|> U1
+H6 --|> U2
+H2 --|> U1
+H7 ..> H6 : <<extend>>
+note on link
+новый проведённый обмен; комиссия выбрана;
+нет связей с целью, долгом или планом
+end note
+H7 ..> H2 : <<include>>
+U1 ..> H5 : <<include>>
+note "Обмен хранит две фактические суммы.\nПеревод и расход комиссии сохраняются вместе." as N1
+@enduml

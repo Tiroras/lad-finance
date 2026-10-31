@@ -1,0 +1,41 @@
+@startuml
+' Publication layout: use-case-diagrams.mjs; @row comments pair the nodes.
+left to right direction
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 32
+actor "Владелец" as Owner
+rectangle "Лад" {
+  package "UC-08. Оценивать доступные деньги и\nпрогнозировать остатки" as U8 {
+    usecase "Узнать доступную\nсумму" as A8_1
+    usecase "Учесть резерв\nи обязательства" as D8_1
+    ' @row A8_1 D8_1
+    usecase "Построить прогноз" as A8_2
+    usecase "Рассчитать остатки\nпо дням" as D8_2
+    ' @row A8_2 D8_2
+  }
+  package "UC-09. Оценивать покупки и сравнивать сценарии" as U9 {
+    usecase "Оценить покупку" as A9_1
+    usecase "Проверить счёт\nи общий резерв" as D9_1
+    ' @row A9_1 D9_1
+    usecase "Подобрать сумму\nили дату" as A9_2
+    usecase "Проверить весь\nгоризонт" as D9_2
+    ' @row A9_2 D9_2
+    usecase "Сравнить сценарии" as A9_3
+    usecase "Пересчитать\nварианты прогноза" as D9_3
+    ' @row A9_3 D9_3
+  }
+}
+Owner -- A8_1
+Owner -- A8_2
+Owner -- A9_1
+Owner -- A9_2
+Owner -- A9_3
+A8_1 ..> D8_1 : <<include>>
+A8_2 ..> D8_2 : <<include>>
+A9_1 ..> D9_1 : <<include>>
+A9_2 ..> D9_2 : <<include>>
+A9_3 ..> D9_3 : <<include>>
+@enduml

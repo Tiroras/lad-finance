@@ -1,0 +1,392 @@
+{
+  "checked_on": "2026-11-01",
+  "project_commit": "63c0ecbed71dfb06af307c759b2414e0a3a3e08f",
+  "documents": {
+    "thesis": {
+      "pages": 117,
+      "docx_sha256": "2fa3992a0be7126a3580ff4fb651cad037596c872f77a69a93e39f3799cc3e89",
+      "pdf_sha256": "8fa6d03bd161861c47cf01e82a54d5a7b433ff659c3b52c3bd7979d4839b6458",
+      "markdown_sha256": "ad00a126474e8549c74d34f4e3c29a50fffb8fc29c2b68b26a91c205992bcefb",
+      "figures": 33,
+      "logical_tables": 7,
+      "table_parts": 9,
+      "equations": 18,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "2f3fb842f2e7749c7d5326ce93e0c89511dd61590b82e2a11bb922bdf5ee5d00"
+        },
+        "chapter_1": {
+          "pages": [3, 41],
+          "body_sha256": "a1504a1182153db7a6c8a1d73362dbcbd11e6e6d31d64e742e3756aa7cd256b6"
+        },
+        "chapter_2": {
+          "pages": [42, 67],
+          "body_sha256": "55139d1e4ff695305839dc8d1ddee4c1f94782b19eecacca701698fecdc6fc7f"
+        },
+        "chapter_3": {
+          "pages": [68, 111],
+          "body_sha256": "cb1f4f979c3cc6a2fb42d14b76840941fd373d9e53f55483f2dd4031fce3e9b0"
+        },
+        "conclusion": {
+          "pages": [112, 114],
+          "body_sha256": "276165cb3e346e246af3b4dca58e286ccdfd860934633c8275632eaa65a07072"
+        },
+        "bibliography": {
+          "pages": [115, 117],
+          "body_sha256": "e78e8ae8a88a40577e435d95975d0102285df37cbe0e46cc43dd3a366e484990"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [27],
+        "2": [28],
+        "3": [29],
+        "4": [30],
+        "5": [31],
+        "6": [32],
+        "7": [33],
+        "8": [34],
+        "9": [35],
+        "10": [36],
+        "11": [44],
+        "12": [46],
+        "13": [48],
+        "14": [50],
+        "15": [52],
+        "16": [54],
+        "17": [57],
+        "18": [59],
+        "19": [61],
+        "20": [63],
+        "21": [65],
+        "22": [66],
+        "23": [71],
+        "24": [74],
+        "25": [76],
+        "26": [79],
+        "27": [82],
+        "28": [88],
+        "29": [94],
+        "30": [97],
+        "31": [104],
+        "32": [106],
+        "33": [108]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 7,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 8,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    }
+  },
+  "structural_checks": {
+    "thesis:artifacts_present": true,
+    "thesis:exact_thesis_topic": true,
+    "thesis:paragraphs_match_markdown": true,
+    "thesis:nine_use_cases_in_requirements_and_implementation": true,
+    "thesis:use_case_references_resolve": true,
+    "thesis:primary_use_cases_match_requirements": true,
+    "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
+    "thesis:six_detailed_use_case_views_in_section_2_1": true,
+    "thesis:all_view_relations_match_reviewed_contracts": true,
+    "thesis:every_use_case_connected_to_its_actor": true,
+    "thesis:extension_points_and_conditions_are_explicit": true,
+    "thesis:table_cells_match_markdown": true,
+    "thesis:logical_tables_and_parts": true,
+    "thesis:editable_equation_count_and_numbers": true,
+    "thesis:equation_content_matches": true,
+    "thesis:figure_count": true,
+    "thesis:figure_numbers_and_references": true,
+    "thesis:embedded_images_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:headings_kept": true,
+    "thesis:table_format": true,
+    "thesis:page_field_centered": true,
+    "thesis:editorial_claims_removed": true,
+    "thesis:pdf_and_png_page_counts": true,
+    "thesis:page_numbers": true,
+    "thesis:no_empty_pages": true,
+    "thesis:table_continuations_on_same_page": true,
+    "thesis:text_within_page_bounds": true,
+    "thesis:prose_fonts": true,
+    "thesis:figures_and_captions_same_page": true,
+    "thesis:equations_rendered": true,
+    "thesis:rendered_editorial_claims_removed": true,
+    "thesis:section_starts": true,
+    "thesis:introduction_page_limit": true
+  },
+  "checks_passed": 35,
+  "checks_total": 35,
+  "visual_review": {
+    "required": false,
+    "status": "passed",
+    "checked_on": "2026-11-01",
+    "bundled_pages_viewed": [
+      10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 42, 43, 44, 45, 46,
+      47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65,
+      66, 70, 71, 73, 74, 75, 76, 78, 79, 81, 82, 85, 88, 94, 96, 97, 104, 105,
+      106, 107, 108, 109, 110, 111, 112, 113, 114, 117
+    ],
+    "bundled_review_assignments": {
+      "rewrite_requirements": [
+        10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 42, 43, 44, 45, 46,
+        47, 48
+      ],
+      "rebuild_diagrams": [
+        49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66, 70,
+        71, 73, 74, 75
+      ],
+      "use_cases_audit": [
+        76, 78, 79, 81, 82, 85, 88, 94, 96, 97, 104, 105, 106, 107, 108, 109,
+        110, 111, 112, 113, 114, 117
+      ]
+    },
+    "bundled_unchanged_body_pages": [
+      {
+        "page": 1,
+        "baseline_page": 1
+      },
+      {
+        "page": 2,
+        "baseline_page": 2
+      },
+      {
+        "page": 3,
+        "baseline_page": 3
+      },
+      {
+        "page": 4,
+        "baseline_page": 4
+      },
+      {
+        "page": 5,
+        "baseline_page": 5
+      },
+      {
+        "page": 6,
+        "baseline_page": 6
+      },
+      {
+        "page": 7,
+        "baseline_page": 7
+      },
+      {
+        "page": 8,
+        "baseline_page": 8
+      },
+      {
+        "page": 9,
+        "baseline_page": 9
+      },
+      {
+        "page": 23,
+        "baseline_page": 23
+      },
+      {
+        "page": 24,
+        "baseline_page": 24
+      },
+      {
+        "page": 25,
+        "baseline_page": 25
+      },
+      {
+        "page": 26,
+        "baseline_page": 26
+      },
+      {
+        "page": 27,
+        "baseline_page": 27
+      },
+      {
+        "page": 28,
+        "baseline_page": 28
+      },
+      {
+        "page": 29,
+        "baseline_page": 29
+      },
+      {
+        "page": 30,
+        "baseline_page": 30
+      },
+      {
+        "page": 31,
+        "baseline_page": 31
+      },
+      {
+        "page": 32,
+        "baseline_page": 32
+      },
+      {
+        "page": 33,
+        "baseline_page": 33
+      },
+      {
+        "page": 34,
+        "baseline_page": 34
+      },
+      {
+        "page": 35,
+        "baseline_page": 35
+      },
+      {
+        "page": 36,
+        "baseline_page": 36
+      },
+      {
+        "page": 37,
+        "baseline_page": 37
+      },
+      {
+        "page": 38,
+        "baseline_page": 38
+      },
+      {
+        "page": 39,
+        "baseline_page": 39
+      },
+      {
+        "page": 40,
+        "baseline_page": 40
+      },
+      {
+        "page": 41,
+        "baseline_page": 41
+      },
+      {
+        "page": 64,
+        "baseline_page": 57
+      },
+      {
+        "page": 67,
+        "baseline_page": 60
+      },
+      {
+        "page": 68,
+        "baseline_page": 61
+      },
+      {
+        "page": 69,
+        "baseline_page": 62
+      },
+      {
+        "page": 72,
+        "baseline_page": 65
+      },
+      {
+        "page": 77,
+        "baseline_page": 70
+      },
+      {
+        "page": 80,
+        "baseline_page": 73
+      },
+      {
+        "page": 83,
+        "baseline_page": 76
+      },
+      {
+        "page": 84,
+        "baseline_page": 77
+      },
+      {
+        "page": 86,
+        "baseline_page": 79
+      },
+      {
+        "page": 87,
+        "baseline_page": 80
+      },
+      {
+        "page": 89,
+        "baseline_page": 82
+      },
+      {
+        "page": 90,
+        "baseline_page": 83
+      },
+      {
+        "page": 91,
+        "baseline_page": 84
+      },
+      {
+        "page": 92,
+        "baseline_page": 85
+      },
+      {
+        "page": 93,
+        "baseline_page": 86
+      },
+      {
+        "page": 95,
+        "baseline_page": 88
+      },
+      {
+        "page": 98,
+        "baseline_page": 91
+      },
+      {
+        "page": 99,
+        "baseline_page": 92
+      },
+      {
+        "page": 100,
+        "baseline_page": 93
+      },
+      {
+        "page": 101,
+        "baseline_page": 94
+      },
+      {
+        "page": 102,
+        "baseline_page": 95
+      },
+      {
+        "page": 103,
+        "baseline_page": 96
+      },
+      {
+        "page": 115,
+        "baseline_page": 108
+      },
+      {
+        "page": 116,
+        "baseline_page": 109
+      }
+    ],
+    "baseline_render": "/private/tmp/lad-uml-final-20261101/render/thesis",
+    "native_pages_version": "14.4",
+    "native_pages_viewed": [
+      1, 2, 6, 7, 8, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 103,
+      104, 105, 106, 107, 108, 109, 110, 116
+    ],
+    "notes": [
+      "Все 64 изменённые страницы bundled-рендера просмотрены полноразмерно; тела 53 остальных совпали с прежней просмотренной редакцией.",
+      "В Pages просмотрены 27 страниц, включая все шесть новых диаграмм, введение, таблицу 1, график, формулы, раздел покупки и новую библиографическую запись.",
+      "Наложений, обрезаний и пустых страниц нет. Рисунки и подписи остаются вместе.",
+      "117 страниц в bundled-рендере и 116 в Pages обусловлены различиями переноса; оба экспорта проверены отдельно.",
+      "Предварительное подозрение об обрезанной странице 8 снято после одиночного открытия исходного PNG: страница цела, верх скрывался только при пакетном выводе инструмента."
+    ]
+  },
+  "notes": [
+    "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+    "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+    "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы."
+  ]
+}

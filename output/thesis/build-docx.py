@@ -1,4 +1,4 @@
-"""Build selected thesis sections from Markdown with the supplied formatting rules.
+"""Build the complete thesis.docx from the single thesis.md source.
 Run with the Codex bundled Python runtime. Does not modify application files.
 """
 from pathlib import Path
@@ -6,7 +6,7 @@ import argparse
 import re
 from docx import Document
 from docx.shared import Mm, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -14,22 +14,10 @@ from docx.enum.text import WD_TAB_ALIGNMENT
 
 ROOT = Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--scope',choices=['chapters-1-2','chapter-3','chapters-1-3','introduction-conclusion','thesis'],default='chapters-1-2')
-args=parser.parse_args()
-source=(ROOT/'chapters-1-2.md').read_text()
-if args.scope in ('chapter-3','chapters-1-3','thesis'):
- chapter3=(ROOT/'chapter-3.md').read_text()
- if args.scope=='chapter-3': source=chapter3
- else:
-  body,bibliography=source.split('# Список использованных источников',1)
-  source=body.rstrip()+'\n\n'+chapter3.rstrip()+'\n\n# Список использованных источников'+bibliography
-if args.scope in ('introduction-conclusion','thesis'):
- introduction=(ROOT/'introduction.md').read_text().rstrip()
- conclusion=(ROOT/'conclusion.md').read_text().rstrip()
- if args.scope=='introduction-conclusion': source=introduction+'\n\n'+conclusion
- else:
-  body,bibliography=source.split('# Список использованных источников',1)
-  source=introduction+'\n\n'+body.rstrip()+'\n\n'+conclusion+'\n\n# Список использованных источников'+bibliography
+# Accept the former full-document command without producing separate versions.
+parser.add_argument('--scope',choices=['thesis'],default='thesis',help=argparse.SUPPRESS)
+parser.parse_args()
+source=(ROOT/'thesis.md').read_text()
 in_chapter3=False
 DOC = Document()
 sec=DOC.sections[0]
@@ -61,8 +49,7 @@ DOC.styles['Caption'].paragraph_format.first_line_indent=Mm(0)
 DOC.styles['Caption'].paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER
 DOC.styles['Caption'].paragraph_format.keep_together=True
 THESIS_TOPIC='Разработка мобильного приложения для управления личными финансами'
-scope_title={'chapters-1-2':'Главы 1 и 2','chapter-3':'Глава 3','chapters-1-3':'Главы 1–3','introduction-conclusion':'Введение и заключение','thesis':''}[args.scope]
-DOC.core_properties.title=THESIS_TOPIC+(' — '+scope_title if scope_title else '')
+DOC.core_properties.title=THESIS_TOPIC
 DOC.core_properties.subject=THESIS_TOPIC
 DOC.core_properties.author=''
 DOC.core_properties.last_modified_by=''
@@ -107,7 +94,7 @@ def inline(p,text):
  return p
 
 TABLE_WIDTHS={1:[30,28,28,28,28,28],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56],6:[47,65,58]}
-table_no=6 if args.scope=='chapter-3' else 0
+table_no=0
 
 def table(rows, continuation=False):
  global table_no
@@ -120,10 +107,21 @@ def table(rows, continuation=False):
   body=rows[1:]
   for part_index,start in enumerate(range(0,len(body),5)):
    if part_index:
+    # One explicit break, outside both tables. Keep it separate from the
+    # continuation caption so table pagination cannot carry the break forward.
+    page_break=DOC.add_paragraph()
+    break_format=page_break.paragraph_format
+    break_format.first_line_indent=Mm(0)
+    break_format.space_before=Pt(0);break_format.space_after=Pt(0)
+    break_format.line_spacing=Pt(1)
+    break_format.keep_with_next=False;break_format.keep_together=False
+    break_format.widow_control=False
+    break_run=page_break.add_run();break_run.font.size=Pt(1)
+    break_run.add_break(WD_BREAK.PAGE)
     p=DOC.add_paragraph()
     p.paragraph_format.first_line_indent=Mm(0)
     p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
-    p.paragraph_format.page_break_before=True
+    p.paragraph_format.page_break_before=False
     p.paragraph_format.keep_with_next=True
     p.paragraph_format.space_after=Pt(4)
     inline(p,'Продолжение таблицы 1')
@@ -151,11 +149,14 @@ def table(rows, continuation=False):
    p=cell.paragraphs[0];p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.line_spacing=1.5
    numbered_header=all(value.isdigit() for value in rowdata)
    p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER if numbered_header else WD_ALIGN_PARAGRAPH.LEFT
-   p.paragraph_format.keep_with_next=(i<len(rows)-1)
+   # Table 1 spans three parts: attach only its headings to the first data row.
+   # Linking every data row makes an entire part an indivisible page block.
+   p.paragraph_format.keep_with_next=(i==0 or numbered_header) if table_no==1 else (i<len(rows)-1)
    p.paragraph_format.keep_together=True
    inline(p,txt)
-   for r in p.runs: r.font.size=Pt(12);r.bold=(i==0)
-   if i==0:
+   is_text_header=i==0 and not numbered_header
+   for r in p.runs: r.font.size=Pt(12);r.bold=is_text_header
+   if is_text_header:
     shade=OxmlElement('w:shd');shade.set(qn('w:fill'),'F2F2F2');tcpr.append(shade)
  return tbl
 
@@ -242,7 +243,9 @@ while i<len(lines):
  p=DOC.add_paragraph();inline(p,text)
  j=i
  while j<len(lines) and not lines[j].strip(): j+=1
- if j<len(lines) and re.match(r'!\[.*\]\(figures/01-ui[^)]*\)',lines[j].strip()):
+ # Keep the short introduction with its UI sketch or behavioural diagram.
+ # Longer scenario explanations remain normal paragraphs around the figure.
+ if j<len(lines) and re.match(r'!\[.*\]\(figures/(?:01-ui|02-use-cases-|02-activity-)[^)]*\)',lines[j].strip()):
   p.paragraph_format.keep_with_next=True
   p.paragraph_format.keep_together=True
  if in_chapter3 and j<len(lines) and lines[j].strip().startswith('$$'):
@@ -253,6 +256,6 @@ while i<len(lines):
   p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
   p.paragraph_format.space_after=Pt(6);p.paragraph_format.keep_together=True
 
-output=ROOT/(args.scope+'.docx')
+output=ROOT/'thesis.docx'
 DOC.save(output)
 print(f'Created {output}: {len(DOC.paragraphs)} paragraphs, {len(DOC.tables)} tables, {len(DOC.inline_shapes)} figures')

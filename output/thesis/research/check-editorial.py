@@ -1,7 +1,7 @@
-"""Check the five current thesis DOCX artifacts, Markdown and rendered pages.
+"""Check the unified thesis.docx, its thesis.md source and rendered pages.
 
-Run with bundled Python and --render-root DIR. DIR contains one subdirectory
-per scope, each with SCOPE.pdf and page-N.png from render_docx.py. Page ranges
+Run with bundled Python and --render-root DIR. DIR/thesis contains thesis.pdf
+and page-N.png from render_docx.py. Page ranges
 are discovered from section headings; visual review remains a separate step.
 """
 from pathlib import Path
@@ -11,6 +11,7 @@ import hashlib
 import json
 import re
 import subprocess
+import xml.etree.ElementTree as ET
 from datetime import date
 
 from docx import Document
@@ -20,8 +21,7 @@ from PIL import Image
 import pdfplumber
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'research/editorial-checks.json'
-BIBLIOGRAPHY = '# Список использованных источников'
+OUTPUT = ROOT / 'research/thesis-checks.json'
 SECTION_PREFIXES = {
     'introduction': r'^Введение\b',
     'chapter_1': r'^1 Требования\b',
@@ -39,11 +39,7 @@ FORBIDDEN = [
 ]
 # Formulas, figures and logical tables. Physical continuation parts are separate.
 COUNTS = {
-    'chapters-1-2': (0, 18, 6),
-    'chapter-3': (18, 11, 1),
-    'chapters-1-3': (18, 29, 7),
-    'introduction-conclusion': (0, 0, 0),
-    'thesis': (18, 29, 7),
+    'thesis': (18, 33, 7),
 }
 
 
@@ -65,19 +61,7 @@ def section_key(title):
 
 
 def sources():
-    previous = (ROOT / 'chapters-1-2.md').read_text()
-    chapter = (ROOT / 'chapter-3.md').read_text()
-    intro = (ROOT / 'introduction.md').read_text().rstrip()
-    conclusion = (ROOT / 'conclusion.md').read_text().rstrip()
-    body, bibliography = previous.split(BIBLIOGRAPHY, 1)
-    chapters = body.rstrip() + '\n\n' + chapter.rstrip()
-    return {
-        'chapters-1-2': previous,
-        'chapter-3': chapter,
-        'chapters-1-3': chapters + '\n\n' + BIBLIOGRAPHY + bibliography,
-        'introduction-conclusion': intro + '\n\n' + conclusion,
-        'thesis': intro + '\n\n' + chapters + '\n\n' + conclusion + '\n\n' + BIBLIOGRAPHY + bibliography,
-    }
+    return {'thesis': (ROOT / 'thesis.md').read_text()}
 
 
 def paragraphs(md):
@@ -119,7 +103,7 @@ def main():
     parser.add_argument('--checked-on', default=date.today().isoformat(), help='Report date in YYYY-MM-DD format')
     parser.add_argument('--introduction-max-pages', type=int, help='Maximum pages for the introduction only')
     args = parser.parse_args()
-    checks, reports, bodies = {}, {}, {}
+    checks, reports = {}, {}
 
     def check(name, value):
         checks[name] = bool(value)
@@ -143,10 +127,84 @@ def main():
         formulas, images, logical_tables = COUNTS[scope]
         source_formulas = re.findall(r'^\$\$ (.+) \\tag\{(3\.\d+)\} \$\$$', md, re.M)
         equations = doc.element.findall('.//' + qn('m:oMath'))
-        actual = [norm(p.text) for p in doc.paragraphs if p.text
+        actual = [norm(p.text) for p in doc.paragraphs if norm(p.text)
                   and not re.fullmatch(r'Продолжение таблицы \d+', norm(p.text))
                   and p._p.find('.//' + qn('m:oMath')) is None]
         check(prefix + 'paragraphs_match_markdown', actual == paragraphs(md))
+        requirement_titles = re.findall(r'^### 1\.2\.(\d+) (.+)$', md, re.M)
+        implementation_titles = re.findall(r'^## 3\.(\d+) (.+)$', md, re.M)
+        expected_ids = [f'UC-{i:02}' for i in range(1, 10)]
+        check(prefix + 'nine_use_cases_in_requirements_and_implementation',
+              [number for number, _ in requirement_titles] == [str(i) for i in range(1, 10)]
+              and requirement_titles == implementation_titles
+              and re.findall(r'^(UC-\d+)\. Цель', md, re.M) == expected_ids
+              and re.findall(r'Прецедент (UC-\d+)', md) == expected_ids)
+        check(prefix + 'use_case_references_resolve', set(re.findall(r'UC-\d+', md)) == set(expected_ids))
+        diagram_names = ['02-use-cases-' + suffix for suffix in [
+            'operations', 'exchange', 'goals', 'reconciliation', 'purchase', 'scenarios']]
+        models = [(ROOT / f'figures/{name}.puml').read_text() for name in diagram_names]
+        model = '\n'.join(models)
+        svgs = [ET.parse(ROOT / f'figures/{name}.svg') for name in diagram_names]
+        labels = {id: norm(label.split('\\n--\\n', 1)[0].replace('\\n', ' ')) for label, id in
+                  re.findall(r'usecase "([^"]+)" as (\w+)', model)}
+        expected_titles = {f'U{number}': f'UC-{int(number):02} {title}'
+                           for number, title in requirement_titles}
+        svg_labels = {node.get('id'): norm(node.get('data-title') or ' '.join(node.itertext()))
+                      for svg in svgs for node in svg.iter() if node.get('data-role') == 'usecase'}
+        core = lambda values: {key: value for key, value in values.items() if re.fullmatch(r'U\d+', key)}
+        check(prefix + 'primary_use_cases_match_requirements',
+              core(labels) == expected_titles == core(svg_labels)
+              and len(expected_titles) <= 10)
+        check(prefix + 'seventeen_named_helpers_are_distinct_from_primary_cases',
+              labels == svg_labels and set(labels) == set(expected_titles) | {f'H{i}' for i in range(1, 18)}
+              and all(node.get('data-primary') == ('true' if node.get('id', '').startswith('U') else 'false')
+                      for svg in svgs for node in svg.iter() if node.get('data-role') == 'usecase'))
+        check(prefix + 'six_detailed_use_case_views_in_section_2_1',
+              re.findall(r'\]\(figures/([^/]+)\.png\)', md.split('## 2.1 ', 1)[1].split('## 2.2 ', 1)[0]) == diagram_names
+              and all(re.search(r'\busecase\b', value) for value in models)
+              and not any(node.get('data-role') in {'action', 'decision', 'initial', 'final'}
+                          for svg in svgs for node in svg.iter()))
+        # These contracts are independent of the publication layout and generator.
+        associations = [['U1'], ['U2'], ['U3', 'U4'], ['U5'], ['U8', 'U7'], ['U9', 'H17']]
+        relations = [
+            [('H1','U1','generalization'),('H2','U1','generalization'),('H3','U1','generalization'),
+             ('U1','H5','include'),('H4','H2','extend')],
+            [('U2','U1','generalization'),('H6','U2','generalization'),('H2','U1','generalization'),
+             ('H7','H6','extend'),('H7','H2','include'),('U1','H5','include')],
+            [('U3','U2','include'),('U3','H8','include'),('U4','U2','include'),
+             ('U4','H9','include'),('U2','H5','include')],
+            [('U5','H10','include'),('U6','U5','extend'),('U6','H5','include')],
+            [('U8','U7','include'),('U7','H11','include'),('U8','H12','include'),
+             ('H13','U8','extend'),('H13','H14','include')],
+            [('U9','U7','include'),('U7','H11','include'),('U9','H15','include'),
+             ('H17','U9','extend'),('H17','H15','include'),('H16','U9','extend')],
+        ]
+        relation_matches, reachable_views = [], []
+        for puml, svg, actors, edges in zip(models, svgs, associations, relations):
+            expected = [('Owner', target, 'association') for target in actors] + edges
+            puml_edges = [('Owner', target, 'association') for target in re.findall(r'^Owner -- (\w+)$', puml, re.M)]
+            puml_edges.extend(re.findall(r'^(\w+) \.\.> (\w+) : <<(include|extend)>>', puml, re.M))
+            puml_edges.extend((source, target, 'generalization')
+                              for source, target in re.findall(r'^(\w+) --\|> (\w+)', puml, re.M))
+            svg_edges = [(node.get('data-from'), node.get('data-to'), node.get('data-relation'))
+                         for node in svg.iter() if node.get('data-relation')]
+            relation_matches.append(sorted(puml_edges) == sorted(svg_edges) == sorted(expected))
+            # UML relationships are not execution arrows; reachability here is structural.
+            seen = {'Owner'}
+            while True:
+                grown = seen | {b for a,b,_ in svg_edges if a in seen} | {a for a,b,_ in svg_edges if b in seen}
+                if grown == seen: break
+                seen = grown
+            reachable_views.append(all(node.get('id') in seen for node in svg.iter()
+                                       if node.get('data-role') == 'usecase'))
+        check(prefix + 'all_view_relations_match_reviewed_contracts', all(relation_matches))
+        check(prefix + 'every_use_case_connected_to_its_actor', all(reachable_views))
+        model_texts = [value.replace('\\n', ' ') for value in models]
+        check(prefix + 'extension_points_and_conditions_are_explicit', all(
+            re.search(r'Точк[аи] расширения', model_texts[index]) and all(word in model_texts[index] for word in words)
+            for index, words in [(0,['разделение']), (1,['комиссия','целью','долгом','планом']),
+                                 (3,['разрешение расхождения','подтвердил']), (4,['сегодня']),
+                                 (5,['сохранение','неактуальные'])]))
         actual_rows = [[norm(c.text) for c in row.cells] for table in doc.tables for row in table.rows
                        if [norm(c.text) for c in row.cells] != ['1', '2', '3', '4', '5', '6']]
         check(prefix + 'table_cells_match_markdown', actual_rows == rows(md))
@@ -161,6 +219,9 @@ def main():
               == [flat_math(expr) for expr, _ in source_formulas])
         paths = re.findall(r'^!\[[^\n]+\]\(([^\n]+)\)$', md, re.M)
         check(prefix + 'figure_count', len(doc.inline_shapes) == len(paths) == images)
+        figure_numbers = re.findall(r'^!\[Рисунок (\d+)', md, re.M)
+        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, images + 1)]
+              and all(number in figure_numbers for number in re.findall(r'рисун(?:ок|ке|ка) (\d+)', md, re.I)))
         check(prefix + 'embedded_images_match', all((ROOT / path).exists()
               and doc.part.rels[shape._inline.graphic.graphicData.pic.blipFill.blip.get(qn('r:embed'))].target_part.blob == (ROOT / path).read_bytes()
               for shape, path in zip(doc.inline_shapes, paths)))
@@ -189,6 +250,7 @@ def main():
             check(prefix + 'pdf_and_png_page_counts', count > 0 and pngs == list(range(1, count + 1)))
             seen_sections, page_hashes, bad_bounds, fonts = {}, [], [], set()
             image_pages, caption_pages, nonempty, footers = [], {}, [], []
+            continuation_pages = []
             for i, (page, text) in enumerate(zip(pdf.pages, texts), 1):
                 key = section_key(text)
                 if key:
@@ -199,6 +261,11 @@ def main():
                 image_pages.extend([i] * len(page.images))
                 for number in re.findall(r'Рисунок\s+(\d+)\s*[–-]', text):
                     caption_pages.setdefault(number, []).append(i)
+                for number in re.findall(r'Продолжение\s+таблицы\s+(\d+)', text):
+                    tables_on_page = [table.extract() for table in page.find_tables()]
+                    numbered_table = any(len(rows) >= 2 and rows[0] == [str(n) for n in range(1, len(rows[0]) + 1)]
+                                         for rows in tables_on_page)
+                    continuation_pages.append({'table': number, 'page': i, 'numbered_table_present': numbered_table})
                 bands = [(w['top'] - 12, w['bottom'] + 12) for w in page.extract_words()
                          if re.fullmatch(r'\(3\.\d+\)', w['text']) and w['x0'] > page.width * 0.7]
                 for char in page.chars:
@@ -212,6 +279,9 @@ def main():
                     page_hashes.append(body_hash(directory / f'page-{i}.png', bottom, page.height))
             check(prefix + 'page_numbers', all(footers))
             check(prefix + 'no_empty_pages', all(nonempty))
+            if continuations:
+                check(prefix + 'table_continuations_on_same_page', len(continuation_pages) == continuations
+                      and all(item['numbered_table_present'] for item in continuation_pages))
             check(prefix + 'text_within_page_bounds', not bad_bounds)
             check(prefix + 'prose_fonts', all(name.startswith(('TimesNewRoman', 'CourierNew')) for name in fonts))
             expected_captions = re.findall(r'^!\[Рисунок (\d+)', md, re.M)
@@ -228,7 +298,6 @@ def main():
             for index, (key, start) in enumerate(ordered):
                 end = ordered[index + 1][1] - 1 if index + 1 < len(ordered) else count
                 hashes = page_hashes[start - 1:end]
-                bodies[(scope, key)] = hashes
                 sections[key] = {'pages': [start, end], 'body_sha256': sha(''.join(hashes).encode())}
             if args.introduction_max_pages is not None and 'introduction' in sections:
                 start, end = sections['introduction']['pages']
@@ -236,11 +305,9 @@ def main():
             reports[scope] = {'pages': count, 'docx_sha256': sha(docx.read_bytes()), 'pdf_sha256': sha(pdf_path.read_bytes()),
                 'markdown_sha256': sha(md.encode()), 'figures': len(paths), 'logical_tables': len(numbers), 'table_parts': len(doc.tables),
                 'equations': len(equations), 'sections': sections, 'prose_fonts': sorted(fonts),
-                'caption_pages': caption_pages, 'editorial_hits': hits + pdf_hits, 'bounds_violations': bad_bounds}
+                'caption_pages': caption_pages, 'table_continuation_pages': continuation_pages,
+                'editorial_hits': hits + pdf_hits, 'bounds_violations': bad_bounds}
 
-    for (scope, section), hashes in bodies.items():
-        if scope != 'thesis':
-            check(scope + ':' + section + '_body_identical_in_thesis', bool(hashes) and hashes == bodies.get(('thesis', section)))
     previous = json.loads(args.output.read_text()) if args.output.exists() else {}
     same = all(previous.get('documents', {}).get(scope, {}).get('docx_sha256') == data.get('docx_sha256')
                and previous.get('documents', {}).get(scope, {}).get('pdf_sha256') == data.get('pdf_sha256') for scope, data in reports.items())

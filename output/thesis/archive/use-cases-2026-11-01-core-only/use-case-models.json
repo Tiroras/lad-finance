@@ -1,0 +1,321 @@
+{
+  "print_width_mm": 160,
+  "body_font_size": 32,
+  "small_font_size": 30,
+  "models": [
+    {
+      "name": "02-use-cases-transactions",
+      "kind": "use-case",
+      "title": "Финансовые операции и накопления",
+      "width": 1200,
+      "height": 860,
+      "boundary": {
+        "x": 230,
+        "y": 20,
+        "width": 960,
+        "height": 820
+      },
+      "actor": {
+        "id": "Owner",
+        "title": "Владелец учёта",
+        "label": ["Владелец", "учёта"],
+        "x": 100,
+        "y": 410
+      },
+      "nodes": [
+        {
+          "id": "U1",
+          "uc": "UC-01",
+          "title": "Записать финансовую операцию",
+          "label": ["UC-01", "Записать финансовую", "операцию"],
+          "x": 950,
+          "y": 200,
+          "rx": 190,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        },
+        {
+          "id": "U2",
+          "uc": "UC-02",
+          "title": "Записать перевод между счетами",
+          "label": ["UC-02", "Записать перевод", "между счетами"],
+          "x": 950,
+          "y": 650,
+          "rx": 190,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        },
+        {
+          "id": "U3",
+          "uc": "UC-03",
+          "title": "Учесть взнос в цель",
+          "label": ["UC-03", "Учесть взнос", "в цель"],
+          "x": 440,
+          "y": 200,
+          "rx": 190,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        },
+        {
+          "id": "U4",
+          "uc": "UC-04",
+          "title": "Учесть вывод из цели",
+          "label": ["UC-04", "Учесть вывод", "из цели"],
+          "x": 440,
+          "y": 650,
+          "rx": 190,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        }
+      ],
+      "edges": [
+        {
+          "from": "Owner",
+          "to": "U1",
+          "kind": "association",
+          "d": "M 100 347 V 75 H 950 V 105",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U2",
+          "kind": "association",
+          "d": "M 65 500 H 20 V 790 H 950 V 745",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U3",
+          "kind": "association",
+          "d": "M 140 410 C 205 410, 205 200, 250 200",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U4",
+          "kind": "association",
+          "d": "M 140 410 C 205 410, 205 650, 250 650",
+          "label": []
+        },
+        {
+          "from": "U2",
+          "to": "U1",
+          "kind": "generalization",
+          "d": "M 950 555 V 295",
+          "label": []
+        },
+        {
+          "from": "U3",
+          "to": "U2",
+          "kind": "include",
+          "d": "M 630 200 H 700 V 560 L 810 585.78",
+          "label": ["«include»"],
+          "labelX": 800,
+          "labelY": 402,
+          "fontSize": 30
+        },
+        {
+          "from": "U4",
+          "to": "U2",
+          "kind": "include",
+          "d": "M 630 650 H 760",
+          "label": ["«include»"],
+          "labelX": 695,
+          "labelY": 620,
+          "fontSize": 30
+        }
+      ]
+    },
+    {
+      "name": "02-use-cases-reconciliation",
+      "kind": "use-case",
+      "title": "Сверка и корректировка остатка",
+      "width": 1200,
+      "height": 780,
+      "boundary": {
+        "x": 230,
+        "y": 20,
+        "width": 960,
+        "height": 740
+      },
+      "actor": {
+        "id": "Owner",
+        "title": "Владелец учёта",
+        "label": ["Владелец", "учёта"],
+        "x": 100,
+        "y": 410
+      },
+      "nodes": [
+        {
+          "id": "U5",
+          "uc": "UC-05",
+          "title": "Сверить остаток счёта",
+          "label": ["UC-05", "Сверить остаток счёта"],
+          "x": 720,
+          "y": 235,
+          "rx": 265,
+          "ry": 145,
+          "fontSize": 32,
+          "shape": "usecase",
+          "labelY": 177,
+          "extensionPoint": {
+            "name": "разрешение расхождения",
+            "label": ["Точка расширения", "разрешение расхождения"],
+            "x": 720,
+            "y": 292,
+            "fontSize": 30,
+            "dividerY": 225
+          }
+        },
+        {
+          "id": "U6",
+          "uc": "UC-06",
+          "title": "Скорректировать остаток счёта",
+          "label": ["UC-06", "Скорректировать", "остаток счёта"],
+          "x": 720,
+          "y": 640,
+          "rx": 240,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        }
+      ],
+      "edges": [
+        {
+          "from": "Owner",
+          "to": "U5",
+          "kind": "association",
+          "d": "M 140 410 C 300 410, 300 235, 455 235",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U6",
+          "kind": "association",
+          "d": "M 140 410 C 300 410, 300 640, 480 640",
+          "label": []
+        },
+        {
+          "from": "U6",
+          "to": "U5",
+          "kind": "extend",
+          "d": "M 720 545 V 380",
+          "label": [
+            "«extend»",
+            "[есть расхождение",
+            "и владелец подтвердил",
+            "корректировку]"
+          ],
+          "labelX": 952,
+          "labelY": 460,
+          "fontSize": 30
+        }
+      ]
+    },
+    {
+      "name": "02-use-cases-forecast",
+      "kind": "use-case",
+      "title": "Прогноз и финансовые решения",
+      "width": 1200,
+      "height": 820,
+      "boundary": {
+        "x": 230,
+        "y": 20,
+        "width": 960,
+        "height": 780
+      },
+      "actor": {
+        "id": "Owner",
+        "title": "Владелец учёта",
+        "label": ["Владелец", "учёта"],
+        "x": 100,
+        "y": 410
+      },
+      "nodes": [
+        {
+          "id": "U7",
+          "uc": "UC-07",
+          "title": "Получить прогноз денежных остатков",
+          "label": ["UC-07", "Получить прогноз", "денежных остатков"],
+          "x": 925,
+          "y": 420,
+          "rx": 245,
+          "ry": 120,
+          "fontSize": 32,
+          "shape": "usecase"
+        },
+        {
+          "id": "U8",
+          "uc": "UC-08",
+          "title": "Оценить возможность покупки",
+          "label": ["UC-08", "Оценить возможность", "покупки"],
+          "x": 500,
+          "y": 200,
+          "rx": 215,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        },
+        {
+          "id": "U9",
+          "uc": "UC-09",
+          "title": "Сравнить финансовые сценарии",
+          "label": ["UC-09", "Сравнить финансовые", "сценарии"],
+          "x": 500,
+          "y": 650,
+          "rx": 215,
+          "ry": 95,
+          "fontSize": 32,
+          "shape": "usecase"
+        }
+      ],
+      "edges": [
+        {
+          "from": "Owner",
+          "to": "U7",
+          "kind": "association",
+          "d": "M 140 410 L 680 420",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U8",
+          "kind": "association",
+          "d": "M 140 410 C 210 410, 210 200, 285 200",
+          "label": []
+        },
+        {
+          "from": "Owner",
+          "to": "U9",
+          "kind": "association",
+          "d": "M 140 410 C 210 410, 210 650, 285 650",
+          "label": []
+        },
+        {
+          "from": "U8",
+          "to": "U7",
+          "kind": "include",
+          "d": "M 715 200 H 925 V 300",
+          "label": ["«include»"],
+          "labelX": 820,
+          "labelY": 172,
+          "fontSize": 30
+        },
+        {
+          "from": "U9",
+          "to": "U7",
+          "kind": "include",
+          "d": "M 715 650 H 925 V 540",
+          "label": ["«include»"],
+          "labelX": 820,
+          "labelY": 620,
+          "fontSize": 30
+        }
+      ]
+    }
+  ]
+}

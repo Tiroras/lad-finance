@@ -1,0 +1,42 @@
+@startuml
+' Publication layout: use-case-diagrams.mjs; @row comments pair the nodes.
+left to right direction
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 32
+actor "Владелец" as Owner
+rectangle "Лад" {
+  package "UC-06. Планировать доходы, платежи и напоминания" as U6 {
+    usecase "Запланировать\nдоход или платёж" as A6_1
+    ' @row A6_1
+    usecase "Отметить доход\nили оплату" as A6_2
+    usecase "Связать событие\nс операцией" as D6_2
+    ' @row A6_2 D6_2
+    usecase "Настроить\nнапоминание" as A6_3
+    usecase "Проверить\nразрешение ОС" as D6_3
+    ' @row A6_3 D6_3
+  }
+  package "UC-07. Учитывать долги и кредитные карты" as U7 {
+    usecase "Записать долг" as A7_1
+    ' @row A7_1
+    usecase "Внести погашение" as A7_2
+    usecase "Уменьшить\nостаток долга" as D7_2
+    ' @row A7_2 D7_2
+    usecase "Записать погашение\nкредитной карты" as A7_3
+    usecase "Записать перевод\nна карту" as D7_3
+    ' @row A7_3 D7_3
+  }
+}
+Owner -- A6_1
+Owner -- A6_2
+Owner -- A6_3
+Owner -- A7_1
+Owner -- A7_2
+Owner -- A7_3
+A6_2 ..> D6_2 : <<include>>
+A6_3 ..> D6_3 : <<include>>
+A7_2 ..> D7_2 : <<include>>
+A7_3 ..> D7_3 : <<include>>
+@enduml

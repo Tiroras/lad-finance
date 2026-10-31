@@ -1,0 +1,22 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-05\nСверить остаток счёта\n--\nТочка расширения\nразрешение\nрасхождения" as U5
+  usecase "Определить\nфактический остаток\nна дату" as H10
+  usecase "UC-06\nСкорректировать\nостаток счёта" as U6
+  usecase "Проверить финансовую\nсогласованность\nучёта" as H5
+}
+Owner -- U5
+U5 ..> H10 : <<include>>
+U6 ..> U5 : <<extend>>
+note on link
+остатки различаются;
+владелец подтвердил корректировку
+end note
+U6 ..> H5 : <<include>>
+note "Корректировка имеет дату и причину;\nне является доходом или расходом." as N1
+@enduml

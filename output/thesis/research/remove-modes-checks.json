@@ -1,0 +1,607 @@
+{
+  "checked_on": "2026-10-30",
+  "project_commit": "63c0ecbed71dfb06af307c759b2414e0a3a3e08f",
+  "documents": {
+    "chapters-1-2": {
+      "pages": 51,
+      "docx_sha256": "efc7f07e2ee8fa02fa68a50eb9fcc1fd51c529a4eb96cb422eb2f04d6d2feeea",
+      "pdf_sha256": "31e737118644bb59ba91585756a9026404c8fc27226509f66a1a5572ae864797",
+      "markdown_sha256": "856bfe99911588ed329d921dbdc27e5b3d26cd44d7239cc069384e50085b5a22",
+      "figures": 18,
+      "logical_tables": 6,
+      "table_parts": 8,
+      "equations": 0,
+      "sections": {
+        "chapter_1": {
+          "pages": [1, 36],
+          "body_sha256": "a49696a264f9923147da41a6dd6906360e977135fe864dec13fbf3f478c198c2"
+        },
+        "chapter_2": {
+          "pages": [37, 49],
+          "body_sha256": "ec6c2effa7d6004476f8ebfb9ae58a904452f7402a3819730b2a53051a114c2c"
+        },
+        "bibliography": {
+          "pages": [50, 51],
+          "body_sha256": "bcb7977873490ce1955baaa74d23328b4b2d9c450b9c01a4925da34e31b0bb6c"
+        }
+      },
+      "prose_fonts": ["TimesNewRomanPS-BoldMT", "TimesNewRomanPSMT"],
+      "caption_pages": {
+        "1": [22],
+        "2": [23],
+        "3": [24],
+        "4": [25],
+        "5": [26],
+        "6": [27],
+        "7": [28],
+        "8": [29],
+        "9": [30],
+        "10": [31],
+        "11": [38],
+        "12": [38],
+        "13": [39],
+        "14": [41],
+        "15": [43],
+        "16": [45],
+        "17": [47],
+        "18": [48]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 5,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 6,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    },
+    "chapter-3": {
+      "pages": 42,
+      "docx_sha256": "deb575b91b8bc7cb6f21c522be20b58064ce0b14fd2c15f76ae4494694ded920",
+      "pdf_sha256": "32e2c6351074013031b54078b9576de03af9cbe0084b959010817ca86c2dd244",
+      "markdown_sha256": "9b47442c8a14c05b3aa5c3c7177c9351e12fc1d6b85fec8c2195647ebf9300e1",
+      "figures": 11,
+      "logical_tables": 1,
+      "table_parts": 1,
+      "equations": 18,
+      "sections": {
+        "chapter_3": {
+          "pages": [1, 42],
+          "body_sha256": "9814262fb5c2ccb66bb48a238a2e342caf204d4402ff38198d7763783e928915"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "19": [3],
+        "20": [8],
+        "21": [13],
+        "22": [15],
+        "23": [18],
+        "24": [27],
+        "25": [29],
+        "26": [30],
+        "27": [32],
+        "28": [37],
+        "29": [40]
+      },
+      "table_continuation_pages": [],
+      "editorial_hits": [],
+      "bounds_violations": []
+    },
+    "chapters-1-3": {
+      "pages": 93,
+      "docx_sha256": "fd2bd4a71211913c7f5807337dd00422dba3fee397b88d94ad8a630dd27851ea",
+      "pdf_sha256": "8cdac5f8fd2161776b64e30b6c0868e63cb3bc811b5685a1028e2753d60c054b",
+      "markdown_sha256": "5315b4dc55a8ad8938699ba6251fa374a53c80f1c36bb9dc46f6d45ad5c87555",
+      "figures": 29,
+      "logical_tables": 7,
+      "table_parts": 9,
+      "equations": 18,
+      "sections": {
+        "chapter_1": {
+          "pages": [1, 36],
+          "body_sha256": "a49696a264f9923147da41a6dd6906360e977135fe864dec13fbf3f478c198c2"
+        },
+        "chapter_2": {
+          "pages": [37, 49],
+          "body_sha256": "ec6c2effa7d6004476f8ebfb9ae58a904452f7402a3819730b2a53051a114c2c"
+        },
+        "chapter_3": {
+          "pages": [50, 91],
+          "body_sha256": "9814262fb5c2ccb66bb48a238a2e342caf204d4402ff38198d7763783e928915"
+        },
+        "bibliography": {
+          "pages": [92, 93],
+          "body_sha256": "bcb7977873490ce1955baaa74d23328b4b2d9c450b9c01a4925da34e31b0bb6c"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [22],
+        "2": [23],
+        "3": [24],
+        "4": [25],
+        "5": [26],
+        "6": [27],
+        "7": [28],
+        "8": [29],
+        "9": [30],
+        "10": [31],
+        "11": [38],
+        "12": [38],
+        "13": [39],
+        "14": [41],
+        "15": [43],
+        "16": [45],
+        "17": [47],
+        "18": [48],
+        "19": [52],
+        "20": [57],
+        "21": [62],
+        "22": [64],
+        "23": [67],
+        "24": [76],
+        "25": [78],
+        "26": [79],
+        "27": [81],
+        "28": [86],
+        "29": [89]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 5,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 6,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    },
+    "introduction-conclusion": {
+      "pages": 5,
+      "docx_sha256": "d868779a5ea338993360c51069d560990ff4a1d08659aea1fa35a1a7c07c34d2",
+      "pdf_sha256": "28f851f741b324e6b8d9106a3212c6906dc16a5b77b39281aa657ce552a97603",
+      "markdown_sha256": "7eef58c56ed17b9ea56bf4310d587d468bf5faf23f66be39bbf4b605b871fba9",
+      "figures": 0,
+      "logical_tables": 0,
+      "table_parts": 0,
+      "equations": 0,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "2f3fb842f2e7749c7d5326ce93e0c89511dd61590b82e2a11bb922bdf5ee5d00"
+        },
+        "conclusion": {
+          "pages": [3, 5],
+          "body_sha256": "e93d77971943f8643860c76033b9aefe6196bc9f28ecb76083e56dc3928d95c9"
+        }
+      },
+      "prose_fonts": ["TimesNewRomanPS-BoldMT", "TimesNewRomanPSMT"],
+      "caption_pages": {},
+      "table_continuation_pages": [],
+      "editorial_hits": [],
+      "bounds_violations": []
+    },
+    "thesis": {
+      "pages": 98,
+      "docx_sha256": "6b5ec6f303ee042fac9caf82e96d9e62f9a34b7d62a4e165fdc75bc8bb101a44",
+      "pdf_sha256": "1395f5745ce5f895dfa3d8e3662cf32372332b526fc93f062e0fa02b48ba6c8d",
+      "markdown_sha256": "48c022ec42d772a2b3803a97b6610de7a86d0514316aed0227757f94270faaaf",
+      "figures": 29,
+      "logical_tables": 7,
+      "table_parts": 9,
+      "equations": 18,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "2f3fb842f2e7749c7d5326ce93e0c89511dd61590b82e2a11bb922bdf5ee5d00"
+        },
+        "chapter_1": {
+          "pages": [3, 38],
+          "body_sha256": "a49696a264f9923147da41a6dd6906360e977135fe864dec13fbf3f478c198c2"
+        },
+        "chapter_2": {
+          "pages": [39, 51],
+          "body_sha256": "ec6c2effa7d6004476f8ebfb9ae58a904452f7402a3819730b2a53051a114c2c"
+        },
+        "chapter_3": {
+          "pages": [52, 93],
+          "body_sha256": "9814262fb5c2ccb66bb48a238a2e342caf204d4402ff38198d7763783e928915"
+        },
+        "conclusion": {
+          "pages": [94, 96],
+          "body_sha256": "e93d77971943f8643860c76033b9aefe6196bc9f28ecb76083e56dc3928d95c9"
+        },
+        "bibliography": {
+          "pages": [97, 98],
+          "body_sha256": "bcb7977873490ce1955baaa74d23328b4b2d9c450b9c01a4925da34e31b0bb6c"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [24],
+        "2": [25],
+        "3": [26],
+        "4": [27],
+        "5": [28],
+        "6": [29],
+        "7": [30],
+        "8": [31],
+        "9": [32],
+        "10": [33],
+        "11": [40],
+        "12": [40],
+        "13": [41],
+        "14": [43],
+        "15": [45],
+        "16": [47],
+        "17": [49],
+        "18": [50],
+        "19": [54],
+        "20": [59],
+        "21": [64],
+        "22": [66],
+        "23": [69],
+        "24": [78],
+        "25": [80],
+        "26": [81],
+        "27": [83],
+        "28": [88],
+        "29": [91]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 7,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 8,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    }
+  },
+  "structural_checks": {
+    "chapters-1-2:artifacts_present": true,
+    "chapters-1-2:exact_thesis_topic": true,
+    "chapters-1-2:paragraphs_match_markdown": true,
+    "chapters-1-2:table_cells_match_markdown": true,
+    "chapters-1-2:logical_tables_and_parts": true,
+    "chapters-1-2:editable_equation_count_and_numbers": true,
+    "chapters-1-2:equation_content_matches": true,
+    "chapters-1-2:figure_count": true,
+    "chapters-1-2:embedded_images_match": true,
+    "chapters-1-2:a4_margins": true,
+    "chapters-1-2:body_format": true,
+    "chapters-1-2:headings_kept": true,
+    "chapters-1-2:table_format": true,
+    "chapters-1-2:page_field_centered": true,
+    "chapters-1-2:editorial_claims_removed": true,
+    "chapters-1-2:pdf_and_png_page_counts": true,
+    "chapters-1-2:page_numbers": true,
+    "chapters-1-2:no_empty_pages": true,
+    "chapters-1-2:table_continuations_on_same_page": true,
+    "chapters-1-2:text_within_page_bounds": true,
+    "chapters-1-2:prose_fonts": true,
+    "chapters-1-2:figures_and_captions_same_page": true,
+    "chapters-1-2:equations_rendered": true,
+    "chapters-1-2:rendered_editorial_claims_removed": true,
+    "chapters-1-2:section_starts": true,
+    "chapter-3:artifacts_present": true,
+    "chapter-3:exact_thesis_topic": true,
+    "chapter-3:paragraphs_match_markdown": true,
+    "chapter-3:table_cells_match_markdown": true,
+    "chapter-3:logical_tables_and_parts": true,
+    "chapter-3:editable_equation_count_and_numbers": true,
+    "chapter-3:equation_content_matches": true,
+    "chapter-3:figure_count": true,
+    "chapter-3:embedded_images_match": true,
+    "chapter-3:a4_margins": true,
+    "chapter-3:body_format": true,
+    "chapter-3:headings_kept": true,
+    "chapter-3:table_format": true,
+    "chapter-3:page_field_centered": true,
+    "chapter-3:editorial_claims_removed": true,
+    "chapter-3:pdf_and_png_page_counts": true,
+    "chapter-3:page_numbers": true,
+    "chapter-3:no_empty_pages": true,
+    "chapter-3:text_within_page_bounds": true,
+    "chapter-3:prose_fonts": true,
+    "chapter-3:figures_and_captions_same_page": true,
+    "chapter-3:equations_rendered": true,
+    "chapter-3:rendered_editorial_claims_removed": true,
+    "chapter-3:section_starts": true,
+    "chapters-1-3:artifacts_present": true,
+    "chapters-1-3:exact_thesis_topic": true,
+    "chapters-1-3:paragraphs_match_markdown": true,
+    "chapters-1-3:table_cells_match_markdown": true,
+    "chapters-1-3:logical_tables_and_parts": true,
+    "chapters-1-3:editable_equation_count_and_numbers": true,
+    "chapters-1-3:equation_content_matches": true,
+    "chapters-1-3:figure_count": true,
+    "chapters-1-3:embedded_images_match": true,
+    "chapters-1-3:a4_margins": true,
+    "chapters-1-3:body_format": true,
+    "chapters-1-3:headings_kept": true,
+    "chapters-1-3:table_format": true,
+    "chapters-1-3:page_field_centered": true,
+    "chapters-1-3:editorial_claims_removed": true,
+    "chapters-1-3:pdf_and_png_page_counts": true,
+    "chapters-1-3:page_numbers": true,
+    "chapters-1-3:no_empty_pages": true,
+    "chapters-1-3:table_continuations_on_same_page": true,
+    "chapters-1-3:text_within_page_bounds": true,
+    "chapters-1-3:prose_fonts": true,
+    "chapters-1-3:figures_and_captions_same_page": true,
+    "chapters-1-3:equations_rendered": true,
+    "chapters-1-3:rendered_editorial_claims_removed": true,
+    "chapters-1-3:section_starts": true,
+    "introduction-conclusion:artifacts_present": true,
+    "introduction-conclusion:exact_thesis_topic": true,
+    "introduction-conclusion:paragraphs_match_markdown": true,
+    "introduction-conclusion:table_cells_match_markdown": true,
+    "introduction-conclusion:logical_tables_and_parts": true,
+    "introduction-conclusion:editable_equation_count_and_numbers": true,
+    "introduction-conclusion:equation_content_matches": true,
+    "introduction-conclusion:figure_count": true,
+    "introduction-conclusion:embedded_images_match": true,
+    "introduction-conclusion:a4_margins": true,
+    "introduction-conclusion:body_format": true,
+    "introduction-conclusion:headings_kept": true,
+    "introduction-conclusion:table_format": true,
+    "introduction-conclusion:page_field_centered": true,
+    "introduction-conclusion:editorial_claims_removed": true,
+    "introduction-conclusion:pdf_and_png_page_counts": true,
+    "introduction-conclusion:page_numbers": true,
+    "introduction-conclusion:no_empty_pages": true,
+    "introduction-conclusion:text_within_page_bounds": true,
+    "introduction-conclusion:prose_fonts": true,
+    "introduction-conclusion:figures_and_captions_same_page": true,
+    "introduction-conclusion:equations_rendered": true,
+    "introduction-conclusion:rendered_editorial_claims_removed": true,
+    "introduction-conclusion:section_starts": true,
+    "introduction-conclusion:introduction_page_limit": true,
+    "thesis:artifacts_present": true,
+    "thesis:exact_thesis_topic": true,
+    "thesis:paragraphs_match_markdown": true,
+    "thesis:table_cells_match_markdown": true,
+    "thesis:logical_tables_and_parts": true,
+    "thesis:editable_equation_count_and_numbers": true,
+    "thesis:equation_content_matches": true,
+    "thesis:figure_count": true,
+    "thesis:embedded_images_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:headings_kept": true,
+    "thesis:table_format": true,
+    "thesis:page_field_centered": true,
+    "thesis:editorial_claims_removed": true,
+    "thesis:pdf_and_png_page_counts": true,
+    "thesis:page_numbers": true,
+    "thesis:no_empty_pages": true,
+    "thesis:table_continuations_on_same_page": true,
+    "thesis:text_within_page_bounds": true,
+    "thesis:prose_fonts": true,
+    "thesis:figures_and_captions_same_page": true,
+    "thesis:equations_rendered": true,
+    "thesis:rendered_editorial_claims_removed": true,
+    "thesis:section_starts": true,
+    "thesis:introduction_page_limit": true,
+    "chapters-1-2:chapter_1_body_identical_in_thesis": true,
+    "chapters-1-2:chapter_2_body_identical_in_thesis": true,
+    "chapters-1-2:bibliography_body_identical_in_thesis": true,
+    "chapter-3:chapter_3_body_identical_in_thesis": true,
+    "chapters-1-3:chapter_1_body_identical_in_thesis": true,
+    "chapters-1-3:chapter_2_body_identical_in_thesis": true,
+    "chapters-1-3:chapter_3_body_identical_in_thesis": true,
+    "chapters-1-3:bibliography_body_identical_in_thesis": true,
+    "introduction-conclusion:introduction_body_identical_in_thesis": true,
+    "introduction-conclusion:conclusion_body_identical_in_thesis": true
+  },
+  "checks_passed": 135,
+  "checks_total": 135,
+  "visual_review": {
+    "required": false,
+    "libreoffice_pages_opened": {
+      "chapters-1-2": [9, 10, 34, 36],
+      "chapter-3": [4],
+      "chapters-1-3": [9, 10, 34, 36, 53],
+      "thesis": [11, 12, 36, 38, 55]
+    },
+    "unchanged_page_images": 269,
+    "unchanged_images_match_previous_reviewed_edition": true,
+    "pages_export_pages_opened": [10, 11, 36, 38, 55],
+    "unresolved_defects_on_changed_pages": []
+  },
+  "notes": [
+    "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+    "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+    "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы.",
+    "Исправлены четыре абзаца в источниках глав 1–2 и главы 3. Во введении и заключении целевые упоминания отсутствовали; их источники и отдельный DOCX сохранены.",
+    "Пересобраны четыре DOCX. Только word/document.xml изменился внутри архивов; оформление, таблицы, иллюстрации и формулы сохранены.",
+    "Первый запуск сравнения использовал разные разрешения PNG для нового и повторно использованного рендеров, поэтому два сравнения введения и заключения не совпали. После одинаковой растеризации сохранённых PDF при 120 dpi все 135 проверок прошли; документы для этого не изменялись.",
+    "В Pages 14.4 полный документ сохранил 97 страниц. Просмотрены пять страниц с изменениями текста или его координат; продолжения первой таблицы остались на с. 7 и 8 вместе со строками. Полный повторный визуальный просмотр всех страниц Pages не выполнялся.",
+    "В bundled LibreOffice: 51 страница в главах 1–2, 42 в главе 3, 93 в главах 1–3, 98 в полном дипломе. Просмотрены все 15 изменённых страниц четырёх файлов; остальные 269 PNG совпали с предыдущей проверенной редакцией.",
+    "Исторические технические протоколы проекта не переписывались. Код приложения и тесты не менялись; новых испытаний приложения не выполнялось."
+  ],
+  "targeted_checks": {
+    "chapters-1-2:expected_paragraph_changes": true,
+    "chapters-1-2:removed_terms_absent": true,
+    "chapters-1-2:table_xml_unchanged": true,
+    "chapters-1-2:only_document_xml_changed": true,
+    "chapters-1-2:formatting_unchanged": true,
+    "chapters-1-2:rendered_terms_absent": true,
+    "chapter-3:expected_paragraph_changes": true,
+    "chapter-3:removed_terms_absent": true,
+    "chapter-3:table_xml_unchanged": true,
+    "chapter-3:only_document_xml_changed": true,
+    "chapter-3:formatting_unchanged": true,
+    "chapter-3:rendered_terms_absent": true,
+    "chapters-1-3:expected_paragraph_changes": true,
+    "chapters-1-3:removed_terms_absent": true,
+    "chapters-1-3:table_xml_unchanged": true,
+    "chapters-1-3:only_document_xml_changed": true,
+    "chapters-1-3:formatting_unchanged": true,
+    "chapters-1-3:rendered_terms_absent": true,
+    "thesis:expected_paragraph_changes": true,
+    "thesis:removed_terms_absent": true,
+    "thesis:table_xml_unchanged": true,
+    "thesis:only_document_xml_changed": true,
+    "thesis:formatting_unchanged": true,
+    "thesis:rendered_terms_absent": true,
+    "chapters-1-2.md:removed_terms_absent": true,
+    "chapter-3.md:removed_terms_absent": true,
+    "introduction.md:removed_terms_absent": true,
+    "conclusion.md:removed_terms_absent": true,
+    "introduction.md:unchanged": true,
+    "conclusion.md:unchanged": true,
+    "introduction-conclusion.docx:unchanged": true,
+    "build-docx.py:unchanged": true,
+    "pages:removed_terms_absent": true,
+    "pages:same_page_count": true,
+    "pages:table1_continuations_preserved": true
+  },
+  "targeted_checks_passed": 35,
+  "targeted_checks_total": 35,
+  "comparison_with_previous": {
+    "chapters-1-2": {
+      "baseline_sha256": "800eac19d185e321896cb2df50d89c232115b59e500de98ad79bc4cefadbb380",
+      "docx_sha256": "efc7f07e2ee8fa02fa68a50eb9fcc1fd51c529a4eb96cb422eb2f04d6d2feeea",
+      "changed_paragraphs": [
+        {
+          "before": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны, а в режиме Demo использовать отдельный пример.",
+          "after": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны приложения."
+        },
+        {
+          "before": "NFR-03. Ошибка чтения не должна подменять данные пустым учётом или Demo; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт.",
+          "after": "NFR-03. Ошибка чтения должна открывать восстановление без подмены сохранённых данных; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт."
+        },
+        {
+          "before": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка, режим и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно.",
+          "after": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно."
+        }
+      ],
+      "changed_archive_entries": ["word/document.xml"],
+      "pages": 51,
+      "changed_pages": [9, 10, 34, 36],
+      "unchanged_pages": 47
+    },
+    "chapter-3": {
+      "baseline_sha256": "aec5e7a0cee679af7f5b48940bedd681362eb30b0d5e9b146c1d8f6a70cab6db",
+      "docx_sha256": "deb575b91b8bc7cb6f21c522be20b58064ce0b14fd2c15f76ae4494694ded920",
+      "changed_paragraphs": [
+        {
+          "before": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Личный и демонстрационный профили используют разные ключи хранения, поэтому восстановление демонстрационного профиля не заменяет личный финансовый снимок.",
+          "after": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Финансовые записи каждого профиля сохраняются под отдельными ключами, поэтому восстановление одного профиля не заменяет данные остальных."
+        }
+      ],
+      "changed_archive_entries": ["word/document.xml"],
+      "pages": 42,
+      "changed_pages": [4],
+      "unchanged_pages": 41
+    },
+    "chapters-1-3": {
+      "baseline_sha256": "89c62908e7cc4c153f032e43e260d111079dc2c8345a9bc154776513f0899c16",
+      "docx_sha256": "fd2bd4a71211913c7f5807337dd00422dba3fee397b88d94ad8a630dd27851ea",
+      "changed_paragraphs": [
+        {
+          "before": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны, а в режиме Demo использовать отдельный пример.",
+          "after": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны приложения."
+        },
+        {
+          "before": "NFR-03. Ошибка чтения не должна подменять данные пустым учётом или Demo; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт.",
+          "after": "NFR-03. Ошибка чтения должна открывать восстановление без подмены сохранённых данных; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт."
+        },
+        {
+          "before": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка, режим и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно.",
+          "after": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно."
+        },
+        {
+          "before": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Личный и демонстрационный профили используют разные ключи хранения, поэтому восстановление демонстрационного профиля не заменяет личный финансовый снимок.",
+          "after": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Финансовые записи каждого профиля сохраняются под отдельными ключами, поэтому восстановление одного профиля не заменяет данные остальных."
+        }
+      ],
+      "changed_archive_entries": ["word/document.xml"],
+      "pages": 93,
+      "changed_pages": [9, 10, 34, 36, 53],
+      "unchanged_pages": 88
+    },
+    "thesis": {
+      "baseline_sha256": "6c10d081c92b7eb8952af561224f9db5240998a80758f45ff4bd8fb25ed0d3af",
+      "docx_sha256": "6b5ec6f303ee042fac9caf82e96d9e62f9a34b7d62a4e165fdc75bc8bb101a44",
+      "changed_paragraphs": [
+        {
+          "before": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны, а в режиме Demo использовать отдельный пример.",
+          "after": "Основной ход: пользователь проходит настройку, задаёт валюту и параметры планирования, открывает обзор. Для дальнейшей работы должны быть доступны отдельные профили, ручные курсы и сетевое обновление; смена основной валюты должна согласованно пересчитывать зависимые значения. Обучение предполагается проводить через основные экраны приложения."
+        },
+        {
+          "before": "NFR-03. Ошибка чтения не должна подменять данные пустым учётом или Demo; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт.",
+          "after": "NFR-03. Ошибка чтения должна открывать восстановление без подмены сохранённых данных; ошибку записи необходимо показывать с возможностью повтора. Критерий: различимы состояние в памяти, читаемый снимок и неподтверждённая запись; повтор не дублирует денежную операцию или импорт."
+        },
+        {
+          "before": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка, режим и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно.",
+          "after": "Предлагаемая приёмочная цель: на согласованном Android-устройстве с 5000 операциями пересчитывать прогноз на 90 дней за 2 секунды в 95% из 30 повторений после прогрева. Это будущий критерий, не замер. В протоколе фиксируются устройство, сборка и границы измерения; холодный запуск и парольный экспорт оцениваются отдельно."
+        },
+        {
+          "before": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Личный и демонстрационный профили используют разные ключи хранения, поэтому восстановление демонстрационного профиля не заменяет личный финансовый снимок.",
+          "after": "Действие возвращает новый массив реестра, не изменяя исходный. Кодирование сохраняет идентификаторы и имена для последующего чтения. Финансовые записи каждого профиля сохраняются под отдельными ключами, поэтому восстановление одного профиля не заменяет данные остальных."
+        }
+      ],
+      "changed_archive_entries": ["word/document.xml"],
+      "pages": 98,
+      "changed_pages": [11, 12, 36, 38, 55],
+      "unchanged_pages": 93
+    }
+  },
+  "pages_14_4": {
+    "version": "14.4",
+    "pages": 97,
+    "before_pages": 97,
+    "changed_text_pages": [10, 11, 36, 38, 55],
+    "table1_continuations": [
+      {
+        "page": 7,
+        "table_present": true
+      },
+      {
+        "page": 8,
+        "table_present": true
+      }
+    ],
+    "removed_terms_absent": true,
+    "pdf_sha256": "b9ec9254639199f0e1155e01dc170d91fc456ecc0aa5945f200e744a5ff9fbfd",
+    "changed_text_or_positions_pages": [10, 11, 36, 38, 55]
+  },
+  "local_links": {
+    "checked": 145,
+    "anchors": 10,
+    "errors": []
+  }
+}

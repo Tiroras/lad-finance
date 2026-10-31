@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+actor "Владелец учёта" as Owner
+rectangle "Мобильное приложение Лад" {
+  usecase "UC-05\nСверить остаток счёта\n--\nТочка расширения\nразрешение расхождения" as U5
+  usecase "UC-06\nСкорректировать\nостаток счёта" as U6
+}
+Owner -- U5
+Owner -- U6
+U6 ..> U5 : <<extend>>\n[есть расхождение и владелец подтвердил корректировку]
+@enduml

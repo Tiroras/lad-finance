@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860">
+<title>Финансовые операции и накопления</title>
+<rect width="1200" height="860" fill="white"/>
+<defs><marker id="open-arrow" markerWidth="15" markerHeight="13" refX="13" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 13 6.5 L 2 12" fill="none" stroke="#111" stroke-width="2"/></marker><marker id="generalization-arrow" markerWidth="21" markerHeight="20" refX="19" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 19 10 L 1 19 Z" fill="white" stroke="#111" stroke-width="2"/></marker></defs>
+<g font-family="Arial, sans-serif" fill="#111">
+<rect data-role="system-boundary" x="230" y="20" width="960" height="820" fill="white" stroke="#111" stroke-width="2"/>
+<text x="250" y="59.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
+<path data-from="Owner" data-to="U1" data-relation="association" d="M 100 347 V 75 H 950 V 105" fill="none" stroke="#111" stroke-width="2.2"/>
+<path data-from="Owner" data-to="U2" data-relation="association" d="M 65 500 H 20 V 790 H 950 V 745" fill="none" stroke="#111" stroke-width="2.2"/>
+<path data-from="Owner" data-to="U3" data-relation="association" d="M 140 410 C 205 410, 205 200, 250 200" fill="none" stroke="#111" stroke-width="2.2"/>
+<path data-from="Owner" data-to="U4" data-relation="association" d="M 140 410 C 205 410, 205 650, 250 650" fill="none" stroke="#111" stroke-width="2.2"/>
+<path data-from="U2" data-to="U1" data-relation="generalization" d="M 950 555 V 295" fill="none" stroke="#111" stroke-width="2.2" marker-end="url(#generalization-arrow)"/>
+<path data-from="U3" data-to="U2" data-relation="include" d="M 630 200 H 700 V 560 L 810 585.78" fill="none" stroke="#111" stroke-width="2.2" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<g data-role="relation-label" data-from="U3" data-to="U2">
+<text x="800" y="412.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<path data-from="U4" data-to="U2" data-relation="include" d="M 630 650 H 760" fill="none" stroke="#111" stroke-width="2.2" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<g data-role="relation-label" data-from="U4" data-to="U2">
+<text x="695" y="630.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g id="U1" data-role="usecase" data-title="UC-01 Записать финансовую операцию">
+<ellipse cx="950" cy="200" rx="190" ry="95" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="172.88" font-size="32" text-anchor="middle">UC-01</text>
+<text x="950" y="210.88" font-size="32" text-anchor="middle">Записать финансовую</text>
+<text x="950" y="248.88" font-size="32" text-anchor="middle">операцию</text>
+</g>
+<g id="U2" data-role="usecase" data-title="UC-02 Записать перевод между счетами">
+<ellipse cx="950" cy="650" rx="190" ry="95" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="950" y="622.88" font-size="32" text-anchor="middle">UC-02</text>
+<text x="950" y="660.88" font-size="32" text-anchor="middle">Записать перевод</text>
+<text x="950" y="698.88" font-size="32" text-anchor="middle">между счетами</text>
+</g>
+<g id="U3" data-role="usecase" data-title="UC-03 Учесть взнос в цель">
+<ellipse cx="440" cy="200" rx="190" ry="95" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="440" y="172.88" font-size="32" text-anchor="middle">UC-03</text>
+<text x="440" y="210.88" font-size="32" text-anchor="middle">Учесть взнос</text>
+<text x="440" y="248.88" font-size="32" text-anchor="middle">в цель</text>
+</g>
+<g id="U4" data-role="usecase" data-title="UC-04 Учесть вывод из цели">
+<ellipse cx="440" cy="650" rx="190" ry="95" fill="white" stroke="#111" stroke-width="2.2"/>
+<text x="440" y="622.88" font-size="32" text-anchor="middle">UC-04</text>
+<text x="440" y="660.88" font-size="32" text-anchor="middle">Учесть вывод</text>
+<text x="440" y="698.88" font-size="32" text-anchor="middle">из цели</text>
+</g>
+<g id="Owner" data-role="actor">
+<g fill="none" stroke="#111" stroke-width="2.5"><circle cx="100" cy="367" r="20"/><path d="M 100 387 V 455 M 60 410 H 140 M 100 455 L 65 500 M 100 455 L 135 500"/></g>
+<text x="100" y="539.2" font-size="30" text-anchor="middle">Владелец</text>
+<text x="100" y="575.2" font-size="30" text-anchor="middle">учёта</text>
+</g></g></svg>

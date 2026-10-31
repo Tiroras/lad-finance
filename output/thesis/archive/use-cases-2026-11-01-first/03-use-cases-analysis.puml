@@ -1,0 +1,30 @@
+@startuml
+' Publication layout: use-case-diagrams.mjs; @row comments pair the nodes.
+left to right direction
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 32
+actor "Владелец" as Owner
+rectangle "Лад" {
+  package "UC-10. Анализировать историю" as U10 {
+    usecase "Посмотреть доходы\nи расходы" as A10_1
+    usecase "Исключить\nпереводы и основную\nсумму долга" as D10_1
+    ' @row A10_1 D10_1
+    usecase "Сравнить категории\nи периоды" as A10_2
+    usecase "Учесть возвраты\nи части покупок" as D10_2
+    ' @row A10_2 D10_2
+    usecase "Отфильтровать\nисторию" as A10_3
+    ' @row A10_3
+    usecase "Открыть исходную\nоперацию" as A10_4
+    ' @row A10_4
+  }
+}
+Owner -- A10_1
+Owner -- A10_2
+Owner -- A10_3
+Owner -- A10_4
+A10_1 ..> D10_1 : <<include>>
+A10_2 ..> D10_2 : <<include>>
+@enduml

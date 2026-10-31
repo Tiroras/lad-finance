@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1290" viewBox="0 0 1200 1290">
+<title>Сверка и исправление расхождения</title>
+<rect width="1200" height="1290" fill="white"/>
+<defs><marker id="open-arrow" markerWidth="18" markerHeight="16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 16 8 L 2 15" fill="none" stroke="#111" stroke-width="2.3"/></marker><marker id="generalization-arrow" markerWidth="23" markerHeight="22" refX="21" refY="11" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 21 11 L 1 21 Z" fill="white" stroke="#111" stroke-width="2.3"/></marker></defs>
+<g font-family="Arial, sans-serif" fill="#111">
+<rect data-role="system-boundary" x="190" y="20" width="1000" height="1250" fill="white" stroke="#111" stroke-width="2"/>
+<text x="210" y="60.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
+<path data-from="Owner" data-to="U5" data-relation="association" d="M 130 300 H 220" fill="none" stroke="#111" stroke-width="2.3"/>
+<path data-from="U5" data-to="H10" data-relation="include" d="M 640 300 H 745" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U6" data-to="U5" data-relation="extend" d="M 430 745 V 465" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-from="U6" data-to="H5" data-relation="include" d="M 640 850 H 745" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
+<path data-role="note-connector" data-note="C1" d="M 555 600 H 430" fill="none" stroke="#111" stroke-width="1.7" stroke-dasharray="3 6"/>
+<g id="U5" data-id="U5" data-role="usecase" data-primary="true" data-title="UC-05 Сверить остаток счёта">
+<ellipse cx="430" cy="300" rx="210" ry="165" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="430" y="226.88" font-size="32" text-anchor="middle">UC-05</text>
+<text x="430" y="264.88" font-size="32" text-anchor="middle">Сверить остаток счёта</text>
+</g>
+<g data-role="extension-point" data-owner="U5" data-name="разрешение расхождения">
+<path d="M 220.38602973817413 290 H 639.6139702618259" fill="none" stroke="#111" stroke-width="1.5"/>
+<text x="430" y="334.2" font-size="30" text-anchor="middle">Точка расширения</text>
+<text x="430" y="370.2" font-size="30" text-anchor="middle">разрешение</text>
+<text x="430" y="406.2" font-size="30" text-anchor="middle">расхождения</text>
+</g>
+<g id="H10" data-id="H10" data-role="usecase" data-primary="false" data-title="Определить фактический остаток на дату">
+<ellipse cx="955" cy="300" rx="210" ry="95" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="955" y="274.2" font-size="30" text-anchor="middle">Определить</text>
+<text x="955" y="310.2" font-size="30" text-anchor="middle">фактический остаток</text>
+<text x="955" y="346.2" font-size="30" text-anchor="middle">на дату</text>
+</g>
+<g id="U6" data-id="U6" data-role="usecase" data-primary="true" data-title="UC-06 Скорректировать остаток счёта">
+<ellipse cx="430" cy="850" rx="210" ry="105" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="430" y="822.88" font-size="32" text-anchor="middle">UC-06</text>
+<text x="430" y="860.88" font-size="32" text-anchor="middle">Скорректировать</text>
+<text x="430" y="898.88" font-size="32" text-anchor="middle">остаток счёта</text>
+</g>
+<g id="H5" data-id="H5" data-role="usecase" data-primary="false" data-title="Проверить финансовую согласованность учёта">
+<ellipse cx="955" cy="850" rx="210" ry="110" fill="white" stroke="#111" stroke-width="2.3"/>
+<text x="955" y="824.2" font-size="30" text-anchor="middle">Проверить финансовую</text>
+<text x="955" y="860.2" font-size="30" text-anchor="middle">согласованность</text>
+<text x="955" y="896.2" font-size="30" text-anchor="middle">учёта</text>
+</g>
+<g data-role="relation-label" data-from="U5" data-to="H10">
+<text x="692.5" y="215.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g data-role="relation-label" data-from="U6" data-to="U5">
+<text x="325" y="610.2" font-size="30" text-anchor="middle">«extend»</text>
+</g>
+<g data-role="relation-label" data-from="U6" data-to="H5">
+<text x="692.5" y="785.2" font-size="30" text-anchor="middle">«include»</text>
+</g>
+<g id="C1" data-role="condition-note" data-from="U6" data-to="U5">
+<path d="M 555 525 H 1135 L 1155 545 V 675 H 555 Z M 1135 525 V 545 H 1155" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="855" y="574.2" font-size="30" text-anchor="middle">остатки различаются;</text>
+<text x="855" y="610.2" font-size="30" text-anchor="middle">владелец подтвердил</text>
+<text x="855" y="646.2" font-size="30" text-anchor="middle">корректировку</text>
+</g>
+<g id="N1" data-role="note">
+<path d="M 250 1100 H 1130 L 1150 1120 V 1210 H 250 Z M 1130 1100 V 1120 H 1150" fill="white" stroke="#111" stroke-width="1.5"/>
+<text x="700" y="1147.2" font-size="30" text-anchor="middle">Корректировка имеет дату и причину;</text>
+<text x="700" y="1183.2" font-size="30" text-anchor="middle">не является доходом или расходом.</text>
+</g>
+<g id="Owner" data-role="actor">
+<g fill="none" stroke="#111" stroke-width="2.5"><circle cx="90" cy="257" r="20"/><path d="M 90 277 V 345 M 50 300 H 130 M 90 345 L 55 390 M 90 345 L 125 390"/></g>
+<text x="90" y="429.2" font-size="30" text-anchor="middle">Владелец</text>
+<text x="90" y="465.2" font-size="30" text-anchor="middle">учёта</text>
+</g></g></svg>

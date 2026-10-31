@@ -1,0 +1,32 @@
+@startuml
+' Publication layout: use-case-diagrams.mjs; @row comments pair the nodes.
+left to right direction
+skinparam monochrome true
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 32
+actor "Владелец" as Owner
+rectangle "Лад" {
+  package "UC-01. Настроить и защитить локальный учёт" as U1 {
+    usecase "Настроить\nпрофиль" as A1_1
+    ' @row A1_1
+    usecase "Включить\nблокировку" as A1_2
+    ' @row A1_2
+    usecase "Создать\nрезервную копию" as A1_3
+    usecase "Зашифровать\nкопию" as D1_3
+    ' @row A1_3 D1_3
+    usecase "Восстановить\nучёт из копии" as A1_4
+    usecase "Проверить файл\nи связи записей" as D1_4
+    ' @row A1_4 D1_4
+  }
+}
+Owner -- A1_1
+Owner -- A1_2
+Owner -- A1_3
+Owner -- A1_4
+D1_3 ..> A1_3 : <<extend>>
+A1_4 ..> D1_4 : <<include>>
+' Extension point: protection of the exported copy.
+' Condition: the owner selects the password-protected .ladbackup format.
+@enduml
