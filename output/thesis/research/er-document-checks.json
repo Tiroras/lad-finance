@@ -1,0 +1,858 @@
+{
+  "checked_on": "2026-11-01",
+  "checks": {
+    "only_section22_appendix_and_numbering_changed": true,
+    "all_tables_preserved": true,
+    "all_formulas_preserved": true,
+    "31_retained_images_identical": true,
+    "no_service_modes_or_control_claims": true,
+    "four_appendix_fragments_ordered": true,
+    "no_a3_in_source": true,
+    "bundled_all_pages_a4": true,
+    "bundled_no_empty_pages": true,
+    "bundled_35_figures_with_captions": true,
+    "bundled_18_equation_numbers": true,
+    "bundled_table1_numeric_continuations": true,
+    "bundled_introduction_two_pages": true,
+    "bundled_appendix_four_last_pages": true,
+    "bundled_page_numbers": true,
+    "bundled_text_within_bounds": true,
+    "pages_all_pages_a4": true,
+    "pages_no_empty_pages": true,
+    "pages_35_figures_with_captions": true,
+    "pages_18_equation_numbers": true,
+    "pages_table1_numeric_continuations": true,
+    "pages_introduction_two_pages": true,
+    "pages_appendix_four_last_pages": true,
+    "pages_page_numbers": true,
+    "pages_text_within_bounds": true,
+    "pages_input_matches_docx": true
+  },
+  "passed": 26,
+  "total": 26,
+  "render": {
+    "bundled": {
+      "page_count": 120,
+      "sha256": "1165ebc7ea180913b0558352712daf1d0aea5d36254033567736be7742eb22c3",
+      "caption_pages": {
+        "27": ["1"],
+        "28": ["2"],
+        "29": ["3"],
+        "30": ["4"],
+        "31": ["5"],
+        "32": ["6"],
+        "33": ["7"],
+        "34": ["8"],
+        "35": ["9"],
+        "36": ["10"],
+        "44": ["11"],
+        "46": ["12"],
+        "48": ["13"],
+        "50": ["14"],
+        "52": ["15"],
+        "54": ["16"],
+        "60": ["17"],
+        "62": ["18"],
+        "64": ["19"],
+        "65": ["20"],
+        "70": ["21"],
+        "73": ["22"],
+        "75": ["23"],
+        "78": ["24"],
+        "81": ["25"],
+        "87": ["26"],
+        "93": ["27"],
+        "96": ["28"],
+        "103": ["29"],
+        "105": ["30"],
+        "107": ["31"],
+        "117": ["А.1"],
+        "118": ["А.2"],
+        "119": ["А.3"],
+        "120": ["А.4"]
+      },
+      "appendix_pages": [117, 118, 119, 120],
+      "bounds_violations": []
+    },
+    "pages": {
+      "page_count": 119,
+      "sha256": "7988cd0156eddafbf6df70d78c6acd7642a4a9c402433e972a515550d7499a4e",
+      "caption_pages": {
+        "27": ["1"],
+        "28": ["2"],
+        "29": ["3"],
+        "30": ["4"],
+        "31": ["5"],
+        "32": ["6"],
+        "33": ["7"],
+        "34": ["8"],
+        "35": ["9"],
+        "36": ["10"],
+        "44": ["11"],
+        "46": ["12"],
+        "48": ["13"],
+        "50": ["14"],
+        "52": ["15"],
+        "54": ["16"],
+        "59": ["17"],
+        "61": ["18"],
+        "64": ["19"],
+        "65": ["20"],
+        "70": ["21"],
+        "72": ["22"],
+        "74": ["23"],
+        "77": ["24"],
+        "80": ["25"],
+        "86": ["26"],
+        "92": ["27"],
+        "95": ["28"],
+        "102": ["29"],
+        "104": ["30"],
+        "106": ["31"],
+        "116": ["А.1"],
+        "117": ["А.2"],
+        "118": ["А.3"],
+        "119": ["А.4"]
+      },
+      "appendix_pages": [116, 117, 118, 119],
+      "bounds_violations": []
+    }
+  },
+  "changed_pages": [
+    56, 57, 58, 59, 60, 61, 62, 64, 65, 69, 70, 72, 73, 74, 75, 77, 78, 80, 81,
+    84, 87, 93, 95, 96, 103, 104, 105, 106, 107, 109, 117, 118, 119, 120
+  ],
+  "unchanged_pages": [
+    {
+      "page": 1,
+      "baseline_page": 1
+    },
+    {
+      "page": 2,
+      "baseline_page": 2
+    },
+    {
+      "page": 3,
+      "baseline_page": 3
+    },
+    {
+      "page": 4,
+      "baseline_page": 4
+    },
+    {
+      "page": 5,
+      "baseline_page": 5
+    },
+    {
+      "page": 6,
+      "baseline_page": 6
+    },
+    {
+      "page": 7,
+      "baseline_page": 7
+    },
+    {
+      "page": 8,
+      "baseline_page": 8
+    },
+    {
+      "page": 9,
+      "baseline_page": 9
+    },
+    {
+      "page": 10,
+      "baseline_page": 10
+    },
+    {
+      "page": 11,
+      "baseline_page": 11
+    },
+    {
+      "page": 12,
+      "baseline_page": 12
+    },
+    {
+      "page": 13,
+      "baseline_page": 13
+    },
+    {
+      "page": 14,
+      "baseline_page": 14
+    },
+    {
+      "page": 15,
+      "baseline_page": 15
+    },
+    {
+      "page": 16,
+      "baseline_page": 16
+    },
+    {
+      "page": 17,
+      "baseline_page": 17
+    },
+    {
+      "page": 18,
+      "baseline_page": 18
+    },
+    {
+      "page": 19,
+      "baseline_page": 19
+    },
+    {
+      "page": 20,
+      "baseline_page": 20
+    },
+    {
+      "page": 21,
+      "baseline_page": 21
+    },
+    {
+      "page": 22,
+      "baseline_page": 22
+    },
+    {
+      "page": 23,
+      "baseline_page": 23
+    },
+    {
+      "page": 24,
+      "baseline_page": 24
+    },
+    {
+      "page": 25,
+      "baseline_page": 25
+    },
+    {
+      "page": 26,
+      "baseline_page": 26
+    },
+    {
+      "page": 27,
+      "baseline_page": 27
+    },
+    {
+      "page": 28,
+      "baseline_page": 28
+    },
+    {
+      "page": 29,
+      "baseline_page": 29
+    },
+    {
+      "page": 30,
+      "baseline_page": 30
+    },
+    {
+      "page": 31,
+      "baseline_page": 31
+    },
+    {
+      "page": 32,
+      "baseline_page": 32
+    },
+    {
+      "page": 33,
+      "baseline_page": 33
+    },
+    {
+      "page": 34,
+      "baseline_page": 34
+    },
+    {
+      "page": 35,
+      "baseline_page": 35
+    },
+    {
+      "page": 36,
+      "baseline_page": 36
+    },
+    {
+      "page": 37,
+      "baseline_page": 37
+    },
+    {
+      "page": 38,
+      "baseline_page": 38
+    },
+    {
+      "page": 39,
+      "baseline_page": 39
+    },
+    {
+      "page": 40,
+      "baseline_page": 40
+    },
+    {
+      "page": 41,
+      "baseline_page": 41
+    },
+    {
+      "page": 42,
+      "baseline_page": 42
+    },
+    {
+      "page": 43,
+      "baseline_page": 43
+    },
+    {
+      "page": 44,
+      "baseline_page": 44
+    },
+    {
+      "page": 45,
+      "baseline_page": 45
+    },
+    {
+      "page": 46,
+      "baseline_page": 46
+    },
+    {
+      "page": 47,
+      "baseline_page": 47
+    },
+    {
+      "page": 48,
+      "baseline_page": 48
+    },
+    {
+      "page": 49,
+      "baseline_page": 49
+    },
+    {
+      "page": 50,
+      "baseline_page": 50
+    },
+    {
+      "page": 51,
+      "baseline_page": 51
+    },
+    {
+      "page": 52,
+      "baseline_page": 52
+    },
+    {
+      "page": 53,
+      "baseline_page": 53
+    },
+    {
+      "page": 54,
+      "baseline_page": 54
+    },
+    {
+      "page": 55,
+      "baseline_page": 55
+    },
+    {
+      "page": 63,
+      "baseline_page": 64
+    },
+    {
+      "page": 66,
+      "baseline_page": 67
+    },
+    {
+      "page": 67,
+      "baseline_page": 68
+    },
+    {
+      "page": 68,
+      "baseline_page": 69
+    },
+    {
+      "page": 71,
+      "baseline_page": 72
+    },
+    {
+      "page": 76,
+      "baseline_page": 77
+    },
+    {
+      "page": 79,
+      "baseline_page": 80
+    },
+    {
+      "page": 82,
+      "baseline_page": 83
+    },
+    {
+      "page": 83,
+      "baseline_page": 84
+    },
+    {
+      "page": 85,
+      "baseline_page": 86
+    },
+    {
+      "page": 86,
+      "baseline_page": 87
+    },
+    {
+      "page": 88,
+      "baseline_page": 89
+    },
+    {
+      "page": 89,
+      "baseline_page": 90
+    },
+    {
+      "page": 90,
+      "baseline_page": 91
+    },
+    {
+      "page": 91,
+      "baseline_page": 92
+    },
+    {
+      "page": 92,
+      "baseline_page": 93
+    },
+    {
+      "page": 94,
+      "baseline_page": 95
+    },
+    {
+      "page": 97,
+      "baseline_page": 98
+    },
+    {
+      "page": 98,
+      "baseline_page": 99
+    },
+    {
+      "page": 99,
+      "baseline_page": 100
+    },
+    {
+      "page": 100,
+      "baseline_page": 101
+    },
+    {
+      "page": 101,
+      "baseline_page": 102
+    },
+    {
+      "page": 102,
+      "baseline_page": 103
+    },
+    {
+      "page": 108,
+      "baseline_page": 109
+    },
+    {
+      "page": 110,
+      "baseline_page": 111
+    },
+    {
+      "page": 111,
+      "baseline_page": 112
+    },
+    {
+      "page": 112,
+      "baseline_page": 113
+    },
+    {
+      "page": 113,
+      "baseline_page": 114
+    },
+    {
+      "page": 114,
+      "baseline_page": 115
+    },
+    {
+      "page": 115,
+      "baseline_page": 116
+    },
+    {
+      "page": 116,
+      "baseline_page": 117
+    }
+  ],
+  "docx_sha256": "0bdefe47488a69fefb1da0056923961b59f5c01e106f3597f0f116a36392d351",
+  "markdown_sha256": "0b4f96b60f1764f46cfeb530970b35b697825e7c34aa21012b744fd053f80bbc",
+  "visual_review": {
+    "required": false,
+    "result": "Passed: no clipping, overlap, blank pages or separated captions.",
+    "bundled": {
+      "pages": 120,
+      "reviewed_changed_pages": [
+        56, 57, 58, 59, 60, 61, 62, 64, 65, 69, 70, 72, 73, 74, 75, 77, 78, 80,
+        81, 84, 87, 93, 95, 96, 103, 104, 105, 106, 107, 109, 117, 118, 119, 120
+      ],
+      "unchanged_prior_reviewed_pages": [
+        {
+          "page": 1,
+          "baseline_page": 1
+        },
+        {
+          "page": 2,
+          "baseline_page": 2
+        },
+        {
+          "page": 3,
+          "baseline_page": 3
+        },
+        {
+          "page": 4,
+          "baseline_page": 4
+        },
+        {
+          "page": 5,
+          "baseline_page": 5
+        },
+        {
+          "page": 6,
+          "baseline_page": 6
+        },
+        {
+          "page": 7,
+          "baseline_page": 7
+        },
+        {
+          "page": 8,
+          "baseline_page": 8
+        },
+        {
+          "page": 9,
+          "baseline_page": 9
+        },
+        {
+          "page": 10,
+          "baseline_page": 10
+        },
+        {
+          "page": 11,
+          "baseline_page": 11
+        },
+        {
+          "page": 12,
+          "baseline_page": 12
+        },
+        {
+          "page": 13,
+          "baseline_page": 13
+        },
+        {
+          "page": 14,
+          "baseline_page": 14
+        },
+        {
+          "page": 15,
+          "baseline_page": 15
+        },
+        {
+          "page": 16,
+          "baseline_page": 16
+        },
+        {
+          "page": 17,
+          "baseline_page": 17
+        },
+        {
+          "page": 18,
+          "baseline_page": 18
+        },
+        {
+          "page": 19,
+          "baseline_page": 19
+        },
+        {
+          "page": 20,
+          "baseline_page": 20
+        },
+        {
+          "page": 21,
+          "baseline_page": 21
+        },
+        {
+          "page": 22,
+          "baseline_page": 22
+        },
+        {
+          "page": 23,
+          "baseline_page": 23
+        },
+        {
+          "page": 24,
+          "baseline_page": 24
+        },
+        {
+          "page": 25,
+          "baseline_page": 25
+        },
+        {
+          "page": 26,
+          "baseline_page": 26
+        },
+        {
+          "page": 27,
+          "baseline_page": 27
+        },
+        {
+          "page": 28,
+          "baseline_page": 28
+        },
+        {
+          "page": 29,
+          "baseline_page": 29
+        },
+        {
+          "page": 30,
+          "baseline_page": 30
+        },
+        {
+          "page": 31,
+          "baseline_page": 31
+        },
+        {
+          "page": 32,
+          "baseline_page": 32
+        },
+        {
+          "page": 33,
+          "baseline_page": 33
+        },
+        {
+          "page": 34,
+          "baseline_page": 34
+        },
+        {
+          "page": 35,
+          "baseline_page": 35
+        },
+        {
+          "page": 36,
+          "baseline_page": 36
+        },
+        {
+          "page": 37,
+          "baseline_page": 37
+        },
+        {
+          "page": 38,
+          "baseline_page": 38
+        },
+        {
+          "page": 39,
+          "baseline_page": 39
+        },
+        {
+          "page": 40,
+          "baseline_page": 40
+        },
+        {
+          "page": 41,
+          "baseline_page": 41
+        },
+        {
+          "page": 42,
+          "baseline_page": 42
+        },
+        {
+          "page": 43,
+          "baseline_page": 43
+        },
+        {
+          "page": 44,
+          "baseline_page": 44
+        },
+        {
+          "page": 45,
+          "baseline_page": 45
+        },
+        {
+          "page": 46,
+          "baseline_page": 46
+        },
+        {
+          "page": 47,
+          "baseline_page": 47
+        },
+        {
+          "page": 48,
+          "baseline_page": 48
+        },
+        {
+          "page": 49,
+          "baseline_page": 49
+        },
+        {
+          "page": 50,
+          "baseline_page": 50
+        },
+        {
+          "page": 51,
+          "baseline_page": 51
+        },
+        {
+          "page": 52,
+          "baseline_page": 52
+        },
+        {
+          "page": 53,
+          "baseline_page": 53
+        },
+        {
+          "page": 54,
+          "baseline_page": 54
+        },
+        {
+          "page": 55,
+          "baseline_page": 55
+        },
+        {
+          "page": 63,
+          "baseline_page": 64
+        },
+        {
+          "page": 66,
+          "baseline_page": 67
+        },
+        {
+          "page": 67,
+          "baseline_page": 68
+        },
+        {
+          "page": 68,
+          "baseline_page": 69
+        },
+        {
+          "page": 71,
+          "baseline_page": 72
+        },
+        {
+          "page": 76,
+          "baseline_page": 77
+        },
+        {
+          "page": 79,
+          "baseline_page": 80
+        },
+        {
+          "page": 82,
+          "baseline_page": 83
+        },
+        {
+          "page": 83,
+          "baseline_page": 84
+        },
+        {
+          "page": 85,
+          "baseline_page": 86
+        },
+        {
+          "page": 86,
+          "baseline_page": 87
+        },
+        {
+          "page": 88,
+          "baseline_page": 89
+        },
+        {
+          "page": 89,
+          "baseline_page": 90
+        },
+        {
+          "page": 90,
+          "baseline_page": 91
+        },
+        {
+          "page": 91,
+          "baseline_page": 92
+        },
+        {
+          "page": 92,
+          "baseline_page": 93
+        },
+        {
+          "page": 94,
+          "baseline_page": 95
+        },
+        {
+          "page": 97,
+          "baseline_page": 98
+        },
+        {
+          "page": 98,
+          "baseline_page": 99
+        },
+        {
+          "page": 99,
+          "baseline_page": 100
+        },
+        {
+          "page": 100,
+          "baseline_page": 101
+        },
+        {
+          "page": 101,
+          "baseline_page": 102
+        },
+        {
+          "page": 102,
+          "baseline_page": 103
+        },
+        {
+          "page": 108,
+          "baseline_page": 109
+        },
+        {
+          "page": 110,
+          "baseline_page": 111
+        },
+        {
+          "page": 111,
+          "baseline_page": 112
+        },
+        {
+          "page": 112,
+          "baseline_page": 113
+        },
+        {
+          "page": 113,
+          "baseline_page": 114
+        },
+        {
+          "page": 114,
+          "baseline_page": 115
+        },
+        {
+          "page": 115,
+          "baseline_page": 116
+        },
+        {
+          "page": 116,
+          "baseline_page": 117
+        }
+      ],
+      "baseline": "/private/tmp/lad-uml-detailed-20261101/render/thesis",
+      "reviewers": {
+        "er_section": [56, 57, 58, 59, 60, 61, 62, 64, 65, 69],
+        "er_entity_audit": [70, 72, 73, 74, 75, 77, 78, 80, 81, 84],
+        "er_diagram": [87, 93, 95, 96, 103, 104, 105, 106, 107, 109],
+        "root": [117, 118, 119, 120]
+      },
+      "pass1_to_final_changed_pages": [117, 118, 119, 120],
+      "method": "30 changed body pages inspected individually at full resolution in pass1 and pixel-identical in final; four final appendix pages inspected individually. Remaining 86 page bodies match the previously inspected baseline."
+    },
+    "pages": {
+      "version": "14.4",
+      "pages": 119,
+      "reviewed_pages": [1, 2, 6, 7, 8, 56, 57, 58, 59, 116, 117, 118, 119],
+      "appendix_pages": [116, 117, 118, 119],
+      "method": "Individual full-resolution PNG inspection of selected pages from a fresh export of the byte-identical temporary DOCX copy; structural checks cover all 119 pages."
+    },
+    "diagram": {
+      "tiles": [1, 2, 3, 4],
+      "nodes": 33,
+      "relationships": 75,
+      "paired_stitches": 32,
+      "png_sha256": {
+        "1": "08864173c38196ee51d7b0b766d006261fe4f483effca4a33ada9e3be1530ec9",
+        "2": "d7539fa75fbebba37d7c7b8f6949029452d1423de68a6f819dfeb2174befaaf9",
+        "3": "e7e582cf9dff1e74043e4a656c58d697cf8e14759201d4927ca64ec89c9bc1df",
+        "4": "d067954c5625feefa64401a0f28efadf63204cc049499a9eb242cc981fba3eb9"
+      }
+    }
+  }
+}

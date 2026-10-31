@@ -29,6 +29,7 @@ SECTION_PREFIXES = {
     'chapter_3': r'^3 Реализация\b',
     'conclusion': r'^Заключение\b',
     'bibliography': r'^Список использованных источников\b',
+    'appendix_a': r'^Приложение А\b',
 }
 # These guards target editorial claims, not descriptions of validation algorithms.
 FORBIDDEN = [
@@ -39,7 +40,7 @@ FORBIDDEN = [
 ]
 # Formulas, figures and logical tables. Physical continuation parts are separate.
 COUNTS = {
-    'thesis': (18, 33, 7),
+    'thesis': (18, 35, 7),
 }
 
 
@@ -219,9 +220,9 @@ def main():
               == [flat_math(expr) for expr, _ in source_formulas])
         paths = re.findall(r'^!\[[^\n]+\]\(([^\n]+)\)$', md, re.M)
         check(prefix + 'figure_count', len(doc.inline_shapes) == len(paths) == images)
-        figure_numbers = re.findall(r'^!\[Рисунок (\d+)', md, re.M)
-        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, images + 1)]
-              and all(number in figure_numbers for number in re.findall(r'рисун(?:ок|ке|ка) (\d+)', md, re.I)))
+        figure_numbers = re.findall(r'^!\[Рисунок ([А-Я]\.\d+|\d+)', md, re.M)
+        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, 32)] + [f'А.{i}' for i in range(1, 5)]
+              and all(number in figure_numbers for number in re.findall(r'рисун(?:ок|ке|ка) ([А-Я]\.\d+|\d+)', md, re.I)))
         check(prefix + 'embedded_images_match', all((ROOT / path).exists()
               and doc.part.rels[shape._inline.graphic.graphicData.pic.blipFill.blip.get(qn('r:embed'))].target_part.blob == (ROOT / path).read_bytes()
               for shape, path in zip(doc.inline_shapes, paths)))
@@ -259,7 +260,7 @@ def main():
                 footers.append(norm(page.crop((0, bottom, page.width, page.height)).extract_text() or '') == str(i))
                 nonempty.append(bool(page.images) or any(c['text'].strip() and c['top'] < bottom for c in page.chars))
                 image_pages.extend([i] * len(page.images))
-                for number in re.findall(r'Рисунок\s+(\d+)\s*[–-]', text):
+                for number in re.findall(r'Рисунок\s+([А-Я]\.\d+|\d+)\s*[–-]', text):
                     caption_pages.setdefault(number, []).append(i)
                 for number in re.findall(r'Продолжение\s+таблицы\s+(\d+)', text):
                     tables_on_page = [table.extract() for table in page.find_tables()]
@@ -284,7 +285,7 @@ def main():
                       and all(item['numbered_table_present'] for item in continuation_pages))
             check(prefix + 'text_within_page_bounds', not bad_bounds)
             check(prefix + 'prose_fonts', all(name.startswith(('TimesNewRoman', 'CourierNew')) for name in fonts))
-            expected_captions = re.findall(r'^!\[Рисунок (\d+)', md, re.M)
+            expected_captions = re.findall(r'^!\[Рисунок ([А-Я]\.\d+|\d+)', md, re.M)
             check(prefix + 'figures_and_captions_same_page', sorted(image_pages) == sorted(p for pages in caption_pages.values() for p in pages)
                   and set(caption_pages) == set(expected_captions) and all(len(pages) == 1 for pages in caption_pages.values()))
             check(prefix + 'equations_rendered', Counter(re.findall(r'\(3\.\d+\)', '\n'.join(texts))) == Counter('(' + n + ')' for _, n in source_formulas))

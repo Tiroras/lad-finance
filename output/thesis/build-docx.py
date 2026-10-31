@@ -19,6 +19,7 @@ parser.add_argument('--scope',choices=['thesis'],default='thesis',help=argparse.
 parser.parse_args()
 source=(ROOT/'thesis.md').read_text()
 in_chapter3=False
+in_appendix=False
 DOC = Document()
 sec=DOC.sections[0]
 sec.page_width=Mm(210); sec.page_height=Mm(297)
@@ -206,7 +207,14 @@ while i<len(lines):
   if len(m.group(1))==1:
    current_heading=m.group(2)
    in_chapter3=current_heading.startswith('3 ')
+  if len(m.group(1))==1 and current_heading.startswith('Приложение '):
+   in_appendix=True
   p=DOC.add_paragraph(style=f'Heading {len(m.group(1))}');inline(p,m.group(2))
+  if in_appendix:
+   p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER
+   p.paragraph_format.first_line_indent=Mm(0)
+   p.paragraph_format.page_break_before=(len(m.group(1))==1)
+   p.paragraph_format.space_before=Pt(0)
   if len(DOC.paragraphs)==1:p.paragraph_format.page_break_before=False
   i+=1;continue
  if line.startswith('$$'):
@@ -226,6 +234,8 @@ while i<len(lines):
   p=DOC.add_paragraph();p.paragraph_format.first_line_indent=Mm(0);p.alignment=WD_ALIGN_PARAGRAPH.CENTER
   p.paragraph_format.keep_with_next=True;p.paragraph_format.keep_together=True
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.line_spacing=1
+  if in_appendix and not caption.startswith('Рисунок А.1 '):
+   p.paragraph_format.page_break_before=True
   width=72 if 'control-screen' in path else 160
   shape=p.add_run().add_picture(str(ROOT/path),width=Mm(width))
   shape._inline.docPr.set('descr',caption)
