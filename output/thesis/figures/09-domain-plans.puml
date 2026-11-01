@@ -7,7 +7,6 @@ skinparam defaultFontSize 18
 skinparam classFontSize 19
 skinparam classAttributeFontSize 18
 skinparam ArrowFontSize 18
-skinparam legendFontSize 18
 skinparam classBackgroundColor white
 skinparam classBorderColor black
 skinparam ArrowColor black
@@ -56,7 +55,7 @@ class "Условия цели" as GoalTerms {
 class "График" as Schedule <<значение>> {
   единица: Период
   интервал: Целое
-  начало: Дата
+  опорная дата: Дата
 }
 
 Income -[hidden]right- Payment
@@ -73,10 +72,4 @@ IncomeTerms "0..1" *-down- "0..1" Schedule
 PaymentTerms "0..1" *-down- "0..1" Schedule
 GoalTerms "0..1" *-down- "0..1" Schedule
 
-legend bottom
-  Пунктир: изменение расчётных условий.
-  График — отдельное значение версии.
-  Интервалы версий не пересекаются.
-  У графика один владелец: {xor}.
-endlegend
 @enduml

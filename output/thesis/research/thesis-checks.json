@@ -1,12 +1,12 @@
 {
   "checked_on": "2026-11-01",
-  "project_commit": "fbcde04f19f98e0764225236e8f9be581856d1ba",
+  "project_commit": "5deb7b73d5f03792ef75f5c414592a0cca140ca9",
   "documents": {
     "thesis": {
       "pages": 119,
-      "docx_sha256": "ac183b88abd06362d3f0f2f581e3e301d042ebe2862bcba245a1fac55c4e98b2",
-      "pdf_sha256": "a492d4ab2cc3f5b06602b3e7746e741d3705ff6c4340f8014c0f07a8720f0f88",
-      "markdown_sha256": "5bbc8f5b195a06f076cae8003df9a0d497e19d2e092193d9b6c2110271d40c22",
+      "docx_sha256": "33cfba7e33efa6bca3daa74de9aa092cadd6c35eda726f57ed1e59ec0b8348cf",
+      "pdf_sha256": "b99e781161c2ec40067b541011a66bda67896185cb30753a8f21a455659eceef",
+      "markdown_sha256": "daa91471308f85de182f86c4da69e70576c0f5e0157bf88dc1376857f5ef5673",
       "figures": 34,
       "logical_tables": 7,
       "table_parts": 9,
@@ -22,7 +22,7 @@
         },
         "chapter_2": {
           "pages": [42, 65],
-          "body_sha256": "9ed7a0aa8a9ba6b3abdbcaa799ff0db03e2436eb166749e34e5e3f11caa04de0"
+          "body_sha256": "8ebf3b11fb81821ff3cc2171dc6cd7e5a4eb8abdebbb85d01b8c932ec95591f0"
         },
         "chapter_3": {
           "pages": [66, 109],
@@ -64,8 +64,8 @@
         "15": [52],
         "16": [54],
         "17": [60],
-        "18": [63],
-        "19": [64],
+        "18": [64],
+        "19": [65],
         "20": [69],
         "21": [72],
         "22": [74],
@@ -139,13 +139,10 @@
   "checks_total": 35,
   "visual_review": {
     "required": false,
-    "bundled_pages_inspected": [
-      59, 60, 61, 62, 63, 64, 68, 69, 71, 72, 73, 74, 76, 77, 79, 80, 83, 86,
-      92, 94, 95, 102, 103, 104, 105, 106, 108
-    ],
-    "bundled_other_92_pages": "Body pixels identical to the previous reviewed document; page-number footer excluded.",
-    "pages_pages_inspected": [59, 60, 61, 62],
-    "result": "No clipped text, overlaps, detached captions or empty pages. Functional tree unchanged and readable.",
+    "bundled_pages_inspected": [62, 63, 64, 65],
+    "bundled_other_pages": "115 page bodies pixel-identical to the previous reviewed document; page-number footer excluded.",
+    "pages_pages_inspected": [62, 63, 64, 65],
+    "result": "No clipping, overlaps, detached captions or empty pages. Multiplicity labels in figures 18–19 moved clear of relation lines.",
     "scope": "Document verification only; application tests and builds not run."
   },
   "notes": [

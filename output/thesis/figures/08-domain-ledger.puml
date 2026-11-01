@@ -7,7 +7,6 @@ skinparam defaultFontSize 19
 skinparam classFontSize 20
 skinparam classAttributeFontSize 19
 skinparam ArrowFontSize 19
-skinparam legendFontSize 19
 skinparam classBackgroundColor white
 skinparam classBorderColor black
 skinparam ArrowColor black
@@ -62,20 +61,10 @@ Category "1" -- "0..*" Transaction
 Category "1" --right-- "0..*" Split : категория
 Transaction "1" *-up- "0..*" Split
 Debt "0..1" -- "0..*" Transaction
-Account "1" -up- "0..*" Transaction : основной
-Account "0..1" -up- "0..*" Transaction : получатель
+Account "1" --up-- "0..*" Transaction : основной
+Account "0..1" --up-- "0..*" Transaction : получатель
 Account "1" -- "0..*" Debt
 Account "1" --left-- "0..*" Adjustment : счёт
 Account "1" --right-- "0..*" Reconciliation : счёт
 
-legend bottom
-  Концептуальные типы без методов.
-  Остаток счёта вычисляется.
-  Статус по умолчанию: проведена.
-  Получатель — только у перевода.
-  Родитель категории: 0..1, детей: 0..*.
-  У операции исходная покупка: 0..1.
-  Деньги — целые минимальные единицы.
-  Дата — местный календарный день.
-endlegend
 @enduml
