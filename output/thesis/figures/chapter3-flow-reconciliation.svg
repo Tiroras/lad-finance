@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1050" viewBox="0 0 800 1050" data-diagram="reconciliation">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
+<rect width="800" height="1050" fill="#fff"/>
+<polyline data-from="start" data-to="input" data-condition="" points="270,58 270,86" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="input" data-to="calculate" data-condition="" points="270,152 270,180" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="calculate" data-to="same" data-condition="" points="270,250 270,280" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="difference" data-to="consent" data-condition="" points="660,378 660,430" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="output" data-to="end" data-condition="" points="270,956 270,990" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error" data-to="end-error" data-condition="" points="660,948 660,990" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="same" data-to="confirm" data-condition="Да" points="270,380 270,430" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="same" data-to="difference" data-condition="Нет" points="490,330 554,330" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="confirm" data-to="success" data-condition="" points="270,520 270,730" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="consent" data-to="correction" data-condition="Да" points="660,530 660,570" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="consent" data-to="end-cancel" data-condition="Нет" points="775,480 788,480 788,750 760,750" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="correction" data-to="success" data-condition="" points="660,660 660,710 270,710 270,730" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="success" data-to="output" data-condition="Да" points="270,830 270,880" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="success" data-to="error" data-condition="Нет" points="490,780 530,780 530,900 554,900" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<g data-node="start" data-kind="term">
+<rect x="160" y="18" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="45.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
+</g>
+<g data-node="input" data-kind="io">
+<polygon points="68,86 490,86 472,152 50,152" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="112" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Счёт, дата, известный остаток</text>
+<text x="270" y="137.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и заметка</text>
+</g>
+<g data-node="calculate" data-kind="process">
+<rect x="50" y="180" width="440" height="70" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="207.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Рассчитать фактический остаток,</text>
+<text x="270" y="233.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">разницу и отпечаток записей</text>
+</g>
+<g data-node="same" data-kind="decision">
+<polygon points="270,280 490,330 270,380 50,330" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="324.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Остатки</text>
+<text x="270" y="350.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">совпали?</text>
+</g>
+<g data-node="confirm" data-kind="subprocess">
+<rect x="50" y="430" width="440" height="90" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<path d="M 66 430 V 520 M 474 430 V 520" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="467.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Подтвердить без корректировки:</text>
+<text x="270" y="491.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">проверки и запись сверки</text>
+</g>
+<g data-node="difference" data-kind="io">
+<polygon points="563,282 775,282 757,378 545,378" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="322.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Показать разницу</text>
+<text x="660" y="346.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и операции</text>
+</g>
+<g data-node="consent" data-kind="decision">
+<polygon points="660,430 775,480 660,530 545,480" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="474.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Есть</text>
+<text x="660" y="500.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">согласие?</text>
+</g>
+<g data-node="correction" data-kind="subprocess">
+<rect x="545" y="570" width="230" height="90" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<path d="M 561 570 V 660 M 759 570 V 660" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="609.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">UC-06:</text>
+<text x="660" y="631.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">корректировка</text>
+</g>
+<g data-node="end-cancel" data-kind="term">
+<rect x="560" y="730" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="755.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<g data-node="success" data-kind="decision">
+<polygon points="270,730 490,780 270,830 50,780" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="772.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Подтверждение</text>
+<text x="270" y="798.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">успешно?</text>
+</g>
+<g data-node="output" data-kind="io">
+<polygon points="68,880 490,880 472,956 50,956" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="910.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Показать сохранённую сверку</text>
+<text x="270" y="936" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и её актуальность</text>
+</g>
+<g data-node="error" data-kind="io">
+<polygon points="563,852 775,852 757,948 545,948" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="893" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
+<text x="660" y="918" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учёт не изменён</text>
+</g>
+<g data-node="end" data-kind="term">
+<rect x="160" y="990" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="1015.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<g data-node="end-error" data-kind="term">
+<rect x="560" y="990" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="1015.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<text x="295" y="410" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="518" y="319.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="685" y="556" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="775" y="465.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="295" y="862" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="518" y="767.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+</svg>

@@ -1,41 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="760" viewBox="0 0 800 760">
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
-<rect width="800" height="760" fill="#fff"/>
-<g fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)">
-<polyline points="280,64 280,92"/>
-<polyline points="280,156 280,186"/>
-<polyline points="280,282 280,314"/>
-<polyline points="280,418 280,450"/>
-<polyline points="280,546 280,578"/>
-<polyline points="280,656 280,690"/>
-<polyline points="505,366 554,366"/>
-<polyline points="660,418 660,712 390,712"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1090" viewBox="0 0 800 1090" data-diagram="purchase">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
+<rect width="800" height="1090" fill="#fff"/>
+<polyline data-from="start" data-to="input" data-condition="" points="270,58 270,80" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="input" data-to="base" data-condition="" points="270,146 270,174" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="base" data-to="obstacles" data-condition="" points="270,244 270,276" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="limit" data-to="more" data-condition="" points="270,498 270,538" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="purchase" data-to="today" data-condition="" points="270,756 270,792" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="output" data-to="end" data-condition="" points="270,1006 270,1028" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="obstacles" data-to="zero" data-condition="Да" points="490,326 545,326" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="obstacles" data-to="limit" data-condition="Нет" points="270,376 270,418" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="zero" data-to="purchase" data-condition="" points="775,326 788,326 788,660 270,660 270,680" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="more" data-to="previous" data-condition="Да" points="490,588 545,588" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="previous" data-to="limit" data-condition="" points="660,536 660,458 490,458" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="more" data-to="purchase" data-condition="Нет" points="270,638 270,680" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="today" data-to="daily" data-condition="Да" points="490,842 545,842" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="today" data-to="output" data-condition="Нет" points="270,892 270,940" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="daily" data-to="output" data-condition="" points="660,894 660,922 270,922 270,940" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<g data-node="start" data-kind="term">
+<rect x="160" y="18" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="45.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
 </g>
-<rect x="170" y="24" width="220" height="40" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="51" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
-<polygon points="73,92 505,92 487,156 55,156" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="118" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Базовый прогноз, сумма,</text>
-<text x="280" y="144" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">дата и повседневный счёт</text>
-<rect x="55" y="186" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="215" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Проверить весь исходный горизонт:</text>
-<text x="280" y="241" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">резерв, достаточность счёта,</text>
-<text x="280" y="267" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">предупреждения и назначения</text>
-<polygon points="280,314 505,366 280,418 55,366" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="360" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Есть исходные</text>
-<text x="280" y="386" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">препятствия?</text>
-<rect x="55" y="450" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="479" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Дни справа налево: двоичный поиск</text>
-<text x="280" y="505" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">с переоценкой остатка;</text>
-<text x="280" y="531" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">минимум последующих пределов</text>
-<polygon points="73,578 505,578 487,656 55,656" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="611" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Предел покупки и ближайшая дата;</text>
-<text x="280" y="637" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">реальная история не меняется</text>
-<rect x="170" y="690" width="220" height="44" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="719" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
-<polygon points="563,314 775,314 757,418 545,418" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="347" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Максимум 0;</text>
-<text x="660" y="373" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">безопасная дата</text>
-<text x="660" y="399" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">не определена</text>
-<text x="526" y="348" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
-<text x="300" y="440" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<g data-node="input" data-kind="io">
+<polygon points="68,80 490,80 472,146 50,146" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="105.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Сумма, дата, повседневный счёт</text>
+<text x="270" y="131" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и горизонт расчёта</text>
+</g>
+<g data-node="base" data-kind="subprocess">
+<rect x="50" y="174" width="440" height="70" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<path d="M 66 174 V 244 M 474 174 V 244" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="201.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Проверить ввод; построить прогноз;</text>
+<text x="270" y="227.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">выбрать последний день</text>
+</g>
+<g data-node="obstacles" data-kind="decision">
+<polygon points="270,276 490,326 270,376 50,326" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="319" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Есть исходные</text>
+<text x="270" y="344.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">препятствия?</text>
+</g>
+<g data-node="zero" data-kind="process">
+<rect x="545" y="274" width="230" height="104" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="305.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Максимум — 0;</text>
+<text x="660" y="331.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">подходящей даты</text>
+<text x="660" y="357.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">нет</text>
+</g>
+<g data-node="limit" data-kind="subprocess">
+<rect x="50" y="418" width="440" height="80" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<path d="M 66 418 V 498 M 474 418 V 498" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="450.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Двоичный поиск предела дня;</text>
+<text x="270" y="474.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учесть последующие пределы</text>
+</g>
+<g data-node="more" data-kind="decision">
+<polygon points="270,538 490,588 270,638 50,588" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="580.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Есть предыдущий</text>
+<text x="270" y="607" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">день?</text>
+</g>
+<g data-node="previous" data-kind="process">
+<rect x="545" y="536" width="230" height="104" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="567.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Перейти</text>
+<text x="660" y="591.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">к предыдущему</text>
+<text x="660" y="618" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">дню</text>
+</g>
+<g data-node="purchase" data-kind="subprocess">
+<rect x="50" y="680" width="440" height="76" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<path d="M 66 680 V 756 M 474 680 V 756" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="710.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Рассчитать вариант с покупкой;</text>
+<text x="270" y="734.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">сопоставить с исходным прогнозом</text>
+</g>
+<g data-node="today" data-kind="decision">
+<polygon points="270,792 490,842 270,892 50,842" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="834.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Покупка</text>
+<text x="270" y="861" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">сегодня?</text>
+</g>
+<g data-node="daily" data-kind="process">
+<rect x="545" y="790" width="230" height="104" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="821.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Оценить</text>
+<text x="660" y="845.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">дневную сумму</text>
+<text x="660" y="871.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">после покупки</text>
+</g>
+<g data-node="output" data-kind="io">
+<polygon points="68,940 490,940 472,1006 50,1006" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="965.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Вывод о покупке, сумма, дата</text>
+<text x="270" y="991" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и ограничения расчёта</text>
+</g>
+<g data-node="end" data-kind="term">
+<rect x="160" y="1028" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="1053.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<text x="518" y="314" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="300" y="405.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="518" y="576" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="300" y="656.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="518" y="830" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="300" y="911.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
 </svg>

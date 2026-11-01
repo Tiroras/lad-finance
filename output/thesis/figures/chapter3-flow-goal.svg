@@ -1,40 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="760" viewBox="0 0 800 760">
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
-<rect width="800" height="760" fill="#fff"/>
-<g fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)">
-<polyline points="280,64 280,92"/>
-<polyline points="280,156 280,186"/>
-<polyline points="280,282 280,314"/>
-<polyline points="280,418 280,450"/>
-<polyline points="280,546 280,578"/>
-<polyline points="280,656 280,690"/>
-<polyline points="505,366 554,366"/>
-<polyline points="660,418 660,712 390,712"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="976" viewBox="0 0 800 976" data-diagram="goal">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/></marker></defs>
+<rect width="800" height="976" fill="#fff"/>
+<polyline data-from="start" data-to="input" data-condition="" points="270,58 270,86" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="input" data-to="prepare" data-condition="" points="270,152 270,180" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="prepare" data-to="valid-input" data-condition="" points="270,250 270,280" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="release" data-to="transfer" data-condition="" points="270,496 270,534" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="transfer" data-to="valid-state" data-condition="" points="270,630 270,668" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="output" data-to="end" data-condition="" points="270,884 270,916" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error-input" data-to="end-input" data-condition="" points="660,378 660,420" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error-state" data-to="end-state" data-condition="" points="660,766 660,808" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-input" data-to="release" data-condition="Да" points="270,380 270,420" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-input" data-to="error-input" data-condition="Нет" points="490,330 554,330" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-state" data-to="output" data-condition="Да" points="270,768 270,808" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-state" data-to="error-state" data-condition="Нет" points="490,718 554,718" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<g data-node="start" data-kind="term">
+<rect x="160" y="18" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="45.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
 </g>
-<rect x="170" y="24" width="220" height="40" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="51" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
-<polygon points="73,92 505,92 487,156 55,156" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="118" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Цель, сумма вывода,</text>
-<text x="280" y="144" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">источник и получатель</text>
-<rect x="55" y="186" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="215" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Подготовить освобождение и перевод;</text>
-<text x="280" y="241" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">проверить накопленное, доступность</text>
-<text x="280" y="267" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и обеспеченность остальных целей</text>
-<polygon points="280,314 505,366 280,418 55,366" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="360" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Вывод</text>
-<text x="280" y="386" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">допустим?</text>
-<rect x="55" y="450" width="450" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="492" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Вернуть освобождение и перевод</text>
-<text x="280" y="518" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">одним состоянием формата 9</text>
-<polygon points="73,578 505,578 487,656 55,656" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="611" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Новые остатки и прогресс;</text>
-<text x="280" y="637" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">история взносов сохранена</text>
-<rect x="170" y="690" width="220" height="44" rx="22" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="280" y="719" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
-<polygon points="563,314 775,314 757,418 545,418" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="347" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
-<text x="660" y="373" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">цели и счета</text>
-<text x="660" y="399" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">не изменять</text>
-<text x="526" y="348" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
-<text x="300" y="440" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<g data-node="input" data-kind="io">
+<polygon points="68,86 490,86 472,152 50,152" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="111.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Цель, счета, суммы</text>
+<text x="270" y="137.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">списания и зачисления</text>
+</g>
+<g data-node="prepare" data-kind="process">
+<rect x="50" y="180" width="440" height="70" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="207.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Проверить цель, сумму,</text>
+<text x="270" y="231.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">виды счетов и валюту источника</text>
+</g>
+<g data-node="valid-input" data-kind="decision">
+<polygon points="270,280 490,330 270,380 50,330" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="323" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Вывод</text>
+<text x="270" y="348.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">допустим?</text>
+</g>
+<g data-node="release" data-kind="process">
+<rect x="50" y="420" width="440" height="76" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="450.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Подготовить освобождение суммы</text>
+<text x="270" y="476.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">из цели и идентификатор перевода</text>
+</g>
+<g data-node="transfer" data-kind="process">
+<rect x="50" y="534" width="440" height="96" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="561.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Подготовить связанный перевод;</text>
+<text x="270" y="585.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">проверить доступность источника</text>
+<text x="270" y="613.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и обеспечение оставшихся целей</text>
+</g>
+<g data-node="valid-state" data-kind="decision">
+<polygon points="270,668 490,718 270,768 50,718" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="712.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Учёт</text>
+<text x="270" y="738.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">согласован?</text>
+</g>
+<g data-node="output" data-kind="io">
+<polygon points="68,808 490,808 472,884 50,884" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="838.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Применить освобождение</text>
+<text x="270" y="862.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">и перевод одним состоянием</text>
+</g>
+<g data-node="end" data-kind="term">
+<rect x="160" y="916" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="270" y="941.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<g data-node="error-input" data-kind="io">
+<polygon points="563,282 775,282 757,378 545,378" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="323" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
+<text x="660" y="348" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учёт не изменён</text>
+</g>
+<g data-node="end-input" data-kind="term">
+<rect x="560" y="420" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="445.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<g data-node="error-state" data-kind="io">
+<polygon points="563,670 775,670 757,766 545,766" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="711" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
+<text x="660" y="736" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учёт не изменён</text>
+</g>
+<g data-node="end-state" data-kind="term">
+<rect x="560" y="808" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
+<text x="660" y="833.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
+</g>
+<text x="295" y="406" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="518" y="319.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
+<text x="295" y="794" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
+<text x="518" y="707.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
 </svg>

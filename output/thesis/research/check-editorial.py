@@ -40,7 +40,7 @@ FORBIDDEN = [
 ]
 # Formulas, figures and logical tables. Physical continuation parts are separate.
 COUNTS = {
-    'thesis': (18, 34, 7),
+    'thesis': (11, 34, 7),
 }
 
 

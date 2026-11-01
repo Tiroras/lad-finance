@@ -1,16 +1,16 @@
 {
   "checked_on": "2026-11-01",
-  "project_commit": "5deb7b73d5f03792ef75f5c414592a0cca140ca9",
+  "project_commit": "e8c627121babbebb4ee925cbe5ada67bf2a9134f",
   "documents": {
     "thesis": {
-      "pages": 119,
-      "docx_sha256": "33cfba7e33efa6bca3daa74de9aa092cadd6c35eda726f57ed1e59ec0b8348cf",
-      "pdf_sha256": "b99e781161c2ec40067b541011a66bda67896185cb30753a8f21a455659eceef",
-      "markdown_sha256": "daa91471308f85de182f86c4da69e70576c0f5e0157bf88dc1376857f5ef5673",
+      "pages": 113,
+      "docx_sha256": "6cecbaa24afabf25102c3fd85f8441663fb49369f4c04351642be8726e3b7491",
+      "pdf_sha256": "a7469f6238711f581d0b270297014371538c8166764ca0bf65ca7b6e47d14597",
+      "markdown_sha256": "03ff3af609c06bd9b369f1404b5d34efadabe7c4b79958d1e8b131fa869b7190",
       "figures": 34,
       "logical_tables": 7,
       "table_parts": 9,
-      "equations": 18,
+      "equations": 11,
       "sections": {
         "introduction": {
           "pages": [1, 2],
@@ -25,19 +25,19 @@
           "body_sha256": "8ebf3b11fb81821ff3cc2171dc6cd7e5a4eb8abdebbb85d01b8c932ec95591f0"
         },
         "chapter_3": {
-          "pages": [66, 109],
-          "body_sha256": "2488be352cd828a723cadf1f097ca3c058cbc6302c1d990594d202d809e2b624"
+          "pages": [66, 103],
+          "body_sha256": "f128abf3831b8db18aae1e1008c8f220e52626bbbda4c30c1aef9a2dfb6360bb"
         },
         "conclusion": {
-          "pages": [110, 112],
+          "pages": [104, 106],
           "body_sha256": "276165cb3e346e246af3b4dca58e286ccdfd860934633c8275632eaa65a07072"
         },
         "bibliography": {
-          "pages": [113, 115],
+          "pages": [107, 109],
           "body_sha256": "e78e8ae8a88a40577e435d95975d0102285df37cbe0e46cc43dd3a366e484990"
         },
         "appendix_a": {
-          "pages": [116, 119],
+          "pages": [110, 113],
           "body_sha256": "30c8f5ebba77d1a9f784a58d9b0bf5e00554ff999dd6e7e07340cdfa3c0e00e5"
         }
       },
@@ -67,20 +67,20 @@
         "18": [64],
         "19": [65],
         "20": [69],
-        "21": [72],
-        "22": [74],
-        "23": [77],
-        "24": [80],
-        "25": [86],
+        "21": [73],
+        "22": [77],
+        "23": [81],
+        "24": [84],
+        "25": [87],
         "26": [92],
-        "27": [95],
-        "28": [102],
-        "29": [104],
-        "30": [106],
-        "А.1": [116],
-        "А.2": [117],
-        "А.3": [118],
-        "А.4": [119]
+        "27": [94],
+        "28": [95],
+        "29": [97],
+        "30": [101],
+        "А.1": [110],
+        "А.2": [111],
+        "А.3": [112],
+        "А.4": [113]
       },
       "table_continuation_pages": [
         {
@@ -139,11 +139,18 @@
   "checks_total": 35,
   "visual_review": {
     "required": false,
-    "bundled_pages_inspected": [62, 63, 64, 65],
-    "bundled_other_pages": "115 page bodies pixel-identical to the previous reviewed document; page-number footer excluded.",
-    "pages_pages_inspected": [62, 63, 64, 65],
-    "result": "No clipping, overlaps, detached captions or empty pages. Multiplicity labels in figures 18–19 moved clear of relation lines.",
-    "scope": "Document verification only; application tests and builds not run."
+    "chapter3_pages_reviewed": [
+      66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+      84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+      102, 103
+    ],
+    "unchanged_pages_by_pixel_comparison": 75,
+    "boundary_page_additionally_opened": 104,
+    "pages_export_pages_reviewed": [
+      66, 67, 69, 71, 73, 75, 77, 79, 81, 83, 84, 86, 87, 90, 92, 93, 94, 95,
+      96, 97, 100, 101
+    ],
+    "unresolved_defects": []
   },
   "notes": [
     "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
