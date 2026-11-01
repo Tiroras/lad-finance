@@ -49,11 +49,6 @@ function svgFor(m) {
       `<path data-from="${e.from}" data-to="${e.to}" data-relation="${e.kind}" d="${e.d}" fill="none" stroke="#111" stroke-width="2.3"${style}/>`,
     );
   }
-  for (const n of m.notes || [])
-    if (n.leader)
-      svg.push(
-        `<path data-role="note-connector" data-note="${n.id}" d="${n.leader}" fill="none" stroke="#111" stroke-width="1.7" stroke-dasharray="3 6"/>`,
-      );
   for (const n of m.nodes) {
     svg.push(
       `<g id="${n.id}" data-id="${n.id}" data-role="usecase" data-primary="${n.primary}" data-title="${escape(n.displayTitle)}">`,
@@ -79,18 +74,14 @@ function svgFor(m) {
         text(e.label, e.labelX, e.labelY, e.fontSize),
         "</g>",
       );
-  for (const n of m.notes || []) {
-    const l = n.x - n.width / 2,
-      r = n.x + n.width / 2,
-      t = n.y - n.height / 2,
-      bt = n.y + n.height / 2,
-      fold = 20;
-    svg.push(
-      `<g id="${n.id}" data-role="${n.kind === "condition" ? "condition-note" : "note"}"${n.relation ? ` data-from="${n.relation[0]}" data-to="${n.relation[1]}"` : ""}>`,
-      `<path d="M ${l} ${t} H ${r - fold} L ${r} ${t + fold} V ${bt} H ${l} Z M ${r - fold} ${t} V ${t + fold} H ${r}" fill="white" stroke="#111" stroke-width="1.5"/>`,
-      text(n.label, n.x, n.y, n.fontSize),
-      "</g>",
-    );
+  for (const e of m.edges) {
+    const condition = e.conditionLabel;
+    if (condition)
+      svg.push(
+        `<g data-role="condition-label" data-from="${e.from}" data-to="${e.to}">`,
+        text(condition.label, condition.x, condition.y, condition.fontSize),
+        "</g>",
+      );
   }
   const a = m.actor;
   svg.push(
@@ -123,14 +114,9 @@ function pumlFor(m) {
         ? `${e.from} -- ${e.to}`
         : e.kind === "generalization"
           ? `${e.from} --|> ${e.to}`
-          : `${e.from} ..> ${e.to} : <<${e.kind}>>`,
+          : `${e.from} ..> ${e.to} : <<${e.kind}>>${e.condition ? `\\n[${e.condition.replaceAll("\n", "\\n")}]` : ""}`,
     );
-    if (e.condition)
-      lines.push("note on link", ...e.condition.split("\n"), "end note");
   }
-  for (const n of m.notes || [])
-    if (n.kind !== "condition")
-      lines.push(`note "${n.label.join("\\n")}" as ${n.id}`);
   lines.push("@enduml", "");
   return lines.join("\n");
 }

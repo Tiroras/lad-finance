@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1380" viewBox="0 0 1200 1380">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1175" viewBox="0 0 1200 1175">
 <title>Взнос в цель и вывод накоплений</title>
-<rect width="1200" height="1380" fill="white"/>
+<rect width="1200" height="1175" fill="white"/>
 <defs><marker id="open-arrow" markerWidth="18" markerHeight="16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 16 8 L 2 15" fill="none" stroke="#111" stroke-width="2.3"/></marker><marker id="generalization-arrow" markerWidth="23" markerHeight="22" refX="21" refY="11" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 21 11 L 1 21 Z" fill="white" stroke="#111" stroke-width="2.3"/></marker></defs>
 <g font-family="Arial, sans-serif" fill="#111">
-<rect data-role="system-boundary" x="190" y="20" width="1000" height="1340" fill="white" stroke="#111" stroke-width="2"/>
+<rect data-role="system-boundary" x="190" y="20" width="1000" height="1135" fill="white" stroke="#111" stroke-width="2"/>
 <text x="210" y="60.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
 <path data-from="Owner" data-to="U3" data-relation="association" d="M 130 600 C 175 600, 175 250, 220 250" fill="none" stroke="#111" stroke-width="2.3"/>
 <path data-from="Owner" data-to="U4" data-relation="association" d="M 130 600 C 175 600, 175 1000, 220 1000" fill="none" stroke="#111" stroke-width="2.3"/>
@@ -59,11 +59,6 @@
 </g>
 <g data-role="relation-label" data-from="U2" data-to="H5">
 <text x="692.5" y="545.2" font-size="30" text-anchor="middle">«include»</text>
-</g>
-<g id="N1" data-role="note">
-<path d="M 250 1190 H 1130 L 1150 1210 V 1310 H 250 Z M 1130 1190 V 1210 H 1150" fill="white" stroke="#111" stroke-width="1.5"/>
-<text x="700" y="1242.2" font-size="30" text-anchor="middle">Перевод и изменение закреплённой суммы</text>
-<text x="700" y="1278.2" font-size="30" text-anchor="middle">образуют одно согласованное действие.</text>
 </g>
 <g id="Owner" data-role="actor">
 <g fill="none" stroke="#111" stroke-width="2.5"><circle cx="90" cy="557" r="20"/><path d="M 90 577 V 645 M 50 600 H 130 M 90 645 L 55 690 M 90 645 L 125 690"/></g>

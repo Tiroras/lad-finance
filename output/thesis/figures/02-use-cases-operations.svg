@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1420" viewBox="0 0 1200 1420">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
 <title>Запись операции и её разновидности</title>
-<rect width="1200" height="1420" fill="white"/>
+<rect width="1200" height="1200" fill="white"/>
 <defs><marker id="open-arrow" markerWidth="18" markerHeight="16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M 2 1 L 16 8 L 2 15" fill="none" stroke="#111" stroke-width="2.3"/></marker><marker id="generalization-arrow" markerWidth="23" markerHeight="22" refX="21" refY="11" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 21 11 L 1 21 Z" fill="white" stroke="#111" stroke-width="2.3"/></marker></defs>
 <g font-family="Arial, sans-serif" fill="#111">
-<rect data-role="system-boundary" x="190" y="20" width="1000" height="1380" fill="white" stroke="#111" stroke-width="2"/>
+<rect data-role="system-boundary" x="190" y="20" width="1000" height="1160" fill="white" stroke="#111" stroke-width="2"/>
 <text x="210" y="60.2" font-size="30" text-anchor="start" font-weight="bold">Мобильное приложение «Лад»</text>
 <path data-from="Owner" data-to="U1" data-relation="association" d="M 130 250 H 220" fill="none" stroke="#111" stroke-width="2.3"/>
 <path data-from="H1" data-to="U1" data-relation="generalization" d="M 430 505 V 355" fill="none" stroke="#111" stroke-width="2.3" marker-end="url(#generalization-arrow)"/>
@@ -11,8 +11,6 @@
 <path data-from="H3" data-to="U1" data-relation="generalization" d="M 220 1030 H 202 V 460 L 281.51 324.25" fill="none" stroke="#111" stroke-width="2.3" marker-end="url(#generalization-arrow)"/>
 <path data-from="U1" data-to="H5" data-relation="include" d="M 640 250 H 745" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
 <path data-from="H4" data-to="H2" data-relation="extend" d="M 955 935 V 750" fill="none" stroke="#111" stroke-width="2.3" stroke-dasharray="10 7" marker-end="url(#open-arrow)"/>
-<path data-role="note-connector" data-note="C1" d="M 815 835 H 955" fill="none" stroke="#111" stroke-width="1.7" stroke-dasharray="3 6"/>
-<path data-role="note-connector" data-note="N1" d="M 430 1125 V 1225" fill="none" stroke="#111" stroke-width="1.7" stroke-dasharray="3 6"/>
 <g id="U1" data-id="U1" data-role="usecase" data-primary="true" data-title="UC-01 Записать финансовую операцию">
 <ellipse cx="430" cy="250" rx="210" ry="105" fill="white" stroke="#111" stroke-width="2.3"/>
 <text x="430" y="222.88" font-size="32" text-anchor="middle">UC-01</text>
@@ -55,17 +53,10 @@
 <g data-role="relation-label" data-from="H4" data-to="H2">
 <text x="1060" y="850.2" font-size="30" text-anchor="middle">«extend»</text>
 </g>
-<g id="C1" data-role="condition-note" data-from="H4" data-to="H2">
-<path d="M 385 747.5 H 795 L 815 767.5 V 922.5 H 385 Z M 795 747.5 V 767.5 H 815" fill="white" stroke="#111" stroke-width="1.5"/>
-<text x="600" y="791.2" font-size="30" text-anchor="middle">обычный расход</text>
-<text x="600" y="827.2" font-size="30" text-anchor="middle">без связи с долгом;</text>
-<text x="600" y="863.2" font-size="30" text-anchor="middle">владелец выбрал</text>
-<text x="600" y="899.2" font-size="30" text-anchor="middle">разделение</text>
-</g>
-<g id="N1" data-role="note">
-<path d="M 250 1225 H 1130 L 1150 1245 V 1335 H 250 Z M 1130 1225 V 1245 H 1150" fill="white" stroke="#111" stroke-width="1.5"/>
-<text x="700" y="1272.2" font-size="30" text-anchor="middle">Возврат уменьшает расходы;</text>
-<text x="700" y="1308.2" font-size="30" text-anchor="middle">обычным доходом не считается.</text>
+<g data-role="condition-label" data-from="H4" data-to="H2">
+<text x="675" y="809.2" font-size="30" text-anchor="middle">[обычный расход без</text>
+<text x="675" y="845.2" font-size="30" text-anchor="middle">связи с долгом;</text>
+<text x="675" y="881.2" font-size="30" text-anchor="middle">выбрано разделение]</text>
 </g>
 <g id="Owner" data-role="actor">
 <g fill="none" stroke="#111" stroke-width="2.5"><circle cx="90" cy="207" r="20"/><path d="M 90 227 V 295 M 50 250 H 130 M 90 295 L 55 340 M 90 295 L 125 340"/></g>

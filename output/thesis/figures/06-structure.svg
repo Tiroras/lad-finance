@@ -1,1 +1,146 @@
-<?plantuml 1.2026.1?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="MINDMAP" height="811px" preserveAspectRatio="none" style="width:917px;height:811px;background:#FFFFFF;" version="1.1" viewBox="0 0 917 811" width="917px" zoomAndPan="magnify"><defs/><g><rect fill="#F1F1F1" height="47.5977" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="116.9258" x="10" y="380.7813"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="96.9258" x="20" y="413.293">&#1057;&#1080;&#1089;&#1090;&#1077;&#1084;&#1072;</text><rect fill="#F1F1F1" height="47.5977" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="146.6914" x="176.9258" y="128.9941"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="126.6914" x="186.9258" y="161.5059">&#1048;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;</text><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="337.6719" x="373.6172" y="20"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="114.75" x="383.6172" y="52.5117">application</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="317.6719" x="383.6172" y="80.1094">&#1079;&#1072;&#1087;&#1091;&#1089;&#1082;, &#1085;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103;, &#1086;&#1073;&#1086;&#1083;&#1086;&#1095;&#1082;&#1072;</text><path d="M323.6172,152.793 L333.6172,152.793 C348.6172,152.793 348.6172,57.5977 363.6172,57.5977 L373.6172,57.5977" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="418.5078" x="373.6172" y="115.1953"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="84.0352" x="383.6172" y="147.707">screens</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="398.5078" x="383.6172" y="175.3047">&#1054;&#1073;&#1079;&#1086;&#1088;, &#1054;&#1087;&#1077;&#1088;&#1072;&#1094;&#1080;&#1080;, &#1055;&#1083;&#1072;&#1085;, &#1040;&#1085;&#1072;&#1083;&#1080;&#1090;&#1080;&#1082;&#1072;</text><path d="M323.6172,152.793 L333.6172,152.793 C348.6172,152.793 348.6172,152.793 363.6172,152.793 L373.6172,152.793" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="352.3438" x="373.6172" y="210.3906"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="86.7188" x="383.6172" y="242.9023">features</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="332.3438" x="383.6172" y="270.5">&#1087;&#1088;&#1077;&#1076;&#1084;&#1077;&#1090;&#1085;&#1099;&#1077; &#1092;&#1086;&#1088;&#1084;&#1099; &#1080; &#1087;&#1072;&#1085;&#1077;&#1083;&#1080;</text><path d="M323.6172,152.793 L333.6172,152.793 C348.6172,152.793 348.6172,247.9883 363.6172,247.9883 L373.6172,247.9883" fill="none" style="stroke:#181818;stroke-width:1.2;"/><path d="M126.9258,404.5801 L136.9258,404.5801 C151.9258,404.5801 151.9258,152.793 166.9258,152.793 L176.9258,152.793" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="47.5977" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="235.9766" x="176.9258" y="366.9824"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="215.9766" x="186.9258" y="399.4941">&#1060;&#1080;&#1085;&#1072;&#1085;&#1089;&#1086;&#1074;&#1072;&#1103; &#1083;&#1086;&#1075;&#1080;&#1082;&#1072;</text><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="442.4492" x="462.9023" y="305.5859"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="78.7148" x="472.9023" y="338.0977">domain</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="422.4492" x="472.9023" y="365.6953">&#1084;&#1086;&#1076;&#1077;&#1083;&#1100;, &#1088;&#1072;&#1089;&#1095;&#1105;&#1090;&#1099;, &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1080;, &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;</text><path d="M412.9023,390.7813 L422.9023,390.7813 C437.9023,390.7813 437.9023,343.1836 452.9023,343.1836 L462.9023,343.1836" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="420.4648" x="462.9023" y="400.7813"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="136.0898" x="472.9023" y="433.293">state/finance</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="400.4648" x="472.9023" y="460.8906">&#1089;&#1086;&#1089;&#1090;&#1086;&#1103;&#1085;&#1080;&#1077;, &#1086;&#1095;&#1077;&#1088;&#1077;&#1076;&#1100;, &#1087;&#1088;&#1086;&#1092;&#1080;&#1083;&#1080;, &#1076;&#1077;&#1085;&#1100;</text><path d="M412.9023,390.7813 L422.9023,390.7813 C437.9023,390.7813 437.9023,438.3789 452.9023,438.3789 L462.9023,438.3789" fill="none" style="stroke:#181818;stroke-width:1.2;"/><path d="M126.9258,404.5801 L136.9258,404.5801 C151.9258,404.5801 151.9258,390.7813 166.9258,390.7813 L176.9258,390.7813" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="47.5977" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="300.7109" x="176.9258" y="523.5742"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="280.7109" x="186.9258" y="556.0859">&#1055;&#1083;&#1072;&#1090;&#1092;&#1086;&#1088;&#1084;&#1077;&#1085;&#1085;&#1099;&#1077; &#1089;&#1083;&#1091;&#1078;&#1073;&#1099;</text><rect fill="#F1F1F1" height="102.793" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="325.5078" x="527.6367" y="495.9766"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="140.0508" x="537.6367" y="528.4883">infrastructure</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="304.1367" x="537.6367" y="556.0859">storage, crypto, device, files,</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="305.5078" x="537.6367" y="583.6836">notifications, exchange-rates</text><path d="M477.6367,547.373 L487.6367,547.373 C502.6367,547.373 502.6367,547.373 517.6367,547.373 L527.6367,547.373" fill="none" style="stroke:#181818;stroke-width:1.2;"/><path d="M126.9258,404.5801 L136.9258,404.5801 C151.9258,404.5801 151.9258,547.373 166.9258,547.373 L176.9258,547.373" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="47.5977" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="207.3711" x="176.9258" y="680.166"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="187.3711" x="186.9258" y="712.6777">&#1054;&#1073;&#1097;&#1080;&#1077; &#1089;&#1088;&#1077;&#1076;&#1089;&#1090;&#1074;&#1072;</text><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="222.3125" x="434.2969" y="618.7695"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="98.7305" x="444.2969" y="651.2813">shared/ui</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="202.3125" x="444.2969" y="678.8789">&#1082;&#1086;&#1084;&#1087;&#1086;&#1085;&#1077;&#1085;&#1090;&#1099;, &#1090;&#1077;&#1084;&#1072;</text><path d="M384.2969,703.9648 L394.2969,703.9648 C409.2969,703.9648 409.2969,656.3672 424.2969,656.3672 L434.2969,656.3672" fill="none" style="stroke:#181818;stroke-width:1.2;"/><rect fill="#F1F1F1" height="75.1953" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:1.5;" width="378.875" x="434.2969" y="713.9648"/><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="104.0625" x="444.2969" y="746.4766">shared/lib</text><text fill="#000000" font-family="Arial" font-size="24" lengthAdjust="spacing" textLength="358.875" x="444.2969" y="774.0742">&#1076;&#1072;&#1090;&#1099; &#1080; &#1091;&#1085;&#1080;&#1074;&#1077;&#1088;&#1089;&#1072;&#1083;&#1100;&#1085;&#1099;&#1077; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1080;</text><path d="M384.2969,703.9648 L394.2969,703.9648 C409.2969,703.9648 409.2969,751.5625 424.2969,751.5625 L434.2969,751.5625" fill="none" style="stroke:#181818;stroke-width:1.2;"/><path d="M126.9258,404.5801 L136.9258,404.5801 C151.9258,404.5801 151.9258,703.9648 166.9258,703.9648 L176.9258,703.9648" fill="none" style="stroke:#181818;stroke-width:1.2;"/><?plantuml-src RLF1RXCn5BplLvXh55eQeOfZAoIE5Q8SSt5tlOcLNNlbTIZbrBI82gLIuSQf28aFI4j2GvfDVk7vZnXxqx873f6oRvxdpSopzqhBZSsbId9UH4yAmtivPna_qKFBobnOhdXK3gGgkE4voxNIST_eN31hXgA17F5uq3Dwg9ANEjE67VUbRU9bdoVwMAeUItbMDf54f7oOsLTQsGCEudqZUVP__51-4Appl07k6wEFt_PbF52YBDdELgS1lkP9uYU-QDJUS3Ku50NRsMqK3tGYGh4JHIr6FsZkHkwCPhIaITH2vHjL_jkTke-e_d4ZL5kC5qKcOswbLbr5TpIXjJjt8rgq6LNukgKv_QA9-mI-AzHMT8FVFQtS1Iq2SukLiH52bJX_3VGEs2awhsdjfzLdQOxATvoRK8L_NmBtFJZFW3tmf8BReH6UQ8s3Cvf2_0mjbHlJZ44tc6dfnepc3EpWGXDOWh-VOFAi5TIle7lYhfWN2ld_HYGwvz8xNGAO-jFkiis2of6xS5_TcHj3dn_lERp-HT0-hJE3c5kVHEtRSYksKwcuYaLN-RcXO-Mke6HECvyNSfhLPloacXbEvbxtXhToby51o0SADZuzyc1z1A7dz9jkt3YCbYerlCJzZNrYNLLQZMilsYms9uNLRTouTpB6ToepKRQxIcahqysYopOJx-C-LptnrC126QPZT-wpLurf6y6rtSsI-zo8P7ie4Tu2uIonW5LOG5M7rhXiZzsPF4BxDBWAMuC9dqn85gOcFl_7zGPmKL-NQ4_WFM_UT8GtyQopkxNp5m00?></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1838" viewBox="0 0 1400 1838">
+<title>Функциональная декомпозиция мобильного приложения «Лад»</title>
+<rect width="1400" height="1838" fill="white"/>
+<g fill="none" stroke="#333" stroke-width="2">
+<path data-from="Application" data-to="Ledger" d="M 340 919 H 395 V 207 H 460"/>
+<path data-from="Ledger" data-to="LedgerRecords" d="M 820 207 H 855 V 63 H 890"/>
+<path data-from="Ledger" data-to="LedgerTransfers" d="M 820 207 H 855 V 159 H 890"/>
+<path data-from="Ledger" data-to="LedgerBalances" d="M 820 207 H 855 V 255 H 890"/>
+<path data-from="Ledger" data-to="LedgerReconciliation" d="M 820 207 H 855 V 351 H 890"/>
+<path data-from="Application" data-to="Planning" d="M 340 919 H 395 V 611 H 460"/>
+<path data-from="Planning" data-to="PlanningFlows" d="M 820 611 H 855 V 467 H 890"/>
+<path data-from="Planning" data-to="PlanningBudgets" d="M 820 611 H 855 V 563 H 890"/>
+<path data-from="Planning" data-to="PlanningGoals" d="M 820 611 H 855 V 659 H 890"/>
+<path data-from="Planning" data-to="PlanningObligations" d="M 820 611 H 855 V 755 H 890"/>
+<path data-from="Application" data-to="Forecast" d="M 340 919 H 395 V 967 H 460"/>
+<path data-from="Forecast" data-to="ForecastBalances" d="M 820 967 H 855 V 871 H 890"/>
+<path data-from="Forecast" data-to="ForecastPurchase" d="M 820 967 H 855 V 967 H 890"/>
+<path data-from="Forecast" data-to="ForecastScenarios" d="M 820 967 H 855 V 1063 H 890"/>
+<path data-from="Application" data-to="Analytics" d="M 340 919 H 395 V 1275 H 460"/>
+<path data-from="Analytics" data-to="AnalyticsTotals" d="M 820 1275 H 855 V 1179 H 890"/>
+<path data-from="Analytics" data-to="AnalyticsComparison" d="M 820 1275 H 855 V 1275 H 890"/>
+<path data-from="Analytics" data-to="AnalyticsBudgets" d="M 820 1275 H 855 V 1371 H 890"/>
+<path data-from="Application" data-to="Storage" d="M 340 919 H 395 V 1631 H 460"/>
+<path data-from="Storage" data-to="StorageProfiles" d="M 820 1631 H 855 V 1487 H 890"/>
+<path data-from="Storage" data-to="StoragePersistence" d="M 820 1631 H 855 V 1583 H 890"/>
+<path data-from="Storage" data-to="StorageTransfer" d="M 820 1631 H 855 V 1679 H 890"/>
+<path data-from="Storage" data-to="StorageProtection" d="M 820 1631 H 855 V 1775 H 890"/>
+</g><g font-family="Arial, sans-serif" fill="#111">
+<g id="Application" data-level="0" data-title="Мобильное приложение «Лад»">
+<rect x="10" y="829" width="330" height="180" fill="white" stroke="#333" stroke-width="2"/>
+<text x="175" y="890.56" font-size="34" text-anchor="middle" font-weight="bold">Мобильное</text>
+<text x="175" y="930.56" font-size="34" text-anchor="middle" font-weight="bold">приложение</text>
+<text x="175" y="970.56" font-size="34" text-anchor="middle" font-weight="bold">«Лад»</text>
+</g>
+<g id="Ledger" data-level="1" data-title="Фактический учёт">
+<rect x="460" y="147" width="360" height="120" fill="white" stroke="#333" stroke-width="2"/>
+<text x="640" y="198.56" font-size="34" text-anchor="middle" font-weight="bold">Фактический</text>
+<text x="640" y="238.56" font-size="34" text-anchor="middle" font-weight="bold">учёт</text>
+</g>
+<g id="Planning" data-level="1" data-title="Финансовое планирование">
+<rect x="460" y="551" width="360" height="120" fill="white" stroke="#333" stroke-width="2"/>
+<text x="640" y="602.56" font-size="34" text-anchor="middle" font-weight="bold">Финансовое</text>
+<text x="640" y="642.56" font-size="34" text-anchor="middle" font-weight="bold">планирование</text>
+</g>
+<g id="Forecast" data-level="1" data-title="Прогноз и оценка решений">
+<rect x="460" y="907" width="360" height="120" fill="white" stroke="#333" stroke-width="2"/>
+<text x="640" y="958.56" font-size="34" text-anchor="middle" font-weight="bold">Прогноз</text>
+<text x="640" y="998.56" font-size="34" text-anchor="middle" font-weight="bold">и оценка решений</text>
+</g>
+<g id="Analytics" data-level="1" data-title="Аналитика">
+<rect x="460" y="1215" width="360" height="120" fill="white" stroke="#333" stroke-width="2"/>
+<text x="640" y="1286.56" font-size="34" text-anchor="middle" font-weight="bold">Аналитика</text>
+</g>
+<g id="Storage" data-level="1" data-title="Хранение и защита данных">
+<rect x="460" y="1571" width="360" height="120" fill="white" stroke="#333" stroke-width="2"/>
+<text x="640" y="1622.56" font-size="34" text-anchor="middle" font-weight="bold">Хранение</text>
+<text x="640" y="1662.56" font-size="34" text-anchor="middle" font-weight="bold">и защита данных</text>
+</g>
+<g id="LedgerRecords" data-level="2" data-title="Вести счета и операции">
+<rect x="890" y="20" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="74.56" font-size="34" text-anchor="middle">Вести счета и операции</text>
+</g>
+<g id="LedgerTransfers" data-level="2" data-title="Записывать переводы и движения накоплений">
+<rect x="890" y="116" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="150.56" font-size="34" text-anchor="middle">Записывать переводы</text>
+<text x="1140" y="190.56" font-size="34" text-anchor="middle">и движения накоплений</text>
+</g>
+<g id="LedgerBalances" data-level="2" data-title="Рассчитывать остатки">
+<rect x="890" y="212" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="266.56" font-size="34" text-anchor="middle">Рассчитывать остатки</text>
+</g>
+<g id="LedgerReconciliation" data-level="2" data-title="Сверять и корректировать остатки">
+<rect x="890" y="308" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="342.56" font-size="34" text-anchor="middle">Сверять и корректировать</text>
+<text x="1140" y="382.56" font-size="34" text-anchor="middle">остатки</text>
+</g>
+<g id="PlanningFlows" data-level="2" data-title="Задавать доходы и платежи">
+<rect x="890" y="424" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="458.56" font-size="34" text-anchor="middle">Задавать доходы</text>
+<text x="1140" y="498.56" font-size="34" text-anchor="middle">и платежи</text>
+</g>
+<g id="PlanningBudgets" data-level="2" data-title="Настраивать бюджеты и периоды">
+<rect x="890" y="520" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="554.56" font-size="34" text-anchor="middle">Настраивать бюджеты</text>
+<text x="1140" y="594.56" font-size="34" text-anchor="middle">и периоды</text>
+</g>
+<g id="PlanningGoals" data-level="2" data-title="Задавать цели и графики взносов">
+<rect x="890" y="616" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="650.56" font-size="34" text-anchor="middle">Задавать цели</text>
+<text x="1140" y="690.56" font-size="34" text-anchor="middle">и графики взносов</text>
+</g>
+<g id="PlanningObligations" data-level="2" data-title="Формировать обязательства и напоминания">
+<rect x="890" y="712" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="746.56" font-size="34" text-anchor="middle">Формировать обязательства</text>
+<text x="1140" y="786.56" font-size="34" text-anchor="middle">и напоминания</text>
+</g>
+<g id="ForecastBalances" data-level="2" data-title="Рассчитывать прогноз и доступную сумму">
+<rect x="890" y="828" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="862.56" font-size="34" text-anchor="middle">Рассчитывать прогноз</text>
+<text x="1140" y="902.56" font-size="34" text-anchor="middle">и доступную сумму</text>
+</g>
+<g id="ForecastPurchase" data-level="2" data-title="Оценивать сумму и дату покупки">
+<rect x="890" y="924" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="958.56" font-size="34" text-anchor="middle">Оценивать сумму</text>
+<text x="1140" y="998.56" font-size="34" text-anchor="middle">и дату покупки</text>
+</g>
+<g id="ForecastScenarios" data-level="2" data-title="Сравнивать сценарии">
+<rect x="890" y="1020" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1074.56" font-size="34" text-anchor="middle">Сравнивать сценарии</text>
+</g>
+<g id="AnalyticsTotals" data-level="2" data-title="Подводить итоги доходов и расходов">
+<rect x="890" y="1136" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1170.56" font-size="34" text-anchor="middle">Подводить итоги</text>
+<text x="1140" y="1210.56" font-size="34" text-anchor="middle">доходов и расходов</text>
+</g>
+<g id="AnalyticsComparison" data-level="2" data-title="Сравнивать категории и периоды">
+<rect x="890" y="1232" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1266.56" font-size="34" text-anchor="middle">Сравнивать категории</text>
+<text x="1140" y="1306.56" font-size="34" text-anchor="middle">и периоды</text>
+</g>
+<g id="AnalyticsBudgets" data-level="2" data-title="Оценивать исполнение бюджетов">
+<rect x="890" y="1328" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1362.56" font-size="34" text-anchor="middle">Оценивать исполнение</text>
+<text x="1140" y="1402.56" font-size="34" text-anchor="middle">бюджетов</text>
+</g>
+<g id="StorageProfiles" data-level="2" data-title="Разделять данные профилей">
+<rect x="890" y="1444" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1478.56" font-size="34" text-anchor="middle">Разделять данные</text>
+<text x="1140" y="1518.56" font-size="34" text-anchor="middle">профилей</text>
+</g>
+<g id="StoragePersistence" data-level="2" data-title="Загружать и сохранять учёт">
+<rect x="890" y="1540" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1574.56" font-size="34" text-anchor="middle">Загружать</text>
+<text x="1140" y="1614.56" font-size="34" text-anchor="middle">и сохранять учёт</text>
+</g>
+<g id="StorageTransfer" data-level="2" data-title="Импортировать и экспортировать данные">
+<rect x="890" y="1636" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1670.56" font-size="34" text-anchor="middle">Импортировать</text>
+<text x="1140" y="1710.56" font-size="34" text-anchor="middle">и экспортировать данные</text>
+</g>
+<g id="StorageProtection" data-level="2" data-title="Защищать данные и доступ">
+<rect x="890" y="1732" width="500" height="86" fill="white" stroke="#333" stroke-width="2"/>
+<text x="1140" y="1766.56" font-size="34" text-anchor="middle">Защищать данные</text>
+<text x="1140" y="1806.56" font-size="34" text-anchor="middle">и доступ</text>
+</g>
+</g></svg>
