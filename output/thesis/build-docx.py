@@ -203,6 +203,7 @@ i=0
 while i<len(lines):
  line=lines[i].strip()
  if not line:i+=1;continue
+ if line.startswith('<!--') and line.endswith('-->'):i+=1;continue
  if line.startswith('#'):
   m=re.match(r'^(#{1,3})\s+(.+)',line)
   if len(m.group(1))==1:
@@ -217,7 +218,7 @@ while i<len(lines):
    p.paragraph_format.first_line_indent=Mm(0)
    p.paragraph_format.page_break_before=(len(m.group(1))==1)
    p.paragraph_format.space_before=Pt(0)
-   p.paragraph_format.space_after=Pt(4)
+   p.paragraph_format.space_after=Pt(10)
    p.paragraph_format.line_spacing=1
   if len(DOC.paragraphs)==1:p.paragraph_format.page_break_before=False
   i+=1;continue
@@ -260,10 +261,10 @@ while i<len(lines):
    p.paragraph_format.keep_with_next=True
    p.paragraph_format.keep_together=True
    p.paragraph_format.space_before=Pt(8)
-   p.paragraph_format.space_after=Pt(4)
-  if re.match(r'^\d+\. ',text):
-   p.paragraph_format.left_indent=Mm(10)
-   p.paragraph_format.first_line_indent=Mm(-10)
+   p.paragraph_format.space_after=Pt(10)
+  if re.match(r'^\d+\) ',text):
+   p.paragraph_format.left_indent=Mm(0)
+   p.paragraph_format.first_line_indent=Mm(10)
    p.paragraph_format.keep_together=True
  j=i
  while j<len(lines) and not lines[j].strip(): j+=1
@@ -272,12 +273,17 @@ while i<len(lines):
  if j<len(lines) and re.match(r'!\[.*\]\(figures/(?:01-ui|02-use-cases-|02-activity-)[^)]*\)',lines[j].strip()):
   p.paragraph_format.keep_with_next=True
   p.paragraph_format.keep_together=True
+ # Keep compact references for the dictionary and forecast input table.
+ # Longer introductions may start on the preceding page.
+ if j<len(lines) and lines[j].strip().startswith('Таблица ') and table_no+1 in (2,3,4,6):
+  p.paragraph_format.keep_with_next=True
+  p.paragraph_format.keep_together=True
  if in_chapter3 and j<len(lines) and lines[j].strip().startswith('$$'):
   p.paragraph_format.keep_with_next=True
  if p._p.getprevious() is not None and p._p.getprevious().tag==qn('w:tbl'):
   p.paragraph_format.space_before=Pt(6)
  if re.match(r'^\d+\. ',text) and 'дата обращения:' in text:
-  p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.LEFT
+  p.paragraph_format.first_line_indent=Mm(10);p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.JUSTIFY
   p.paragraph_format.space_after=Pt(6);p.paragraph_format.keep_together=True
 
 output=ROOT/'thesis.docx'

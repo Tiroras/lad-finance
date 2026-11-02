@@ -1,12 +1,12 @@
 {
   "checked_on": "2026-11-03",
-  "project_commit": "8c7210de060162b5fc396ed79591361f61585836",
+  "project_commit": "d8505e82fac9166deb8f276fe76f68feb8f11136",
   "documents": {
     "thesis": {
-      "pages": 129,
-      "docx_sha256": "35533e4fa99c0ed6325267ca86f0637198463e48bc7fc9cc5010d0de641124f1",
-      "pdf_sha256": "b2c07421ef1157a7ad1fca082a0cb0c16fcac2979b4b5d5c862064edb2d79299",
-      "markdown_sha256": "90df1dd219054413d77a20892b43ab556f70cf19b3a4a725992d841b59cacf30",
+      "pages": 135,
+      "docx_sha256": "30410936068882842058dcb236a7b66aab7cacfafbf0016f17e8f5a9079db342",
+      "pdf_sha256": "c37ede4b29bde32a349b46ad98457f20394abbb702ae318dec98f4739582acbe",
+      "markdown_sha256": "bbfe3d84f75a15e02bcb5c2f6d3c98f1746ce9277b50ef4f75db480a0e2d33a4",
       "figures": 33,
       "logical_tables": 6,
       "table_parts": 8,
@@ -17,32 +17,32 @@
           "body_sha256": "2f3fb842f2e7749c7d5326ce93e0c89511dd61590b82e2a11bb922bdf5ee5d00"
         },
         "chapter_1": {
-          "pages": [3, 41],
-          "body_sha256": "a1504a1182153db7a6c8a1d73362dbcbd11e6e6d31d64e742e3756aa7cd256b6"
+          "pages": [3, 45],
+          "body_sha256": "ad66d3bc633476d5ac5197cf91c6ffe159557b60161f62169673da51ae6b631e"
         },
         "chapter_2": {
-          "pages": [42, 67],
-          "body_sha256": "6d649627d7784f69853c1aa106ba3010f6d6b1d379448b07cb61e236487cde8a"
+          "pages": [46, 72],
+          "body_sha256": "8ebb103b90567315f8842ff1d962b226097fcad7b53cfda360605968982ee2d8"
         },
         "chapter_3": {
-          "pages": [68, 105],
-          "body_sha256": "020e4230aed0dda49e10e9cd9361d9570da0cb9456fd34a160f4ebd5709c371b"
+          "pages": [73, 111],
+          "body_sha256": "9426748d75f22e3242567fa065ba5878fa4741db70afd976f1cd275447dcf230"
         },
         "conclusion": {
-          "pages": [106, 108],
+          "pages": [112, 114],
           "body_sha256": "276165cb3e346e246af3b4dca58e286ccdfd860934633c8275632eaa65a07072"
         },
         "bibliography": {
-          "pages": [109, 111],
-          "body_sha256": "e78e8ae8a88a40577e435d95975d0102285df37cbe0e46cc43dd3a366e484990"
+          "pages": [115, 116],
+          "body_sha256": "67fb0651512f5be3b88ac12e66de16534b7cbc8d8ce507857479eacd69dae586"
         },
         "appendix_1": {
-          "pages": [112, 113],
-          "body_sha256": "1b65b4972e68aa366ae5e15af883647bf913e21c3faa2d4a9a9c4e29b1750da8"
+          "pages": [117, 118],
+          "body_sha256": "44a98ea84f942ee098a574b11f41df03bbec5caf4d78e04b6765184056b0e34d"
         },
         "appendix_2": {
-          "pages": [114, 129],
-          "body_sha256": "92af676b355802e634ad41eb2afff457228dd1913cb12cbb7fae4c38b03b203e"
+          "pages": [119, 135],
+          "body_sha256": "f314a46fdca6129946ca9f4ee24a02d34bdaa94ec641ee97b436fa9a5329579a"
         }
       },
       "prose_fonts": [
@@ -51,39 +51,39 @@
         "TimesNewRomanPSMT"
       ],
       "caption_pages": {
-        "1": [27],
-        "2": [28],
-        "3": [29],
-        "4": [30],
-        "5": [31],
-        "6": [32],
-        "7": [33],
-        "8": [34],
-        "9": [35],
-        "10": [36],
-        "11": [44],
-        "12": [46],
-        "13": [48],
-        "14": [50],
-        "15": [52],
-        "16": [54],
-        "17": [60],
-        "18": [63],
-        "19": [65],
-        "20": [67],
-        "21": [71],
-        "22": [75],
-        "23": [79],
-        "24": [83],
-        "25": [86],
-        "26": [89],
-        "27": [94],
-        "28": [96],
-        "29": [97],
-        "30": [99],
-        "31": [103],
-        "1.1": [112],
-        "1.2": [113]
+        "1": [29],
+        "2": [30],
+        "3": [31],
+        "4": [32],
+        "5": [33],
+        "6": [34],
+        "7": [35],
+        "8": [36],
+        "9": [37],
+        "10": [38],
+        "11": [48],
+        "12": [50],
+        "13": [52],
+        "14": [54],
+        "15": [56],
+        "16": [58],
+        "17": [65],
+        "18": [68],
+        "19": [70],
+        "20": [72],
+        "21": [76],
+        "22": [80],
+        "23": [84],
+        "24": [88],
+        "25": [91],
+        "26": [94],
+        "27": [99],
+        "28": [102],
+        "29": [103],
+        "30": [105],
+        "31": [109],
+        "1.1": [117],
+        "1.2": [118]
       },
       "table_continuation_pages": [
         {
@@ -107,6 +107,8 @@
     "thesis:paragraphs_match_markdown": true,
     "thesis:nine_use_cases_in_requirements_and_implementation": true,
     "thesis:use_case_references_resolve": true,
+    "thesis:bibliography_count_and_first_citation_order": true,
+    "thesis:transaction_flow_has_one_shared_end": true,
     "thesis:primary_use_cases_match_requirements": true,
     "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
     "thesis:six_detailed_use_case_views_in_section_2_1": true,
@@ -138,21 +140,10 @@
     "thesis:section_starts": true,
     "thesis:introduction_page_limit": true
   },
-  "checks_passed": 35,
-  "checks_total": 35,
+  "checks_passed": 37,
+  "checks_total": 37,
   "visual_review": {
-    "required": false,
-    "checked_on": "2026-11-03",
-    "bundled_reviewed_pages": [
-      56, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
-      126, 127, 128, 129
-    ],
-    "pages_reviewed_pages": [
-      112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
-      127, 128, 129
-    ],
-    "unchanged_pixel_identical_pages": 110,
-    "result": "Все 19 новых или изменённых страниц просмотрены; остальные 110 пиксельно идентичны ранее проверенной редакции. В Pages просмотрены приложения 1 и 2 целиком. Дефектов вёрстки не обнаружено."
+    "required": true
   },
   "notes": [
     "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",

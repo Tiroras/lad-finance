@@ -111,22 +111,22 @@
   },
   {
     "number": 13,
-    "key": "requirements",
+    "key": "react",
     "metadata": [
-      "System Engineering Handbook: Appendix",
-      "NASA",
-      "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
-      "Приложения C, D."
+      "Thinking in React",
+      "React",
+      "https://react.dev/learn/thinking-in-react",
+      ""
     ]
   },
   {
     "number": 14,
-    "key": "ynab_export",
+    "key": "rn",
     "metadata": [
-      "How to Export Plan Data",
-      "YNAB",
-      "https://support.ynab.com/en_us/how-to-export-plan-data-Sy_CouWA9",
-      "18.08.2026."
+      "Core Components and APIs",
+      "React Native",
+      "https://reactnative.dev/docs/components-and-apis",
+      ""
     ]
   },
   {
@@ -141,6 +141,26 @@
   },
   {
     "number": 16,
+    "key": "ts",
+    "metadata": [
+      "The TypeScript Handbook",
+      "TypeScript",
+      "https://www.typescriptlang.org/docs/handbook/intro.html",
+      ""
+    ]
+  },
+  {
+    "number": 17,
+    "key": "requirements",
+    "metadata": [
+      "System Engineering Handbook: Appendix",
+      "NASA",
+      "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+      "Приложения C, D."
+    ]
+  },
+  {
+    "number": 18,
     "key": "securestore",
     "metadata": [
       "Expo SecureStore. SDK 58",
@@ -150,7 +170,7 @@
     ]
   },
   {
-    "number": 17,
+    "number": 19,
     "key": "uml",
     "metadata": [
       "Unified Modeling Language. Version 2.5.1",
@@ -160,32 +180,12 @@
     ]
   },
   {
-    "number": 18,
-    "key": "rn",
-    "metadata": [
-      "Core Components and APIs",
-      "React Native",
-      "https://reactnative.dev/docs/components-and-apis",
-      ""
-    ]
-  },
-  {
-    "number": 19,
-    "key": "react",
-    "metadata": [
-      "Thinking in React",
-      "React",
-      "https://react.dev/learn/thinking-in-react",
-      ""
-    ]
-  },
-  {
     "number": 20,
-    "key": "ts",
+    "key": "expo_internal_distribution",
     "metadata": [
-      "The TypeScript Handbook",
-      "TypeScript",
-      "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "Internal distribution",
+      "Expo",
+      "https://docs.expo.dev/build/internal-distribution/",
       ""
     ]
   }

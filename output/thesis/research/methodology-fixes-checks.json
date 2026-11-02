@@ -1,0 +1,82 @@
+{
+  "checked_on": "2026-11-03",
+  "docx_sha256": "c625f30364deb6d9c1c569226dcb110c5725c500ba9e9d4593376ca068748aff",
+  "markdown_sha256": "b03a3b999bfd2774aa9fe185758df5a7b57054ada49b561834e426e8cd7cb909",
+  "bundled_pdf_sha256": "45484e0a3094e8ee6dc76f81d1f813784c83cbc7355441ddcae33f107a50786c",
+  "pages_pdf_sha256": "29afc37da1dac1757028ee871ab817bd0b2abb2ec3a43ff3c62bbcc3fb34ef6e",
+  "scope": [
+    "bibliography",
+    "1.1.2",
+    "1.3.1",
+    "1.4.2",
+    "2.2",
+    "3.1.4–3.9.4",
+    "appendix_2_installation",
+    "figure_21"
+  ],
+  "checks": {
+    "20_sources": true,
+    "introduction_unchanged": true,
+    "only_figure21_changed": true,
+    "pages_input_equals_current_docx": true,
+    "pages_134": true,
+    "pages_portrait_a4": true,
+    "pages_no_blank_pages": true,
+    "pages_continuous_page_numbers": true,
+    "all_table_cells_present_in_pages": true
+  },
+  "domain_examples": {
+    "scenarios": 9,
+    "assertions": 111,
+    "result": "passed",
+    "execution": "domain-only; app not launched",
+    "evidence": "examples/results.json"
+  },
+  "render": {
+    "bundled_pages": 134,
+    "pages_pages": 134,
+    "introduction_pages": [1, 2],
+    "appendix_1_pages": [116, 117],
+    "appendix_2_pages": [118, 134]
+  },
+  "visual_review": {
+    "first_pass_changed_pages": [
+      8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+      27, 28, 29, 30, 42, 43, 44, 45, 46, 47, 48, 49, 62, 63, 64, 65, 66, 69,
+      75, 78, 79, 83, 84, 85, 86, 87, 91, 95, 96, 97, 98, 99, 103, 104, 105,
+      106, 109, 113, 117, 118, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130,
+      131, 132, 133, 134, 135, 136, 137
+    ],
+    "v3_changed_pages_reviewed": [23, 24, 25, 26, 27, 28, 62, 95, 96],
+    "final_changed_pages_reviewed": [26, 27, 28],
+    "final_other_pages_pixel_identical_to_reviewed_v3": 131,
+    "pages_reviewed_pages": [
+      23, 24, 25, 26, 27, 40, 62, 76, 85, 86, 87, 94, 95, 101, 118, 119, 120
+    ],
+    "pages_final_rechecked": [26, 27],
+    "resolved": [
+      "Large gaps before dictionary tables in bundled render",
+      "Nearly empty page before adjustment diagram",
+      "Clipped last word in table4 in Pages"
+    ],
+    "extraction_exceptions_manually_verified": [
+      "Plan conditions paragraph across Pages26–27",
+      "GoalRelease paragraph across Pages86–87; formula reordered only by extraction"
+    ],
+    "result": "No unresolved clipping, overlap, blank pages or detached captions on inspected pages; all final bundled page bodies covered by visual review or pixel identity."
+  },
+  "limitations": [
+    "No mobile UI, native device, cloud build or publication was performed.",
+    "Minimum OS versions are configuration constraints, not device performance measurements."
+  ],
+  "maintenance": {
+    "new_link_occurrences_checked": 24,
+    "new_missing_local_targets": [],
+    "preexisting_missing_archive_link_occurrences": 23,
+    "all_thesis_figure_paths_exist": true,
+    "prettier": "passed",
+    "python_syntax": "passed",
+    "git_diff_check": "passed",
+    "final_hashes_match": true
+  }
+}

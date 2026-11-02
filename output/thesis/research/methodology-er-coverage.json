@@ -1,0 +1,102 @@
+{
+  "method": "Manual semantic mapping of all model relations to draft paragraphs; set comparison verifies no omitted relation IDs.",
+  "relation_count": 75,
+  "node_count": 33,
+  "draft_words": 1157,
+  "previous_words": 823,
+  "added_words": 334,
+  "paragraphs": [
+    {
+      "paragraph": 3,
+      "starts": "Финансовое состояние `FinanceState` одного профиля должно объединять шестнадцать коллекций и настройки `settin",
+      "edges": ["R1", "R2", "R3", "R6"]
+    },
+    {
+      "paragraph": 4,
+      "starts": "Справочник `CURRENCIES[CurrencyCode]` задаёт код, точность и обозначение валюты. На одну его запись могут ссыл",
+      "edges": ["R4", "R5", "R7", "R8", "R9"]
+    },
+    {
+      "paragraph": 5,
+      "starts": "Операция `Transaction` относится к одному основному счёту: получателю дохода либо источнику расхода или перево",
+      "edges": ["R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17"]
+    },
+    {
+      "paragraph": 6,
+      "starts": "Для категории предусматривается не более одного родителя и несколько подкатегорий; циклы и третий уровень запр",
+      "edges": ["R18", "R19", "R20", "R21", "R22"]
+    },
+    {
+      "paragraph": 7,
+      "starts": "План дохода `PlannedIncome`, платёж `Recurring` и цель `Goal` могут содержать несколько сохранённых версий `In",
+      "edges": ["R23", "R24", "R25", "R28", "R29", "R30", "R31", "R32", "R33"]
+    },
+    {
+      "paragraph": 8,
+      "starts": "План дохода может включать уточнения поступлений `IncomeOccurrenceOverride`, каждое принадлежащее только ему. ",
+      "edges": ["R26", "R27", "R35", "R36", "R37", "R38", "R39"]
+    },
+    {
+      "paragraph": 9,
+      "starts": "Цель может объединять несколько переводов-взносов; перевод относится не более чем к одной цели. Накопления обе",
+      "edges": ["R34", "R40", "R41", "R42", "R43", "R44", "R45", "R46"]
+    },
+    {
+      "paragraph": 10,
+      "starts": "Параметры прогноза могут задавать один повседневный счёт ежедневных расходов и содержать назначения взносов, п",
+      "edges": [
+        "R64",
+        "R65",
+        "R66",
+        "R67",
+        "R68",
+        "R69",
+        "R70",
+        "R71",
+        "R72",
+        "R73",
+        "R74",
+        "R75"
+      ]
+    },
+    {
+      "paragraph": 11,
+      "starts": "Сценарий `SavedScenario` может содержать несколько изменений `ScenarioChange` и разовых событий `ScenarioEvent",
+      "edges": ["R47", "R48", "R49", "R50", "R51", "R52", "R53"]
+    },
+    {
+      "paragraph": 12,
+      "starts": "Правило распознавания `CategoryRule` указывает одну категорию, которую могут выбирать несколько правил. Шаблон",
+      "edges": [
+        "R54",
+        "R55",
+        "R56",
+        "R57",
+        "R58",
+        "R59",
+        "R60",
+        "R61",
+        "R62",
+        "R63"
+      ]
+    }
+  ],
+  "code_sources": [
+    "src/domain/types.ts",
+    "src/domain/incomes.ts",
+    "src/domain/finance.ts",
+    "src/domain/accountForecastSettings.ts",
+    "src/domain/automation.ts",
+    "src/domain/budgets.ts",
+    "src/domain/currency.ts",
+    "src/domain/backup.ts"
+  ],
+  "notes": [
+    "Legend describes the actual graphical marks in er-diagram.mjs mark().",
+    "IncomeOccurrenceOverride.versionId is required as a key; the corresponding saved version can be absent because legacy conditions are virtual.",
+    "Draft does not claim missing account references are permitted in current plans.",
+    "Only figure 21 assets changed; PNG inspected at full resolution."
+  ],
+  "text_source": "../thesis.md, section 2.2",
+  "checked_on": "2026-11-03"
+}

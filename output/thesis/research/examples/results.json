@@ -1,0 +1,127 @@
+{
+  "checkedOn": "2026-11-03",
+  "mode": "domain-only; app not launched",
+  "execution": "Direct calls to current TypeScript domain functions on independent synthetic in-memory state; no UI, device, storage, server or user financial records.",
+  "monetaryUnit": "Integer minor units; RUB values explicitly marked otherwise.",
+  "command": "node --import tsx output/thesis/research/examples/prove-examples.mts",
+  "scenarios": {
+    "UC-01": {
+      "purchaseBalance": 875000,
+      "refundBalance": 900000,
+      "contributions": {
+        "groceries": 80000,
+        "home": 20000
+      },
+      "totals": {
+        "income": 0,
+        "expense": 100000
+      },
+      "invalidSplitError": "Сумма частей должна совпадать с общей суммой покупки.",
+      "inputUnchanged": true
+    },
+    "UC-02": {
+      "balances": {
+        "card": 1090000,
+        "usd": 10000
+      },
+      "totals": {
+        "income": 0,
+        "expense": 10000
+      },
+      "transactions": 2,
+      "archivedFeeError": "Категория в архиве. Выберите активную категорию.",
+      "inputUnchanged": true
+    },
+    "UC-03": {
+      "balances": {
+        "card": 850000,
+        "cash": 0,
+        "savings": 350000
+      },
+      "tripSaved": 250000,
+      "otherSaved": 50000,
+      "excessiveContributionError": "Пополнение превышает оставшуюся сумму цели.",
+      "inputUnchanged": true
+    },
+    "UC-04": {
+      "balances": {
+        "card": 920000,
+        "cash": 0,
+        "savings": 280000
+      },
+      "tripSaved": 180000,
+      "historicTripSaved": 250000,
+      "releaseCount": 1,
+      "transferLinked": true,
+      "excessiveWithdrawalError": "Нельзя вывести больше, чем накоплено в цели.",
+      "inputUnchanged": true
+    },
+    "UC-05": {
+      "reconciledBalance": 950000,
+      "adjustmentCount": 0,
+      "reconciliationCurrentBeforeEdit": true,
+      "balanceAfterEdit": 930000,
+      "reconciliationCurrentAfterEdit": false,
+      "inputUnchanged": true
+    },
+    "UC-06": {
+      "adjustment": -12345,
+      "balanceBeforeDate": 1000000,
+      "balanceAtDate": 987655,
+      "openingBalance": 1000000,
+      "transactions": 0,
+      "adjustmentsAfterRepeat": 1,
+      "reconciliationsAfterRepeat": 2,
+      "staleSignatureError": "Операции изменились. Проверьте разницу заново.",
+      "inputUnchanged": true
+    },
+    "UC-07": {
+      "dailyBalancesRUB": {
+        "2026-10-20": 40000,
+        "2026-10-24": 38000,
+        "2026-10-25": 47500,
+        "2026-10-27": 46500,
+        "2026-10-28": 28000,
+        "2026-11-18": 17500
+      },
+      "lastAccountA": 750000,
+      "lastAccountB": 1000000,
+      "dailyExpenseCount": 29,
+      "minimum": 1750000,
+      "accountShortfallExample": {
+        "total": 800000,
+        "accountA": -100000
+      },
+      "inputUnchanged": true
+    },
+    "UC-08": {
+      "maximum": 750000,
+      "earliest": "2026-10-20",
+      "tooExpensiveEarliest": null,
+      "accountAAfterMaximum": 0,
+      "accountAAfterExcess": -1,
+      "available": 1450000,
+      "daily": 290000,
+      "afterPurchase": 700000,
+      "dailyAfter": 140000,
+      "unassignedMaximum": 0,
+      "highReserveMaximum": 0,
+      "inputUnchanged": true
+    },
+    "UC-09": {
+      "closing": 1950000,
+      "delta": 200000,
+      "minimum": 1700000,
+      "minimumDate": "2026-11-03",
+      "afterIncome": 2650000,
+      "incomeOriginalDate": "2026-10-25",
+      "scenarioCountAfterCopy": 2,
+      "disabledEventPreserved": true,
+      "recalculatedBothAfterNewFact": 1940000,
+      "realPlansUnchanged": true,
+      "inputUnchanged": true
+    }
+  },
+  "assertions": 111,
+  "passedScenarios": 9
+}

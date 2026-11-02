@@ -1,0 +1,254 @@
+{
+  "checked_on": "2026-11-03",
+  "scope": "Пункты 2–7 проверки оформления; пункт 1 исключён пользователем",
+  "files": {
+    "output/thesis/thesis.md": "bbfe3d84f75a15e02bcb5c2f6d3c98f1746ce9277b50ef4f75db480a0e2d33a4",
+    "output/thesis/thesis.docx": "30410936068882842058dcb236a7b66aab7cacfafbf0016f17e8f5a9079db342",
+    "output/thesis/build-docx.py": "50e1a12a85761b45a445ad93133ccbab1420e69f6e2f0c8af74d9eb9c4ec9cb0"
+  },
+  "checks": {
+    "introduction_unchanged": true,
+    "no_title_or_contents_added": true,
+    "formula_source_unchanged": true,
+    "eleven_editable_formulas_unchanged": true,
+    "every_formula_followed_by_explanation": true,
+    "formula_spacing_and_attachment": true,
+    "table_references_immediately_before_captions": true,
+    "twenty_bibliography_entries_justified": true,
+    "bibliography_first_line_1cm": true,
+    "seventy_seven_steps_with_parentheses": true,
+    "steps_first_line_1cm_left_zero": true,
+    "manual_text_unchanged_except_markers": true,
+    "appendix_titles_10pt_after": true,
+    "appendices_remain_numbered_and_centered": true,
+    "appendix_2_reference_in_main_text": true,
+    "heading_abbreviations_expanded": true,
+    "singular_table_one_criteria": true,
+    "formatter_comments_not_printed": true,
+    "all_33_embedded_images_unchanged": true,
+    "uc_1_algorithms_and_examples_unchanged": true,
+    "uc_2_algorithms_and_examples_unchanged": true,
+    "uc_3_algorithms_and_examples_unchanged": true,
+    "uc_4_algorithms_and_examples_unchanged": true,
+    "uc_5_algorithms_and_examples_unchanged": true,
+    "uc_6_algorithms_and_examples_unchanged": true,
+    "uc_7_algorithms_and_examples_unchanged": true,
+    "uc_8_algorithms_and_examples_unchanged": true,
+    "uc_9_algorithms_and_examples_unchanged": true,
+    "bundled_references_on_table_pages": true,
+    "bundled_no_blank_pages": true,
+    "Pages_references_on_table_pages": true,
+    "Pages_no_blank_pages": true,
+    "Pages_checked_exact_final_input": true,
+    "all_final_page_bodies_visually_verified": true
+  },
+  "passed": 34,
+  "total": 34,
+  "renders": {
+    "bundled": {
+      "page_count": 135,
+      "tables_2_to_4": [
+        {
+          "table": 2,
+          "reference_pages": [24],
+          "caption_pages": [24]
+        },
+        {
+          "table": 3,
+          "reference_pages": [25],
+          "caption_pages": [25]
+        },
+        {
+          "table": 4,
+          "reference_pages": [26],
+          "caption_pages": [26]
+        }
+      ],
+      "pdf_sha256": "c37ede4b29bde32a349b46ad98457f20394abbb702ae318dec98f4739582acbe"
+    },
+    "Pages": {
+      "page_count": 134,
+      "tables_2_to_4": [
+        {
+          "table": 2,
+          "reference_pages": [24],
+          "caption_pages": [24]
+        },
+        {
+          "table": 3,
+          "reference_pages": [25],
+          "caption_pages": [25]
+        },
+        {
+          "table": 4,
+          "reference_pages": [26],
+          "caption_pages": [26]
+        }
+      ],
+      "pdf_sha256": "892d1bd1111f485964e1b7337b6b6d3a99a615cb1547236ed6027d4332d73b97"
+    }
+  },
+  "visual_review": {
+    "final_pages": 135,
+    "mapped_to_reviewed_bodies": 135,
+    "v1_reviewed_pages": [
+      5, 6, 7, 23, 24, 25, 26, 27, 28, 39, 40, 41, 73, 74, 75, 78, 79, 82, 86,
+      87, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 104, 105, 106,
+      107, 108, 115, 116, 117, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
+      129, 130, 131, 132, 133, 134
+    ],
+    "v2_reviewed_pages": [6, 39, 100, 101, 102],
+    "final_unreviewed_pages": [],
+    "Pages_final": {
+      "page_count_v1": 134,
+      "page_count_v3": 134,
+      "unchanged_pages": {
+        "24": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "25": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "26": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "97": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "103": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "107": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "114": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "115": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "116": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "118": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "119": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        },
+        "120": {
+          "size": true,
+          "chars": true,
+          "lines": true,
+          "rects": true,
+          "images": true
+        }
+      },
+      "tables2to4": [
+        {
+          "table": 2,
+          "page": 24,
+          "reference_and_caption": [
+            {
+              "text": "Простые элементы финансовых данных приведены в таблице 2.",
+              "top": 58.101,
+              "bottom": 72.101
+            },
+            {
+              "text": "Таблица 2 – Общие элементы финансовых данных",
+              "top": 87.80359999999996,
+              "bottom": 101.80359999999996
+            }
+          ],
+          "page_text_unchanged": true
+        },
+        {
+          "table": 3,
+          "page": 25,
+          "reference_and_caption": [
+            {
+              "text": "Состав записей фактического учёта приведён в таблице 3.",
+              "top": 58.101,
+              "bottom": 72.101
+            },
+            {
+              "text": "Таблица 3 – Составные элементы фактического учёта",
+              "top": 87.80359999999996,
+              "bottom": 101.80359999999996
+            }
+          ],
+          "page_text_unchanged": true
+        },
+        {
+          "table": 4,
+          "page": 26,
+          "reference_and_caption": [
+            {
+              "text": "Состав записей планирования приведён в таблице 4.",
+              "top": 58.101,
+              "bottom": 72.101
+            },
+            {
+              "text": "Таблица 4 – Составные элементы планирования",
+              "top": 87.80359999999996,
+              "bottom": 101.80359999999996
+            }
+          ],
+          "page_text_unchanged": true
+        }
+      ],
+      "visual_review": {
+        "pages": [5, 6, 7, 39, 40],
+        "each_png_opened": true,
+        "findings": [],
+        "table1": "Reference on p5; title and first part p6; continuation with numbered columns p7. No blank pages or clipping.",
+        "table5": "Heading and introductory reference on p39; complete table begins p40. No detached heading or clipping."
+      },
+      "reviewed_docx_sha256": "30410936068882842058dcb236a7b66aab7cacfafbf0016f17e8f5a9079db342"
+    }
+  }
+}

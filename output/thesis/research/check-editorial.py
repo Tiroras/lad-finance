@@ -69,7 +69,7 @@ def sources():
 def paragraphs(md):
     result = []
     for block in re.split(r'\n\s*\n', md.strip()):
-        if block.startswith(('|', '$$')):
+        if block.startswith(('|', '$$', '<!--')):
             continue
         image = re.fullmatch(r'!\[(.*?)\]\([^\n]+\)', block)
         value = image[1] if image else re.sub(r'^#{1,3} ', '', block)
@@ -142,6 +142,20 @@ def main():
               and re.findall(r'^(UC-\d+)\. Цель', md, re.M) == expected_ids
               and re.findall(r'Прецедент (UC-\d+)', md) == expected_ids)
         check(prefix + 'use_case_references_resolve', set(re.findall(r'UC-\d+', md)) == set(expected_ids))
+        before_sources, after_sources = md.split('# Список использованных источников', 1)
+        bibliography, appendices = after_sources.split('# Приложение 1', 1)
+        source_numbers = [int(number) for number in re.findall(r'^(\d+)\. ', bibliography, re.M)]
+        cited_numbers = [int(number) for number in re.findall(r'\[(\d+)\]', before_sources + appendices)]
+        first_citations = list(dict.fromkeys(cited_numbers))
+        check(prefix + 'bibliography_count_and_first_citation_order',
+              10 <= len(source_numbers) <= 20 and source_numbers == list(range(1, len(source_numbers) + 1))
+              and first_citations == source_numbers)
+        transaction_svg = ET.parse(ROOT / 'figures/chapter3-flow-transaction.svg').getroot()
+        ends = [node.get('data-node') for node in transaction_svg.iter()
+                if node.get('data-kind') == 'term' and 'Конец' in ''.join(node.itertext())]
+        check(prefix + 'transaction_flow_has_one_shared_end', ends == ['end'] and any(
+            node.get('data-from') == 'error' and node.get('data-to') == 'end'
+            for node in transaction_svg.iter()))
         diagram_names = ['02-use-cases-' + suffix for suffix in [
             'operations', 'exchange', 'goals', 'reconciliation', 'purchase', 'scenarios']]
         models = [(ROOT / f'figures/{name}.puml').read_text() for name in diagram_names]

@@ -142,8 +142,7 @@ def transaction_flow():
     out=d.node('output','io','Вернуть состояние с операцией;\nпересчитать остатки и аналитику',270,770,440,76)
     end=d.node('end','term','Конец',270,890,220,40)
     err=d.node('error','io','Ошибка;\nучёт не изменён',660,622,230,96)
-    ee=d.node('end-error','term','Конец',660,770,200,40)
-    for a,b in [(s,i),(i,k),(check,valid),(out,end),(err,ee)]:
+    for a,b in [(s,i),(i,k),(check,valid),(out,end)]:
         if a is check:d.edge(a,b,a.bottom,(400,596),(270,596),b.top)
         else:d.edge(a,b)
     d.edge(k,income,k.left,(140,243),income.top,condition='Доход',label=(145,220))
@@ -154,6 +153,7 @@ def transaction_flow():
     d.edge(refund,check,refund.bottom,(660,454),(400,454),check.top)
     d.edge(valid,out,condition='Да',label=(295,745))
     d.edge(valid,err,valid.right,err.left,condition='Нет',label=(518,652))
+    d.edge(err,end,err.bottom,(660,910),end.right)
     return d
 
 
