@@ -215,6 +215,8 @@ while i<len(lines):
    p.paragraph_format.first_line_indent=Mm(0)
    p.paragraph_format.page_break_before=(len(m.group(1))==1)
    p.paragraph_format.space_before=Pt(0)
+   p.paragraph_format.space_after=Pt(4)
+   p.paragraph_format.line_spacing=1
   if len(DOC.paragraphs)==1:p.paragraph_format.page_break_before=False
   i+=1;continue
  if line.startswith('$$'):

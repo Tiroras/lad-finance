@@ -1,6 +1,6 @@
 {
   "scope": "Independent documentation-model audit; no app tests executed",
-  "model_sha256": "61b2b0d1ed8f0561f42633b3ca9f87bfaeec84be28dc203b176ed50e2783b188",
+  "model_sha256": "27ddb932a0ac7a40d7e19daa5d419e09b131931259ddf1671539778a2d802b51",
   "checks": [
     {
       "name": "33 distinct entity/configuration/value-record nodes",
@@ -11,171 +11,6 @@
       "name": "75 distinct relationships",
       "passed": true,
       "detail": ""
-    },
-    {
-      "name": "key:Profile",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Settings",
-      "passed": true,
-      "detail": "'профиль'; expected 'профиль'"
-    },
-    {
-      "name": "key:Forecast",
-      "passed": true,
-      "detail": "'профиль'; expected 'профиль'"
-    },
-    {
-      "name": "key:Currency",
-      "passed": true,
-      "detail": "'код'; expected 'код'"
-    },
-    {
-      "name": "key:Rate",
-      "passed": true,
-      "detail": "'профиль + код'; expected 'профиль + код'"
-    },
-    {
-      "name": "key:Account",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Category",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Transaction",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Split",
-      "passed": true,
-      "detail": "'операция + категория'; expected 'операция + категория'"
-    },
-    {
-      "name": "key:Debt",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Adjustment",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Reconciliation",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Goal",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:GoalVersion",
-      "passed": true,
-      "detail": "'цель + id'; expected 'цель + id'"
-    },
-    {
-      "name": "key:Payment",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:PaymentVersion",
-      "passed": true,
-      "detail": "'платёж + id'; expected 'платёж + id'"
-    },
-    {
-      "name": "key:Income",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:IncomeVersion",
-      "passed": true,
-      "detail": "'доход + id'; expected 'доход + id'"
-    },
-    {
-      "name": "key:IncomeOverride",
-      "passed": true,
-      "detail": "'план + версия + дата'; expected 'план + версия + дата'"
-    },
-    {
-      "name": "key:Cycle",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Release",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Budget",
-      "passed": true,
-      "detail": "'categoryId'; expected 'categoryId'"
-    },
-    {
-      "name": "key:BudgetVersion",
-      "passed": true,
-      "detail": "'бюджет + id'; expected 'бюджет + id'"
-    },
-    {
-      "name": "key:Scenario",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Change",
-      "passed": true,
-      "detail": "'сценарий + вид + источник'; expected 'сценарий + вид + источник'"
-    },
-    {
-      "name": "key:Event",
-      "passed": true,
-      "detail": "'сценарий + id'; expected 'сценарий + id'"
-    },
-    {
-      "name": "key:Rule",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:Template",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:TemplateSplit",
-      "passed": true,
-      "detail": "'шаблон + категория'; expected 'шаблон + категория'"
-    },
-    {
-      "name": "key:Csv",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
-    },
-    {
-      "name": "key:GoalAssignment",
-      "passed": true,
-      "detail": "'goalId'; expected 'goalId'"
-    },
-    {
-      "name": "key:Repayment",
-      "passed": true,
-      "detail": "'вид + источник'; expected 'вид + источник'"
-    },
-    {
-      "name": "key:Transfer",
-      "passed": true,
-      "detail": "'id'; expected 'id'"
     },
     {
       "name": "relationship:R1",
@@ -588,12 +423,2337 @@
       "detail": ""
     },
     {
-      "name": "geometry:four tiles in a complete 2 by 2 arrangement",
+      "name": "code:Profile:exact TypeScript type",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "geometry:equal A4-fragment scale and no inter-tile gaps",
+      "name": "code:Profile:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Profile:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Profile:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Profile:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Profile:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Settings:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Settings:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Settings:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Settings:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Settings:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Settings:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Forecast:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Forecast:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Forecast:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Forecast:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Forecast:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Forecast:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Currency:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Currency:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Currency:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Currency:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Currency:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Currency:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Rate:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rate:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rate:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rate:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rate:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rate:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Account:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Account:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Account:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Account:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Account:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Account:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Category:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Category:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Category:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Category:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Category:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Category:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Transaction:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transaction:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transaction:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transaction:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transaction:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transaction:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Split:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Split:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Split:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Split:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Split:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Split:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Debt:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Debt:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Debt:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Debt:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Debt:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Debt:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Adjustment:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Adjustment:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Adjustment:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Adjustment:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Adjustment:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Adjustment:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Reconciliation:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Reconciliation:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Reconciliation:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Reconciliation:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Reconciliation:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Reconciliation:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Goal:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Goal:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Goal:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Goal:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Goal:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Goal:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:GoalVersion:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalVersion:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalVersion:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalVersion:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalVersion:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalVersion:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Payment:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Payment:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Payment:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Payment:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Payment:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Payment:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:PaymentVersion:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:PaymentVersion:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:PaymentVersion:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:PaymentVersion:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:PaymentVersion:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:PaymentVersion:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Income:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Income:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Income:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Income:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Income:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Income:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:IncomeVersion:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeVersion:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeVersion:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeVersion:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeVersion:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeVersion:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:IncomeOverride:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeOverride:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeOverride:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeOverride:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeOverride:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:IncomeOverride:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Cycle:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Cycle:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Cycle:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Cycle:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Cycle:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Cycle:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Release:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Release:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Release:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Release:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Release:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Release:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Budget:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Budget:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Budget:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Budget:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Budget:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Budget:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:BudgetVersion:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:BudgetVersion:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:BudgetVersion:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:BudgetVersion:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:BudgetVersion:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:BudgetVersion:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Scenario:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Scenario:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Scenario:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Scenario:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Scenario:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Scenario:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Change:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Change:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Change:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Change:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Change:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Change:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Event:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Event:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Event:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Event:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Event:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Event:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Rule:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rule:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rule:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rule:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rule:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Rule:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Template:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Template:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Template:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Template:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Template:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Template:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:TemplateSplit:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TemplateSplit:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TemplateSplit:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TemplateSplit:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TemplateSplit:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TemplateSplit:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Csv:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Csv:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Csv:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Csv:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Csv:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Csv:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:GoalAssignment:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalAssignment:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalAssignment:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalAssignment:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalAssignment:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:GoalAssignment:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Repayment:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Repayment:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Repayment:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Repayment:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Repayment:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Repayment:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:Transfer:exact TypeScript type",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transfer:visible real type or member path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transfer:real local key and parent scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transfer:typed distinct attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transfer:shown key attributes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:Transfer:actual types shown without self-referential substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:R1:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R2:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R3:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R4:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R5:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R6:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R7:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R8:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R9:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R10:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R11:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R12:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R13:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R14:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R15:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R16:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R17:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R18:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R19:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R20:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R21:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R22:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R23:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R24:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R25:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R26:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R27:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R28:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R29:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R30:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R31:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R32:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R33:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R34:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R35:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R36:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R37:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R38:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R39:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R40:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R41:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R42:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R43:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R44:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R45:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R46:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R47:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R48:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R49:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R50:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R51:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R52:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R53:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R54:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R55:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R56:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R57:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R58:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R59:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R60:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R61:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R62:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R63:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R64:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R65:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R66:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R67:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R68:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R69:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R70:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R71:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R72:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R73:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R74:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:R75:real relation role and source path",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:TypeScript declarations can be resolved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "code:all declared diagram type expressions resolve without errors",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "code:source-property:Profile.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Profile\", \"field\": \"id\", \"exists\": true, \"actualType\": \"\\\"personal\\\" | \\\"demo\\\" | `profile-${string}`\", \"claimedType\": \"FinanceProfile\", \"declaredType\": \"FinanceProfile\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Profile.name",
+      "passed": true,
+      "detail": "{\"entity\": \"Profile\", \"field\": \"name\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Settings.payday",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"field\": \"payday\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Settings.buffer",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"field\": \"buffer\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Settings.reminders",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"field\": \"reminders\", \"exists\": true, \"actualType\": \"ReminderPreferences\", \"claimedType\": \"ReminderPreferences\", \"declaredType\": \"ReminderPreferences\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R2",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"relation\": \"R2\", \"field\": \"forecast\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R3",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"relation\": \"R3\", \"field\": \"exchange.rates\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R5",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"relation\": \"R5\", \"field\": \"baseCurrency\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R6",
+      "passed": true,
+      "detail": "{\"entity\": \"Settings\", \"relation\": \"R6\", \"field\": \"spendableIncomeId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Forecast.dailySpending",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"field\": \"dailySpending\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Forecast.goalDay",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"field\": \"goalDay\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R64",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"relation\": \"R64\", \"field\": \"dailyAccountId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R65",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"relation\": \"R65\", \"field\": \"goalAccounts\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R66",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"relation\": \"R66\", \"field\": \"repaymentAccounts\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R67",
+      "passed": true,
+      "detail": "{\"entity\": \"Forecast\", \"relation\": \"R67\", \"field\": \"transfers\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Currency.name",
+      "passed": true,
+      "detail": "{\"entity\": \"Currency\", \"field\": \"name\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Currency.digits",
+      "passed": true,
+      "detail": "{\"entity\": \"Currency\", \"field\": \"digits\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Currency.symbol",
+      "passed": true,
+      "detail": "{\"entity\": \"Currency\", \"field\": \"symbol\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rate.value",
+      "passed": true,
+      "detail": "{\"entity\": \"Rate\", \"field\": \"value\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rate.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Rate\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rate.source",
+      "passed": true,
+      "detail": "{\"entity\": \"Rate\", \"field\": \"source\", \"exists\": true, \"actualType\": \"\\\"manual\\\" | \\\"frankfurter\\\"\", \"claimedType\": \"\\\"manual\\\" | \\\"frankfurter\\\"\", \"declaredType\": \"\\\"manual\\\" | \\\"frankfurter\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Account.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Account\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Account.kind",
+      "passed": true,
+      "detail": "{\"entity\": \"Account\", \"field\": \"kind\", \"exists\": true, \"actualType\": \"\\\"spending\\\" | \\\"savings\\\" | \\\"credit\\\"\", \"claimedType\": \"\\\"spending\\\" | \\\"savings\\\" | \\\"credit\\\"\", \"declaredType\": \"\\\"spending\\\" | \\\"savings\\\" | \\\"credit\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Account.currency",
+      "passed": true,
+      "detail": "{\"entity\": \"Account\", \"field\": \"currency\", \"exists\": true, \"actualType\": \"\\\"RUB\\\" | \\\"USD\\\" | \\\"EUR\\\" | \\\"GBP\\\" | \\\"CNY\\\" | \\\"JPY\\\" | \\\"CHF\\\" | \\\"TRY\\\" | \\\"KZT\\\" | \\\"AED\\\" | \\\"BYN\\\" | \\\"GEL\\\" | \\\"KWD\\\"\", \"claimedType\": \"CurrencyCode\", \"declaredType\": \"CurrencyCode\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Account.openingBalance",
+      "passed": true,
+      "detail": "{\"entity\": \"Account\", \"field\": \"openingBalance\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R7",
+      "passed": true,
+      "detail": "{\"entity\": \"Account\", \"relation\": \"R7\", \"field\": \"currency\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Category.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Category\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"CategoryId\", \"declaredType\": \"CategoryId\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Category.name",
+      "passed": true,
+      "detail": "{\"entity\": \"Category\", \"field\": \"name\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Category.archived",
+      "passed": true,
+      "detail": "{\"entity\": \"Category\", \"field\": \"archived\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": \"boolean\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R20",
+      "passed": true,
+      "detail": "{\"entity\": \"Category\", \"relation\": \"R20\", \"field\": \"parentId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transaction.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transaction.type",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"field\": \"type\", \"exists\": true, \"actualType\": \"\\\"expense\\\" | \\\"income\\\" | \\\"transfer\\\"\", \"claimedType\": \"\\\"expense\\\" | \\\"income\\\" | \\\"transfer\\\"\", \"declaredType\": \"\\\"expense\\\" | \\\"income\\\" | \\\"transfer\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transaction.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transaction.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transaction.status",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"field\": \"status\", \"exists\": true, \"actualType\": \"\\\"posted\\\" | \\\"pending\\\" | \\\"cancelled\\\"\", \"claimedType\": \"\\\"posted\\\" | \\\"pending\\\" | \\\"cancelled\\\"\", \"declaredType\": \"\\\"posted\\\" | \\\"pending\\\" | \\\"cancelled\\\"\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R10",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R10\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R11",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R11\", \"field\": \"toAccountId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R12",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R12\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R13",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R13\", \"field\": \"splits\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R15",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R15\", \"field\": \"refundOf\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R16",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R16\", \"field\": \"debtId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R34",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R34\", \"field\": \"goalId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R35",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R35\", \"field\": \"goalVersionId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R36",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R36\", \"field\": \"recurringId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R37",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R37\", \"field\": \"recurringVersionId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R38",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R38\", \"field\": \"plannedIncomeId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R39",
+      "passed": true,
+      "detail": "{\"entity\": \"Transaction\", \"relation\": \"R39\", \"field\": \"incomeVersionId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Split.category",
+      "passed": true,
+      "detail": "{\"entity\": \"Split\", \"field\": \"category\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"CategoryId\", \"declaredType\": \"CategoryId\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Split.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Split\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R14",
+      "passed": true,
+      "detail": "{\"entity\": \"Split\", \"relation\": \"R14\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Debt.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Debt.direction",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"field\": \"direction\", \"exists\": true, \"actualType\": \"\\\"lent\\\" | \\\"borrowed\\\"\", \"claimedType\": \"\\\"lent\\\" | \\\"borrowed\\\"\", \"declaredType\": \"\\\"lent\\\" | \\\"borrowed\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Debt.openingAmount",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"field\": \"openingAmount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Debt.dueDate",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"field\": \"dueDate\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R9",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"relation\": \"R9\", \"field\": \"currency\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R17",
+      "passed": true,
+      "detail": "{\"entity\": \"Debt\", \"relation\": \"R17\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Adjustment.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Adjustment\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Adjustment.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Adjustment\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Adjustment.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Adjustment\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Adjustment.note",
+      "passed": true,
+      "detail": "{\"entity\": \"Adjustment\", \"field\": \"note\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R18",
+      "passed": true,
+      "detail": "{\"entity\": \"Adjustment\", \"relation\": \"R18\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Reconciliation.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Reconciliation\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Reconciliation.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Reconciliation\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Reconciliation.balance",
+      "passed": true,
+      "detail": "{\"entity\": \"Reconciliation\", \"field\": \"balance\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Reconciliation.signature",
+      "passed": true,
+      "detail": "{\"entity\": \"Reconciliation\", \"field\": \"signature\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R19",
+      "passed": true,
+      "detail": "{\"entity\": \"Reconciliation\", \"relation\": \"R19\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Goal.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Goal\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Goal.target",
+      "passed": true,
+      "detail": "{\"entity\": \"Goal\", \"field\": \"target\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Goal.initialSaved",
+      "passed": true,
+      "detail": "{\"entity\": \"Goal\", \"field\": \"initialSaved\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R8",
+      "passed": true,
+      "detail": "{\"entity\": \"Goal\", \"relation\": \"R8\", \"field\": \"currency\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R23",
+      "passed": true,
+      "detail": "{\"entity\": \"Goal\", \"relation\": \"R23\", \"field\": \"versions\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalVersion.id",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalVersion\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalVersion.effectiveFrom",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalVersion\", \"field\": \"effectiveFrom\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalVersion.effectiveTo",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalVersion\", \"field\": \"effectiveTo\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalVersion.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalVersion\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalVersion.schedule",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalVersion\", \"field\": \"schedule\", \"exists\": true, \"actualType\": \"RecurrenceSchedule\", \"claimedType\": \"RecurrenceSchedule\", \"declaredType\": \"RecurrenceSchedule\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Payment.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Payment.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Payment.schedule",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"field\": \"schedule\", \"exists\": true, \"actualType\": \"RecurrenceSchedule\", \"claimedType\": \"RecurrenceSchedule\", \"declaredType\": \"RecurrenceSchedule\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R24",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"relation\": \"R24\", \"field\": \"versions\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R28",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"relation\": \"R28\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R29",
+      "passed": true,
+      "detail": "{\"entity\": \"Payment\", \"relation\": \"R29\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:PaymentVersion.id",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:PaymentVersion.effectiveFrom",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"field\": \"effectiveFrom\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:PaymentVersion.effectiveTo",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"field\": \"effectiveTo\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:PaymentVersion.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:PaymentVersion.schedule",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"field\": \"schedule\", \"exists\": true, \"actualType\": \"RecurrenceSchedule\", \"claimedType\": \"RecurrenceSchedule\", \"declaredType\": \"RecurrenceSchedule\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R30",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"relation\": \"R30\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R31",
+      "passed": true,
+      "detail": "{\"entity\": \"PaymentVersion\", \"relation\": \"R31\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Income.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Income.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Income.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Income.repeat",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"field\": \"repeat\", \"exists\": true, \"actualType\": \"\\\"once\\\" | \\\"monthly\\\"\", \"claimedType\": \"\\\"once\\\" | \\\"monthly\\\"\", \"declaredType\": \"\\\"once\\\" | \\\"monthly\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R25",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"relation\": \"R25\", \"field\": \"versions\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R26",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"relation\": \"R26\", \"field\": \"occurrenceOverrides\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R32",
+      "passed": true,
+      "detail": "{\"entity\": \"Income\", \"relation\": \"R32\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeVersion.id",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeVersion.effectiveFrom",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"field\": \"effectiveFrom\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeVersion.effectiveTo",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"field\": \"effectiveTo\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeVersion.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeVersion.schedule",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"field\": \"schedule\", \"exists\": true, \"actualType\": \"RecurrenceSchedule\", \"claimedType\": \"RecurrenceSchedule\", \"declaredType\": \"RecurrenceSchedule\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R33",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeVersion\", \"relation\": \"R33\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeOverride.versionId",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeOverride\", \"field\": \"versionId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeOverride.occurrenceDate",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeOverride\", \"field\": \"occurrenceDate\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeOverride.expectedDate",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeOverride\", \"field\": \"expectedDate\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:IncomeOverride.cancelled",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeOverride\", \"field\": \"cancelled\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": \"boolean\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R27",
+      "passed": true,
+      "detail": "{\"entity\": \"IncomeOverride\", \"relation\": \"R27\", \"field\": \"versionId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Cycle.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Cycle.occurrenceDate",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"field\": \"occurrenceDate\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Cycle.status",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"field\": \"status\", \"exists\": true, \"actualType\": \"\\\"cancelled\\\" | \\\"active\\\" | \\\"paid\\\"\", \"claimedType\": \"\\\"active\\\" | \\\"paid\\\" | \\\"cancelled\\\"\", \"declaredType\": \"\\\"active\\\" | \\\"paid\\\" | \\\"cancelled\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R40",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"relation\": \"R40\", \"field\": \"goalId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R41",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"relation\": \"R41\", \"field\": \"recurringId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R42",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"relation\": \"R42\", \"field\": \"recurringVersionId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R43",
+      "passed": true,
+      "detail": "{\"entity\": \"Cycle\", \"relation\": \"R43\", \"field\": \"paymentTransactionId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Release.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Release.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Release.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R44",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"relation\": \"R44\", \"field\": \"goalId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R45",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"relation\": \"R45\", \"field\": \"cycleId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R46",
+      "passed": true,
+      "detail": "{\"entity\": \"Release\", \"relation\": \"R46\", \"field\": \"transferId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Budget.categoryId",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"field\": \"categoryId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Budget.period",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"field\": \"period\", \"exists\": true, \"actualType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"claimedType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"declaredType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Budget.rolloverSurplus",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"field\": \"rolloverSurplus\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": \"boolean\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Budget.rolloverDeficit",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"field\": \"rolloverDeficit\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": \"boolean\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R21",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"relation\": \"R21\", \"field\": \"categoryId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R22",
+      "passed": true,
+      "detail": "{\"entity\": \"Budget\", \"relation\": \"R22\", \"field\": \"versions\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:BudgetVersion.id",
+      "passed": true,
+      "detail": "{\"entity\": \"BudgetVersion\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:BudgetVersion.effectiveFrom",
+      "passed": true,
+      "detail": "{\"entity\": \"BudgetVersion\", \"field\": \"effectiveFrom\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:BudgetVersion.period",
+      "passed": true,
+      "detail": "{\"entity\": \"BudgetVersion\", \"field\": \"period\", \"exists\": true, \"actualType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"claimedType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"declaredType\": \"\\\"monthly\\\" | \\\"weekly\\\" | \\\"yearly\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:BudgetVersion.startDay",
+      "passed": true,
+      "detail": "{\"entity\": \"BudgetVersion\", \"field\": \"startDay\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Scenario.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Scenario\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Scenario.name",
+      "passed": true,
+      "detail": "{\"entity\": \"Scenario\", \"field\": \"name\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Scenario.horizon",
+      "passed": true,
+      "detail": "{\"entity\": \"Scenario\", \"field\": \"horizon\", \"exists\": true, \"actualType\": \"30 | 60 | 90\", \"claimedType\": \"30 | 60 | 90\", \"declaredType\": \"30 | 60 | 90\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R47",
+      "passed": true,
+      "detail": "{\"entity\": \"Scenario\", \"relation\": \"R47\", \"field\": \"changes\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R48",
+      "passed": true,
+      "detail": "{\"entity\": \"Scenario\", \"relation\": \"R48\", \"field\": \"events\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Change.source",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"field\": \"source\", \"exists\": true, \"actualType\": \"\\\"income\\\" | \\\"payment\\\" | \\\"goal\\\"\", \"claimedType\": \"\\\"income\\\" | \\\"payment\\\" | \\\"goal\\\"\", \"declaredType\": \"\\\"income\\\" | \\\"payment\\\" | \\\"goal\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Change.sourceId",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"field\": \"sourceId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Change.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Change.delayDays",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"field\": \"delayDays\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Change.enabled",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"field\": \"enabled\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": \"boolean\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R50",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"relation\": \"R50\", \"field\": \"sourceId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R51",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"relation\": \"R51\", \"field\": \"sourceId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R52",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"relation\": \"R52\", \"field\": \"sourceId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R53",
+      "passed": true,
+      "detail": "{\"entity\": \"Change\", \"relation\": \"R53\", \"field\": \"currency\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Event.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Event\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Event.type",
+      "passed": true,
+      "detail": "{\"entity\": \"Event\", \"field\": \"type\", \"exists\": true, \"actualType\": \"\\\"expense\\\" | \\\"income\\\"\", \"claimedType\": \"\\\"income\\\" | \\\"expense\\\"\", \"declaredType\": \"\\\"income\\\" | \\\"expense\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Event.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Event\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Event.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Event\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R49",
+      "passed": true,
+      "detail": "{\"entity\": \"Event\", \"relation\": \"R49\", \"field\": \"accountId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rule.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Rule\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rule.pattern",
+      "passed": true,
+      "detail": "{\"entity\": \"Rule\", \"field\": \"pattern\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Rule.enabled",
+      "passed": true,
+      "detail": "{\"entity\": \"Rule\", \"field\": \"enabled\", \"exists\": true, \"actualType\": \"false | true\", \"claimedType\": \"boolean\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R54",
+      "passed": true,
+      "detail": "{\"entity\": \"Rule\", \"relation\": \"R54\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Template.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Template.type",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"field\": \"type\", \"exists\": true, \"actualType\": \"\\\"expense\\\" | \\\"income\\\" | \\\"transfer\\\"\", \"claimedType\": \"\\\"expense\\\" | \\\"income\\\" | \\\"transfer\\\"\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Template.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Template.currency",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"field\": \"currency\", \"exists\": true, \"actualType\": \"\\\"RUB\\\" | \\\"USD\\\" | \\\"EUR\\\" | \\\"GBP\\\" | \\\"CNY\\\" | \\\"JPY\\\" | \\\"CHF\\\" | \\\"TRY\\\" | \\\"KZT\\\" | \\\"AED\\\" | \\\"BYN\\\" | \\\"GEL\\\" | \\\"KWD\\\"\", \"claimedType\": \"CurrencyCode\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R55",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R55\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R56",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R56\", \"field\": \"toAccountId\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R57",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R57\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R58",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R58\", \"field\": \"currency\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R59",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R59\", \"field\": \"toCurrency\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R60",
+      "passed": true,
+      "detail": "{\"entity\": \"Template\", \"relation\": \"R60\", \"field\": \"splits\", \"exists\": true, \"optional\": true, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:TemplateSplit.category",
+      "passed": true,
+      "detail": "{\"entity\": \"TemplateSplit\", \"field\": \"category\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:TemplateSplit.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"TemplateSplit\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R61",
+      "passed": true,
+      "detail": "{\"entity\": \"TemplateSplit\", \"relation\": \"R61\", \"field\": \"category\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Csv.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Csv.encoding",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"field\": \"encoding\", \"exists\": true, \"actualType\": \"\\\"auto\\\" | \\\"utf8\\\" | \\\"windows1251\\\"\", \"claimedType\": \"\\\"auto\\\" | \\\"utf8\\\" | \\\"windows1251\\\"\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Csv.separator",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"field\": \"separator\", \"exists\": true, \"actualType\": \"\\\"auto\\\" | \\\";\\\" | \\\",\\\" | \\\"\\\\t\\\"\", \"claimedType\": \"\\\"auto\\\" | \\\";\\\" | \\\",\\\" | \\\"\\\\t\\\"\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Csv.options.accountId",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"field\": \"options.accountId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": null, \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R62",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"relation\": \"R62\", \"field\": \"options.accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R63",
+      "passed": true,
+      "detail": "{\"entity\": \"Csv\", \"relation\": \"R63\", \"field\": \"currency\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalAssignment.goalId",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"field\": \"goalId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalAssignment.fromAccountId",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"field\": \"fromAccountId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:GoalAssignment.toAccountId",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"field\": \"toAccountId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R68",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"relation\": \"R68\", \"field\": \"goalId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R69",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"relation\": \"R69\", \"field\": \"fromAccountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R70",
+      "passed": true,
+      "detail": "{\"entity\": \"GoalAssignment\", \"relation\": \"R70\", \"field\": \"toAccountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Repayment.kind",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"field\": \"kind\", \"exists\": true, \"actualType\": \"\\\"credit\\\" | \\\"debt\\\"\", \"claimedType\": \"\\\"credit\\\" | \\\"debt\\\"\", \"declaredType\": \"\\\"credit\\\" | \\\"debt\\\"\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Repayment.sourceId",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"field\": \"sourceId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Repayment.accountId",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"field\": \"accountId\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R71",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"relation\": \"R71\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R72",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"relation\": \"R72\", \"field\": \"sourceId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R73",
+      "passed": true,
+      "detail": "{\"entity\": \"Repayment\", \"relation\": \"R73\", \"field\": \"sourceId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transfer.id",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"field\": \"id\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transfer.date",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"field\": \"date\", \"exists\": true, \"actualType\": \"string\", \"claimedType\": \"string\", \"declaredType\": \"string\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transfer.amount",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"field\": \"amount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": false, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:Transfer.toAmount",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"field\": \"toAmount\", \"exists\": true, \"actualType\": \"number\", \"claimedType\": \"number\", \"declaredType\": \"number\", \"declaredMatches\": true, \"optional\": true, \"optionalMatches\": true, \"typeMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R74",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"relation\": \"R74\", \"field\": \"accountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "code:source-property:R75",
+      "passed": true,
+      "detail": "{\"entity\": \"Transfer\", \"relation\": \"R75\", \"field\": \"toAccountId\", \"exists\": true, \"optional\": false, \"optionalMatches\": true}"
+    },
+    {
+      "name": "geometry:two or three adjacent A4 fragments cover the complete canvas",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "geometry:equal scale fits portrait A4 print areas",
       "passed": true,
       "detail": ""
     },
@@ -635,7 +2795,7 @@
     {
       "name": "geometry:every crossed seam has exactly one manifest entry",
       "passed": true,
-      "detail": "route crossings=32; manifest crossings=32"
+      "detail": "route crossings=24; manifest crossings=24"
     },
     {
       "name": "geometry:stitch IDs unique",
@@ -658,6 +2818,11 @@
       "detail": ""
     },
     {
+      "name": "geometry:SVG relationships use the real source, target and role",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
       "name": "geometry:all SVG relationship groups contain a visible line",
       "passed": true,
       "detail": ""
@@ -673,7 +2838,47 @@
       "detail": "[]"
     },
     {
+      "name": "geometry:only the three soft references use dashed routes",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "geometry:all 150 endpoint cardinalities drawn once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "geometry:actual endpoint symbols show every declared minimum and maximum",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "geometry:cardinality symbols stay separated, including dense account ports",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "geometry:no unrelated route crosses an endpoint cardinality symbol",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "geometry:all 12 parallel relationship roles visible once; other labels distinct",
+      "passed": true,
+      "detail": "{'R1': 1, 'R2': 1, 'R3': 1, 'R4': 1, 'R5': 1, 'R7': 1, 'R8': 1, 'R10': 1, 'R11': 1, 'R12': 1, 'R13': 1, 'R14': 1, 'R15': 1, 'R16': 1, 'R17': 1, 'R18': 1, 'R19': 1, 'R20': 1, 'R21': 1, 'R22': 1, 'R23': 1, 'R24': 1, 'R25': 1, 'R27': 1, 'R29': 1, 'R30': 1, 'R31': 1, 'R33': 1, 'R34': 1, 'R36': 1, 'R40': 1, 'R41': 1, 'R43': 1, 'R44': 1, 'R45': 1, 'R46': 1, 'R47': 1, 'R48': 1, 'R50': 1, 'R51': 1, 'R52': 1, 'R54': 1, 'R55': 1, 'R56': 1, 'R57': 1, 'R58': 1, 'R59': 1, 'R60': 1, 'R61': 1, 'R65': 1, 'R67': 1, 'R68': 1, 'R69': 1, 'R70': 1, 'R71': 1, 'R72': 1, 'R73': 1, 'R74': 1, 'R75': 1}"
+    },
+    {
+      "name": "geometry:actual SVG relation labels use the declared source-property names",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
       "name": "geometry:tile 1 SVG exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "geometry:tile 1 contains unchanged entities, routes, endpoint marks and labels",
       "passed": true,
       "detail": ""
     },
@@ -698,7 +2903,17 @@
       "detail": "ports=[]; cards=[]"
     },
     {
+      "name": "geometry:tile 1 stitch backgrounds hide no unrelated routes",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
       "name": "geometry:tile 2 SVG exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "geometry:tile 2 contains unchanged entities, routes, endpoint marks and labels",
       "passed": true,
       "detail": ""
     },
@@ -723,88 +2938,142 @@
       "detail": "ports=[]; cards=[]"
     },
     {
-      "name": "geometry:tile 3 SVG exists",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 3 exact crop and scale",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 3 all expected stitch labels drawn once",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 3 stitch direction, text and bounds",
+      "name": "geometry:tile 2 stitch backgrounds hide no unrelated routes",
       "passed": true,
       "detail": "[]"
-    },
-    {
-      "name": "geometry:tile 3 stitch boxes do not overlap each other or entity cards",
-      "passed": true,
-      "detail": "ports=[]; cards=[]"
-    },
-    {
-      "name": "geometry:tile 4 SVG exists",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 4 exact crop and scale",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 4 all expected stitch labels drawn once",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "geometry:tile 4 stitch direction, text and bounds",
-      "passed": true,
-      "detail": "[]"
-    },
-    {
-      "name": "geometry:tile 4 stitch boxes do not overlap each other or entity cards",
-      "passed": true,
-      "detail": "ports=[]; cards=[]"
     },
     {
       "name": "geometry:each seam label has exactly two drawn ends",
       "passed": true,
-      "detail": "{'L01': 2, 'L02': 2, 'L03': 2, 'L04': 2, 'L05': 2, 'L06': 2, 'L07': 2, 'L15': 2, 'L16': 2, 'L17': 2, 'L18': 2, 'L19': 2, 'L20': 2, 'L21': 2, 'L22': 2, 'L23': 2, 'L24': 2, 'L25': 2, 'L26': 2, 'L27': 2, 'L28': 2, 'L29': 2, 'L30': 2, 'L31': 2, 'L32': 2, 'L08': 2, 'L09': 2, 'L10': 2, 'L11': 2, 'L12': 2, 'L13': 2, 'L14': 2}"
+      "detail": "{'L01': 2, 'L02': 2, 'L03': 2, 'L04': 2, 'L05': 2, 'L06': 2, 'L07': 2, 'L08': 2, 'L09': 2, 'L10': 2, 'L11': 2, 'L12': 2, 'L13': 2, 'L14': 2, 'L15': 2, 'L16': 2, 'L17': 2, 'L18': 2, 'L19': 2, 'L20': 2, 'L21': 2, 'L22': 2, 'L23': 2, 'L24': 2}"
+    },
+    {
+      "name": "content:only entity, relation and continuation text; no notes or legends",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:all SVG text independently measurable",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:every real typed attribute is visible once in its entity",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:no broken identifiers or self-referential type substitutions",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:actual glyphs and card borders contain all entity text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:no complete-SVG text clipping",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:no overlapping text glyph bounds",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:no relationship route under unrelated text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:relationship label backgrounds contain their glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:relationship label backgrounds hide no unrelated lines",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:tile 1 has no clipped glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:tile 1 has no notes or legends",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:tile 2 has no clipped glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:tile 2 has no notes or legends",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "content:print scale keeps fields at 10 pt, labels at 9.5 pt and long titles about 9.1 pt",
+      "passed": true,
+      "detail": "print width=160 mm; minima={'titles': 9.070866141732285, 'fields': 10.078740157480317, 'relationship_and_seam_labels': 9.574803149606302}; small=[]"
     }
   ],
-  "passed": 155,
-  "total": 155,
+  "passed": 604,
+  "total": 604,
   "geometry": {
-    "tiles": 4,
+    "tiles": 2,
     "relationships": 75,
-    "stitches": 32,
+    "stitches": 24,
     "svg_sha256": {
-      "04-er-complete.svg": "9501581d8403c060190876c3cd3d84160773341bee668f65794e3ffe27abbb6b",
-      "04-er-complete-1.svg": "214c4d57b70d3778ee05842f46168e713200a20faea2b7cb5d5bf2ea86b9d838",
-      "04-er-complete-2.svg": "e6c0c19a866371eceadd29a45791794c465381fabc77867ce3a5962131d95ba7",
-      "04-er-complete-3.svg": "318ffb652fc41c85ee18f74d7139bd128fe661176ce0c99025f6e2b5e9c0220a",
-      "04-er-complete-4.svg": "1b17c2698f033eaedcf85be191997f42a6998d98c4f237781f2e2b38a2f6a8ff"
+      "04-er-complete.svg": "9e723517664bf6816d6afd814ca48f2cc196ba7733c48dd1e3f9ca51300f2887",
+      "04-er-complete-1.svg": "28aa48e88c9cd7c5ee0f050d0f126c977b2390bcb66038d8152e22fd258c135d",
+      "04-er-complete-2.svg": "59a438fdb50fbe4bf8c733c9ab42175cb6a9360d042572ef5154c4b7bffe92b2"
+    },
+    "content": {
+      "actual_text_count": 232,
+      "minimum_font_pt": 9.070866141732285,
+      "maximum_font_pt": 10.078740157480317,
+      "minimum_font_pt_by_role": {
+        "titles": 9.070866141732285,
+        "fields": 10.078740157480317,
+        "relationship_and_seam_labels": 9.574803149606302
+      },
+      "print_width_mm": 160
+    }
+  },
+  "code": {
+    "resolved": true,
+    "attributes": 117,
+    "source_sha256": {
+      "src/domain/accountForecastSettings.ts": "2f45b21f99a6bccc2ce513ecbfa33c5963a7af875afae5edc85ae16becd35a21",
+      "src/domain/automation.ts": "37f0d5353fb9b60a36e55a4aa81c0d3c2ca377cbfc4f700bf65a219959ea6c56",
+      "src/domain/budgets.ts": "dc7c30b6db4ce353440e2432247729517aa173db36d07b2aa36529d5d065544a",
+      "src/domain/currency.ts": "372aede2e82f68f4b44da26ff56ca031ff39aa16da33488c90a7ef0838cd8883",
+      "src/domain/debts.ts": "381810c98e393ab05b730e2adad546e8a6013b259188ccb3c147d73a0ec28470",
+      "src/domain/goalFunds.ts": "c918a0be737059a54529cfff509de6facb186f92d29f64aa0442b4d4cd5fb54b",
+      "src/domain/incomes.ts": "c0930657259d698f8570be15253acd2820f31fc14fb7be01c5a6fd34f349c056",
+      "src/domain/profiles.ts": "355b0fcf263bf900e43484e4138996372943306ee5ef3c71b66632a300a84a87",
+      "src/domain/reconciliation.ts": "f6a2bdd60f161ba106d4cb891682fb5c6e549fe11bd186b4ee405fb31f6b95fb",
+      "src/domain/recurrence.ts": "a6d9eafa9aee2664b27504cd97e4c5f20b283327e3142d0c122de6637a78bd12",
+      "src/domain/types.ts": "85fbfd0feb86a22b91b1991a4e3ec2b119a9a7aa718886877263f775855bb47f",
+      "src/infrastructure/storage/profileStorage.ts": "8c1e2c8137dba0dc9026d3bd2ff049e4f481c348af0a649f33a1ed25b42062c8"
     }
   },
   "visual_review": {
     "required": false,
-    "tiles": [1, 2, 3, 4],
+    "tiles": [1, 2],
     "reviewers": {
-      "er_diagram": [1, 2],
-      "er_entity_audit": [3, 4]
+      "uml_text_audit": [1, 2]
     },
     "png_sha256": {
-      "1": "08864173c38196ee51d7b0b766d006261fe4f483effca4a33ada9e3be1530ec9",
-      "2": "d7539fa75fbebba37d7c7b8f6949029452d1423de68a6f819dfeb2174befaaf9",
-      "3": "e7e582cf9dff1e74043e4a656c58d697cf8e14759201d4927ca64ec89c9bc1df",
-      "4": "d067954c5625feefa64401a0f28efadf63204cc049499a9eb242cc981fba3eb9"
+      "1": "519b002a0a7c264aeab1b852f4271b5ff4809f044697a802b2f8e1404d271421",
+      "2": "8c510a3720c3d71ff1f6ed3af8f752008bdf9d5c1d34d6503ffc7e4c31dd7ac1"
     },
-    "result": "All four final fragments inspected at full resolution; DOCX and Pages layout separately verified in er-document-checks.json."
+    "result": "Both final portrait A4 fragments inspected at full resolution. Entity titles and typed fields are legible; account and transaction cardinalities are separated; no clipping, overlaps or misplaced continuation labels found. Diagram image audit only; DOCX and Pages layout are reviewed separately."
   }
 }

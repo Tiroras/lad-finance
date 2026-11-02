@@ -1,13 +1,13 @@
 {
   "checked_on": "2026-11-02",
-  "project_commit": "fe6c094941ea71fc9c6a8c147c3c328c36695b79",
+  "project_commit": "f60e4bc9ec4a43faa79ff0eaa1442da028d08171",
   "documents": {
     "thesis": {
-      "pages": 113,
-      "docx_sha256": "7055ebfb803ffe84759e8408f7d43be50236d8ddfd25b5bcbe9b3c5bf8fc46b1",
-      "pdf_sha256": "1da5827560f38f1af00788cc98b18342be385162c48927ad4d431ff4f6f97343",
-      "markdown_sha256": "03ff3af609c06bd9b369f1404b5d34efadabe7c4b79958d1e8b131fa869b7190",
-      "figures": 34,
+      "pages": 111,
+      "docx_sha256": "1fba4d44b3216ac69104d101de03eca71c401f9478e64109416521558d1306fd",
+      "pdf_sha256": "8dc26ddef7b52e9cc6b9a707473bb4e8c210a03383a5386e6197d26ed4944435",
+      "markdown_sha256": "f9344c7d6b5b0612f113e30ae4643d7b75397a2283d7bf9c3edcba1d9ada6533",
+      "figures": 32,
       "logical_tables": 7,
       "table_parts": 9,
       "equations": 11,
@@ -22,7 +22,7 @@
         },
         "chapter_2": {
           "pages": [42, 65],
-          "body_sha256": "8ebf3b11fb81821ff3cc2171dc6cd7e5a4eb8abdebbb85d01b8c932ec95591f0"
+          "body_sha256": "99c4615221cc143491ed3a053503e889481b0e05a3aaaefd33b2962a93141cbe"
         },
         "chapter_3": {
           "pages": [66, 103],
@@ -37,8 +37,8 @@
           "body_sha256": "e78e8ae8a88a40577e435d95975d0102285df37cbe0e46cc43dd3a366e484990"
         },
         "appendix_a": {
-          "pages": [110, 113],
-          "body_sha256": "30c8f5ebba77d1a9f784a58d9b0bf5e00554ff999dd6e7e07340cdfa3c0e00e5"
+          "pages": [110, 111],
+          "body_sha256": "123fc29bb88845c14b24b0e2fcd1e4688bfec614e8889c570862dea0c645a4ec"
         }
       },
       "prose_fonts": [
@@ -78,9 +78,7 @@
         "29": [97],
         "30": [101],
         "А.1": [110],
-        "А.2": [111],
-        "А.3": [112],
-        "А.4": [113]
+        "А.2": [111]
       },
       "table_continuation_pages": [
         {
@@ -140,10 +138,11 @@
   "visual_review": {
     "required": false,
     "checked_on": "2026-11-02",
-    "bundled_pages": [73, 77, 81, 84, 87, 92, 101],
-    "pages_pages": [73, 77, 81, 84, 87, 92, 101],
-    "unchanged_pages": 106,
-    "result": "Все семь изменённых страниц обоих экспортов просмотрены полноразмерно; линии и подписи читаются, наложений и обрезаний нет. Остальные 106 страниц bundled-рендера побайтно совпадают по пикселям с ранее просмотренной редакцией."
+    "protocol": "er-compaction-checks.json",
+    "bundled_pages": [56, 57, 58, 110, 111],
+    "pages_pages": [56, 57, 58, 59, 110, 111],
+    "unchanged_verified_pages": 106,
+    "result": "Все изменённые страницы обоих экспортов просмотрены полноразмерно. Обрезаний, пустых страниц и оторванных подписей нет."
   },
   "notes": [
     "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
