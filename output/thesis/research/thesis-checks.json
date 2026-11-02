@@ -1,11 +1,11 @@
 {
-  "checked_on": "2026-11-01",
-  "project_commit": "e8c627121babbebb4ee925cbe5ada67bf2a9134f",
+  "checked_on": "2026-11-02",
+  "project_commit": "fe6c094941ea71fc9c6a8c147c3c328c36695b79",
   "documents": {
     "thesis": {
       "pages": 113,
-      "docx_sha256": "6cecbaa24afabf25102c3fd85f8441663fb49369f4c04351642be8726e3b7491",
-      "pdf_sha256": "a7469f6238711f581d0b270297014371538c8166764ca0bf65ca7b6e47d14597",
+      "docx_sha256": "7055ebfb803ffe84759e8408f7d43be50236d8ddfd25b5bcbe9b3c5bf8fc46b1",
+      "pdf_sha256": "1da5827560f38f1af00788cc98b18342be385162c48927ad4d431ff4f6f97343",
       "markdown_sha256": "03ff3af609c06bd9b369f1404b5d34efadabe7c4b79958d1e8b131fa869b7190",
       "figures": 34,
       "logical_tables": 7,
@@ -26,7 +26,7 @@
         },
         "chapter_3": {
           "pages": [66, 103],
-          "body_sha256": "f128abf3831b8db18aae1e1008c8f220e52626bbbda4c30c1aef9a2dfb6360bb"
+          "body_sha256": "76b855d63714cee8b2a43e56ef39119bfc8b5eaee06cccebf8443bc245e6dc76"
         },
         "conclusion": {
           "pages": [104, 106],
@@ -139,18 +139,11 @@
   "checks_total": 35,
   "visual_review": {
     "required": false,
-    "chapter3_pages_reviewed": [
-      66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
-      84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-      102, 103
-    ],
-    "unchanged_pages_by_pixel_comparison": 75,
-    "boundary_page_additionally_opened": 104,
-    "pages_export_pages_reviewed": [
-      66, 67, 69, 71, 73, 75, 77, 79, 81, 83, 84, 86, 87, 90, 92, 93, 94, 95,
-      96, 97, 100, 101
-    ],
-    "unresolved_defects": []
+    "checked_on": "2026-11-02",
+    "bundled_pages": [73, 77, 81, 84, 87, 92, 101],
+    "pages_pages": [73, 77, 81, 84, 87, 92, 101],
+    "unchanged_pages": 106,
+    "result": "Все семь изменённых страниц обоих экспортов просмотрены полноразмерно; линии и подписи читаются, наложений и обрезаний нет. Остальные 106 страниц bundled-рендера побайтно совпадают по пикселям с ранее просмотренной редакцией."
   },
   "notes": [
     "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",

@@ -7,12 +7,11 @@
 <polyline data-from="release" data-to="transfer" data-condition="" points="270,496 270,534" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="transfer" data-to="valid-state" data-condition="" points="270,630 270,668" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="output" data-to="end" data-condition="" points="270,884 270,916" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="error-input" data-to="end-input" data-condition="" points="660,378 660,420" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="error-state" data-to="end-state" data-condition="" points="660,766 660,808" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid-input" data-to="release" data-condition="Да" points="270,380 270,420" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="valid-input" data-to="error-input" data-condition="Нет" points="490,330 554,330" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-input" data-to="error" data-condition="Нет" points="490,330 540,330 540,718 554,718" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid-state" data-to="output" data-condition="Да" points="270,768 270,808" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="valid-state" data-to="error-state" data-condition="Нет" points="490,718 554,718" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="valid-state" data-to="error" data-condition="Нет" points="490,718 554,718" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error" data-to="end" data-condition="" points="660,766 660,936 380,936" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <g data-node="start" data-kind="term">
 <rect x="160" y="18" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="270" y="45.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
@@ -57,23 +56,10 @@
 <rect x="160" y="916" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="270" y="941.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
 </g>
-<g data-node="error-input" data-kind="io">
-<polygon points="563,282 775,282 757,378 545,378" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="323" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
-<text x="660" y="348" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учёт не изменён</text>
-</g>
-<g data-node="end-input" data-kind="term">
-<rect x="560" y="420" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="445.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
-</g>
-<g data-node="error-state" data-kind="io">
+<g data-node="error" data-kind="io">
 <polygon points="563,670 775,670 757,766 545,766" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="660" y="711" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
 <text x="660" y="736" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">учёт не изменён</text>
-</g>
-<g data-node="end-state" data-kind="term">
-<rect x="560" y="808" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="833.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
 </g>
 <text x="295" y="406" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
 <text x="518" y="319.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>

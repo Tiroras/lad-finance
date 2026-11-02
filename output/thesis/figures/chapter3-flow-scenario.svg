@@ -5,17 +5,17 @@
 <polyline data-from="forecasts" data-to="result" data-condition="" points="270,506 270,536" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="result" data-to="save" data-condition="" points="270,602 270,640" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="saved" data-to="end" data-condition="" points="270,988 270,1020" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="error-input" data-to="end-input" data-condition="" points="660,250 660,292" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="error-save" data-to="end-no-save" data-condition="" points="660,874 660,1020" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="input" data-to="valid" data-condition="" points="270,130 270,160" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid" data-to="compare" data-condition="Да" points="270,250 270,290" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid" data-to="error-input" data-condition="Нет" points="490,205 554,205" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="compare" data-to="forecasts" data-condition="Да" points="270,380 270,410" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="compare" data-to="save" data-condition="Нет" points="50,335 24,335 24,620 270,620 270,640" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="save" data-to="revalidate" data-condition="Да" points="270,730 270,772" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="save" data-to="end-no-save" data-condition="Нет" points="490,685 788,685 788,1040 760,1040" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="save" data-to="end" data-condition="Нет" points="490,685 788,685 788,1040 380,1040" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="revalidate" data-to="saved" data-condition="Да" points="270,872 270,912" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="revalidate" data-to="error-save" data-condition="Нет" points="490,822 554,822" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error-input" data-to="end" data-condition="" points="766,205 788,205 788,1040 380,1040" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error-save" data-to="end" data-condition="" points="660,874 660,1040 380,1040" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <g data-node="start" data-kind="term">
 <rect x="160" y="12" width="220" height="36" rx="18" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="270" y="37.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
@@ -71,19 +71,11 @@
 <text x="660" y="197.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка условий;</text>
 <text x="660" y="221.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">исправить ввод</text>
 </g>
-<g data-node="end-input" data-kind="term">
-<rect x="560" y="292" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="317.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
-</g>
 <g data-node="error-save" data-kind="io">
 <polygon points="563,770 775,770 757,874 545,874" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="660" y="802" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка;</text>
 <text x="660" y="827.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">сценарий</text>
 <text x="660" y="853" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">не сохранён</text>
-</g>
-<g data-node="end-no-save" data-kind="term">
-<rect x="560" y="1020" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="1045.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
 </g>
 <text x="295" y="276" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
 <text x="518" y="194.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>

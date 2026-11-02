@@ -1,0 +1,336 @@
+{
+  "checked_on": "2026-11-02",
+  "checks": {
+    "markdown_unchanged": true,
+    "other_figure_assets_unchanged": true,
+    "only_docx_media_changed": true,
+    "exactly_seven_embedded_images_changed": true,
+    "same_docx_parts": true,
+    "all_updated_images_embedded": true,
+    "only_seven_figure_pages_changed": true,
+    "all_113_pages_compared": true,
+    "bundled_113_a4_pages": true,
+    "bundled_no_empty_pages": true,
+    "bundled_expected_caption_pages": true,
+    "bundled_captions_stay_with_images": true,
+    "pages_113_a4_pages": true,
+    "pages_no_empty_pages": true,
+    "pages_expected_caption_pages": true,
+    "pages_captions_stay_with_images": true
+  },
+  "passed": 16,
+  "total": 16,
+  "changed_docx_parts": [
+    "word/media/image21.png",
+    "word/media/image22.png",
+    "word/media/image23.png",
+    "word/media/image24.png",
+    "word/media/image25.png",
+    "word/media/image26.png",
+    "word/media/image30.png"
+  ],
+  "changed_pages": [73, 77, 81, 84, 87, 92, 101],
+  "pixel_identical_pages": [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 74, 75, 76, 78, 79, 80,
+    82, 83, 85, 86, 88, 89, 90, 91, 93, 94, 95, 96, 97, 98, 99, 100, 102, 103,
+    104, 105, 106, 107, 108, 109, 110, 111, 112, 113
+  ],
+  "render": {
+    "bundled": {
+      "page_count": 113,
+      "caption_pages": {
+        "21": 73,
+        "22": 77,
+        "23": 81,
+        "24": 84,
+        "25": 87,
+        "26": 92,
+        "30": 101
+      },
+      "empty_pages": [],
+      "sha256": "1da5827560f38f1af00788cc98b18342be385162c48927ad4d431ff4f6f97343"
+    },
+    "pages": {
+      "page_count": 113,
+      "caption_pages": {
+        "21": 73,
+        "22": 77,
+        "23": 81,
+        "24": 84,
+        "25": 87,
+        "26": 92,
+        "30": 101
+      },
+      "empty_pages": [],
+      "sha256": "13457c482d758cf5393fa0b83d0db57358575316bf1fd3d099509153676103b6"
+    }
+  },
+  "docx_sha256": "7055ebfb803ffe84759e8408f7d43be50236d8ddfd25b5bcbe9b3c5bf8fc46b1",
+  "markdown_sha256": "03ff3af609c06bd9b369f1404b5d34efadabe7c4b79958d1e8b131fa869b7190",
+  "graph_audit": {
+    "passed": true,
+    "diagrams": [
+      {
+        "figure": 21,
+        "name": "transfer",
+        "nodes_before": 13,
+        "nodes_after": 10,
+        "quotient_nodes": 10,
+        "quotient_edges": 12,
+        "end_count": 1,
+        "error_count": 1,
+        "decisions": {
+          "valid-transfer": "Перевод допустим?",
+          "fee-selected": "Комиссия выбрана?",
+          "valid-fee": "Расход комиссии допустим?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 22,
+        "name": "contribution",
+        "nodes_before": 11,
+        "nodes_after": 10,
+        "quotient_nodes": 10,
+        "quotient_edges": 11,
+        "end_count": 1,
+        "error_count": 1,
+        "decisions": {
+          "schedule": "Есть событие графика?",
+          "valid": "Взнос допустим?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 23,
+        "name": "goal",
+        "nodes_before": 13,
+        "nodes_after": 10,
+        "quotient_nodes": 10,
+        "quotient_edges": 11,
+        "end_count": 1,
+        "error_count": 1,
+        "decisions": {
+          "valid-input": "Вывод допустим?",
+          "valid-state": "Учёт согласован?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 24,
+        "name": "reconciliation",
+        "nodes_before": 14,
+        "nodes_after": 12,
+        "quotient_nodes": 12,
+        "quotient_edges": 14,
+        "end_count": 1,
+        "error_count": 1,
+        "decisions": {
+          "same": "Остатки совпали?",
+          "consent": "Есть согласие?",
+          "success": "Подтверждение успешно?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 25,
+        "name": "adjustment",
+        "nodes_before": 16,
+        "nodes_after": 12,
+        "quotient_nodes": 12,
+        "quotient_edges": 14,
+        "end_count": 1,
+        "error_count": 1,
+        "decisions": {
+          "valid": "Ввод допустим?",
+          "nonzero": "Разница ненулевая?",
+          "valid-state": "Все проверки пройдены?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 26,
+        "name": "forecast",
+        "nodes_before": 12,
+        "nodes_after": 11,
+        "quotient_nodes": 11,
+        "quotient_edges": 12,
+        "end_count": 1,
+        "error_count": 0,
+        "decisions": {
+          "valid": "Расчёт возможен?",
+          "more": "Есть следующий день?"
+        },
+        "cycles": [["advance", "day", "more", "total"]],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      },
+      {
+        "figure": 30,
+        "name": "scenario",
+        "nodes_before": 14,
+        "nodes_after": 12,
+        "quotient_nodes": 12,
+        "quotient_edges": 15,
+        "end_count": 1,
+        "error_count": 0,
+        "decisions": {
+          "valid": "Условия допустимы?",
+          "compare": "Показать сравнение?",
+          "save": "Сохранить условия?",
+          "revalidate": "Повторная проверка пройдена?"
+        },
+        "cycles": [],
+        "svg_matches_generator": true,
+        "passed": true,
+        "errors": []
+      }
+    ],
+    "untargeted_graphs_unchanged": {
+      "transaction": true,
+      "purchase": true
+    }
+  },
+  "visual_review": {
+    "bundled_pages": [73, 77, 81, 84, 87, 92, 101],
+    "pages_pages": [73, 77, 81, 84, 87, 92, 101],
+    "unchanged_pages": 106,
+    "result": "Все семь изменённых страниц обоих экспортов просмотрены полноразмерно; линии и подписи читаются, наложений и обрезаний нет. Остальные 106 страниц bundled-рендера побайтно совпадают по пикселям с ранее просмотренной редакцией."
+  },
+  "scope": "Изменены семь блок-схем и встроенные изображения единого DOCX. Текст Markdown, остальные рисунки, таблицы и формулы сохранены. Код приложения, тесты и сборки не менялись и не запускались.",
+  "diagram_geometry": {
+    "changed_files": [
+      "chapter3-flow-reconciliation.png",
+      "chapter3-flow-forecast.png",
+      "chapter3-flow-adjustment.svg",
+      "chapter3-flow-adjustment.png",
+      "chapter3-flow-forecast.svg",
+      "chapter3-flow-reconciliation.svg",
+      "chapter3-flow-goal.png",
+      "chapter3-flow-contribution.svg",
+      "chapter3-flow-transfer.png",
+      "chapter3-algorithms.py",
+      "chapter3-flow-scenario.png",
+      "chapter3-flow-scenario.svg",
+      "chapter3-flow-transfer.svg",
+      "chapter3-flow-contribution.png",
+      "chapter3-flow-goal.svg"
+    ],
+    "only_expected_files_changed": true,
+    "unchanged_other_files": 90,
+    "protected_transaction_purchase_identical": true,
+    "ast_parse": true,
+    "geometric_checks": {
+      "transaction": {
+        "issues": [],
+        "nodes": 12,
+        "edges": 13,
+        "height_mm": 190.0,
+        "font_pt": 11.338582677165356
+      },
+      "transfer": {
+        "issues": [],
+        "nodes": 10,
+        "edges": 12,
+        "height_mm": 190.0,
+        "font_pt": 11.338582677165356
+      },
+      "contribution": {
+        "issues": [],
+        "nodes": 10,
+        "edges": 11,
+        "height_mm": 182.0,
+        "font_pt": 11.338582677165356
+      },
+      "goal": {
+        "issues": [],
+        "nodes": 10,
+        "edges": 11,
+        "height_mm": 195.2,
+        "font_pt": 11.338582677165356
+      },
+      "reconciliation": {
+        "issues": [],
+        "nodes": 12,
+        "edges": 14,
+        "height_mm": 210.0,
+        "font_pt": 11.338582677165356
+      },
+      "adjustment": {
+        "issues": [],
+        "nodes": 12,
+        "edges": 14,
+        "height_mm": 210.0,
+        "font_pt": 11.338582677165356
+      },
+      "forecast": {
+        "issues": [],
+        "nodes": 11,
+        "edges": 12,
+        "height_mm": 204.0,
+        "font_pt": 11.338582677165356
+      },
+      "purchase": {
+        "issues": [],
+        "nodes": 13,
+        "edges": 15,
+        "height_mm": 218.0,
+        "font_pt": 11.338582677165356
+      },
+      "scenario": {
+        "issues": [],
+        "nodes": 12,
+        "edges": 15,
+        "height_mm": 216.0,
+        "font_pt": 11.338582677165356
+      }
+    },
+    "visually_reviewed": [
+      "transfer",
+      "contribution",
+      "goal",
+      "reconciliation",
+      "adjustment",
+      "forecast",
+      "scenario"
+    ],
+    "visual_defects": []
+  },
+  "artifact_sha256": {
+    "chapter3-flow-reconciliation.png": "94714d5cbcaacc86b04e288c755e7c592af59e022cfbe8731cc92e62277bbc0d",
+    "chapter3-flow-forecast.png": "cc4da6fe88bff856f271bad467115f7b4badb7a2e8510669fcef694adbc112bc",
+    "chapter3-flow-adjustment.svg": "c080372ddcfb5b5a3d2db3cc2418ed38f54ec94a2190020b57681117d6c1461a",
+    "chapter3-flow-adjustment.png": "6d0a1996633c112f6c8ce36da49a141c897819f935774bfd5c11362f9329a23b",
+    "chapter3-flow-forecast.svg": "f4ae6f6a37e135db6e4d51a5ecfdf002de7c8e6fb483fa3db6e9e9a67cb1b543",
+    "chapter3-flow-reconciliation.svg": "624b51c3b919ddac800f294935ba12af743f0916c573caa7080650ebbc3168f0",
+    "chapter3-flow-goal.png": "b53cb24f1a95e988c6069bbd10f71898ddf0ba855059a0dc8635c343f27ac3c2",
+    "chapter3-flow-contribution.svg": "10f2d32e1aa67ff421e241159e04e021f47128e2aa934ccf7753bbfb3475d643",
+    "chapter3-flow-transfer.png": "b4e736719212bd7d30dbeec87dfb16234c091ecffe84c08bb9bae59e7872c7c1",
+    "chapter3-algorithms.py": "42ba201cd6ae6db1e2b71228c71f401369757111646ec1a87e2cb1411816dd6a",
+    "chapter3-flow-scenario.png": "093274f6829e1129fece774a04fc200e6e0bd1143d86b85bd8bbfaec114ddca7",
+    "chapter3-flow-scenario.svg": "3706abbed3d9dbade3184bc0668a4ecf5255dc31f49e3db05d6fe9219a82aee0",
+    "chapter3-flow-transfer.svg": "c2d4f50ae88ca719cff902c67550e22bdee6c3c83e160800f6768d44d9779775",
+    "chapter3-flow-contribution.png": "66eca08866993ac8b830fe54831efb3766d11d6f0d7d703eba5ac01e378c2047",
+    "chapter3-flow-goal.svg": "98ff7723ecfb1979a3f4073da905f8a28b76b0d9952d1a6c516991b56435a7bd"
+  },
+  "pages_input_matches_final_docx": true
+}

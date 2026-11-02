@@ -7,12 +7,12 @@
 <polyline data-from="day" data-to="total" data-condition="" points="270,536 270,566" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="total" data-to="more" data-condition="" points="270,662 270,702" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="output" data-to="end" data-condition="" points="270,922 270,962" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline data-from="error" data-to="end-error" data-condition="" points="660,398 660,440" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid" data-to="day" data-condition="Да" points="270,400 270,440" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="valid" data-to="error" data-condition="Нет" points="490,350 554,350" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="more" data-to="advance" data-condition="Да" points="490,752 545,752" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="advance" data-to="day" data-condition="" points="660,700 660,488 490,488" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline data-from="more" data-to="output" data-condition="Нет" points="270,802 270,846" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-from="error" data-to="end" data-condition="" points="766,350 788,350 788,982 380,982" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <g data-node="start" data-kind="term">
 <rect x="160" y="18" width="220" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="270" y="45.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Начало</text>
@@ -69,10 +69,6 @@
 <polygon points="563,302 775,302 757,398 545,398" fill="#fff" stroke="#000" stroke-width="1.8"/>
 <text x="660" y="344.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Ошибка</text>
 <text x="660" y="367" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">исходных данных</text>
-</g>
-<g data-node="end-error" data-kind="term">
-<rect x="560" y="440" width="200" height="40" rx="20" fill="#fff" stroke="#000" stroke-width="1.8"/>
-<text x="660" y="465.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Конец</text>
 </g>
 <text x="295" y="426" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Да</text>
 <text x="518" y="339.5" text-anchor="middle" font-family="Arial" font-size="20" fill="#000">Нет</text>
