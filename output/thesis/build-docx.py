@@ -94,7 +94,7 @@ def inline(p,text):
     tail=p.add_run(after);s._r.addnext(tail._r)
  return p
 
-TABLE_WIDTHS={1:[30,28,28,28,28,28],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56],6:[32,80,58]}
+TABLE_WIDTHS={1:[30,28,28,28,28,28],2:[33,58,79],3:[37,57,76],4:[37,57,76],5:[39,75,56]}
 table_no=0
 
 def table(rows, continuation=False):

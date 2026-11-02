@@ -1,0 +1,769 @@
+{
+  "scope": "Independent conceptual-model documentation audit; no application tests executed",
+  "model_sha256": "120183df60cc68e3deb1bb04d9f0adaf249a18ebc427b7d69ec9e4cd6df5927a",
+  "checks": [
+    {
+      "name": "semantic:exactly three agreed diagram views",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "semantic:23 concepts and 29 appearances",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "semantic:40 relationships, 39 unique conceptual relationships",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:complete distinct class set",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Account",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Transaction",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Category",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Split",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Debt",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Adjustment",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class:Reconciliation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:all relations have the agreed kind, direction and endpoint multiplicities",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:parallel and self-association roles remain distinguishable",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:edge identifiers are distinct within the view",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:one connected conceptual view without isolated classes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:complete distinct class set",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Income",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Payment",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Goal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Terms",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Schedule",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:FundCycle",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Release",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:Transaction",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class:IncomeOverride",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:all relations have the agreed kind, direction and endpoint multiplicities",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:parallel and self-association roles remain distinguishable",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:edge identifiers are distinct within the view",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:one connected conceptual view without isolated classes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:complete distinct class set",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Category",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Account",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Payment",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Terms",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Debt",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:BudgetTerms",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Scenario",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Change",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Event",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:PlannedTransfer",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Forecast",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class:Purchase",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:all relations have the agreed kind, direction and endpoint multiplicities",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:parallel and self-association roles remain distinguishable",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:edge identifiers are distinct within the view",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:one connected conceptual view without isolated classes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "semantic:no budget subtraction dependency on forecast",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "semantic:no automatic planned-to-actual transfer association",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "semantic:scenario change depends on current conditions without a persisted-version association",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "geometry:common 160 mm print width",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:portrait A4 print area",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:all class cards wholly inside canvas",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:class cards do not overlap",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:routes attach to the declared endpoint cards",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:no route passes through any class card",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:SVG exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:SVG has exact canvas viewBox",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:actual SVG text can be independently measured",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:no notes, legends or unrelated text blocks",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:all class groups visible exactly once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:actual SVG titles and properties match the independent contract",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:every relation has exactly one SVG group",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:visible SVG paths, multiplicities and roles match their conceptual relations",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:no clipped text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:no overlapping text glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:no route passes through another label or class text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:composition markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:dependency markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:filled diamonds identify owners and dependency arrows identify targets",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:relationship markers do not overlap text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:label backgrounds do not hide unrelated routes",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "08-domain-ledger:print size keeps classes at 11.3 pt and labels at 10.7 pt",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:portrait A4 print area",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:all class cards wholly inside canvas",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:class cards do not overlap",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:routes attach to the declared endpoint cards",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:no route passes through any class card",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:SVG exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:SVG has exact canvas viewBox",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:actual SVG text can be independently measured",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:no notes, legends or unrelated text blocks",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:all class groups visible exactly once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:actual SVG titles and properties match the independent contract",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:every relation has exactly one SVG group",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:visible SVG paths, multiplicities and roles match their conceptual relations",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:no clipped text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:no overlapping text glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:no route passes through another label or class text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:composition markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:dependency markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:filled diamonds identify owners and dependency arrows identify targets",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:relationship markers do not overlap text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:label backgrounds do not hide unrelated routes",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "09-domain-plans:print size keeps classes at 11.3 pt and labels at 10.7 pt",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:portrait A4 print area",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:all class cards wholly inside canvas",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:class cards do not overlap",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:routes attach to the declared endpoint cards",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:no route passes through any class card",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:SVG exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:SVG has exact canvas viewBox",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:actual SVG text can be independently measured",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:no notes, legends or unrelated text blocks",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:all class groups visible exactly once",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:actual SVG titles and properties match the independent contract",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:every relation has exactly one SVG group",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:visible SVG paths, multiplicities and roles match their conceptual relations",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:no clipped text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:no overlapping text glyphs",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:no route passes through another label or class text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:composition markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:dependency markers exist only for the agreed relations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:filled diamonds identify owners and dependency arrows identify targets",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:relationship markers do not overlap text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:label backgrounds do not hide unrelated routes",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "10-domain-decisions:print size keeps classes at 11.3 pt and labels at 10.7 pt",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:PUML source exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:PUML classes and attributes agree with the conceptual contract",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:PUML includes every relationship, role and endpoint multiplicity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "08-domain-ledger:PUML has no methods, note blocks or legends",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:PUML source exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:PUML classes and attributes agree with the conceptual contract",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:PUML includes every relationship, role and endpoint multiplicity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "09-domain-plans:PUML has no methods, note blocks or legends",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:PUML source exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:PUML classes and attributes agree with the conceptual contract",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:PUML includes every relationship, role and endpoint multiplicity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "10-domain-decisions:PUML has no methods, note blocks or legends",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 129,
+  "total": 129,
+  "geometry": {
+    "diagrams": [
+      {
+        "diagram": "08-domain-ledger",
+        "classes": 7,
+        "relations": 11,
+        "height_mm": 158.0,
+        "minimum_class_font_pt": 11.338582677165356,
+        "minimum_label_font_pt": 10.771653543307089
+      },
+      {
+        "diagram": "09-domain-plans",
+        "classes": 9,
+        "relations": 12,
+        "height_mm": 152.0,
+        "minimum_class_font_pt": 11.338582677165356,
+        "minimum_label_font_pt": 10.771653543307089
+      },
+      {
+        "diagram": "10-domain-decisions",
+        "classes": 13,
+        "relations": 17,
+        "height_mm": 190.0,
+        "minimum_class_font_pt": 11.338582677165356,
+        "minimum_label_font_pt": 10.771653543307089
+      }
+    ],
+    "svg_sha256": {
+      "08-domain-ledger.svg": "da048274bfc2010cc579d2fcc37c27065768f8e05f2336897d081709f3a2e93c",
+      "09-domain-plans.svg": "667a88a4f536e4bef6b2982a46fc6a4cc63b5c80f845bb84c4df072f9ecbecbb",
+      "10-domain-decisions.svg": "b00560dfd11a2ccdb164a684fedf81f22524304306b4f2a40d919bdd3995a6ce"
+    }
+  },
+  "puml_sha256": {
+    "08-domain-ledger.puml": "2a0f9f16d31be3f886aa246a302f8b91b228d6f5974f13539fd9ec333af98a37",
+    "09-domain-plans.puml": "7b62cbe1f20d3a981ef4592239b6c29395417a5f7a4a3b56eb6cc5e3bc9a0d9e",
+    "10-domain-decisions.puml": "604e32904a2ba5b3e90eac1e718ae06560be3c24319f0cfe75274bd1154d5178"
+  },
+  "png_sha256": {
+    "08-domain-ledger": "16955f5f7b02a8edee1e0c3884a211d5885ca4697e7883c6d979f53e03d32fee",
+    "09-domain-plans": "a67b6f53727504373b1604e84c853b5350b65879b8220a03534573d0f32a5229",
+    "10-domain-decisions": "090fcc426c8e39a6dfd86a6908518c44a5d1552e6033431bf13439df8d77dc29"
+  },
+  "section_2_4": {
+    "sha256": "ac1a9acb82e157f6ff77628031cddc1ce8e5644c98682fb2094676133a9c4efc",
+    "start_line": 527
+  },
+  "source_sha256": {
+    "src/domain/types.ts": "85fbfd0feb86a22b91b1991a4e3ec2b119a9a7aa718886877263f775855bb47f",
+    "src/domain/debts.ts": "381810c98e393ab05b730e2adad546e8a6013b259188ccb3c147d73a0ec28470",
+    "src/domain/reconciliation.ts": "f6a2bdd60f161ba106d4cb891682fb5c6e549fe11bd186b4ee405fb31f6b95fb",
+    "src/domain/planHistory.ts": "b66d0c74060100ef6074430d68b26a1e627727b6157544ac262c4f9b67701141",
+    "src/domain/goals.ts": "9034c7967488eb6dd56b1bdbecfea3c204ea653ee4fd98c368e53308de3e928e",
+    "src/domain/incomes.ts": "c0930657259d698f8570be15253acd2820f31fc14fb7be01c5a6fd34f349c056",
+    "src/domain/goalFunds.ts": "c918a0be737059a54529cfff509de6facb186f92d29f64aa0442b4d4cd5fb54b",
+    "src/domain/budgets.ts": "dc7c30b6db4ce353440e2432247729517aa173db36d07b2aa36529d5d065544a",
+    "src/domain/scenarios.ts": "fa04b8887b915bc574c015f58f77cbd3667b7e887508fd8d644ed165abb9d702",
+    "src/domain/forecast.ts": "eade9e680caa2c0faf0a5e9bb3c2841856e9ae23b7a2809eb210508720e781a3",
+    "src/domain/purchasePlanner.ts": "9e75d05809e12c96f4d4abb89ca9098f8040cc78ffb556cd31a05c9d011725bd",
+    "src/domain/actions/incomes.ts": "d37917a8052ab3c6d26444d9d38ffd56d5d172a17313169f63d5566ee13d4d5b",
+    "src/domain/actions/goalFunds.ts": "57f200a0c480201c2012a8c25eb9f58bed7cd423ee4c5ebe37c24cb352e2d77f",
+    "src/domain/actions/goals.ts": "1871abc8a24d941ef2935dfd2bb6542ba4282bf39aa8785d2b332b31fb237d91",
+    "src/domain/actions/budgets.ts": "62f6f1a3f98db3d0c0b2ca293bed5af05ab0f6657a70a5b664f3a22fc965bc66",
+    "src/domain/actions/scenarios.ts": "6ca066eaab26afb3403e48d7f67e6b2b8054f91d5160882517d589d8aa9f9078"
+  },
+  "text_review": {
+    "required": false,
+    "reviewed_on": "2026-11-03",
+    "reviewer": "uml_text_audit",
+    "concepts": 23,
+    "shown_relations": 40,
+    "unique_relations": 39,
+    "result": "Окончательный раздел 2.4 прочитан полностью после переноса пояснения реализации во вступление и сокращения ссылки на словарь. Все понятия, показанные свойства, роли, кратности и ограничения раскрыты; исходная концептуальная история отделена от сохранённых версий ER, расчётные понятия — от сохраняемых записей. Проектные формулировки выдержаны.",
+    "coverage": [
+      {
+        "view": "08-domain-ledger",
+        "lines": [537, 539, 541],
+        "classes": 7,
+        "relations": 11
+      },
+      {
+        "view": "09-domain-plans",
+        "lines": [543, 545, 549],
+        "classes": 9,
+        "relations": 12
+      },
+      {
+        "view": "10-domain-decisions",
+        "lines": [543, 551, 553, 555, 557],
+        "classes": 13,
+        "relations": 17
+      },
+      {
+        "area": "scope, notation and implementation boundary",
+        "lines": [529, 531, 533]
+      }
+    ],
+    "key_evidence": [
+      "История 1..* включает исходные условия, даже без выделенной записи версии в данных.",
+      "Зависимость от условий плана означает использование актуальных условий источника, а не ссылку на конкретную версию.",
+      "Бюджеты повторно из денег не вычитаются.",
+      "Прогноз и оценка покупки являются несохраняемыми результатами расчётов"
+    ]
+  },
+  "visual_review": {
+    "required": false,
+    "reviewed_on": "2026-11-03",
+    "reviewer": "uml_text_audit",
+    "images": ["08-domain-ledger", "09-domain-plans", "10-domain-decisions"],
+    "png_sha256": {
+      "08-domain-ledger": "16955f5f7b02a8edee1e0c3884a211d5885ca4697e7883c6d979f53e03d32fee",
+      "09-domain-plans": "a67b6f53727504373b1604e84c853b5350b65879b8220a03534573d0f32a5229",
+      "10-domain-decisions": "090fcc426c8e39a6dfd86a6908518c44a5d1552e6033431bf13439df8d77dc29"
+    },
+    "result": "Все три окончательных PNG просмотрены полноразмерно; вторая схема повторно просмотрена после последней правки. Текст внутри карточек, все роли и кратности видимы и различимы. Наложений, обрезки и неоднозначных общих портов не обнаружено. Это проверка отдельных изображений; DOCX и Pages проверяются отдельно."
+  }
+}

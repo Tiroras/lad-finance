@@ -40,7 +40,7 @@ FORBIDDEN = [
 ]
 # Formulas, figures and logical tables. Physical continuation parts are separate.
 COUNTS = {
-    'thesis': (11, 32, 7),
+    'thesis': (11, 33, 6),
 }
 
 
@@ -221,7 +221,7 @@ def main():
         paths = re.findall(r'^!\[[^\n]+\]\(([^\n]+)\)$', md, re.M)
         check(prefix + 'figure_count', len(doc.inline_shapes) == len(paths) == images)
         figure_numbers = re.findall(r'^!\[Рисунок ([А-Я]\.\d+|\d+)', md, re.M)
-        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, 31)] + [f'А.{i}' for i in range(1, 3)]
+        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, 32)] + [f'А.{i}' for i in range(1, 3)]
               and all(number in figure_numbers for number in re.findall(r'рисун(?:ок|ке|ка) ([А-Я]\.\d+|\d+)', md, re.I)))
         check(prefix + 'embedded_images_match', all((ROOT / path).exists()
               and doc.part.rels[shape._inline.graphic.graphicData.pic.blipFill.blip.get(qn('r:embed'))].target_part.blob == (ROOT / path).read_bytes()

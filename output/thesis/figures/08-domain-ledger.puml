@@ -1,70 +1,51 @@
 @startuml
-!pragma layout smetana
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam defaultFontName Arial
-skinparam defaultFontSize 19
-skinparam classFontSize 20
-skinparam classAttributeFontSize 19
-skinparam ArrowFontSize 19
-skinparam classBackgroundColor white
-skinparam classBorderColor black
-skinparam ArrowColor black
+skinparam defaultFontSize 20
 skinparam classAttributeIconSize 0
-skinparam nodesep 40
-skinparam ranksep 25
 hide circle
 hide methods
-
+class "Счёт" as Account {
+  вид: ВидСчёта
+  валюта: Код
+  /остаток: Деньги
+}
+class "Операция" as Transaction {
+  вид: ВидОперации
+  дата: Дата
+  сумма: Деньги
+  зачисление?: Деньги
+  статус: Статус
+}
 class "Категория" as Category {
-  id: ИД
-  название: Строка
+  название: Текст
   архив: Логика
 }
 class "Часть расхода" as Split {
   сумма: Деньги
 }
 class "Долг" as Debt {
-  id: ИД
   вид: взят / выдан
-  нач. остаток: Деньги
-}
-class "Операция" as Transaction {
-  id: ИД
-  вид: ВидОперации
-  дата: Дата
-  сумма: Деньги
-  зачисление?: Деньги
-  статус?: Статус
-}
-class "Счёт" as Account {
-  id: ИД
-  вид: ВидСчёта
-  валюта: Код
-  нач. остаток: Деньги
+  /остаток: Деньги
 }
 class "Корректировка" as Adjustment {
-  id: ИД
   дата: Дата
-  сумма: Деньги
+  изменение: Деньги
 }
 class "Сверка" as Reconciliation {
-  id: ИД
   дата: Дата
   остаток: Деньги
-  отпечаток: Строка
 }
-
-Category -[hidden]right- Split
-Split -[hidden]right- Debt
+Account "1" -- "0..*" Transaction : основной
+Account "0..1" -- "0..*" Transaction : получатель
 Category "1" -- "0..*" Transaction
-Category "1" --right-- "0..*" Split : категория
-Transaction "1" *-up- "0..*" Split
+Transaction "1" *-- "0..*" Split
+Category "1" -- "0..*" Split
+Account "1" -- "0..*" Debt : исходный
 Debt "0..1" -- "0..*" Transaction
-Account "1" --up-- "0..*" Transaction : основной
-Account "0..1" --up-- "0..*" Transaction : получатель
-Account "1" -- "0..*" Debt
-Account "1" --left-- "0..*" Adjustment : счёт
-Account "1" --right-- "0..*" Reconciliation : счёт
-
+Account "1" -- "0..*" Adjustment
+Account "1" -- "0..*" Reconciliation
+Category "0..1" -- "0..*" Category : родитель / подкатегории
+Transaction "0..1" -- "0..*" Transaction : покупка / возвраты
 @enduml

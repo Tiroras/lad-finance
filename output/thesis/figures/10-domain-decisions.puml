@@ -1,0 +1,73 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+class "Категория" as Category {
+}
+class "Счёт" as Account {
+}
+class "План платежа" as Payment {
+}
+class "Условия плана" as Terms {
+}
+class "Долг" as Debt {
+}
+class "Бюджет" as Budget {
+  /доступно: Деньги
+}
+class "Условия бюджета" as BudgetTerms {
+  период: ПериодБюджета
+  лимит: Деньги
+  перенос: Правило
+}
+class "Сценарий" as Scenario {
+  название: Текст
+  горизонт: Дни
+}
+class "Изменение сценария" as Change {
+  сумма: Деньги
+  сдвиг: Дни
+  включено: Логика
+}
+class "Разовое событие" as Event {
+  вид: доход / расход
+  дата: Дата
+  сумма: Деньги
+  включено: Логика
+}
+class "Плановый перевод" as PlannedTransfer {
+  дата: Дата
+  списание: Деньги
+  зачисление: Деньги
+}
+class "Прогноз" as Forecast {
+  горизонт: Дни
+  резерв: Деньги
+  /минимум: Деньги
+}
+class "Оценка покупки" as Purchase {
+  /максимум: Деньги
+  /ближайшая дата?: Дата
+}
+Category "1" -- "0..1" Budget
+Budget "1" *-- "1..*" BudgetTerms
+Category "1" -- "0..*" Payment
+Payment "0..1" *-- "1..*" Terms
+Scenario "1" *-- "0..*" Change
+Scenario "1" *-- "0..*" Event
+Change ..> Terms : условия источника
+Account "0..1" -- "0..*" Event
+Account "1" -- "0..*" PlannedTransfer : источник
+Account "1" -- "0..*" PlannedTransfer : получатель
+Forecast ..> Account
+Forecast ..> Debt
+Forecast ..> Terms
+Forecast ..> Scenario
+Forecast ..> PlannedTransfer
+Purchase ..> Forecast
+Account "1" -- "0..*" Purchase : выбранный
+@enduml

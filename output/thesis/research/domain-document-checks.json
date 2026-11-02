@@ -1,0 +1,714 @@
+{
+  "checked_on": "2026-11-03",
+  "checks": {
+    "text before 2.4 unchanged": true,
+    "text after 2.4 changed only by figure and table numbering": true,
+    "section 2.2 and appendix unchanged": true,
+    "all thirty other images unchanged": true,
+    "ER model source and graphics unchanged": true,
+    "11 native equations unchanged": true,
+    "only former table6 removed": true,
+    "exactly33embeddedfigures": true,
+    "threeconceptualdiagrams": true,
+    "embeddedfiguresmatchsource": true,
+    "section24no_more_than_six_pages": true,
+    "allportraitA4": true,
+    "noblankpages": true,
+    "figures18to20withcaption": true,
+    "newfiguresinsidemargins": true,
+    "appendixexactlytwopages": true
+  },
+  "passed": 16,
+  "total": 16,
+  "pages": 113,
+  "section24pages": [62, 67],
+  "section24words": {
+    "before": 601,
+    "after": 936
+  },
+  "caption_pages": {
+    "1": 27,
+    "2": 28,
+    "3": 29,
+    "4": 30,
+    "5": 31,
+    "6": 32,
+    "7": 33,
+    "8": 34,
+    "9": 35,
+    "10": 36,
+    "11": 44,
+    "12": 46,
+    "13": 48,
+    "14": 50,
+    "15": 52,
+    "16": 54,
+    "17": 60,
+    "18": 63,
+    "19": 65,
+    "20": 67,
+    "21": 71,
+    "22": 75,
+    "23": 79,
+    "24": 83,
+    "25": 86,
+    "26": 89,
+    "27": 94,
+    "28": 96,
+    "29": 97,
+    "30": 99,
+    "31": 103,
+    "А.1": 112,
+    "А.2": 113
+  },
+  "new_image_boxes": {
+    "18": [
+      {
+        "x0": 99.25,
+        "x1": 552.8,
+        "top": 56.650763779528006,
+        "bottom": 504.450763779528
+      }
+    ],
+    "19": [
+      {
+        "x0": 99.25,
+        "x1": 552.8,
+        "top": 56.650763779528006,
+        "bottom": 487.65076377952806
+      }
+    ],
+    "20": [
+      {
+        "x0": 99.25,
+        "x1": 552.8,
+        "top": 207.5507637795281,
+        "bottom": 746.100763779528
+      }
+    ]
+  },
+  "unchanged_body_pages": [
+    {
+      "current": 1,
+      "baseline": 1
+    },
+    {
+      "current": 2,
+      "baseline": 2
+    },
+    {
+      "current": 3,
+      "baseline": 3
+    },
+    {
+      "current": 4,
+      "baseline": 4
+    },
+    {
+      "current": 5,
+      "baseline": 5
+    },
+    {
+      "current": 6,
+      "baseline": 6
+    },
+    {
+      "current": 7,
+      "baseline": 7
+    },
+    {
+      "current": 8,
+      "baseline": 8
+    },
+    {
+      "current": 9,
+      "baseline": 9
+    },
+    {
+      "current": 10,
+      "baseline": 10
+    },
+    {
+      "current": 11,
+      "baseline": 11
+    },
+    {
+      "current": 12,
+      "baseline": 12
+    },
+    {
+      "current": 13,
+      "baseline": 13
+    },
+    {
+      "current": 14,
+      "baseline": 14
+    },
+    {
+      "current": 15,
+      "baseline": 15
+    },
+    {
+      "current": 16,
+      "baseline": 16
+    },
+    {
+      "current": 17,
+      "baseline": 17
+    },
+    {
+      "current": 18,
+      "baseline": 18
+    },
+    {
+      "current": 19,
+      "baseline": 19
+    },
+    {
+      "current": 20,
+      "baseline": 20
+    },
+    {
+      "current": 21,
+      "baseline": 21
+    },
+    {
+      "current": 22,
+      "baseline": 22
+    },
+    {
+      "current": 23,
+      "baseline": 23
+    },
+    {
+      "current": 24,
+      "baseline": 24
+    },
+    {
+      "current": 25,
+      "baseline": 25
+    },
+    {
+      "current": 26,
+      "baseline": 26
+    },
+    {
+      "current": 27,
+      "baseline": 27
+    },
+    {
+      "current": 28,
+      "baseline": 28
+    },
+    {
+      "current": 29,
+      "baseline": 29
+    },
+    {
+      "current": 30,
+      "baseline": 30
+    },
+    {
+      "current": 31,
+      "baseline": 31
+    },
+    {
+      "current": 32,
+      "baseline": 32
+    },
+    {
+      "current": 33,
+      "baseline": 33
+    },
+    {
+      "current": 34,
+      "baseline": 34
+    },
+    {
+      "current": 35,
+      "baseline": 35
+    },
+    {
+      "current": 36,
+      "baseline": 36
+    },
+    {
+      "current": 37,
+      "baseline": 37
+    },
+    {
+      "current": 38,
+      "baseline": 38
+    },
+    {
+      "current": 39,
+      "baseline": 39
+    },
+    {
+      "current": 40,
+      "baseline": 40
+    },
+    {
+      "current": 41,
+      "baseline": 41
+    },
+    {
+      "current": 42,
+      "baseline": 42
+    },
+    {
+      "current": 43,
+      "baseline": 43
+    },
+    {
+      "current": 44,
+      "baseline": 44
+    },
+    {
+      "current": 45,
+      "baseline": 45
+    },
+    {
+      "current": 46,
+      "baseline": 46
+    },
+    {
+      "current": 47,
+      "baseline": 47
+    },
+    {
+      "current": 48,
+      "baseline": 48
+    },
+    {
+      "current": 49,
+      "baseline": 49
+    },
+    {
+      "current": 50,
+      "baseline": 50
+    },
+    {
+      "current": 51,
+      "baseline": 51
+    },
+    {
+      "current": 52,
+      "baseline": 52
+    },
+    {
+      "current": 53,
+      "baseline": 53
+    },
+    {
+      "current": 54,
+      "baseline": 54
+    },
+    {
+      "current": 55,
+      "baseline": 55
+    },
+    {
+      "current": 56,
+      "baseline": 56
+    },
+    {
+      "current": 57,
+      "baseline": 57
+    },
+    {
+      "current": 58,
+      "baseline": 58
+    },
+    {
+      "current": 59,
+      "baseline": 59
+    },
+    {
+      "current": 60,
+      "baseline": 60
+    },
+    {
+      "current": 61,
+      "baseline": 61
+    },
+    {
+      "current": 68,
+      "baseline": 66
+    },
+    {
+      "current": 69,
+      "baseline": 67
+    },
+    {
+      "current": 72,
+      "baseline": 70
+    },
+    {
+      "current": 73,
+      "baseline": 71
+    },
+    {
+      "current": 76,
+      "baseline": 74
+    },
+    {
+      "current": 77,
+      "baseline": 75
+    },
+    {
+      "current": 80,
+      "baseline": 78
+    },
+    {
+      "current": 81,
+      "baseline": 79
+    },
+    {
+      "current": 84,
+      "baseline": 82
+    },
+    {
+      "current": 87,
+      "baseline": 85
+    },
+    {
+      "current": 88,
+      "baseline": 86
+    },
+    {
+      "current": 91,
+      "baseline": 89
+    },
+    {
+      "current": 92,
+      "baseline": 90
+    },
+    {
+      "current": 98,
+      "baseline": 96
+    },
+    {
+      "current": 104,
+      "baseline": 102
+    },
+    {
+      "current": 106,
+      "baseline": 104
+    },
+    {
+      "current": 107,
+      "baseline": 105
+    },
+    {
+      "current": 108,
+      "baseline": 106
+    },
+    {
+      "current": 109,
+      "baseline": 107
+    },
+    {
+      "current": 110,
+      "baseline": 108
+    },
+    {
+      "current": 111,
+      "baseline": 109
+    },
+    {
+      "current": 112,
+      "baseline": 110
+    },
+    {
+      "current": 113,
+      "baseline": 111
+    }
+  ],
+  "changed_pages_requiring_review": [
+    62, 63, 64, 65, 66, 67, 70, 71, 74, 75, 78, 79, 82, 83, 85, 86, 89, 90, 93,
+    94, 95, 96, 97, 99, 100, 101, 102, 103, 105
+  ],
+  "sha256": {
+    "docx": "80b6c9fbf93fd1ac3294dc90e4231280d7cc28791135e0dcb63e338dd0c3b710",
+    "markdown": "822e4231d6cd05b1a3cd0b90bb57c382e4dc0c273e4cd7fcc494baa42fc2b3fc",
+    "bundled_pdf": "5c741d39587771c4503d1e9bc641fda510389d769e0eecc20acb3b57e9cbd8a4",
+    "pages_pdf": "b40f0c535388931e0485393acaf7374bb1920abde371e5a763be4dd58f40cbb6"
+  },
+  "visual_review": {
+    "required": false,
+    "reviewed_on": "2026-11-03",
+    "bundled": {
+      "pages": [
+        62, 63, 64, 65, 66, 67, 70, 71, 74, 75, 78, 79, 82, 83, 85, 86, 89, 90,
+        93, 94, 95, 96, 97, 99, 100, 101, 102, 103, 105
+      ],
+      "reviewers": {
+        "root": [62, 63, 64, 65, 66, 67],
+        "uml_text_audit": [70, 71, 74, 75, 78, 79, 82, 83, 85, 86, 89],
+        "uml_clean": [90, 93, 94, 95, 96, 97, 99, 100, 101, 102, 103, 105]
+      },
+      "previously_reviewed_body_pages_identical": 84,
+      "comparison_excludes": "Footer; after section 2.4 page numbers increase by two.",
+      "result": "Все 29 изменённых страниц просмотрены полноразмерно. Обрезаний, наложений, оторванных подписей и случайных пустых страниц нет. Остальные 84 тела страниц совпадают с предыдущей проверенной редакцией.",
+      "minor_observation": "В прежнем тексте главы 3 остаётся допустимый перенос встроенного вычисления между с. 95–96; все операнды и результат сохранены."
+    },
+    "pages": {
+      "required": false,
+      "reviewer": "root",
+      "pages": [62, 63, 64, 65, 66, 67, 68],
+      "result": "Все семь страниц просмотрены полноразмерно. Схемы читаются в размере публикации, подписи остаются с рисунками; обрезаний, наложений и пустых страниц нет."
+    }
+  },
+  "scope": "Document-only change; application tests and builds not run.",
+  "pages_export": {
+    "checked_on": "2026-11-03",
+    "checks": {
+      "exported copy equals final DOCX": true,
+      "113 pages": true,
+      "all pages portrait A4": true,
+      "no blank body pages": true,
+      "continuous page numbers": true,
+      "introduction limited to two pages": true,
+      "section 2.4 and chapter 3 page boundaries": true,
+      "new captions on pages 63 65 67": true,
+      "new images kept with captions": true,
+      "new images preserve 160 mm width and full heights": true,
+      "appendix remains two pages": true,
+      "all section 2.4 text paragraphs present": true
+    },
+    "passed": 12,
+    "total": 12,
+    "pages": 113,
+    "docx_sha256": "80b6c9fbf93fd1ac3294dc90e4231280d7cc28791135e0dcb63e338dd0c3b710",
+    "pdf_sha256": "b40f0c535388931e0485393acaf7374bb1920abde371e5a763be4dd58f40cbb6",
+    "section_2_4_pages": [62, 67],
+    "caption_pages": {
+      "1": 27,
+      "2": 28,
+      "3": 29,
+      "4": 30,
+      "5": 31,
+      "6": 32,
+      "7": 33,
+      "8": 34,
+      "9": 35,
+      "10": 36,
+      "11": 44,
+      "12": 46,
+      "13": 48,
+      "14": 50,
+      "15": 52,
+      "16": 54,
+      "17": 60,
+      "18": 63,
+      "19": 65,
+      "20": 67,
+      "21": 71,
+      "22": 75,
+      "23": 79,
+      "24": 83,
+      "25": 86,
+      "26": 89,
+      "27": 94,
+      "28": 96,
+      "29": 97,
+      "30": 99,
+      "31": 103,
+      "А.1": 112,
+      "А.2": 113
+    },
+    "new_image_boxes_pt": {
+      "18": [
+        {
+          "x0": 99.0784,
+          "x1": 552.6217,
+          "top": 56.7,
+          "bottom": 504.4809,
+          "width": 453.5433,
+          "height": 447.7809
+        }
+      ],
+      "19": [
+        {
+          "x0": 99.0784,
+          "x1": 552.6217,
+          "top": 56.7,
+          "bottom": 487.6742,
+          "width": 453.5433,
+          "height": 430.9742
+        }
+      ],
+      "20": [
+        {
+          "x0": 99.0784,
+          "x1": 552.6217,
+          "top": 181.2132,
+          "bottom": 719.7508,
+          "width": 453.5433,
+          "height": 538.5376
+        }
+      ]
+    },
+    "missing_paragraphs": [],
+    "visual_review": {
+      "required": false,
+      "reviewer": "root",
+      "pages": [62, 63, 64, 65, 66, 67, 68],
+      "result": "Все семь страниц просмотрены полноразмерно. Схемы читаются в размере публикации, подписи остаются с рисунками; обрезаний, наложений и пустых страниц нет."
+    }
+  },
+  "model_check_summary": {
+    "passed": 129,
+    "total": 129,
+    "concepts": 23,
+    "appearances": 29,
+    "shown_relations": 40,
+    "unique_relations": 39,
+    "report": "domain-model-checks.json"
+  },
+  "geometry": [
+    {
+      "id": "08-domain-ledger",
+      "nodes": 7,
+      "edges": 11,
+      "issues": [],
+      "widthMm": 160,
+      "heightMm": 158,
+      "fontPt": 11.338582677165354
+    },
+    {
+      "id": "09-domain-plans",
+      "nodes": 9,
+      "edges": 12,
+      "issues": [],
+      "widthMm": 160,
+      "heightMm": 152,
+      "fontPt": 11.338582677165354
+    },
+    {
+      "id": "10-domain-decisions",
+      "nodes": 13,
+      "edges": 17,
+      "issues": [],
+      "widthMm": 160,
+      "heightMm": 190,
+      "fontPt": 11.338582677165354
+    }
+  ],
+  "reproduction": {
+    "method": "Generation into a separate temporary directory, byte comparison of three SVG, three PNG and three PUML; source JSON copied unchanged.",
+    "files": [
+      {
+        "name": "domain-models.json",
+        "byteIdentical": true,
+        "sha256": "120183df60cc68e3deb1bb04d9f0adaf249a18ebc427b7d69ec9e4cd6df5927a"
+      },
+      {
+        "name": "08-domain-ledger.svg",
+        "byteIdentical": true,
+        "sha256": "da048274bfc2010cc579d2fcc37c27065768f8e05f2336897d081709f3a2e93c"
+      },
+      {
+        "name": "08-domain-ledger.png",
+        "byteIdentical": true,
+        "sha256": "16955f5f7b02a8edee1e0c3884a211d5885ca4697e7883c6d979f53e03d32fee"
+      },
+      {
+        "name": "08-domain-ledger.puml",
+        "byteIdentical": true,
+        "sha256": "2a0f9f16d31be3f886aa246a302f8b91b228d6f5974f13539fd9ec333af98a37"
+      },
+      {
+        "name": "09-domain-plans.svg",
+        "byteIdentical": true,
+        "sha256": "667a88a4f536e4bef6b2982a46fc6a4cc63b5c80f845bb84c4df072f9ecbecbb"
+      },
+      {
+        "name": "09-domain-plans.png",
+        "byteIdentical": true,
+        "sha256": "a67b6f53727504373b1604e84c853b5350b65879b8220a03534573d0f32a5229"
+      },
+      {
+        "name": "09-domain-plans.puml",
+        "byteIdentical": true,
+        "sha256": "7b62cbe1f20d3a981ef4592239b6c29395417a5f7a4a3b56eb6cc5e3bc9a0d9e"
+      },
+      {
+        "name": "10-domain-decisions.svg",
+        "byteIdentical": true,
+        "sha256": "b00560dfd11a2ccdb164a684fedf81f22524304306b4f2a40d919bdd3995a6ce"
+      },
+      {
+        "name": "10-domain-decisions.png",
+        "byteIdentical": true,
+        "sha256": "090fcc426c8e39a6dfd86a6908518c44a5d1552e6033431bf13439df8d77dc29"
+      },
+      {
+        "name": "10-domain-decisions.puml",
+        "byteIdentical": true,
+        "sha256": "604e32904a2ba5b3e90eac1e718ae06560be3c24319f0cfe75274bd1154d5178"
+      }
+    ],
+    "other_figure_files_unchanged": 94
+  },
+  "methodology": {
+    "source": "/Users/gamkrelidzetimur/Documents/ВКР_2024_v2 (2).doc",
+    "requirement": "Подраздел 2.4 содержит диаграмму классов и текстовое описание всех показанных классов, элементов и отношений. Дополнительные диаграммы компонентов и развёртывания необязательны.",
+    "scope": "Концептуальная модель предметной области; техническая структура сохраняемых данных раскрывается в 2.2 и приложении А. Максимальный общий объём не применяется по указанию пользователя."
+  },
+  "maintenance": {
+    "scope": "Four complete current thesis Markdown documents plus only the first current entry in each of two journals; local links and Markdown anchors. External URLs are syntax-checked only. Historical journal entries are excluded.",
+    "totals": {
+      "markdown_links": 240,
+      "local_links": 218,
+      "local_targets_present": 218,
+      "external_links_syntax_only": 22,
+      "anchors": 1
+    },
+    "syntax": [
+      {
+        "file": "output/thesis/build-docx.py",
+        "method": "Python ast.parse",
+        "passed": true
+      },
+      {
+        "file": "output/thesis/research/check-editorial.py",
+        "method": "Python ast.parse",
+        "passed": true
+      },
+      {
+        "file": "output/thesis/research/check-domain-model.py",
+        "method": "Python ast.parse",
+        "passed": true
+      },
+      {
+        "file": "output/thesis/figures/domain-diagrams.mjs",
+        "method": "bundled Node --check",
+        "passed": true,
+        "exit_code": 0,
+        "output": ""
+      }
+    ],
+    "errors": [],
+    "source_sha256": {
+      "output/thesis/thesis.md": "822e4231d6cd05b1a3cd0b90bb57c382e4dc0c273e4cd7fcc494baa42fc2b3fc",
+      "output/thesis/README.md": "d4087c2eb8d733d5d317d8bef2a3aa7a3aa63f958d38c2d31e9ea3f00f952bc2",
+      "output/thesis/figures/README.md": "82401a46f6858699c8fc16db4791c7b71e93cd3706cfd0d8252aaa55d3240d51",
+      "output/thesis/research/domain-model-review.md": "3e4b948237907bbcd68f4348218808efd0a300346cf3b467870a03643bc18421",
+      "docs/VERIFICATION.md": "c9321d3971c08a9ffed852eabb94c589f0b007d24ca936be00915f63aea87160",
+      "output/thesis/research-notes.md": "8ebb1274bddcbd800c64e099f1b9a3150857d038624eb50d900145ba92b5f099",
+      "output/thesis/build-docx.py": "1f5625a3828687210f83ca4044c6a5f746c496cc18310b18ba1f304fda09fc81",
+      "output/thesis/research/check-editorial.py": "87d7d438374073c26d28bb345bc8c6368f46a5cb63598db1701d35b1a0859d6b",
+      "output/thesis/research/check-domain-model.py": "f37737134e1e3076e72fea840c922512e10559424aec1605691e58bb2d129a40",
+      "output/thesis/figures/domain-diagrams.mjs": "c08c0b983c7ae7117c37653b8998c78d0bd3013e3c70c743f3cfe07395a7872c"
+    },
+    "prettier": {
+      "passed": true,
+      "files": 11
+    },
+    "git_diff_check": {
+      "passed": true
+    }
+  }
+}

@@ -1,75 +1,56 @@
 @startuml
-!pragma layout smetana
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam defaultFontName Arial
-skinparam defaultFontSize 18
-skinparam classFontSize 19
-skinparam classAttributeFontSize 18
-skinparam ArrowFontSize 18
-skinparam classBackgroundColor white
-skinparam classBorderColor black
-skinparam ArrowColor black
+skinparam defaultFontSize 20
 skinparam classAttributeIconSize 0
-skinparam nodesep 22
-skinparam ranksep 25
 hide circle
 hide methods
-
-class "Сценарий" as Scenario {
-  id: ИД
-  горизонт: 30 / 60 / 90
-  изменения: Массив
-  события: Массив
-}
 class "План дохода" as Income {
-  id: ИД
-  название: Строка
+  название: Текст
 }
 class "План платежа" as Payment {
-  id: ИД
-  название: Строка
-  категория: ИД
+  название: Текст
 }
 class "Цель" as Goal {
-  id: ИД
   целевая сумма: Деньги
   валюта: Код
+  /накоплено: Деньги
 }
-class "Условия дохода" as IncomeTerms {
-  id: ИД
-  начало, конец?: Дата
+class "Условия плана" as Terms {
+  начало: Дата
+  конец?: Дата
   сумма: Деньги
 }
-class "Условия платежа" as PaymentTerms {
-  id: ИД
-  начало, конец?: Дата
-  сумма: Деньги
-}
-class "Условия цели" as GoalTerms {
-  id: ИД
-  начало, конец?: Дата
-  взнос: Деньги
-  срок: Дата [0..1]
-}
-class "График" as Schedule <<значение>> {
+class "График" as Schedule {
   единица: Период
   интервал: Целое
   опорная дата: Дата
 }
-
-Income -[hidden]right- Payment
-Payment -[hidden]right- Goal
-IncomeTerms -[hidden]right- PaymentTerms
-PaymentTerms -[hidden]right- GoalTerms
-Scenario ..> Income
-Scenario ..> Payment
-Scenario ..> Goal
-Income "1" *-down- "0..*" IncomeTerms
-Payment "1" *-down- "0..*" PaymentTerms
-Goal "1" *-down- "0..*" GoalTerms
-IncomeTerms "0..1" *-down- "0..1" Schedule
-PaymentTerms "0..1" *-down- "0..1" Schedule
-GoalTerms "0..1" *-down- "0..1" Schedule
-
+class "Цикл фонда" as FundCycle {
+  дата платежа: Дата
+  статус: СтатусЦикла
+}
+class "Освобождение накоплений" as Release {
+  дата: Дата
+  сумма: Деньги
+}
+class "Операция" as Transaction {
+}
+class "Уточнение дохода" as IncomeOverride {
+  ожидается?: Дата
+  пропуск: Логика
+}
+Income "0..1" *-- "1..*" Terms
+Payment "0..1" *-- "1..*" Terms
+Goal "0..1" *-- "1..*" Terms
+Terms "1" *-- "0..1" Schedule
+Income "1" *-- "0..*" IncomeOverride
+Goal "1" -- "0..*" FundCycle
+Goal "1" -- "0..*" Release
+FundCycle "0..1" -- "0..1" Release
+Transaction "1" -- "0..1" Release : перевод
+Payment "0..1" -- "0..*" FundCycle : обязательство
+Transaction "0..1" -- "0..1" FundCycle : оплата
+Goal "0..1" -- "0..*" Transaction : взнос
 @enduml

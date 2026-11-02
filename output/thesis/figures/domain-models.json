@@ -1,0 +1,3199 @@
+{
+  "schemaVersion": 1,
+  "widthMm": 160,
+  "fontSize": 20,
+  "labelFontSize": 19,
+  "diagrams": [
+    {
+      "id": "08-domain-ledger",
+      "width": 800,
+      "height": 790,
+      "nodes": [
+        {
+          "id": "Account",
+          "title": "Счёт",
+          "attributes": ["вид: ВидСчёта", "валюта: Код", "/остаток: Деньги"],
+          "x": 280,
+          "y": 550,
+          "width": 240,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Счёт"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["вид: ВидСчёта"]
+            },
+            {
+              "index": 1,
+              "lines": ["валюта: Код"]
+            },
+            {
+              "index": 2,
+              "lines": ["/остаток: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Transaction",
+          "title": "Операция",
+          "attributes": [
+            "вид: ВидОперации",
+            "дата: Дата",
+            "сумма: Деньги",
+            "зачисление?: Деньги",
+            "статус: Статус"
+          ],
+          "x": 270,
+          "y": 280,
+          "width": 260,
+          "height": 164,
+          "context": false,
+          "titleLines": ["Операция"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["вид: ВидОперации"]
+            },
+            {
+              "index": 1,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 2,
+              "lines": ["сумма: Деньги"]
+            },
+            {
+              "index": 3,
+              "lines": ["зачисление?: Деньги"]
+            },
+            {
+              "index": 4,
+              "lines": ["статус: Статус"]
+            }
+          ]
+        },
+        {
+          "id": "Category",
+          "title": "Категория",
+          "attributes": ["название: Текст", "архив: Логика"],
+          "x": 25,
+          "y": 100,
+          "width": 220,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Категория"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["название: Текст"]
+            },
+            {
+              "index": 1,
+              "lines": ["архив: Логика"]
+            }
+          ]
+        },
+        {
+          "id": "Split",
+          "title": "Часть расхода",
+          "attributes": ["сумма: Деньги"],
+          "x": 310,
+          "y": 100,
+          "width": 220,
+          "height": 72,
+          "context": false,
+          "titleLines": ["Часть расхода"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["сумма: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Debt",
+          "title": "Долг",
+          "attributes": ["вид: взят / выдан", "/остаток: Деньги"],
+          "x": 565,
+          "y": 100,
+          "width": 210,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Долг"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["вид: взят / выдан"]
+            },
+            {
+              "index": 1,
+              "lines": ["/остаток: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Adjustment",
+          "title": "Корректировка",
+          "attributes": ["дата: Дата", "изменение: Деньги"],
+          "x": 25,
+          "y": 670,
+          "width": 220,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Корректировка"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["изменение: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Reconciliation",
+          "title": "Сверка",
+          "attributes": ["дата: Дата", "остаток: Деньги"],
+          "x": 555,
+          "y": 670,
+          "width": 220,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Сверка"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["остаток: Деньги"]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "L1",
+          "source": "Account",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "основной",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [340, 550],
+            [340, 444]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 320,
+              "y": 515.5,
+              "width": 8,
+              "height": 21,
+              "center": [324, 526],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 351,
+              "y": 457.5,
+              "width": 30,
+              "height": 21,
+              "center": [366, 468],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "основной",
+              "x": 249,
+              "y": 486.5,
+              "width": 85,
+              "height": 21,
+              "center": [291.5, 497],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L2",
+          "source": "Account",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "получатель",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [460, 550],
+            [460, 444]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 418.5,
+              "y": 515.5,
+              "width": 31,
+              "height": 21,
+              "center": [434, 526],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 471,
+              "y": 457.5,
+              "width": 30,
+              "height": 21,
+              "center": [486, 468],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "получатель",
+              "x": 353,
+              "y": 486.5,
+              "width": 101,
+              "height": 21,
+              "center": [403.5, 497],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L3",
+          "source": "Category",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [135, 196],
+            [135, 362],
+            [270, 362]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 147,
+              "y": 209.5,
+              "width": 8,
+              "height": 21,
+              "center": [151, 220],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 231,
+              "y": 367.5,
+              "width": 30,
+              "height": 21,
+              "center": [246, 378],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L4",
+          "source": "Transaction",
+          "target": "Split",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [420, 280],
+            [420, 172]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 400,
+              "y": 245.5,
+              "width": 8,
+              "height": 21,
+              "center": [404, 256],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 431,
+              "y": 185.5,
+              "width": 30,
+              "height": 21,
+              "center": [446, 196],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L5",
+          "source": "Category",
+          "target": "Split",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [245, 144],
+            [310, 144]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 265,
+              "y": 117.5,
+              "width": 8,
+              "height": 21,
+              "center": [269, 128],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 271,
+              "y": 149.5,
+              "width": 30,
+              "height": 21,
+              "center": [286, 160],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L6",
+          "source": "Account",
+          "target": "Debt",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "исходный",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [520, 610],
+            [765, 610],
+            [765, 235],
+            [670, 235],
+            [670, 196]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 540,
+              "y": 583.5,
+              "width": 8,
+              "height": 21,
+              "center": [544, 594],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 681,
+              "y": 209.5,
+              "width": 30,
+              "height": 21,
+              "center": [696, 220],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "исходный",
+              "x": 673,
+              "y": 412,
+              "width": 86,
+              "height": 21,
+              "center": [716, 422.5],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L7",
+          "source": "Debt",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [610, 196],
+            [610, 240],
+            [490, 240],
+            [490, 280]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 620.5,
+              "y": 209.5,
+              "width": 31,
+              "height": 21,
+              "center": [636, 220],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 449,
+              "y": 245.5,
+              "width": 30,
+              "height": 21,
+              "center": [464, 256],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L8",
+          "source": "Account",
+          "target": "Adjustment",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [280, 620],
+            [135, 620],
+            [135, 670]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 252,
+              "y": 625.5,
+              "width": 8,
+              "height": 21,
+              "center": [256, 636],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 94,
+              "y": 635.5,
+              "width": 30,
+              "height": 21,
+              "center": [109, 646],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L9",
+          "source": "Account",
+          "target": "Reconciliation",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [520, 640],
+            [665, 640],
+            [665, 670]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 540,
+              "y": 645.5,
+              "width": 8,
+              "height": 21,
+              "center": [544, 656],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 676,
+              "y": 635.5,
+              "width": 30,
+              "height": 21,
+              "center": [691, 646],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "L10",
+          "source": "Category",
+          "target": "Category",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "родитель",
+          "targetRole": "подкатегории",
+          "points": [
+            [80, 100],
+            [80, 30],
+            [190, 30],
+            [190, 100]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 38.5,
+              "y": 65.5,
+              "width": 31,
+              "height": 21,
+              "center": [54, 76],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 149,
+              "y": 65.5,
+              "width": 30,
+              "height": 21,
+              "center": [164, 76],
+              "inline": false
+            },
+            {
+              "kind": "sourceRole",
+              "text": "родитель",
+              "x": 94.5,
+              "y": 40.5,
+              "width": 83,
+              "height": 21,
+              "center": [136, 51],
+              "inline": false
+            },
+            {
+              "kind": "targetRole",
+              "text": "подкатегории",
+              "x": 218,
+              "y": 62.5,
+              "width": 120,
+              "height": 21,
+              "center": [278, 73],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "sourceRole": [136, 51],
+            "targetRole": [278, 73]
+          }
+        },
+        {
+          "id": "L11",
+          "source": "Transaction",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "покупка",
+          "targetRole": "возвраты",
+          "points": [
+            [530, 340],
+            [625, 340],
+            [625, 410],
+            [530, 410]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 538.5,
+              "y": 313.5,
+              "width": 31,
+              "height": 21,
+              "center": [554, 324],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 539,
+              "y": 383.5,
+              "width": 30,
+              "height": 21,
+              "center": [554, 394],
+              "inline": false
+            },
+            {
+              "kind": "sourceRole",
+              "text": "покупка",
+              "x": 540,
+              "y": 354.5,
+              "width": 70,
+              "height": 21,
+              "center": [575, 365],
+              "inline": false
+            },
+            {
+              "kind": "targetRole",
+              "text": "возвраты",
+              "x": 542.5,
+              "y": 427.5,
+              "width": 83,
+              "height": 21,
+              "center": [584, 438],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "sourceRole": [575, 365],
+            "targetRole": [584, 438]
+          }
+        }
+      ],
+      "geometry": {
+        "markers": [
+          {
+            "id": "L4",
+            "kind": "composition",
+            "points": [
+              [420, 280],
+              [426, 270],
+              [420, 260],
+              [414, 270]
+            ]
+          }
+        ],
+        "labels": [
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 320,
+            "y": 515.5,
+            "width": 8,
+            "height": 21,
+            "center": [324, 526],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 351,
+            "y": 457.5,
+            "width": 30,
+            "height": 21,
+            "center": [366, 468],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "основной",
+            "x": 249,
+            "y": 486.5,
+            "width": 85,
+            "height": 21,
+            "center": [291.5, 497],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 418.5,
+            "y": 515.5,
+            "width": 31,
+            "height": 21,
+            "center": [434, 526],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 471,
+            "y": 457.5,
+            "width": 30,
+            "height": 21,
+            "center": [486, 468],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "получатель",
+            "x": 353,
+            "y": 486.5,
+            "width": 101,
+            "height": 21,
+            "center": [403.5, 497],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 147,
+            "y": 209.5,
+            "width": 8,
+            "height": 21,
+            "center": [151, 220],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 231,
+            "y": 367.5,
+            "width": 30,
+            "height": 21,
+            "center": [246, 378],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 400,
+            "y": 245.5,
+            "width": 8,
+            "height": 21,
+            "center": [404, 256],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 431,
+            "y": 185.5,
+            "width": 30,
+            "height": 21,
+            "center": [446, 196],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 265,
+            "y": 117.5,
+            "width": 8,
+            "height": 21,
+            "center": [269, 128],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 271,
+            "y": 149.5,
+            "width": 30,
+            "height": 21,
+            "center": [286, 160],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 540,
+            "y": 583.5,
+            "width": 8,
+            "height": 21,
+            "center": [544, 594],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 681,
+            "y": 209.5,
+            "width": 30,
+            "height": 21,
+            "center": [696, 220],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "исходный",
+            "x": 673,
+            "y": 412,
+            "width": 86,
+            "height": 21,
+            "center": [716, 422.5],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 620.5,
+            "y": 209.5,
+            "width": 31,
+            "height": 21,
+            "center": [636, 220],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 449,
+            "y": 245.5,
+            "width": 30,
+            "height": 21,
+            "center": [464, 256],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 252,
+            "y": 625.5,
+            "width": 8,
+            "height": 21,
+            "center": [256, 636],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 94,
+            "y": 635.5,
+            "width": 30,
+            "height": 21,
+            "center": [109, 646],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 540,
+            "y": 645.5,
+            "width": 8,
+            "height": 21,
+            "center": [544, 656],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 676,
+            "y": 635.5,
+            "width": 30,
+            "height": 21,
+            "center": [691, 646],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 38.5,
+            "y": 65.5,
+            "width": 31,
+            "height": 21,
+            "center": [54, 76],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 149,
+            "y": 65.5,
+            "width": 30,
+            "height": 21,
+            "center": [164, 76],
+            "inline": false
+          },
+          {
+            "kind": "sourceRole",
+            "text": "родитель",
+            "x": 94.5,
+            "y": 40.5,
+            "width": 83,
+            "height": 21,
+            "center": [136, 51],
+            "inline": false
+          },
+          {
+            "kind": "targetRole",
+            "text": "подкатегории",
+            "x": 218,
+            "y": 62.5,
+            "width": 120,
+            "height": 21,
+            "center": [278, 73],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 538.5,
+            "y": 313.5,
+            "width": 31,
+            "height": 21,
+            "center": [554, 324],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 539,
+            "y": 383.5,
+            "width": 30,
+            "height": 21,
+            "center": [554, 394],
+            "inline": false
+          },
+          {
+            "kind": "sourceRole",
+            "text": "покупка",
+            "x": 540,
+            "y": 354.5,
+            "width": 70,
+            "height": 21,
+            "center": [575, 365],
+            "inline": false
+          },
+          {
+            "kind": "targetRole",
+            "text": "возвраты",
+            "x": 542.5,
+            "y": 427.5,
+            "width": 83,
+            "height": 21,
+            "center": [584, 438],
+            "inline": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "09-domain-plans",
+      "width": 800,
+      "height": 760,
+      "nodes": [
+        {
+          "id": "Income",
+          "title": "План дохода",
+          "attributes": ["название: Текст"],
+          "x": 25,
+          "y": 20,
+          "width": 220,
+          "height": 72,
+          "context": false,
+          "titleLines": ["План дохода"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["название: Текст"]
+            }
+          ]
+        },
+        {
+          "id": "Payment",
+          "title": "План платежа",
+          "attributes": ["название: Текст"],
+          "x": 300,
+          "y": 20,
+          "width": 220,
+          "height": 72,
+          "context": false,
+          "titleLines": ["План платежа"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["название: Текст"]
+            }
+          ]
+        },
+        {
+          "id": "Goal",
+          "title": "Цель",
+          "attributes": [
+            "целевая сумма: Деньги",
+            "валюта: Код",
+            "/накоплено: Деньги"
+          ],
+          "x": 570,
+          "y": 20,
+          "width": 205,
+          "height": 144,
+          "context": false,
+          "titleLines": ["Цель"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["целевая сумма:", "Деньги"]
+            },
+            {
+              "index": 1,
+              "lines": ["валюта: Код"]
+            },
+            {
+              "index": 2,
+              "lines": ["/накоплено: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Terms",
+          "title": "Условия плана",
+          "attributes": ["начало: Дата", "конец?: Дата", "сумма: Деньги"],
+          "x": 285,
+          "y": 240,
+          "width": 230,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Условия плана"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["начало: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["конец?: Дата"]
+            },
+            {
+              "index": 2,
+              "lines": ["сумма: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Schedule",
+          "title": "График",
+          "attributes": [
+            "единица: Период",
+            "интервал: Целое",
+            "опорная дата: Дата"
+          ],
+          "x": 25,
+          "y": 560,
+          "width": 240,
+          "height": 120,
+          "context": false,
+          "titleLines": ["График"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["единица: Период"]
+            },
+            {
+              "index": 1,
+              "lines": ["интервал: Целое"]
+            },
+            {
+              "index": 2,
+              "lines": ["опорная дата: Дата"]
+            }
+          ]
+        },
+        {
+          "id": "FundCycle",
+          "title": "Цикл фонда",
+          "attributes": ["дата платежа: Дата", "статус: СтатусЦикла"],
+          "x": 540,
+          "y": 330,
+          "width": 220,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Цикл фонда"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["дата платежа: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["статус: СтатусЦикла"]
+            }
+          ]
+        },
+        {
+          "id": "Release",
+          "title": "Освобождение\nнакоплений",
+          "attributes": ["дата: Дата", "сумма: Деньги"],
+          "x": 560,
+          "y": 570,
+          "width": 200,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Освобождение", "накоплений"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["сумма: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Transaction",
+          "title": "Операция",
+          "attributes": [],
+          "x": 300,
+          "y": 570,
+          "width": 180,
+          "height": 48,
+          "context": true,
+          "titleLines": ["Операция"],
+          "attributeLines": []
+        },
+        {
+          "id": "IncomeOverride",
+          "title": "Уточнение дохода",
+          "attributes": ["ожидается?: Дата", "пропуск: Логика"],
+          "x": 25,
+          "y": 240,
+          "width": 220,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Уточнение дохода"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["ожидается?: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["пропуск: Логика"]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "P1",
+          "source": "Income",
+          "target": "Terms",
+          "kind": "composition",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "1..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [155, 92],
+            [155, 175],
+            [330, 175],
+            [330, 240]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 165.5,
+              "y": 105.5,
+              "width": 31,
+              "height": 21,
+              "center": [181, 116],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "1..*",
+              "x": 290,
+              "y": 205.5,
+              "width": 28,
+              "height": 21,
+              "center": [304, 216],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P2",
+          "source": "Payment",
+          "target": "Terms",
+          "kind": "composition",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "1..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [410, 92],
+            [410, 240]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 420.5,
+              "y": 105.5,
+              "width": 31,
+              "height": 21,
+              "center": [436, 116],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "1..*",
+              "x": 370,
+              "y": 205.5,
+              "width": 28,
+              "height": 21,
+              "center": [384, 216],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P3",
+          "source": "Goal",
+          "target": "Terms",
+          "kind": "composition",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "1..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [570, 80],
+            [550, 80],
+            [550, 210],
+            [490, 210],
+            [490, 240]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 530.5,
+              "y": 43.5,
+              "width": 31,
+              "height": 21,
+              "center": [546, 54],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "1..*",
+              "x": 450,
+              "y": 205.5,
+              "width": 28,
+              "height": 21,
+              "center": [464, 216],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P4",
+          "source": "Terms",
+          "target": "Schedule",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..1",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [345, 360],
+            [345, 450],
+            [145, 450],
+            [145, 560]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 357,
+              "y": 373.5,
+              "width": 8,
+              "height": 21,
+              "center": [361, 384],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..1",
+              "x": 103.5,
+              "y": 525.5,
+              "width": 31,
+              "height": 21,
+              "center": [119, 536],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P5",
+          "source": "Income",
+          "target": "IncomeOverride",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [75, 92],
+            [75, 240]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 87,
+              "y": 105.5,
+              "width": 8,
+              "height": 21,
+              "center": [91, 116],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 34,
+              "y": 205.5,
+              "width": 30,
+              "height": 21,
+              "center": [49, 216],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P6",
+          "source": "Goal",
+          "target": "FundCycle",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [740, 164],
+            [740, 330]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 750,
+              "y": 169.5,
+              "width": 8,
+              "height": 21,
+              "center": [754, 180],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 699,
+              "y": 295.5,
+              "width": 30,
+              "height": 21,
+              "center": [714, 306],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "sourceCardinality": [754, 180]
+          }
+        },
+        {
+          "id": "P7",
+          "source": "Goal",
+          "target": "Release",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [710, 164],
+            [710, 220],
+            [795, 220],
+            [795, 520],
+            [700, 520],
+            [700, 570]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 690,
+              "y": 169.5,
+              "width": 8,
+              "height": 21,
+              "center": [694, 180],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 711,
+              "y": 535.5,
+              "width": 30,
+              "height": 21,
+              "center": [726, 546],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "sourceCardinality": [694, 180]
+          }
+        },
+        {
+          "id": "P8",
+          "source": "FundCycle",
+          "target": "Release",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..1",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [670, 426],
+            [670, 570]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 680.5,
+              "y": 439.5,
+              "width": 31,
+              "height": 21,
+              "center": [696, 450],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..1",
+              "x": 628.5,
+              "y": 535.5,
+              "width": 31,
+              "height": 21,
+              "center": [644, 546],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P9",
+          "source": "Transaction",
+          "target": "Release",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..1",
+          "role": "перевод",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [480, 594],
+            [560, 594]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 500,
+              "y": 567.5,
+              "width": 8,
+              "height": 21,
+              "center": [504, 578],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..1",
+              "x": 520.5,
+              "y": 599.5,
+              "width": 31,
+              "height": 21,
+              "center": [536, 610],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "перевод",
+              "x": 480.5,
+              "y": 629.5,
+              "width": 75,
+              "height": 21,
+              "center": [518, 640],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "role": [518, 640]
+          }
+        },
+        {
+          "id": "P10",
+          "source": "Payment",
+          "target": "FundCycle",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "обязательство",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [480, 92],
+            [480, 150],
+            [535, 150],
+            [535, 270],
+            [610, 270],
+            [610, 330]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 490.5,
+              "y": 105.5,
+              "width": 31,
+              "height": 21,
+              "center": [506, 116],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 629,
+              "y": 305.5,
+              "width": 30,
+              "height": 21,
+              "center": [644, 316],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "обязательство",
+              "x": 570,
+              "y": 237.5,
+              "width": 130,
+              "height": 21,
+              "center": [635, 248],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "role": [635, 248],
+            "targetCardinality": [644, 316]
+          }
+        },
+        {
+          "id": "P11",
+          "source": "Transaction",
+          "target": "FundCycle",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..1",
+          "role": "оплата",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [390, 570],
+            [390, 470],
+            [600, 470],
+            [600, 426]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 348.5,
+              "y": 535.5,
+              "width": 31,
+              "height": 21,
+              "center": [364, 546],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..1",
+              "x": 610.5,
+              "y": 439.5,
+              "width": 31,
+              "height": 21,
+              "center": [626, 450],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "оплата",
+              "x": 464,
+              "y": 443,
+              "width": 62,
+              "height": 21,
+              "center": [495, 453.5],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "P12",
+          "source": "Goal",
+          "target": "Transaction",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "взнос",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [600, 164],
+            [600, 200],
+            [780, 200],
+            [780, 735],
+            [390, 735],
+            [390, 618]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 610.5,
+              "y": 169.5,
+              "width": 31,
+              "height": 21,
+              "center": [626, 180],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 401,
+              "y": 631.5,
+              "width": 30,
+              "height": 21,
+              "center": [416, 642],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "взнос",
+              "x": 554.5,
+              "y": 702.5,
+              "width": 51,
+              "height": 21,
+              "center": [580, 713],
+              "inline": false
+            }
+          ],
+          "labelPositions": {
+            "sourceCardinality": [626, 180],
+            "role": [580, 713]
+          }
+        }
+      ],
+      "geometry": {
+        "markers": [
+          {
+            "id": "P1",
+            "kind": "composition",
+            "points": [
+              [155, 92],
+              [149, 102],
+              [155, 112],
+              [161, 102]
+            ]
+          },
+          {
+            "id": "P2",
+            "kind": "composition",
+            "points": [
+              [410, 92],
+              [404, 102],
+              [410, 112],
+              [416, 102]
+            ]
+          },
+          {
+            "id": "P3",
+            "kind": "composition",
+            "points": [
+              [570, 80],
+              [560, 74],
+              [550, 80],
+              [560, 86]
+            ]
+          },
+          {
+            "id": "P4",
+            "kind": "composition",
+            "points": [
+              [345, 360],
+              [339, 370],
+              [345, 380],
+              [351, 370]
+            ]
+          },
+          {
+            "id": "P5",
+            "kind": "composition",
+            "points": [
+              [75, 92],
+              [69, 102],
+              [75, 112],
+              [81, 102]
+            ]
+          }
+        ],
+        "labels": [
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 165.5,
+            "y": 105.5,
+            "width": 31,
+            "height": 21,
+            "center": [181, 116],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "1..*",
+            "x": 290,
+            "y": 205.5,
+            "width": 28,
+            "height": 21,
+            "center": [304, 216],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 420.5,
+            "y": 105.5,
+            "width": 31,
+            "height": 21,
+            "center": [436, 116],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "1..*",
+            "x": 370,
+            "y": 205.5,
+            "width": 28,
+            "height": 21,
+            "center": [384, 216],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 530.5,
+            "y": 43.5,
+            "width": 31,
+            "height": 21,
+            "center": [546, 54],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "1..*",
+            "x": 450,
+            "y": 205.5,
+            "width": 28,
+            "height": 21,
+            "center": [464, 216],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 357,
+            "y": 373.5,
+            "width": 8,
+            "height": 21,
+            "center": [361, 384],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..1",
+            "x": 103.5,
+            "y": 525.5,
+            "width": 31,
+            "height": 21,
+            "center": [119, 536],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 87,
+            "y": 105.5,
+            "width": 8,
+            "height": 21,
+            "center": [91, 116],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 34,
+            "y": 205.5,
+            "width": 30,
+            "height": 21,
+            "center": [49, 216],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 750,
+            "y": 169.5,
+            "width": 8,
+            "height": 21,
+            "center": [754, 180],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 699,
+            "y": 295.5,
+            "width": 30,
+            "height": 21,
+            "center": [714, 306],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 690,
+            "y": 169.5,
+            "width": 8,
+            "height": 21,
+            "center": [694, 180],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 711,
+            "y": 535.5,
+            "width": 30,
+            "height": 21,
+            "center": [726, 546],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 680.5,
+            "y": 439.5,
+            "width": 31,
+            "height": 21,
+            "center": [696, 450],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..1",
+            "x": 628.5,
+            "y": 535.5,
+            "width": 31,
+            "height": 21,
+            "center": [644, 546],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 500,
+            "y": 567.5,
+            "width": 8,
+            "height": 21,
+            "center": [504, 578],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..1",
+            "x": 520.5,
+            "y": 599.5,
+            "width": 31,
+            "height": 21,
+            "center": [536, 610],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "перевод",
+            "x": 480.5,
+            "y": 629.5,
+            "width": 75,
+            "height": 21,
+            "center": [518, 640],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 490.5,
+            "y": 105.5,
+            "width": 31,
+            "height": 21,
+            "center": [506, 116],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 629,
+            "y": 305.5,
+            "width": 30,
+            "height": 21,
+            "center": [644, 316],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "обязательство",
+            "x": 570,
+            "y": 237.5,
+            "width": 130,
+            "height": 21,
+            "center": [635, 248],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 348.5,
+            "y": 535.5,
+            "width": 31,
+            "height": 21,
+            "center": [364, 546],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..1",
+            "x": 610.5,
+            "y": 439.5,
+            "width": 31,
+            "height": 21,
+            "center": [626, 450],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "оплата",
+            "x": 464,
+            "y": 443,
+            "width": 62,
+            "height": 21,
+            "center": [495, 453.5],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 610.5,
+            "y": 169.5,
+            "width": 31,
+            "height": 21,
+            "center": [626, 180],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 401,
+            "y": 631.5,
+            "width": 30,
+            "height": 21,
+            "center": [416, 642],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "взнос",
+            "x": 554.5,
+            "y": 702.5,
+            "width": 51,
+            "height": 21,
+            "center": [580, 713],
+            "inline": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "10-domain-decisions",
+      "width": 800,
+      "height": 950,
+      "nodes": [
+        {
+          "id": "Category",
+          "title": "Категория",
+          "attributes": [],
+          "x": 565,
+          "y": 20,
+          "width": 210,
+          "height": 48,
+          "context": true,
+          "titleLines": ["Категория"],
+          "attributeLines": []
+        },
+        {
+          "id": "Account",
+          "title": "Счёт",
+          "attributes": [],
+          "x": 570,
+          "y": 745,
+          "width": 210,
+          "height": 48,
+          "context": true,
+          "titleLines": ["Счёт"],
+          "attributeLines": []
+        },
+        {
+          "id": "Payment",
+          "title": "План платежа",
+          "attributes": [],
+          "x": 570,
+          "y": 190,
+          "width": 210,
+          "height": 48,
+          "context": true,
+          "titleLines": ["План платежа"],
+          "attributeLines": []
+        },
+        {
+          "id": "Terms",
+          "title": "Условия плана",
+          "attributes": [],
+          "x": 570,
+          "y": 365,
+          "width": 210,
+          "height": 48,
+          "context": true,
+          "titleLines": ["Условия плана"],
+          "attributeLines": []
+        },
+        {
+          "id": "Debt",
+          "title": "Долг",
+          "attributes": [],
+          "x": 570,
+          "y": 550,
+          "width": 210,
+          "height": 48,
+          "context": true,
+          "titleLines": ["Долг"],
+          "attributeLines": []
+        },
+        {
+          "id": "Budget",
+          "title": "Бюджет",
+          "attributes": ["/доступно: Деньги"],
+          "x": 315,
+          "y": 20,
+          "width": 170,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Бюджет"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["/доступно:", "Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "BudgetTerms",
+          "title": "Условия бюджета",
+          "attributes": [
+            "период: ПериодБюджета",
+            "лимит: Деньги",
+            "перенос: Правило"
+          ],
+          "x": 20,
+          "y": 20,
+          "width": 250,
+          "height": 144,
+          "context": false,
+          "titleLines": ["Условия бюджета"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["период:", "ПериодБюджета"]
+            },
+            {
+              "index": 1,
+              "lines": ["лимит: Деньги"]
+            },
+            {
+              "index": 2,
+              "lines": ["перенос: Правило"]
+            }
+          ]
+        },
+        {
+          "id": "Scenario",
+          "title": "Сценарий",
+          "attributes": ["название: Текст", "горизонт: Дни"],
+          "x": 20,
+          "y": 200,
+          "width": 235,
+          "height": 96,
+          "context": false,
+          "titleLines": ["Сценарий"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["название: Текст"]
+            },
+            {
+              "index": 1,
+              "lines": ["горизонт: Дни"]
+            }
+          ]
+        },
+        {
+          "id": "Change",
+          "title": "Изменение сценария",
+          "attributes": ["сумма: Деньги", "сдвиг: Дни", "включено: Логика"],
+          "x": 20,
+          "y": 380,
+          "width": 235,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Изменение сценария"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["сумма: Деньги"]
+            },
+            {
+              "index": 1,
+              "lines": ["сдвиг: Дни"]
+            },
+            {
+              "index": 2,
+              "lines": ["включено: Логика"]
+            }
+          ]
+        },
+        {
+          "id": "Event",
+          "title": "Разовое событие",
+          "attributes": [
+            "вид: доход / расход",
+            "дата: Дата",
+            "сумма: Деньги",
+            "включено: Логика"
+          ],
+          "x": 20,
+          "y": 590,
+          "width": 235,
+          "height": 144,
+          "context": false,
+          "titleLines": ["Разовое событие"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["вид: доход / расход"]
+            },
+            {
+              "index": 1,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 2,
+              "lines": ["сумма: Деньги"]
+            },
+            {
+              "index": 3,
+              "lines": ["включено: Логика"]
+            }
+          ]
+        },
+        {
+          "id": "PlannedTransfer",
+          "title": "Плановый перевод",
+          "attributes": [
+            "дата: Дата",
+            "списание: Деньги",
+            "зачисление: Деньги"
+          ],
+          "x": 20,
+          "y": 800,
+          "width": 235,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Плановый перевод"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["дата: Дата"]
+            },
+            {
+              "index": 1,
+              "lines": ["списание: Деньги"]
+            },
+            {
+              "index": 2,
+              "lines": ["зачисление: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Forecast",
+          "title": "Прогноз",
+          "attributes": ["горизонт: Дни", "резерв: Деньги", "/минимум: Деньги"],
+          "x": 300,
+          "y": 570,
+          "width": 235,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Прогноз"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["горизонт: Дни"]
+            },
+            {
+              "index": 1,
+              "lines": ["резерв: Деньги"]
+            },
+            {
+              "index": 2,
+              "lines": ["/минимум: Деньги"]
+            }
+          ]
+        },
+        {
+          "id": "Purchase",
+          "title": "Оценка покупки",
+          "attributes": ["/максимум: Деньги", "/ближайшая дата?: Дата"],
+          "x": 310,
+          "y": 805,
+          "width": 255,
+          "height": 120,
+          "context": false,
+          "titleLines": ["Оценка покупки"],
+          "attributeLines": [
+            {
+              "index": 0,
+              "lines": ["/максимум: Деньги"]
+            },
+            {
+              "index": 1,
+              "lines": ["/ближайшая дата?: Дата"]
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "D1",
+          "source": "Category",
+          "target": "Budget",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..1",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [565, 44],
+            [485, 44]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 537,
+              "y": 49.5,
+              "width": 8,
+              "height": 21,
+              "center": [541, 60],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..1",
+              "x": 493.5,
+              "y": 17.5,
+              "width": 31,
+              "height": 21,
+              "center": [509, 28],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D2",
+          "source": "Budget",
+          "target": "BudgetTerms",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "1..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [315, 56],
+            [270, 56]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 287,
+              "y": 71.5,
+              "width": 8,
+              "height": 21,
+              "center": [291, 82],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "1..*",
+              "x": 280,
+              "y": 19.5,
+              "width": 28,
+              "height": 21,
+              "center": [294, 30],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D3",
+          "source": "Category",
+          "target": "Payment",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [670, 68],
+            [670, 190]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 682,
+              "y": 81.5,
+              "width": 8,
+              "height": 21,
+              "center": [686, 92],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 629,
+              "y": 155.5,
+              "width": 30,
+              "height": 21,
+              "center": [644, 166],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D4",
+          "source": "Payment",
+          "target": "Terms",
+          "kind": "composition",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "1..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [670, 238],
+            [670, 365]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 680.5,
+              "y": 251.5,
+              "width": 31,
+              "height": 21,
+              "center": [696, 262],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "1..*",
+              "x": 630,
+              "y": 330.5,
+              "width": 28,
+              "height": 21,
+              "center": [644, 341],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D5",
+          "source": "Scenario",
+          "target": "Change",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [135, 296],
+            [135, 380]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 147,
+              "y": 337.5,
+              "width": 8,
+              "height": 21,
+              "center": [151, 348],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 94,
+              "y": 345.5,
+              "width": 30,
+              "height": 21,
+              "center": [109, 356],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D6",
+          "source": "Scenario",
+          "target": "Event",
+          "kind": "composition",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [60, 296],
+            [60, 330],
+            [275, 330],
+            [275, 565],
+            [135, 565],
+            [135, 590]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 40,
+              "y": 309.5,
+              "width": 8,
+              "height": 21,
+              "center": [44, 320],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 94,
+              "y": 555.5,
+              "width": 30,
+              "height": 21,
+              "center": [109, 566],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D7",
+          "source": "Change",
+          "target": "Terms",
+          "kind": "dependency",
+          "role": "условия источника",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [255, 440],
+            [670, 440],
+            [670, 413]
+          ],
+          "labels": [
+            {
+              "kind": "role",
+              "text": "условия источника",
+              "x": 378.5,
+              "y": 413,
+              "width": 168,
+              "height": 21,
+              "center": [462.5, 423.5],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D8",
+          "source": "Account",
+          "target": "Event",
+          "kind": "association",
+          "sourceCardinality": "0..1",
+          "targetCardinality": "0..*",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [570, 768],
+            [550, 768],
+            [550, 750],
+            [275, 750],
+            [275, 650],
+            [255, 650]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "0..1",
+              "x": 502.5,
+              "y": 719.5,
+              "width": 31,
+              "height": 21,
+              "center": [518, 730],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 264,
+              "y": 623.5,
+              "width": 30,
+              "height": 21,
+              "center": [279, 634],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D9",
+          "source": "Account",
+          "target": "PlannedTransfer",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "источник",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [570, 775],
+            [270, 775],
+            [270, 835],
+            [255, 835]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 542,
+              "y": 780.5,
+              "width": 8,
+              "height": 21,
+              "center": [546, 791],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 264,
+              "y": 840.5,
+              "width": 30,
+              "height": 21,
+              "center": [279, 851],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "источник",
+              "x": 455,
+              "y": 781,
+              "width": 80,
+              "height": 21,
+              "center": [495, 791.5],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D10",
+          "source": "Account",
+          "target": "PlannedTransfer",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "получатель",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [710, 793],
+            [710, 940],
+            [280, 940],
+            [280, 904],
+            [255, 904]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 722,
+              "y": 806.5,
+              "width": 8,
+              "height": 21,
+              "center": [726, 817],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 264,
+              "y": 877.5,
+              "width": 30,
+              "height": 21,
+              "center": [279, 888],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "получатель",
+              "x": 603,
+              "y": 892.75,
+              "width": 101,
+              "height": 21,
+              "center": [653.5, 903.25],
+              "inline": false
+            }
+          ]
+        },
+        {
+          "id": "D11",
+          "source": "Forecast",
+          "target": "Account",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [535, 630],
+            [550, 630],
+            [550, 720],
+            [675, 720],
+            [675, 745]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D12",
+          "source": "Forecast",
+          "target": "Debt",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [535, 595],
+            [550, 595],
+            [550, 574],
+            [570, 574]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D13",
+          "source": "Forecast",
+          "target": "Terms",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [445, 570],
+            [445, 530],
+            [735, 530],
+            [735, 413]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D14",
+          "source": "Forecast",
+          "target": "Scenario",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [340, 570],
+            [340, 248],
+            [255, 248]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D15",
+          "source": "Forecast",
+          "target": "PlannedTransfer",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [365, 690],
+            [365, 710],
+            [285, 710],
+            [285, 765],
+            [140, 765],
+            [140, 800]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D16",
+          "source": "Purchase",
+          "target": "Forecast",
+          "kind": "dependency",
+          "role": "",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [410, 805],
+            [410, 690]
+          ],
+          "labels": []
+        },
+        {
+          "id": "D17",
+          "source": "Account",
+          "target": "Purchase",
+          "kind": "association",
+          "sourceCardinality": "1",
+          "targetCardinality": "0..*",
+          "role": "выбранный",
+          "sourceRole": "",
+          "targetRole": "",
+          "points": [
+            [650, 793],
+            [650, 860],
+            [565, 860]
+          ],
+          "labels": [
+            {
+              "kind": "sourceCardinality",
+              "text": "1",
+              "x": 662,
+              "y": 806.5,
+              "width": 8,
+              "height": 21,
+              "center": [666, 817],
+              "inline": false
+            },
+            {
+              "kind": "targetCardinality",
+              "text": "0..*",
+              "x": 574,
+              "y": 833.5,
+              "width": 30,
+              "height": 21,
+              "center": [589, 844],
+              "inline": false
+            },
+            {
+              "kind": "role",
+              "text": "выбранный",
+              "x": 577.75,
+              "y": 866,
+              "width": 102,
+              "height": 21,
+              "center": [628.75, 876.5],
+              "inline": false
+            }
+          ]
+        }
+      ],
+      "geometry": {
+        "markers": [
+          {
+            "id": "D2",
+            "kind": "composition",
+            "points": [
+              [315, 56],
+              [305, 50],
+              [295, 56],
+              [305, 62]
+            ]
+          },
+          {
+            "id": "D4",
+            "kind": "composition",
+            "points": [
+              [670, 238],
+              [664, 248],
+              [670, 258],
+              [676, 248]
+            ]
+          },
+          {
+            "id": "D5",
+            "kind": "composition",
+            "points": [
+              [135, 296],
+              [129, 306],
+              [135, 316],
+              [141, 306]
+            ]
+          },
+          {
+            "id": "D6",
+            "kind": "composition",
+            "points": [
+              [60, 296],
+              [54, 306],
+              [60, 316],
+              [66, 306]
+            ]
+          },
+          {
+            "id": "D7",
+            "kind": "dependency-arrow",
+            "points": [
+              [664, 426],
+              [670, 413],
+              [676, 426]
+            ]
+          },
+          {
+            "id": "D11",
+            "kind": "dependency-arrow",
+            "points": [
+              [681, 732],
+              [675, 745],
+              [669, 732]
+            ]
+          },
+          {
+            "id": "D12",
+            "kind": "dependency-arrow",
+            "points": [
+              [557, 568],
+              [570, 574],
+              [557, 580]
+            ]
+          },
+          {
+            "id": "D13",
+            "kind": "dependency-arrow",
+            "points": [
+              [729, 426],
+              [735, 413],
+              [741, 426]
+            ]
+          },
+          {
+            "id": "D14",
+            "kind": "dependency-arrow",
+            "points": [
+              [268, 254],
+              [255, 248],
+              [268, 242]
+            ]
+          },
+          {
+            "id": "D15",
+            "kind": "dependency-arrow",
+            "points": [
+              [146, 787],
+              [140, 800],
+              [134, 787]
+            ]
+          },
+          {
+            "id": "D16",
+            "kind": "dependency-arrow",
+            "points": [
+              [404, 703],
+              [410, 690],
+              [416, 703]
+            ]
+          }
+        ],
+        "labels": [
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 537,
+            "y": 49.5,
+            "width": 8,
+            "height": 21,
+            "center": [541, 60],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..1",
+            "x": 493.5,
+            "y": 17.5,
+            "width": 31,
+            "height": 21,
+            "center": [509, 28],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 287,
+            "y": 71.5,
+            "width": 8,
+            "height": 21,
+            "center": [291, 82],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "1..*",
+            "x": 280,
+            "y": 19.5,
+            "width": 28,
+            "height": 21,
+            "center": [294, 30],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 682,
+            "y": 81.5,
+            "width": 8,
+            "height": 21,
+            "center": [686, 92],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 629,
+            "y": 155.5,
+            "width": 30,
+            "height": 21,
+            "center": [644, 166],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 680.5,
+            "y": 251.5,
+            "width": 31,
+            "height": 21,
+            "center": [696, 262],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "1..*",
+            "x": 630,
+            "y": 330.5,
+            "width": 28,
+            "height": 21,
+            "center": [644, 341],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 147,
+            "y": 337.5,
+            "width": 8,
+            "height": 21,
+            "center": [151, 348],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 94,
+            "y": 345.5,
+            "width": 30,
+            "height": 21,
+            "center": [109, 356],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 40,
+            "y": 309.5,
+            "width": 8,
+            "height": 21,
+            "center": [44, 320],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 94,
+            "y": 555.5,
+            "width": 30,
+            "height": 21,
+            "center": [109, 566],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "условия источника",
+            "x": 378.5,
+            "y": 413,
+            "width": 168,
+            "height": 21,
+            "center": [462.5, 423.5],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "0..1",
+            "x": 502.5,
+            "y": 719.5,
+            "width": 31,
+            "height": 21,
+            "center": [518, 730],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 264,
+            "y": 623.5,
+            "width": 30,
+            "height": 21,
+            "center": [279, 634],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 542,
+            "y": 780.5,
+            "width": 8,
+            "height": 21,
+            "center": [546, 791],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 264,
+            "y": 840.5,
+            "width": 30,
+            "height": 21,
+            "center": [279, 851],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "источник",
+            "x": 455,
+            "y": 781,
+            "width": 80,
+            "height": 21,
+            "center": [495, 791.5],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 722,
+            "y": 806.5,
+            "width": 8,
+            "height": 21,
+            "center": [726, 817],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 264,
+            "y": 877.5,
+            "width": 30,
+            "height": 21,
+            "center": [279, 888],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "получатель",
+            "x": 603,
+            "y": 892.75,
+            "width": 101,
+            "height": 21,
+            "center": [653.5, 903.25],
+            "inline": false
+          },
+          {
+            "kind": "sourceCardinality",
+            "text": "1",
+            "x": 662,
+            "y": 806.5,
+            "width": 8,
+            "height": 21,
+            "center": [666, 817],
+            "inline": false
+          },
+          {
+            "kind": "targetCardinality",
+            "text": "0..*",
+            "x": 574,
+            "y": 833.5,
+            "width": 30,
+            "height": 21,
+            "center": [589, 844],
+            "inline": false
+          },
+          {
+            "kind": "role",
+            "text": "выбранный",
+            "x": 577.75,
+            "y": 866,
+            "width": 102,
+            "height": 21,
+            "center": [628.75, 876.5],
+            "inline": false
+          }
+        ]
+      }
+    }
+  ]
+}
