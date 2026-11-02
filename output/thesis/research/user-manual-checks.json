@@ -1,0 +1,101 @@
+{
+  "checked_on": "2026-11-03",
+  "docx_sha256": "35533e4fa99c0ed6325267ca86f0637198463e48bc7fc9cc5010d0de641124f1",
+  "markdown_sha256": "90df1dd219054413d77a20892b43ab556f70cf19b3a4a725992d841b59cacf30",
+  "methodology_sha256": "f86ecf1f81071e40a78c4d0a1a47b9cc877349e524dc68f3ef06cea54e4052e8",
+  "checks": {
+    "existing_text_changes_only_appendix_numbers": true,
+    "five_methodology_sections": true,
+    "no_development_modes_or_control_examples": true,
+    "all_embedded_figures_unchanged": true,
+    "eleven_editable_equations_preserved": true,
+    "pages_input_matches_delivered_docx": true,
+    "bundled_129_pages": true,
+    "bundled_portrait_a4": true,
+    "bundled_no_blank_pages": true,
+    "bundled_continuous_page_numbers": true,
+    "bundled_manual_begins_114": true,
+    "bundled_all_manual_paragraphs_present": true,
+    "bundled_all_step_numbers_present": true,
+    "bundled_ER_figures_with_captions": true,
+    "Pages_129_pages": true,
+    "Pages_portrait_a4": true,
+    "Pages_no_blank_pages": true,
+    "Pages_continuous_page_numbers": true,
+    "Pages_manual_begins_114": true,
+    "Pages_all_manual_paragraphs_present": true,
+    "Pages_all_step_numbers_present": true,
+    "Pages_ER_figures_with_captions": true
+  },
+  "passed": 22,
+  "total": 22,
+  "renderers": {
+    "bundled": {
+      "pages": 129,
+      "manual_pages": [114, 129],
+      "missing_paragraphs": [],
+      "pdf_sha256": "b2c07421ef1157a7ad1fca082a0cb0c16fcac2979b4b5d5c862064edb2d79299"
+    },
+    "Pages": {
+      "pages": 129,
+      "manual_pages": [114, 129],
+      "missing_paragraphs": [],
+      "pdf_sha256": "82af3b151ba207ba3f0eb4709efdc147b22a696a2a43ab2da7d924a59f2bbd50"
+    }
+  },
+  "manual": {
+    "words": 3436,
+    "numbered_steps": 69,
+    "procedures": 20,
+    "main_sections": [
+      "Назначение системы",
+      "Условия применения системы",
+      "Подготовка системы к работе",
+      "Описание операций",
+      "Аварийные ситуации"
+    ]
+  },
+  "page_regression": {
+    "pixel_identical_pages": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 57, 58,
+      59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+      77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
+      95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+      111
+    ],
+    "changed_existing_pages": [56, 112, 113],
+    "new_pages": [
+      114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
+      129
+    ]
+  },
+  "visual_review": {
+    "required": false,
+    "bundled_reviewed_pages": [
+      56, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
+      126, 127, 128, 129
+    ],
+    "pages_reviewed_pages": [
+      112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+      127, 128, 129
+    ],
+    "result": "Все новые и изменённые страницы просмотрены целиком. Обрезаний, наложений, оторванных заголовков и пустых страниц нет. 110 прежних страниц пиксельно идентичны ранее проверенной редакции."
+  },
+  "limitations": [
+    "Инструкции сверены по текущему коду и документации; мобильное приложение в этой задаче не запускалось.",
+    "Числовые минимумы ОС и аппаратных ресурсов не установлены новым испытанием; требуется совместимая мобильная сборка."
+  ],
+  "maintenance": {
+    "local_links_checked": 238,
+    "missing_local_targets": [],
+    "python_syntax_checked": [
+      "output/thesis/build-docx.py",
+      "output/thesis/research/check-editorial.py"
+    ],
+    "prettier_files_checked": 8,
+    "git_diff_check": "passed",
+    "final_deliverable_hashes_match_reviewed": true
+  }
+}

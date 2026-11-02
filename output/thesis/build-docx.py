@@ -20,6 +20,7 @@ parser.parse_args()
 source=(ROOT/'thesis.md').read_text()
 in_chapter3=False
 in_appendix=False
+appendix_number=None
 DOC = Document()
 sec=DOC.sections[0]
 sec.page_width=Mm(210); sec.page_height=Mm(297)
@@ -209,8 +210,9 @@ while i<len(lines):
    in_chapter3=current_heading.startswith('3 ')
   if len(m.group(1))==1 and current_heading.startswith('Приложение '):
    in_appendix=True
+   appendix_number=current_heading.rsplit(' ',1)[-1]
   p=DOC.add_paragraph(style=f'Heading {len(m.group(1))}');inline(p,m.group(2))
-  if in_appendix:
+  if in_appendix and (appendix_number=='1' or len(m.group(1))<3):
    p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER
    p.paragraph_format.first_line_indent=Mm(0)
    p.paragraph_format.page_break_before=(len(m.group(1))==1)
@@ -236,7 +238,7 @@ while i<len(lines):
   p=DOC.add_paragraph();p.paragraph_format.first_line_indent=Mm(0);p.alignment=WD_ALIGN_PARAGRAPH.CENTER
   p.paragraph_format.keep_with_next=True;p.paragraph_format.keep_together=True
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.line_spacing=1
-  if in_appendix and not caption.startswith('Рисунок А.1 '):
+  if appendix_number=='1' and not caption.startswith('Рисунок 1.1 '):
    p.paragraph_format.page_break_before=True
   width=72 if 'control-screen' in path else 160
   shape=p.add_run().add_picture(str(ROOT/path),width=Mm(width))
@@ -253,6 +255,16 @@ while i<len(lines):
   parts.append(lines[i].strip());i+=1
  text=' '.join(parts)
  p=DOC.add_paragraph();inline(p,text)
+ if appendix_number=='2':
+  if re.fullmatch(r'\*\*[^*]+\*\*',text):
+   p.paragraph_format.keep_with_next=True
+   p.paragraph_format.keep_together=True
+   p.paragraph_format.space_before=Pt(8)
+   p.paragraph_format.space_after=Pt(4)
+  if re.match(r'^\d+\. ',text):
+   p.paragraph_format.left_indent=Mm(10)
+   p.paragraph_format.first_line_indent=Mm(-10)
+   p.paragraph_format.keep_together=True
  j=i
  while j<len(lines) and not lines[j].strip(): j+=1
  # Keep the short introduction with its UI sketch or behavioural diagram.
