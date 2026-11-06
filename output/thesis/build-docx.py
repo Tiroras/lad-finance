@@ -11,6 +11,7 @@ from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.enum.text import WD_TAB_ALIGNMENT
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
 ROOT = Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)
@@ -78,10 +79,26 @@ def inline(p,text):
   text=re.sub(r'\b(рисун(?:ок|ке|ка)|таблиц[аеы]|подраздел[ае]) (?=\d)',r'\1'+'\u00a0',text,flags=re.I)
  # Keep numeric ranges on one line without changing their visible punctuation.
  text=re.sub(r'(?<=\d)–(?=\d)', '\u2060–\u2060', text)
- # Render simple Markdown emphasis; preserve numbered source references.
- for n,seg in enumerate(re.split(r'(\*\*.*?\*\*|`[^`]+`)',text)):
+ if current_heading=='Список использованных источников':
+  def bibliography_link(match):
+   url=match.group(0)
+   scheme,rest=url.split('://',1)
+   # Permit wrapping at path separators; the hyperlink retains the exact URL.
+   label=scheme+'://'+re.sub(r'(?<=[/_-])', '\u200b', rest)
+   return '['+label+']('+url+')'
+  text=re.sub(r'https?://\S+',bibliography_link,text)
+ # Render explicit web links and emphasis; preserve numbered source references.
+ for seg in re.split(r'(\[[^\]\n]+\]\(https?://[^\s)]+\)|\*\*.*?\*\*|`[^`]+`)',text):
   if not seg: continue
-  if seg.startswith('**'): r=p.add_run(seg[2:-2]); r.bold=True
+  link=re.fullmatch(r'\[([^\]]+)\]\((https?://[^\s)]+)\)',seg)
+  if link:
+   r=p.add_run(link[1])
+   hyperlink=OxmlElement('w:hyperlink')
+   target,separator,anchor=link[2].partition('#')
+   hyperlink.set(qn('r:id'),p.part.relate_to(target,RT.HYPERLINK,is_external=True))
+   if separator: hyperlink.set(qn('w:anchor'),anchor)
+   r._r.addprevious(hyperlink);hyperlink.append(r._r)
+  elif seg.startswith('**'): r=p.add_run(seg[2:-2]); r.bold=True
   elif seg.startswith('`'):
    r=p.add_run(seg[1:-1])
    if in_chapter3: r.font.name='Courier New';r.font.size=Pt(12)
@@ -220,6 +237,8 @@ while i<len(lines):
    p.paragraph_format.space_before=Pt(0)
    p.paragraph_format.space_after=Pt(10)
    p.paragraph_format.line_spacing=1
+   if len(m.group(1))==1:
+    for r in p.runs:r.font.all_caps=True
   if len(DOC.paragraphs)==1:p.paragraph_format.page_break_before=False
   i+=1;continue
  if line.startswith('$$'):
@@ -282,9 +301,9 @@ while i<len(lines):
   p.paragraph_format.keep_with_next=True
  if p._p.getprevious() is not None and p._p.getprevious().tag==qn('w:tbl'):
   p.paragraph_format.space_before=Pt(6)
- if re.match(r'^\d+\. ',text) and 'дата обращения:' in text:
+ if current_heading=='Список использованных источников' and re.match(r'^\d+ ',text):
   p.paragraph_format.first_line_indent=Mm(10);p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.JUSTIFY
-  p.paragraph_format.space_after=Pt(6);p.paragraph_format.keep_together=True
+  p.paragraph_format.space_after=Pt(0);p.paragraph_format.keep_together=True
 
 output=ROOT/'thesis.docx'
 DOC.save(output)

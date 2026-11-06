@@ -31,6 +31,7 @@ SECTION_PREFIXES = {
     'bibliography': r'^Список использованных источников\b',
     'appendix_1': r'^Приложение 1\b',
     'appendix_2': r'^Приложение 2\b',
+    'appendix_3': r'^Приложение 3\b',
 }
 # These guards target editorial claims, not descriptions of validation algorithms.
 FORBIDDEN = [
@@ -46,7 +47,7 @@ COUNTS = {
 
 
 def norm(value):
-    return ' '.join(value.replace('\u2060', '').replace('⁸', '8').split())
+    return ' '.join(value.replace('\u2060', '').replace('\u200b', '').replace('⁸', '8').split())
 
 
 def sha(data):
@@ -54,12 +55,13 @@ def sha(data):
 
 
 def plain(value):
+    value = re.sub(r'\[([^\]]+)\]\((https?://[^\s)]+)\)', r'\1', value)
     return value.replace('**', '').replace('`', '')
 
 
 def section_key(title):
     return next((key for key, pattern in SECTION_PREFIXES.items()
-                 if re.match(pattern, norm(title))), None)
+                 if re.match(pattern, norm(title), re.I)), None)
 
 
 def sources():
@@ -144,12 +146,71 @@ def main():
         check(prefix + 'use_case_references_resolve', set(re.findall(r'UC-\d+', md)) == set(expected_ids))
         before_sources, after_sources = md.split('# Список использованных источников', 1)
         bibliography, appendices = after_sources.split('# Приложение 1', 1)
-        source_numbers = [int(number) for number in re.findall(r'^(\d+)\. ', bibliography, re.M)]
+        source_numbers = [int(number) for number in re.findall(r'^(\d+) ', bibliography, re.M)]
         cited_numbers = [int(number) for number in re.findall(r'\[(\d+)\]', before_sources + appendices)]
         first_citations = list(dict.fromkeys(cited_numbers))
+        source_catalog = json.loads((ROOT / 'research/bibliography-sources.json').read_text())
+        # The user requested more sources than the methodology's former 10–20 range.
         check(prefix + 'bibliography_count_and_first_citation_order',
-              10 <= len(source_numbers) <= 20 and source_numbers == list(range(1, len(source_numbers) + 1))
+              len(source_numbers) == source_catalog['current_count']
+              and source_numbers == list(range(1, len(source_numbers) + 1))
               and first_citations == source_numbers)
+        source_entries = re.findall(r'^\d+ (.+)$', bibliography, re.M)
+        check(prefix + 'bibliography_matches_researched_catalog',
+              source_entries == [item['entry'] for item in source_catalog['sources']]
+              and len({item['url'] for item in source_catalog['sources']}) == len(source_entries)
+              and all(item['citation_count'] == cited_numbers.count(item['number']) for item in source_catalog['sources'])
+              and all(item.get('claim') and item.get('locator') and item.get('evidence_url')
+                      for item in source_catalog['sources'] if item['added']))
+        check(prefix + 'bibliography_follows_methodology_examples',
+              not re.search(r'^\d+\. ', bibliography, re.M)
+              and all((re.search(r' – \d+ с\. – ISBN [\d-]+\.$', item['entry'])
+                       and 'URL' not in item['entry'])
+                      if item.get('publication_type') == 'book'
+                      else re.search(r' – URL, режим доступа свободный: https?://\S+ '
+                                     r'\(дата обращения \d{2}\.\d{2}\.\d{4}\)\.$', item['entry'])
+                      for item in source_catalog['sources']))
+        # Include table cells in document order, where SecureStore is first cited.
+        docx_citations, docx_entries = [], []
+        in_sources = False
+        for element in doc.element.body:
+            value = ''.join(element.itertext(qn('w:t')))
+            if value == 'Список использованных источников':
+                in_sources = True
+            elif value == 'Приложение 1':
+                in_sources = False
+            elif in_sources and value:
+                docx_entries.append(norm(value))
+            elif not in_sources:
+                docx_citations.extend(int(n) for n in re.findall(r'\[(\d+)\]', value))
+        check(prefix + 'docx_citations_match_markdown_in_reading_order',
+              docx_citations == cited_numbers
+              and list(dict.fromkeys(docx_citations)) == source_numbers
+              and docx_entries == [norm(f'{number} {entry}')
+                                   for number, entry in zip(source_numbers, source_entries)])
+        appendix_titles = [p for p in doc.paragraphs if re.fullmatch(r'Приложение \d+', p.text)]
+        check(prefix + 'appendices_follow_first_reference_order',
+              [p.text for p in appendix_titles] == [f'Приложение {i}' for i in (1, 2, 3)]
+              and list(dict.fromkeys(re.findall(r'приложени[еяию]\s+(\d+)', before_sources, re.I))) == ['1', '2', '3'])
+        check(prefix + 'appendix_headings_centered_on_new_pages', all(
+            p.alignment == WD_ALIGN_PARAGRAPH.CENTER and p.paragraph_format.page_break_before
+            and p.runs and all(r.font.all_caps for r in p.runs) for p in appendix_titles))
+        repository_url = 'https://github.com/Tiroras/lad-finance'
+        hyperlinks = doc.element.findall('.//' + qn('w:hyperlink'))
+        link_targets = [doc.part.rels[link.get(qn('r:id'))].target_ref
+                        + ('#' + link.get(qn('w:anchor')) if link.get(qn('w:anchor')) else '')
+                        for link in hyperlinks]
+        check(prefix + 'bibliography_urls_visible_clickable_and_exact',
+              link_targets == [item['url'] for item in source_catalog['sources']
+                               if item['url'] in item['entry']] + [repository_url]
+              and all(norm(''.join(link.itertext(qn('w:t')))) == target
+                      and doc.part.rels[link.get(qn('r:id'))].is_external
+                      for link, target in zip(hyperlinks, link_targets)))
+        repository_links = [link for link, target in zip(hyperlinks, link_targets) if target == repository_url]
+        check(prefix + 'repository_url_visible_and_clickable', len(repository_links) == 1
+              and ''.join(repository_links[0].itertext(qn('w:t'))) == repository_url
+              and repository_url in md.split('# Приложение 3', 1)[1]
+              and '(дата обращения: 06.11.2026).' in md.split('# Приложение 3', 1)[1])
         transaction_svg = ET.parse(ROOT / 'figures/chapter3-flow-transaction.svg').getroot()
         ends = [node.get('data-node') for node in transaction_svg.iter()
                 if node.get('data-kind') == 'term' and 'Конец' in ''.join(node.itertext())]
@@ -319,7 +380,7 @@ def main():
                 start, end = sections['introduction']['pages']
                 check(prefix + 'introduction_page_limit', end - start + 1 <= args.introduction_max_pages)
             reports[scope] = {'pages': count, 'docx_sha256': sha(docx.read_bytes()), 'pdf_sha256': sha(pdf_path.read_bytes()),
-                'markdown_sha256': sha(md.encode()), 'figures': len(paths), 'logical_tables': len(numbers), 'table_parts': len(doc.tables),
+                'markdown_sha256': sha(md.encode()), 'sources': len(source_numbers), 'figures': len(paths), 'logical_tables': len(numbers), 'table_parts': len(doc.tables),
                 'equations': len(equations), 'sections': sections, 'prose_fonts': sorted(fonts),
                 'caption_pages': caption_pages, 'table_continuation_pages': continuation_pages,
                 'editorial_hits': hits + pdf_hits, 'bounds_violations': bad_bounds}

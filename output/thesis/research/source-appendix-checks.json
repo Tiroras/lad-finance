@@ -1,0 +1,76 @@
+{
+  "checked_on": "2026-11-06",
+  "project_commit": "2c99a3c9a53fb439b62c5fb3f545470a84dd2a83",
+  "mode": "documents-only; application not launched",
+  "files": {
+    "output/thesis/thesis.md": {
+      "sha256": "f06c67861b4da3561a4891e4748bf9366a75d1cb4574dedc0e725eec2f5b9117"
+    },
+    "output/thesis/thesis.docx": {
+      "sha256": "6d6da41ce3cf63cbff338ebdc3d0182ab0038b44dfa55d54cae47a58dbdc1f3b"
+    }
+  },
+  "normative_sources": [
+    {
+      "standard": "ГОСТ 7.32–2017",
+      "clauses": ["6.17.1–6.17.7"],
+      "url": "https://allgosts.ru/01/140/gost_7.32-2017"
+    },
+    {
+      "standard": "ГОСТ Р 7.0.108–2022",
+      "clauses": ["5.1", "5.3.1", "5.3.5"],
+      "url": "https://library.csu.ru/media/files/i-culture/7_0_108-2022.pdf"
+    }
+  ],
+  "repository": {
+    "full_name": "Tiroras/lad-finance",
+    "html_url": "https://github.com/Tiroras/lad-finance",
+    "private": false,
+    "default_branch": "main"
+  },
+  "common_document_checks": {
+    "passed": 40,
+    "total": 40
+  },
+  "checks": {
+    "common_document_checks_passed": true,
+    "document_hash_matches_common_report": true,
+    "previous_text_preserved_except_appendix_reference": true,
+    "embedded_images_preserved": true,
+    "formula_xml_preserved": true,
+    "table_xml_preserved": true,
+    "all_bundled_pages_covered_by_review": true,
+    "pages_adds_exactly_one_page": true,
+    "pages_final_change_limited_to_reviewed_appendix": true,
+    "pages_has_no_empty_pages_or_overflow": true,
+    "pages_numbering_continuous": true,
+    "pages_hyperlink_target_correct": true,
+    "repository_public_and_address_matches": true,
+    "changed_python_syntax_valid": true,
+    "new_local_links_resolve": true
+  },
+  "checks_passed": 15,
+  "checks_total": 15,
+  "bundled": {
+    "pages": 136,
+    "appendix_page": 136,
+    "pdf_sha256": "dedd5e5a50ecabc3f609427ef7f03c865e6e893f0b0c4bf63785c16fd4a9a7e4",
+    "baseline_pixel_matches": 132,
+    "visually_reviewed_pages": [73, 117, 119, 136]
+  },
+  "pages": {
+    "pages": 135,
+    "appendix_page": 135,
+    "pdf_sha256": "a352bb872bb63ecbd35ce32fc7830f62ca9b5c27a069f0b676ce79cc750bc278",
+    "baseline_geometry_matches": 130,
+    "visually_reviewed_pages": [73, 116, 118, 134, 135],
+    "empty_pages": [],
+    "bounds_violations": []
+  },
+  "limitations": [
+    "Цифровые обозначения сохранены по профильной методичке и принятой структуре; пункт 6.17.4 ГОСТ использует буквенные обозначения.",
+    "Методичка требует тексты программ; замена внешней ссылкой выполнена по запросу пользователя, принятие кафедрой не подтверждено.",
+    "Ссылка ведёт на репозиторий без закрепления конкретного коммита; состав удалённой версии может изменяться."
+  ],
+  "artifact_directory": "/private/tmp/lad-source-appendix-20261106"
+}

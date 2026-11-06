@@ -1,12 +1,13 @@
 {
-  "checked_on": "2026-11-03",
-  "project_commit": "d8505e82fac9166deb8f276fe76f68feb8f11136",
+  "checked_on": "2026-11-06",
+  "project_commit": "2c99a3c9a53fb439b62c5fb3f545470a84dd2a83",
   "documents": {
     "thesis": {
-      "pages": 135,
-      "docx_sha256": "30410936068882842058dcb236a7b66aab7cacfafbf0016f17e8f5a9079db342",
-      "pdf_sha256": "c37ede4b29bde32a349b46ad98457f20394abbb702ae318dec98f4739582acbe",
-      "markdown_sha256": "bbfe3d84f75a15e02bcb5c2f6d3c98f1746ce9277b50ef4f75db480a0e2d33a4",
+      "pages": 141,
+      "docx_sha256": "5ad5649a91235d824b62426bd386d3ec50aecaa784a680a08cfb21ce3afb6166",
+      "pdf_sha256": "ebc396742c5ad32c0776aca6b57ce968f107ea2692b01791c48208b57804e375",
+      "markdown_sha256": "2dcdbed7d354f5062994fac2d81705b762fee2bcdcb3aabbc040973626cc1b9f",
+      "sources": 40,
       "figures": 33,
       "logical_tables": 6,
       "table_parts": 8,
@@ -17,32 +18,36 @@
           "body_sha256": "2f3fb842f2e7749c7d5326ce93e0c89511dd61590b82e2a11bb922bdf5ee5d00"
         },
         "chapter_1": {
-          "pages": [3, 45],
-          "body_sha256": "ad66d3bc633476d5ac5197cf91c6ffe159557b60161f62169673da51ae6b631e"
+          "pages": [3, 46],
+          "body_sha256": "f22e95d41b86af39402ca7dab06c8900b1c3d32c227a316bca282beeb84253e0"
         },
         "chapter_2": {
-          "pages": [46, 72],
-          "body_sha256": "8ebb103b90567315f8842ff1d962b226097fcad7b53cfda360605968982ee2d8"
+          "pages": [47, 74],
+          "body_sha256": "63360fb3592857358398f20ea17046d4ac943257f4f6798ddd976d5e9e3c0044"
         },
         "chapter_3": {
-          "pages": [73, 111],
-          "body_sha256": "9426748d75f22e3242567fa065ba5878fa4741db70afd976f1cd275447dcf230"
+          "pages": [75, 113],
+          "body_sha256": "aa9222dece0a18e28e3bf12e17f2f81158d59dd1843c6552922ef61ecf363276"
         },
         "conclusion": {
-          "pages": [112, 114],
+          "pages": [114, 116],
           "body_sha256": "276165cb3e346e246af3b4dca58e286ccdfd860934633c8275632eaa65a07072"
         },
         "bibliography": {
-          "pages": [115, 116],
-          "body_sha256": "67fb0651512f5be3b88ac12e66de16534b7cbc8d8ce507857479eacd69dae586"
+          "pages": [117, 121],
+          "body_sha256": "fa1d833c471957b8098d7152fe00187b0e860aee2c4cb7b1795b68127aff3087"
         },
         "appendix_1": {
-          "pages": [117, 118],
-          "body_sha256": "44a98ea84f942ee098a574b11f41df03bbec5caf4d78e04b6765184056b0e34d"
+          "pages": [122, 123],
+          "body_sha256": "59ef842fc4faab4e0dc60162341eb8ebe778e3a7d1ffaf2e9d0f315652af65d5"
         },
         "appendix_2": {
-          "pages": [119, 135],
-          "body_sha256": "f314a46fdca6129946ca9f4ee24a02d34bdaa94ec641ee97b436fa9a5329579a"
+          "pages": [124, 140],
+          "body_sha256": "f7950d81cc4469925161aa73dd2578686d9b4e96b86b07237c37ee1097bd223c"
+        },
+        "appendix_3": {
+          "pages": [141, 141],
+          "body_sha256": "3f45590760f2885d1e3aa872a48a5969e3e50e60589fa3b7a54eb3cbfb0375c8"
         }
       },
       "prose_fonts": [
@@ -51,39 +56,39 @@
         "TimesNewRomanPSMT"
       ],
       "caption_pages": {
-        "1": [29],
-        "2": [30],
-        "3": [31],
-        "4": [32],
-        "5": [33],
-        "6": [34],
-        "7": [35],
-        "8": [36],
-        "9": [37],
-        "10": [38],
-        "11": [48],
-        "12": [50],
-        "13": [52],
-        "14": [54],
-        "15": [56],
-        "16": [58],
-        "17": [65],
-        "18": [68],
-        "19": [70],
-        "20": [72],
-        "21": [76],
-        "22": [80],
-        "23": [84],
-        "24": [88],
-        "25": [91],
-        "26": [94],
-        "27": [99],
-        "28": [102],
-        "29": [103],
-        "30": [105],
-        "31": [109],
-        "1.1": [117],
-        "1.2": [118]
+        "1": [30],
+        "2": [31],
+        "3": [32],
+        "4": [33],
+        "5": [34],
+        "6": [35],
+        "7": [36],
+        "8": [37],
+        "9": [38],
+        "10": [39],
+        "11": [49],
+        "12": [51],
+        "13": [53],
+        "14": [55],
+        "15": [57],
+        "16": [59],
+        "17": [66],
+        "18": [69],
+        "19": [71],
+        "20": [74],
+        "21": [78],
+        "22": [82],
+        "23": [86],
+        "24": [90],
+        "25": [93],
+        "26": [96],
+        "27": [101],
+        "28": [104],
+        "29": [105],
+        "30": [107],
+        "31": [111],
+        "1.1": [122],
+        "1.2": [123]
       },
       "table_continuation_pages": [
         {
@@ -108,6 +113,13 @@
     "thesis:nine_use_cases_in_requirements_and_implementation": true,
     "thesis:use_case_references_resolve": true,
     "thesis:bibliography_count_and_first_citation_order": true,
+    "thesis:bibliography_matches_researched_catalog": true,
+    "thesis:bibliography_follows_methodology_examples": true,
+    "thesis:docx_citations_match_markdown_in_reading_order": true,
+    "thesis:appendices_follow_first_reference_order": true,
+    "thesis:appendix_headings_centered_on_new_pages": true,
+    "thesis:bibliography_urls_visible_clickable_and_exact": true,
+    "thesis:repository_url_visible_and_clickable": true,
     "thesis:transaction_flow_has_one_shared_end": true,
     "thesis:primary_use_cases_match_requirements": true,
     "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
@@ -140,8 +152,8 @@
     "thesis:section_starts": true,
     "thesis:introduction_page_limit": true
   },
-  "checks_passed": 37,
-  "checks_total": 37,
+  "checks_passed": 44,
+  "checks_total": 44,
   "visual_review": {
     "required": true
   },
