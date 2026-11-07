@@ -268,6 +268,9 @@ while i<len(lines):
  if line.startswith('Таблица '):
   p=DOC.add_paragraph();p.paragraph_format.first_line_indent=Mm(0);p.alignment=WD_ALIGN_PARAGRAPH.LEFT
   p.paragraph_format.keep_with_next=True;p.paragraph_format.keep_together=True
+  # The comparison has three explicitly paginated parts; start its first part
+  # on a fresh page so shorter preceding prose cannot create a fourth fragment.
+  if line.startswith('Таблица 1 '):p.paragraph_format.page_break_before=True
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.space_after=Pt(4)
   inline(p,line);i+=1;continue
  parts=[line];i+=1

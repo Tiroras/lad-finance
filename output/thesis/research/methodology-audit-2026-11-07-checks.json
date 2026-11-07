@@ -1,0 +1,228 @@
+{
+  "checked_on": "2026-11-07",
+  "project_commit": "845185db28c15acefdbe7222a454f6372f5eb7e6",
+  "documents": {
+    "thesis": {
+      "pages": 141,
+      "docx_sha256": "5ad5649a91235d824b62426bd386d3ec50aecaa784a680a08cfb21ce3afb6166",
+      "pdf_sha256": "e821f4fac1f948bcea18e4e32be39474b09548707c8f7c8695061038f9e9bb58",
+      "markdown_sha256": "2dcdbed7d354f5062994fac2d81705b762fee2bcdcb3aabbc040973626cc1b9f",
+      "sources": 40,
+      "figures": 33,
+      "logical_tables": 6,
+      "table_parts": 8,
+      "equations": 11,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "8cb8717d7d698a2395311e097d34235b4563629ad03fe6d17028874149e4c13a"
+        },
+        "chapter_1": {
+          "pages": [3, 46],
+          "body_sha256": "98b35367c77f06f44cfae2a44ffedf0df6474d33ca2897f50beaaa35c31dcbba"
+        },
+        "chapter_2": {
+          "pages": [47, 74],
+          "body_sha256": "7cafd4004bc29694715ae866df232721cf9b47f2c3dea3693c66babd46ab4cb4"
+        },
+        "chapter_3": {
+          "pages": [75, 113],
+          "body_sha256": "28faf45e271a8fef1cf1bfb12c81fff9887a62ae42fb5c3a918c59555c2ce120"
+        },
+        "conclusion": {
+          "pages": [114, 116],
+          "body_sha256": "e0c06c360e437b2dd9fbdcc822ce650e673054561932a915d38b4bda658ec3c7"
+        },
+        "bibliography": {
+          "pages": [117, 121],
+          "body_sha256": "38169ecd206fe2efe4359a701e56bc02a45da23a81cb1b372212fcd17e1c17b5"
+        },
+        "appendix_1": {
+          "pages": [122, 123],
+          "body_sha256": "c98f2ecc22e0ccd42732dbc7ee4320767e5fb9bf0b99f75dc6e6c9d6b5824ca7"
+        },
+        "appendix_2": {
+          "pages": [124, 140],
+          "body_sha256": "e2583b6172b15a6eedb4061c349aed40e5eef450fc3b6f5ca78bc1ba6ff0ac60"
+        },
+        "appendix_3": {
+          "pages": [141, 141],
+          "body_sha256": "3648d4eb1c8e2325570957088cdadd90c25d26967a905004ab0f3b244788b20c"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [30],
+        "2": [31],
+        "3": [32],
+        "4": [33],
+        "5": [34],
+        "6": [35],
+        "7": [36],
+        "8": [37],
+        "9": [38],
+        "10": [39],
+        "11": [49],
+        "12": [51],
+        "13": [53],
+        "14": [55],
+        "15": [57],
+        "16": [59],
+        "17": [66],
+        "18": [69],
+        "19": [71],
+        "20": [74],
+        "21": [78],
+        "22": [82],
+        "23": [86],
+        "24": [90],
+        "25": [93],
+        "26": [96],
+        "27": [101],
+        "28": [104],
+        "29": [105],
+        "30": [107],
+        "31": [111],
+        "1.1": [122],
+        "1.2": [123]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 7,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 8,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    }
+  },
+  "structural_checks": {
+    "thesis:artifacts_present": true,
+    "thesis:paragraphs_match_markdown": true,
+    "thesis:nine_use_cases_in_requirements_and_implementation": true,
+    "thesis:use_case_references_resolve": true,
+    "thesis:bibliography_count_and_first_citation_order": true,
+    "thesis:bibliography_matches_researched_catalog": true,
+    "thesis:bibliography_follows_methodology_examples": true,
+    "thesis:docx_citations_match_markdown_in_reading_order": true,
+    "thesis:appendices_follow_first_reference_order": true,
+    "thesis:appendix_headings_centered_on_new_pages": true,
+    "thesis:bibliography_urls_visible_clickable_and_exact": true,
+    "thesis:repository_url_visible_and_clickable": true,
+    "thesis:transaction_flow_has_one_shared_end": true,
+    "thesis:primary_use_cases_match_requirements": true,
+    "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
+    "thesis:six_detailed_use_case_views_in_section_2_1": true,
+    "thesis:all_view_relations_match_reviewed_contracts": true,
+    "thesis:every_use_case_connected_to_its_actor": true,
+    "thesis:extension_points_and_conditions_are_explicit": true,
+    "thesis:table_cells_match_markdown": true,
+    "thesis:logical_tables_and_parts": true,
+    "thesis:editable_equation_count_and_numbers": true,
+    "thesis:equation_content_matches": true,
+    "thesis:figure_count": true,
+    "thesis:figure_numbers_and_references": true,
+    "thesis:embedded_images_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:headings_kept": true,
+    "thesis:table_format": true,
+    "thesis:page_field_centered": true,
+    "thesis:editorial_claims_removed": true,
+    "thesis:pdf_and_png_page_counts": true,
+    "thesis:page_numbers": true,
+    "thesis:no_empty_pages": true,
+    "thesis:table_continuations_on_same_page": true,
+    "thesis:text_within_page_bounds": true,
+    "thesis:prose_fonts": true,
+    "thesis:figures_and_captions_same_page": true,
+    "thesis:equations_rendered": true,
+    "thesis:rendered_editorial_claims_removed": true,
+    "thesis:section_starts": true,
+    "thesis:introduction_page_limit": true
+  },
+  "checks_passed": 43,
+  "checks_total": 43,
+  "visual_review": {
+    "performed": true,
+    "method": "Обзор страниц иллюстраций, таблиц, формул и приложений; отдельные страницы крупно; повторный обзор после исправления подстановки шрифтов.",
+    "initial_figure_pages": [
+      30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 49, 51, 53, 55, 57, 59, 66, 69,
+      71, 74, 78, 82, 86, 90, 93, 96, 101, 104, 105, 107, 111, 122, 123
+    ],
+    "initial_table_pages": [6, 7, 8, 25, 26, 27, 41, 103],
+    "initial_formula_pages": [76, 80, 84, 88, 92, 95, 99, 106, 110],
+    "initial_appendix_pages": [
+      122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136,
+      137, 138, 139, 140, 141
+    ],
+    "final_changed_pages_reviewed": [
+      1, 2, 75, 77, 78, 79, 81, 82, 83, 85, 86, 87, 89, 90, 91, 92, 93, 94, 95,
+      96, 97, 98, 101, 103, 104, 105, 107, 108, 109, 110, 111, 113
+    ],
+    "final_close_review_pages": [78, 103, 105, 122],
+    "confirmed_clipping_or_detached_captions": [],
+    "full_document_review_at_100_percent": false,
+    "note": "Совпадение текста и геометрии не означает совпадения пикселей. Обзор не заменяет полную корректуру."
+  },
+  "notes": [
+    "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+    "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+    "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы.",
+    "43/43 — технические проверки документа, не процент соответствия методичкам. Отсутствие начальных частей и осознанные отступления выявлены отдельно."
+  ],
+  "audit_scope": "Проверка соответствия двум приложенным методичкам; приложение не запускалось; исходный диплом не изменялся.",
+  "methodologies": [
+    {
+      "path": "/Users/gamkrelidzetimur/Documents/metodichka_po_oformleniu_v3.pdf",
+      "sha256": "9e8736539b1519bd9bb5af6759902509aecaf04a8bfc306d7464b29eeeac8fad"
+    },
+    {
+      "path": "/Users/gamkrelidzetimur/Documents/ВКР_2024_v2 (2).doc",
+      "sha256": "f86ecf1f81071e40a78c4d0a1a47b9cc877349e524dc68f3ef06cea54e4052e8"
+    }
+  ],
+  "render_environment": {
+    "first_pass": "42/43: подстановка Liberation в прозе; это проблема окружения, не DOCX",
+    "final_pass": "43/43 после FONTCONFIG_FILE с каталогами системных шрифтов и временным кэшем",
+    "page_count_before_and_after": 141,
+    "text_same_on_all_pages": true,
+    "image_geometry_same_on_all_pages": true,
+    "fontconfig_path": "/tmp/lad-methodology-audit-20261107/fonts.conf",
+    "final_render_path": "/tmp/lad-methodology-audit-20261107/final/thesis"
+  },
+  "manual_compliance": {
+    "missing_front_matter": [
+      "Титульный лист",
+      "Реферат",
+      "Оглавление",
+      "Перечень обозначений и сокращений"
+    ],
+    "intentional_deviations": [
+      "40 источников при диапазоне 10–20",
+      "Ссылка на репозиторий вместо текстов программ"
+    ],
+    "advisory_extent_deviations": {
+      "main_body_pages": 111,
+      "main_body_guideline": [30, 50],
+      "user_manual_pages": 17,
+      "user_manual_guideline": [3, 10]
+    },
+    "conflicting_requirements": [
+      "Буквы приложений в общей методичке и цифры в профильной"
+    ],
+    "minor_local_formatting": [
+      "Интервал 1,0 в шести абзацах заголовков приложений вместо общего 1,5"
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "source_sha256": "27eaee4c1bb2872c22a10130ef4a8580a904c6da5f86d84cc8715e6a3488c936",
+  "builder_sha256": "4e327b1cf831ede44058fce4c38ca1159e9f3f26577424debae6eaa1ad095510",
+  "image_references_checked": 63,
+  "citations": 65,
+  "counts": {
+    "main": {
+      "images": 33,
+      "formulas": 11,
+      "tables": 8
+    },
+    "trial": {
+      "images": 30,
+      "formulas": 11,
+      "tables": 8
+    }
+  },
+  "table_xml_identical": true,
+  "formula_xml_identical": true,
+  "section1_4_2_unchanged": true,
+  "appendices_unchanged": true,
+  "checked_on": "2026-11-07",
+  "status": "experiment_only_not_applied_to_main_document",
+  "source_markdown": "output/thesis/thesis.md",
+  "selected_original_figures": [1, 2, 3, 4, 6, 9, 10],
+  "removed_original_figures": [5, 7, 8],
+  "pagination": {
+    "ten": {
+      "page_count": 138,
+      "start_pages": {
+        "Введение": 1,
+        "Глава 1": 3,
+        "1.4.1": 28,
+        "1.4.2": 39,
+        "Глава 2": 46,
+        "Глава 3": 73,
+        "Заключение": 112,
+        "Источники": 115,
+        "Приложение 1": 120,
+        "Приложение 2": 122,
+        "Приложение 3": 138
+      }
+    },
+    "seven": {
+      "page_count": 135,
+      "start_pages": {
+        "Введение": 1,
+        "Глава 1": 3,
+        "1.4.1": 28,
+        "1.4.2": 36,
+        "Глава 2": 43,
+        "Глава 3": 70,
+        "Заключение": 109,
+        "Источники": 112,
+        "Приложение 1": 117,
+        "Приложение 2": 119,
+        "Приложение 3": 135
+      }
+    }
+  },
+  "page_savings": 3,
+  "trial_markdown_sha256": "5dbc0f44aeac4cfad8637405f762ef75a51b66df7352460542793176d3f03572",
+  "trial_docx_sha256": "2ed50c5b92ed26d9895849a2fbfb68ee7c7fe737ae429fb58988dbb8922dc095",
+  "trial_pdf_sha256": "b3a081c9c638ca75e13aef1613467a421cfd9fafcae16d882aad00f912cb1f49",
+  "primary_pdf_sha256": "c5ca94f880240d5394a911f8086bad358ae8bbd14097cd33fe7ae881f9944dcd",
+  "final_trial_render": "/tmp/lad-thesis-shortening-20261107/candidate-seven/render-checked/thesis",
+  "visual_review": {
+    "pages_reviewed": [28, 29, 30, 31, 32, 33, 34, 35, 36],
+    "final_changed_page_reinspected": 35,
+    "other_reviewed_pages_pixel_identical": true,
+    "full_trial_document_reviewed": false,
+    "unresolved_defects_in_reviewed_pages": []
+  },
+  "limitations": [
+    "Selection preserves textual requirements but reduces visual detail of three typical form pairs.",
+    "The methodology gives no fixed figure count; completeness of required screen forms remains a substantive judgement.",
+    "Pagination was measured in bundled LibreOffice, not Word or Pages."
+  ]
+}

@@ -1,0 +1,371 @@
+{
+  "checked_on": "2026-11-07",
+  "project_commit": "845185db28c15acefdbe7222a454f6372f5eb7e6",
+  "documents": {
+    "thesis": {
+      "pages": 138,
+      "docx_sha256": "bd4ffe635870e6816ceff394c639fbe6c025314f0b96b26ece914fe7094a5b78",
+      "pdf_sha256": "c5ca94f880240d5394a911f8086bad358ae8bbd14097cd33fe7ae881f9944dcd",
+      "markdown_sha256": "27eaee4c1bb2872c22a10130ef4a8580a904c6da5f86d84cc8715e6a3488c936",
+      "sources": 40,
+      "figures": 33,
+      "logical_tables": 6,
+      "table_parts": 8,
+      "equations": 11,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "8cb8717d7d698a2395311e097d34235b4563629ad03fe6d17028874149e4c13a"
+        },
+        "chapter_1": {
+          "pages": [3, 45],
+          "body_sha256": "f28400ac295d4cccaa2e088f9b0e32e970070e167ee826ddb93f43cf5ac27674"
+        },
+        "chapter_2": {
+          "pages": [46, 72],
+          "body_sha256": "56fa3b8f06a14482efb7b962a70f9f9f156ccd74c5a2e8b47480a54bf2074054"
+        },
+        "chapter_3": {
+          "pages": [73, 111],
+          "body_sha256": "28faf45e271a8fef1cf1bfb12c81fff9887a62ae42fb5c3a918c59555c2ce120"
+        },
+        "conclusion": {
+          "pages": [112, 114],
+          "body_sha256": "f1cea613584f18d09311619cfab964bd98d31a084b9c134df4047476807225ca"
+        },
+        "bibliography": {
+          "pages": [115, 119],
+          "body_sha256": "38169ecd206fe2efe4359a701e56bc02a45da23a81cb1b372212fcd17e1c17b5"
+        },
+        "appendix_1": {
+          "pages": [120, 121],
+          "body_sha256": "c98f2ecc22e0ccd42732dbc7ee4320767e5fb9bf0b99f75dc6e6c9d6b5824ca7"
+        },
+        "appendix_2": {
+          "pages": [122, 137],
+          "body_sha256": "8196c5e57d2049081e1b06f362fd4376675ab22f44d36ab2980400649620dc45"
+        },
+        "appendix_3": {
+          "pages": [138, 138],
+          "body_sha256": "3648d4eb1c8e2325570957088cdadd90c25d26967a905004ab0f3b244788b20c"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [29],
+        "2": [30],
+        "3": [31],
+        "4": [32],
+        "5": [33],
+        "6": [34],
+        "7": [35],
+        "8": [36],
+        "9": [37],
+        "10": [38],
+        "11": [48],
+        "12": [50],
+        "13": [52],
+        "14": [54],
+        "15": [56],
+        "16": [58],
+        "17": [65],
+        "18": [68],
+        "19": [70],
+        "20": [72],
+        "21": [76],
+        "22": [80],
+        "23": [84],
+        "24": [88],
+        "25": [91],
+        "26": [94],
+        "27": [99],
+        "28": [102],
+        "29": [103],
+        "30": [105],
+        "31": [109],
+        "1.1": [120],
+        "1.2": [121]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 7,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 8,
+          "numbered_table_present": true
+        }
+      ],
+      "editorial_hits": [],
+      "bounds_violations": []
+    }
+  },
+  "structural_checks": {
+    "thesis:artifacts_present": true,
+    "thesis:paragraphs_match_markdown": true,
+    "thesis:nine_use_cases_in_requirements_and_implementation": true,
+    "thesis:use_case_references_resolve": true,
+    "thesis:bibliography_count_and_first_citation_order": true,
+    "thesis:bibliography_matches_researched_catalog": true,
+    "thesis:bibliography_follows_methodology_examples": true,
+    "thesis:docx_citations_match_markdown_in_reading_order": true,
+    "thesis:appendices_follow_first_reference_order": true,
+    "thesis:appendix_headings_centered_on_new_pages": true,
+    "thesis:bibliography_urls_visible_clickable_and_exact": true,
+    "thesis:repository_url_visible_and_clickable": true,
+    "thesis:transaction_flow_has_one_shared_end": true,
+    "thesis:primary_use_cases_match_requirements": true,
+    "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
+    "thesis:six_detailed_use_case_views_in_section_2_1": true,
+    "thesis:all_view_relations_match_reviewed_contracts": true,
+    "thesis:every_use_case_connected_to_its_actor": true,
+    "thesis:extension_points_and_conditions_are_explicit": true,
+    "thesis:table_cells_match_markdown": true,
+    "thesis:logical_tables_and_parts": true,
+    "thesis:editable_equation_count_and_numbers": true,
+    "thesis:equation_content_matches": true,
+    "thesis:figure_count": true,
+    "thesis:figure_numbers_and_references": true,
+    "thesis:embedded_images_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:headings_kept": true,
+    "thesis:table_format": true,
+    "thesis:page_field_centered": true,
+    "thesis:editorial_claims_removed": true,
+    "thesis:pdf_and_png_page_counts": true,
+    "thesis:page_numbers": true,
+    "thesis:no_empty_pages": true,
+    "thesis:table_continuations_on_same_page": true,
+    "thesis:text_within_page_bounds": true,
+    "thesis:prose_fonts": true,
+    "thesis:figures_and_captions_same_page": true,
+    "thesis:equations_rendered": true,
+    "thesis:rendered_editorial_claims_removed": true,
+    "thesis:section_starts": true,
+    "thesis:introduction_page_limit": true
+  },
+  "checks_passed": 43,
+  "checks_total": 43,
+  "visual_review": {
+    "required": true,
+    "completed": true,
+    "page_count": 138,
+    "ranges_reviewed": [
+      [1, 45],
+      [46, 90],
+      [91, 120],
+      [121, 138]
+    ],
+    "method": "Full-page PNG inspection through view_image; original-size repeat for manual p.133.",
+    "initial_render": "/tmp/lad-thesis-shortening-20261107/render/thesis",
+    "final_render": "/tmp/lad-thesis-shortening-20261107/render-final/thesis",
+    "changed_pages_after_table_fix": [5, 6],
+    "final_pages_reinspected": [5, 6, 7, 8],
+    "remaining_136_pages_pixel_identical": true,
+    "unresolved_visual_defects": [],
+    "notes": [
+      "The first part of table 1 now starts on a fresh page; its three parts occupy pp.6–8.",
+      "Existing whitespace before large figures is retained. Conclusion still occupies three pages."
+    ]
+  },
+  "notes": [
+    "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+    "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+    "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы."
+  ],
+  "revision_comparison": {
+    "checks": {
+      "section_order_unchanged": true,
+      "only_authorized_sections_changed": true,
+      "all_headings_unchanged": true,
+      "all_images_unchanged": true,
+      "all_tables_unchanged": true,
+      "all_table_titles_unchanged": true,
+      "all_formulas_unchanged": true,
+      "citation_sequence_unchanged": true,
+      "nine_requirement_use_cases": true,
+      "manual_step_numbers_unchanged": true,
+      "manual_procedure_labels_unchanged": true,
+      "manual_comments_unchanged": true,
+      "builder_only_adds_table_1_page_break": true
+    },
+    "passed": 13,
+    "total": 13,
+    "statistics": {
+      "# Приложение 2": {
+        "before": {
+          "words": 3685,
+          "characters": 28142
+        },
+        "after": {
+          "words": 3352,
+          "characters": 25830
+        }
+      },
+      "# 1 Требования к мобильному приложению «Лад»": {
+        "before": {
+          "words": 6615,
+          "characters": 52518
+        },
+        "after": {
+          "words": 6312,
+          "characters": 50137
+        }
+      },
+      "# 2 Проектирование мобильного приложения «Лад»": {
+        "before": {
+          "words": 4206,
+          "characters": 33139
+        },
+        "after": {
+          "words": 3907,
+          "characters": 30904
+        }
+      },
+      "# Заключение": {
+        "before": {
+          "words": 602,
+          "characters": 5117
+        },
+        "after": {
+          "words": 505,
+          "characters": 4257
+        }
+      }
+    },
+    "review_signals": {
+      "# Приложение 2": {
+        "numbers": {
+          "missing": [],
+          "added": []
+        },
+        "identifiers": {
+          "missing": [],
+          "added": []
+        },
+        "quoted_labels": {
+          "missing": [],
+          "added": []
+        }
+      },
+      "# 1 Требования к мобильному приложению «Лад»": {
+        "numbers": {
+          "missing": [],
+          "added": []
+        },
+        "identifiers": {
+          "missing": [],
+          "added": []
+        },
+        "quoted_labels": {
+          "missing": [],
+          "added": ["Обзора", "Платежах"]
+        }
+      },
+      "# 2 Проектирование мобильного приложения «Лад»": {
+        "numbers": {
+          "missing": [],
+          "added": []
+        },
+        "identifiers": {
+          "missing": [],
+          "added": []
+        },
+        "quoted_labels": {
+          "missing": [],
+          "added": []
+        }
+      },
+      "# Заключение": {
+        "numbers": {
+          "missing": [],
+          "added": []
+        },
+        "identifiers": {
+          "missing": [],
+          "added": []
+        },
+        "quoted_labels": {
+          "missing": [],
+          "added": []
+        }
+      }
+    },
+    "before_sha256": "2dcdbed7d354f5062994fac2d81705b762fee2bcdcb3aabbc040973626cc1b9f",
+    "after_sha256": "27eaee4c1bb2872c22a10130ef4a8580a904c6da5f86d84cc8715e6a3488c936",
+    "word_count_method": "Whitespace-delimited tokens in nonempty Markdown lines, excluding headings, table rows and captions, images, formulas and comments."
+  },
+  "baseline": {
+    "markdown_sha256": "2dcdbed7d354f5062994fac2d81705b762fee2bcdcb3aabbc040973626cc1b9f",
+    "docx_sha256": "5ad5649a91235d824b62426bd386d3ec50aecaa784a680a08cfb21ce3afb6166",
+    "pages": 141,
+    "sections": {
+      "introduction": {
+        "pages": [1, 2],
+        "body_sha256": "8cb8717d7d698a2395311e097d34235b4563629ad03fe6d17028874149e4c13a"
+      },
+      "chapter_1": {
+        "pages": [3, 46],
+        "body_sha256": "98b35367c77f06f44cfae2a44ffedf0df6474d33ca2897f50beaaa35c31dcbba"
+      },
+      "chapter_2": {
+        "pages": [47, 74],
+        "body_sha256": "7cafd4004bc29694715ae866df232721cf9b47f2c3dea3693c66babd46ab4cb4"
+      },
+      "chapter_3": {
+        "pages": [75, 113],
+        "body_sha256": "28faf45e271a8fef1cf1bfb12c81fff9887a62ae42fb5c3a918c59555c2ce120"
+      },
+      "conclusion": {
+        "pages": [114, 116],
+        "body_sha256": "e0c06c360e437b2dd9fbdcc822ce650e673054561932a915d38b4bda658ec3c7"
+      },
+      "bibliography": {
+        "pages": [117, 121],
+        "body_sha256": "38169ecd206fe2efe4359a701e56bc02a45da23a81cb1b372212fcd17e1c17b5"
+      },
+      "appendix_1": {
+        "pages": [122, 123],
+        "body_sha256": "c98f2ecc22e0ccd42732dbc7ee4320767e5fb9bf0b99f75dc6e6c9d6b5824ca7"
+      },
+      "appendix_2": {
+        "pages": [124, 140],
+        "body_sha256": "e2583b6172b15a6eedb4061c349aed40e5eef450fc3b6f5ca78bc1ba6ff0ac60"
+      },
+      "appendix_3": {
+        "pages": [141, 141],
+        "body_sha256": "3648d4eb1c8e2325570957088cdadd90c25d26967a905004ab0f3b244788b20c"
+      }
+    }
+  },
+  "revision_result": {
+    "words_before": 15108,
+    "words_after": 14076,
+    "words_removed": 1032,
+    "pages_before": 141,
+    "pages_after": 138,
+    "section_pages_before_after": {
+      "chapter_1": [44, 43],
+      "chapter_2": [28, 27],
+      "conclusion": [3, 3],
+      "manual": [17, 16]
+    },
+    "semantic_review": "All edited passages compared with baseline; independent review of chapter 2, conclusion and manual; chapter 1 reviewed by primary editor.",
+    "resolved_semantic_findings": [
+      "Restored optional additional plan creation",
+      "Restored comparison with the goal currency",
+      "Restored recommendation modality in conclusion",
+      "Preserved original scheduled contribution credit wording"
+    ],
+    "unresolved_semantic_findings": [],
+    "application_tests_run": false
+  },
+  "builder_sha256": "4e327b1cf831ede44058fce4c38ca1159e9f3f26577424debae6eaa1ad095510"
+}
