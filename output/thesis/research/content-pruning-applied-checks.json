@@ -1,0 +1,2583 @@
+{
+  "checked_on": "2026-11-07",
+  "status": "complete",
+  "authorized_scope": ["Глава 1", "Глава 3", "Руководство пользователя"],
+  "application": {
+    "status": "applied",
+    "selected_ids": [
+      "C1-R01",
+      "C1-R02",
+      "C1-R03",
+      "C1-R04",
+      "C1-R05",
+      "C1-R06",
+      "C1-R07",
+      "C1-R08",
+      "C1-R09",
+      "C1-R10",
+      "C1-R11",
+      "C1-R12",
+      "C1-R13",
+      "C1-R14",
+      "C1-R15",
+      "C23-08",
+      "C23-09",
+      "C23-10",
+      "C23-11",
+      "C23-12",
+      "C23-13",
+      "C23-14",
+      "C23-15",
+      "C23-16",
+      "C23-17",
+      "C23-18",
+      "C23-19",
+      "C23-20",
+      "C23-21",
+      "C23-22",
+      "C23-23",
+      "C23-24",
+      "C23-25",
+      "C23-26",
+      "C23-27",
+      "C23-28",
+      "C23-29",
+      "END-M0",
+      "END-M1",
+      "END-M2",
+      "END-M3",
+      "END-M4",
+      "END-M5",
+      "END-M6",
+      "END-M7",
+      "END-M8",
+      "END-M9",
+      "END-M10",
+      "END-M11",
+      "END-M12",
+      "END-M13",
+      "END-LINK1"
+    ],
+    "before_sha256": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+    "after_sha256": "87f8cae65ebdcf3a63ff06769606b0d63c202813b03ad5611ff5323f09c8eef7",
+    "removed_words": 2840,
+    "sections": [
+      {
+        "section": "Введение",
+        "before_words": 413,
+        "after_words": 413,
+        "removed_words": 0
+      },
+      {
+        "section": "1 Требования к мобильному приложению «Лад»",
+        "before_words": 6312,
+        "after_words": 5633,
+        "removed_words": 679
+      },
+      {
+        "section": "2 Проектирование мобильного приложения «Лад»",
+        "before_words": 3907,
+        "after_words": 3907,
+        "removed_words": 0
+      },
+      {
+        "section": "3 Реализация прецедентов мобильного приложения «Лад»",
+        "before_words": 6309,
+        "after_words": 4962,
+        "removed_words": 1347
+      },
+      {
+        "section": "Заключение",
+        "before_words": 505,
+        "after_words": 505,
+        "removed_words": 0
+      },
+      {
+        "section": "Список использованных источников",
+        "before_words": 987,
+        "after_words": 987,
+        "removed_words": 0
+      },
+      {
+        "section": "Приложение 1",
+        "before_words": 0,
+        "after_words": 0,
+        "removed_words": 0
+      },
+      {
+        "section": "Приложение 2",
+        "before_words": 3352,
+        "after_words": 2538,
+        "removed_words": 814
+      },
+      {
+        "section": "Приложение 3",
+        "before_words": 17,
+        "after_words": 17,
+        "removed_words": 0
+      }
+    ],
+    "structure_guards": {
+      "headings": {
+        "unchanged": true,
+        "count": 102
+      },
+      "images": {
+        "unchanged": true,
+        "count": 28
+      },
+      "formulas": {
+        "unchanged": true,
+        "count": 11
+      },
+      "table_rows": {
+        "unchanged": true,
+        "count": 60
+      },
+      "citations": {
+        "unchanged": true,
+        "count": 65
+      }
+    },
+    "manual": {
+      "steps": 64,
+      "procedures": 17
+    },
+    "unchanged_sections": [
+      "Введение",
+      "2 Проектирование мобильного приложения «Лад»",
+      "Заключение",
+      "Список использованных источников",
+      "Приложение 1",
+      "Приложение 3"
+    ]
+  },
+  "measurements": {
+    "before": {
+      "pages": 132,
+      "sections": [
+        {
+          "heading": "Введение",
+          "first_page": 1,
+          "last_page": 2,
+          "pages": 2
+        },
+        {
+          "heading": "1 Требования к мобильному приложению",
+          "first_page": 3,
+          "last_page": 39,
+          "pages": 37
+        },
+        {
+          "heading": "2 Проектирование мобильного приложения",
+          "first_page": 40,
+          "last_page": 66,
+          "pages": 27
+        },
+        {
+          "heading": "3 Реализация прецедентов мобильного приложения",
+          "first_page": 67,
+          "last_page": 105,
+          "pages": 39
+        },
+        {
+          "heading": "Заключение",
+          "first_page": 106,
+          "last_page": 108,
+          "pages": 3
+        },
+        {
+          "heading": "Список использованных источников",
+          "first_page": 109,
+          "last_page": 113,
+          "pages": 5
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 1",
+          "first_page": 114,
+          "last_page": 115,
+          "pages": 2
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 2",
+          "first_page": 116,
+          "last_page": 131,
+          "pages": 16
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 3",
+          "first_page": 132,
+          "last_page": 132,
+          "pages": 1
+        }
+      ]
+    },
+    "after_text_pruning": {
+      "pages": 123,
+      "sections": [
+        {
+          "heading": "Введение",
+          "first_page": 1,
+          "last_page": 2,
+          "pages": 2
+        },
+        {
+          "heading": "1 Требования к мобильному приложению",
+          "first_page": 3,
+          "last_page": 37,
+          "pages": 35
+        },
+        {
+          "heading": "2 Проектирование мобильного приложения",
+          "first_page": 38,
+          "last_page": 64,
+          "pages": 27
+        },
+        {
+          "heading": "3 Реализация прецедентов мобильного приложения",
+          "first_page": 65,
+          "last_page": 99,
+          "pages": 35
+        },
+        {
+          "heading": "Заключение",
+          "first_page": 100,
+          "last_page": 102,
+          "pages": 3
+        },
+        {
+          "heading": "Список использованных источников",
+          "first_page": 103,
+          "last_page": 107,
+          "pages": 5
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 1",
+          "first_page": 108,
+          "last_page": 109,
+          "pages": 2
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 2",
+          "first_page": 110,
+          "last_page": 122,
+          "pages": 13
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 3",
+          "first_page": 123,
+          "last_page": 123,
+          "pages": 1
+        }
+      ]
+    },
+    "final": {
+      "pages": 122,
+      "sections": [
+        {
+          "heading": "Введение",
+          "first_page": 1,
+          "last_page": 2,
+          "pages": 2
+        },
+        {
+          "heading": "1 Требования к мобильному приложению",
+          "first_page": 3,
+          "last_page": 36,
+          "pages": 34
+        },
+        {
+          "heading": "2 Проектирование мобильного приложения",
+          "first_page": 37,
+          "last_page": 63,
+          "pages": 27
+        },
+        {
+          "heading": "3 Реализация прецедентов мобильного приложения",
+          "first_page": 64,
+          "last_page": 98,
+          "pages": 35
+        },
+        {
+          "heading": "Заключение",
+          "first_page": 99,
+          "last_page": 101,
+          "pages": 3
+        },
+        {
+          "heading": "Список использованных источников",
+          "first_page": 102,
+          "last_page": 106,
+          "pages": 5
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 1",
+          "first_page": 107,
+          "last_page": 108,
+          "pages": 2
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 2",
+          "first_page": 109,
+          "last_page": 121,
+          "pages": 13
+        },
+        {
+          "heading": "ПРИЛОЖЕНИЕ 3",
+          "first_page": 122,
+          "last_page": 122,
+          "pages": 1
+        }
+      ]
+    },
+    "saved_pages": 10,
+    "layout_change_saved_pages": 1,
+    "layout_preserves_extracted_text": true,
+    "page_numbering_sequential": true,
+    "final_docx_identical_to_rendered_docx": true,
+    "pixel_identical_bodies_after_layout_change": [
+      1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+      58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+      76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+      94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
+      110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122
+    ],
+    "changed_body_pages_after_layout_change": [5],
+    "unchanged_package_members": {
+      "word/styles.xml": true,
+      "word/settings.xml": true,
+      "word/fontTable.xml": true,
+      "word/numbering.xml": true,
+      "word/footer1.xml": true,
+      "word/media/image1.png": true,
+      "word/media/image2.png": true,
+      "word/media/image3.png": true,
+      "word/media/image4.png": true,
+      "word/media/image5.png": true,
+      "word/media/image6.png": true,
+      "word/media/image7.png": true,
+      "word/media/image8.png": true,
+      "word/media/image9.png": true,
+      "word/media/image10.png": true,
+      "word/media/image11.png": true,
+      "word/media/image12.png": true,
+      "word/media/image13.png": true,
+      "word/media/image14.png": true,
+      "word/media/image15.png": true,
+      "word/media/image16.png": true,
+      "word/media/image17.png": true,
+      "word/media/image18.png": true,
+      "word/media/image19.png": true,
+      "word/media/image20.png": true,
+      "word/media/image21.png": true,
+      "word/media/image22.png": true,
+      "word/media/image23.png": true,
+      "word/media/image24.png": true,
+      "word/media/image25.png": true,
+      "word/media/image26.png": true,
+      "word/media/image27.png": true,
+      "word/media/image28.png": true
+    },
+    "thesis_md_sha256": "87f8cae65ebdcf3a63ff06769606b0d63c202813b03ad5611ff5323f09c8eef7",
+    "thesis_docx_sha256": "11d9947dc30f84a6d0240d034cf20bb8d3136aed28cb3d88b044733c4e0e13b9",
+    "builder_sha256": "f4ea2f22a45710123644a9dfcda384d04e92145516edc19d3cde66c9dd8fe4a2"
+  },
+  "editorial_verification": {
+    "checked_on": "2026-11-07",
+    "project_commit": "8c6178fb4849e5e71e58b49f2a78ab0606c92cc6",
+    "documents": {
+      "thesis": {
+        "pages": 122,
+        "docx_sha256": "11d9947dc30f84a6d0240d034cf20bb8d3136aed28cb3d88b044733c4e0e13b9",
+        "pdf_sha256": "b9ec9946e26503add45b8024a7d9072c34aa5f6a7ece0f65ca837f9f8541f48b",
+        "markdown_sha256": "87f8cae65ebdcf3a63ff06769606b0d63c202813b03ad5611ff5323f09c8eef7",
+        "sources": 40,
+        "figures": 28,
+        "logical_tables": 6,
+        "table_parts": 8,
+        "equations": 11,
+        "sections": {
+          "introduction": {
+            "pages": [1, 2],
+            "body_sha256": "8cb8717d7d698a2395311e097d34235b4563629ad03fe6d17028874149e4c13a"
+          },
+          "chapter_1": {
+            "pages": [3, 36],
+            "body_sha256": "90ec74f93a510db0e14139e7e811a3c039be98683ba6471195a56be5ceff89d9"
+          },
+          "chapter_2": {
+            "pages": [37, 63],
+            "body_sha256": "4371447cc2b953820c8ab519d2762d3347aec833ca3f1c55e95424006625f7cd"
+          },
+          "chapter_3": {
+            "pages": [64, 98],
+            "body_sha256": "f55ee4afad4f4f3b9144c44f68a4e3792c37a469b699262848c0a87cda7bc826"
+          },
+          "conclusion": {
+            "pages": [99, 101],
+            "body_sha256": "f1cea613584f18d09311619cfab964bd98d31a084b9c134df4047476807225ca"
+          },
+          "bibliography": {
+            "pages": [102, 106],
+            "body_sha256": "38169ecd206fe2efe4359a701e56bc02a45da23a81cb1b372212fcd17e1c17b5"
+          },
+          "appendix_1": {
+            "pages": [107, 108],
+            "body_sha256": "c98f2ecc22e0ccd42732dbc7ee4320767e5fb9bf0b99f75dc6e6c9d6b5824ca7"
+          },
+          "appendix_2": {
+            "pages": [109, 121],
+            "body_sha256": "34545ac8e48a03577e4dca32e5a6f0cd20f3a0d2069d2c0ec436559d5ed77480"
+          },
+          "appendix_3": {
+            "pages": [122, 122],
+            "body_sha256": "3648d4eb1c8e2325570957088cdadd90c25d26967a905004ab0f3b244788b20c"
+          }
+        },
+        "prose_fonts": [
+          "CourierNewPSMT",
+          "TimesNewRomanPS-BoldMT",
+          "TimesNewRomanPSMT"
+        ],
+        "caption_pages": {
+          "1": [26],
+          "2": [27],
+          "3": [28],
+          "4": [29],
+          "5": [30],
+          "6": [39],
+          "7": [41],
+          "8": [43],
+          "9": [45],
+          "10": [47],
+          "11": [49],
+          "12": [56],
+          "13": [59],
+          "14": [61],
+          "15": [63],
+          "16": [67],
+          "17": [71],
+          "18": [74],
+          "19": [77],
+          "20": [80],
+          "21": [83],
+          "22": [87],
+          "23": [89],
+          "24": [90],
+          "25": [92],
+          "26": [96],
+          "1.1": [107],
+          "1.2": [108]
+        },
+        "table_continuation_pages": [
+          {
+            "table": "1",
+            "page": 6,
+            "numbered_table_present": true
+          },
+          {
+            "table": "1",
+            "page": 7,
+            "numbered_table_present": true
+          }
+        ],
+        "compact_ui": {
+          "errors": [],
+          "compositions": [
+            {
+              "basename": "01-ui-compact-01-operations",
+              "panels": ["overview", "operations", "transaction"]
+            },
+            {
+              "basename": "01-ui-compact-02-goals",
+              "panels": ["budgets", "goals", "withdrawal"]
+            },
+            {
+              "basename": "01-ui-compact-03-forecast",
+              "panels": ["payments", "forecast", "purchase"]
+            },
+            {
+              "basename": "01-ui-compact-04-analysis",
+              "panels": ["analytics", "scenario", "full_list"]
+            },
+            {
+              "basename": "01-ui-compact-05-settings",
+              "panels": ["settings", "data"]
+            }
+          ],
+          "rendered_image_bounds": [
+            {
+              "figure": "1",
+              "page": 26,
+              "bounds_pt": [
+                85.05, 110.95076377952807, 566.9499999999999, 497.10076377952805
+              ],
+              "within_margins": true
+            },
+            {
+              "figure": "2",
+              "page": 27,
+              "bounds_pt": [
+                85.05, 110.95076377952807, 566.9499999999999, 406.85076377952805
+              ],
+              "within_margins": true
+            },
+            {
+              "figure": "3",
+              "page": 28,
+              "bounds_pt": [
+                85.05, 110.95076377952796, 566.9499999999999, 481.00076377952803
+              ],
+              "within_margins": true
+            },
+            {
+              "figure": "4",
+              "page": 29,
+              "bounds_pt": [
+                85.05, 86.8007637795281, 566.9499999999999, 429.25076377952803
+              ],
+              "within_margins": true
+            },
+            {
+              "figure": "5",
+              "page": 30,
+              "bounds_pt": [
+                85.05, 110.95076377952807, 566.9499999999999, 345.90076377952806
+              ],
+              "within_margins": true
+            }
+          ]
+        },
+        "editorial_hits": [],
+        "bounds_violations": []
+      }
+    },
+    "structural_checks": {
+      "thesis:artifacts_present": true,
+      "thesis:paragraphs_match_markdown": true,
+      "thesis:nine_use_cases_in_requirements_and_implementation": true,
+      "thesis:use_case_references_resolve": true,
+      "thesis:bibliography_count_and_first_citation_order": true,
+      "thesis:bibliography_matches_researched_catalog": true,
+      "thesis:bibliography_follows_methodology_examples": true,
+      "thesis:docx_citations_match_markdown_in_reading_order": true,
+      "thesis:appendices_follow_first_reference_order": true,
+      "thesis:appendix_headings_centered_on_new_pages": true,
+      "thesis:bibliography_urls_visible_clickable_and_exact": true,
+      "thesis:repository_url_visible_and_clickable": true,
+      "thesis:transaction_flow_has_one_shared_end": true,
+      "thesis:primary_use_cases_match_requirements": true,
+      "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
+      "thesis:six_detailed_use_case_views_in_section_2_1": true,
+      "thesis:all_view_relations_match_reviewed_contracts": true,
+      "thesis:every_use_case_connected_to_its_actor": true,
+      "thesis:extension_points_and_conditions_are_explicit": true,
+      "thesis:table_cells_match_markdown": true,
+      "thesis:logical_tables_and_parts": true,
+      "thesis:editable_equation_count_and_numbers": true,
+      "thesis:equation_content_matches": true,
+      "thesis:figure_count": true,
+      "thesis:compact_ui_model_has_fourteen_distinct_panels": true,
+      "thesis:compact_ui_resources_in_section_1_4": true,
+      "thesis:compact_ui_svg_panels_match_model": true,
+      "thesis:compact_ui_asset_and_document_dimensions": true,
+      "thesis:compact_ui_text_at_least_ten_points": true,
+      "thesis:figure_numbers_and_references": true,
+      "thesis:embedded_images_match": true,
+      "thesis:a4_margins": true,
+      "thesis:body_format": true,
+      "thesis:headings_kept": true,
+      "thesis:table_format": true,
+      "thesis:page_field_centered": true,
+      "thesis:editorial_claims_removed": true,
+      "thesis:pdf_and_png_page_counts": true,
+      "thesis:page_numbers": true,
+      "thesis:no_empty_pages": true,
+      "thesis:table_continuations_on_same_page": true,
+      "thesis:text_within_page_bounds": true,
+      "thesis:compact_ui_rendered_within_margins": true,
+      "thesis:prose_fonts": true,
+      "thesis:figures_and_captions_same_page": true,
+      "thesis:equations_rendered": true,
+      "thesis:rendered_editorial_claims_removed": true,
+      "thesis:section_starts": true,
+      "thesis:introduction_page_limit": true
+    },
+    "checks_passed": 49,
+    "checks_total": 49,
+    "visual_review": {
+      "required": true,
+      "completed": true,
+      "all_pages_viewed_full_size": true,
+      "pages_reviewed": [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+        39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+        57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+        75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
+        93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
+        109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122
+      ],
+      "reports": [
+        {
+          "scope": "Повторная визуальная приёмка финального рендера диплома: страницы 1–40 включительно.",
+          "date": "2026-11-07",
+          "source_directory": "/tmp/lad-pruning-applied-20261107/render-final/thesis",
+          "total_document_pages_as_task_reported": 122,
+          "png_files_present": 122,
+          "checked_pages": [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+            37, 38, 39, 40
+          ],
+          "checked_count": 40,
+          "method": "Каждый из 40 PNG отдельно открыт через view_image с detail=original и осмотрен целиком. Пакеты содержали по 2–4 полных изображения; контактные листы не использовались. После обрезанного вывода страницы 21–24 открыты повторно. Рендер, LibreOffice и приложение не запускались.",
+          "result": "Визуальных дефектов на страницах 1–40 не обнаружено. Прежнее замечание к малой заполненности страницы 5 устранено.",
+          "defects": [],
+          "observations": [],
+          "resolved_observations": [
+            {
+              "previous_id": "V1-41-01",
+              "previous_report": "/tmp/lad-pruning-applied-20261107/visual-1-41.json",
+              "page": 5,
+              "status": "resolved",
+              "evidence": "На финальной странице 5 после пяти строк основного текста размещены подпись таблицы 1, её заголовок и первая часть. На страницах 6 и 7 стоят продолжения таблицы 1; ячейки и текст полностью видны, наложений нет."
+            }
+          ],
+          "verified": {
+            "clipping_or_overlap": "Не обнаружены на всех 40 просмотренных страницах.",
+            "completely_blank_pages": "Не обнаружены.",
+            "orphan_headings": "Заголовков без следующего текста на той же странице не обнаружено.",
+            "figure_caption_separation": "Рисунки 1–5 на страницах 26–30 и рисунок 6 на странице 39 имеют подписи на той же странице; подписи видны полностью.",
+            "diagram_legibility": "Составные макеты рисунков 1–5 и диаграмма рисунка 6 читаются; подписи, рамки и связи не обрезаны и не перекрываются.",
+            "tables": "Таблица 1 корректно размещена в трёх частях на страницах 5–7 с подписями продолжения и номерами столбцов. Таблицы 2, 3, 4 и 5 на страницах 21, 22, 23 и 31 полностью помещаются; текст не выходит за ячейки.",
+            "text_and_page_numbers": "Текст читается. Нижние номера на всех страницах 1–40 соответствуют порядку и не пересекаются с основным содержимым."
+          },
+          "limits": [
+            "Отчёт покрывает только финальные страницы 1–40; вывод не распространяется на страницы 41–122.",
+            "Это проверка визуальной вёрстки готовых PNG, а не повторная смысловая, финансовая или нормативная проверка текста.",
+            "Файлы диплома, репозитория и рендера не изменялись; создан только этот временный отчёт."
+          ],
+          "page_evidence": [
+            {
+              "page": 1,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-1.png",
+              "sha256": "96af268b763a3888728e3367ae268bfd1be2f5f1df1379eb85448fed0d1e9b6c",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 1,
+              "blocking_defects": []
+            },
+            {
+              "page": 2,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-2.png",
+              "sha256": "712041ff9819ec58fcf24e0ecb7ca397d1be935e6badd497b2b7237b9df1ca61",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 2,
+              "blocking_defects": []
+            },
+            {
+              "page": 3,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-3.png",
+              "sha256": "41b5b9ff00e744755170eab7bdd337ba2490f936044b4d8fe5cced9ca5104477",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 3,
+              "blocking_defects": []
+            },
+            {
+              "page": 4,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-4.png",
+              "sha256": "354283a4c715357ff580476d1fe6c0a0c61de21e2fa85c65aa0dc0045ff156c1",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 4,
+              "blocking_defects": []
+            },
+            {
+              "page": 5,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-5.png",
+              "sha256": "65dccded6cb273a02fee1eda38c010b775e1a61b48179406dd37c12338a85225",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 5,
+              "blocking_defects": []
+            },
+            {
+              "page": 6,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-6.png",
+              "sha256": "16cd7fb35fd0528b2f0b5a7f6fab7a8b7a68e283a55c2ecf7d1ae797329908b4",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 6,
+              "blocking_defects": []
+            },
+            {
+              "page": 7,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-7.png",
+              "sha256": "bfd154e8dca7385cf9d6bbaa07bd54e7765445e87a11a4ba1cdad229d75e5798",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 7,
+              "blocking_defects": []
+            },
+            {
+              "page": 8,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-8.png",
+              "sha256": "b9aae35b868db7d292bb4e018a362aeb02a55375a5985d264cbb3ee1c5b63c12",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 8,
+              "blocking_defects": []
+            },
+            {
+              "page": 9,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-9.png",
+              "sha256": "b5f1f9b9cbbb58d639c63fe9a5b8327ff00b95248b2f97b0e0b9e01e7c2d8d7e",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 9,
+              "blocking_defects": []
+            },
+            {
+              "page": 10,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-10.png",
+              "sha256": "fc9fa7e404b17327d139343ba560cc796ad898a2e5e8e576ae80ccb60489de86",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 10,
+              "blocking_defects": []
+            },
+            {
+              "page": 11,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-11.png",
+              "sha256": "dd81211657c7fe9a34eb1fb337e1dcb1ac32ec213e016a44487c2f880c7613c2",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 11,
+              "blocking_defects": []
+            },
+            {
+              "page": 12,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-12.png",
+              "sha256": "f28acaa4f485f12338ae4c14016e6d21ee1a8eed6d5ed8b49ad12e1fee935de8",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 12,
+              "blocking_defects": []
+            },
+            {
+              "page": 13,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-13.png",
+              "sha256": "b3f3625fa9d44a343d1b8c707013cac255d184e6654b22d6de1a7ee9b6bd6123",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 13,
+              "blocking_defects": []
+            },
+            {
+              "page": 14,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-14.png",
+              "sha256": "07345942b50ba2f560eb731d4a82c24c98f4df3e371664e5b35f357ae83f6284",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 14,
+              "blocking_defects": []
+            },
+            {
+              "page": 15,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-15.png",
+              "sha256": "7ea09bfcff5669e41a20319dbc4ab442b88f97a4a01d6fe8091a1774125e1607",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 15,
+              "blocking_defects": []
+            },
+            {
+              "page": 16,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-16.png",
+              "sha256": "e20f4fd67350625caa33a768246e15767bd30708f2f3d70df3585dd8ac17b187",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 16,
+              "blocking_defects": []
+            },
+            {
+              "page": 17,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-17.png",
+              "sha256": "98c2c5579e97eb2545dd79e9e2543208606206fe25a5a7e50b6d615f76df5f81",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 17,
+              "blocking_defects": []
+            },
+            {
+              "page": 18,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-18.png",
+              "sha256": "7da0c516554199ba2ce5af12b920a13461dca6613c4168310333eee6f29e5ecd",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 18,
+              "blocking_defects": []
+            },
+            {
+              "page": 19,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-19.png",
+              "sha256": "dc7f9dccb51e51964ee7c7ec8e046f5181e8ead6b568b2ddc8fb9a5f4db2db72",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 19,
+              "blocking_defects": []
+            },
+            {
+              "page": 20,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-20.png",
+              "sha256": "2926fe81413acef8d96f8d803015775fa4dec8a1d682dd4f052acf50cc36162c",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 20,
+              "blocking_defects": []
+            },
+            {
+              "page": 21,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-21.png",
+              "sha256": "3457aaafb530722ef6ae5c6227d4013c19b5bc0330bcb5df7dc46396f894b9da",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 21,
+              "blocking_defects": []
+            },
+            {
+              "page": 22,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-22.png",
+              "sha256": "e829bb63563a1acbbf0a1b1e54b0732a2306364756a2e14844e961d8fb078c49",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 22,
+              "blocking_defects": []
+            },
+            {
+              "page": 23,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-23.png",
+              "sha256": "b36f6ef764b5cd4d0b8796cccf38f659460423dbf9e7d6a9aeeffb11b6704692",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 23,
+              "blocking_defects": []
+            },
+            {
+              "page": 24,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-24.png",
+              "sha256": "503921f43f40f1313d7c4bfbd4b851d2bf3054785091eb11d9423fc475a3e5f1",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 24,
+              "blocking_defects": []
+            },
+            {
+              "page": 25,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-25.png",
+              "sha256": "bdf3ae29bb8edaa215e55df4fbc10e7f4fde6019552270082e22b9438a1ce7b6",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 25,
+              "blocking_defects": []
+            },
+            {
+              "page": 26,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-26.png",
+              "sha256": "d67880d826fd876c184e166569936d015864d2851fac231ee11f5384b9beecd3",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 26,
+              "blocking_defects": []
+            },
+            {
+              "page": 27,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-27.png",
+              "sha256": "902c80592e6b303c2ffde7da1949e15640da82d48c34d3d46389d09a567149a3",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 27,
+              "blocking_defects": []
+            },
+            {
+              "page": 28,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-28.png",
+              "sha256": "6c022a22a444f7b57f32e352d0b825c20d376e314ccd165a9b82d89c43c85d50",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 28,
+              "blocking_defects": []
+            },
+            {
+              "page": 29,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-29.png",
+              "sha256": "d0dac1df7855b62cca73d9d25e70145a05cbe51767c76c1a6a0d2028ddbdafcc",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 29,
+              "blocking_defects": []
+            },
+            {
+              "page": 30,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-30.png",
+              "sha256": "4e39592b6396c8929de86702cf4ef2b2bb74cfa3f1611378ebeef4740c5d7954",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 30,
+              "blocking_defects": []
+            },
+            {
+              "page": 31,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-31.png",
+              "sha256": "446f72ebbedcd3304c44e4d2cc597db1a984a50aab84254e5bb2a647601d1f34",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 31,
+              "blocking_defects": []
+            },
+            {
+              "page": 32,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-32.png",
+              "sha256": "d1a83d284007d4e5de25dd70dad4f787cc2c3119e36ceda67e765d46346fecc9",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 32,
+              "blocking_defects": []
+            },
+            {
+              "page": 33,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-33.png",
+              "sha256": "b9cfd401ae15cfc4a95777deefd7e342d7e840e1d1d4f5f4a31264eb4f5daad6",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 33,
+              "blocking_defects": []
+            },
+            {
+              "page": 34,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-34.png",
+              "sha256": "5019f9b7a080901d30e726554e0b8c6bb8681320afc176db70330917f96dc500",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 34,
+              "blocking_defects": []
+            },
+            {
+              "page": 35,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-35.png",
+              "sha256": "18226969e4779cf87bf749bdfb6570585027fbfe9066e51bbb962f9ae3cc756f",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 35,
+              "blocking_defects": []
+            },
+            {
+              "page": 36,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-36.png",
+              "sha256": "e2ec45279cd02828aa3218b386ef785392d3b09d7e1ba058b692750e33a5df2c",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 36,
+              "blocking_defects": []
+            },
+            {
+              "page": 37,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-37.png",
+              "sha256": "0bf627f5564dc0dcf4fefdde1c534b3fe66bced8c6156599014331e042c6067b",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 37,
+              "blocking_defects": []
+            },
+            {
+              "page": 38,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-38.png",
+              "sha256": "61288c83778b3263aab6e0198e0c370c6bd7aa22639619bf5145c1c7fa137dfc",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 38,
+              "blocking_defects": []
+            },
+            {
+              "page": 39,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-39.png",
+              "sha256": "c7d377e5e95eac527ddaa8af302100598a2d679410d560f8ca9e416bb19a42e9",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 39,
+              "blocking_defects": []
+            },
+            {
+              "page": 40,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-40.png",
+              "sha256": "931c70094e68c06edce8f6d4367aac4c41903640909f213905b80464603164b7",
+              "viewed_full_page": true,
+              "detail": "original",
+              "footer_number": 40,
+              "blocking_defects": []
+            }
+          ]
+        },
+        {
+          "scope": "Повторная read-only визуальная приёмка окончательного 122-страничного рендера после устранения лишнего разрыва перед таблицей 1: страницы 41–81 включительно.",
+          "render_directory": "/tmp/lad-pruning-applied-20261107/render-final/thesis",
+          "method": "Каждая страница повторно открыта через view_image с detail=original и просмотрена целиком в исходном размере 1414×2000; последовательные пакеты по 4 страницы и отдельно страница 81. Контактные листы не использовались.",
+          "pages_reviewed": [
+            41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+            58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+            75, 76, 77, 78, 79, 80, 81
+          ],
+          "pages_reviewed_count": 41,
+          "status": "passed",
+          "defects": [],
+          "checks": {
+            "numbering": "Визуально подтверждены последовательные номера 41–81 в нижних колонтитулах; они совпадают с номерами файлов PNG.",
+            "clipping": "Обрезаний текста, схем, подписей, формул или номеров страниц не обнаружено.",
+            "overlap": "Наложений текста, графики, подписей или колонтитулов не обнаружено.",
+            "blank_pages": "Полностью пустых страниц нет.",
+            "figures": "Рисунки 7–20 просмотрены целиком, подписи находятся на тех же страницах; элементы схем и связи читаемы.",
+            "formulas": "Формулы 3.1–3.5 просмотрены на страницах 65, 68, 72, 75 и 79: индексы, знаки и номера различимы, разрывов формул нет.",
+            "headings_and_breaks": "Заголовки сопровождаются последующим текстом; переносы абзацев между страницами не приводят к визуальной потере строк.",
+            "tables": "Таблиц в проверенном диапазоне нет."
+          },
+          "figure_pages": {
+            "7": 41,
+            "8": 43,
+            "9": 45,
+            "10": 47,
+            "11": 49,
+            "12": 56,
+            "13": 59,
+            "14": 61,
+            "15": 63,
+            "16": 67,
+            "17": 71,
+            "18": 74,
+            "19": 77,
+            "20": 80
+          },
+          "observations": [
+            "Свободное место на страницах 42, 44, 46, 48, 55, 66 и 70 связано с переносом крупных схем целиком на следующие страницы; это не пустые листы и не отрыв подписи.",
+            "Двухстрочная подпись рисунка 11 на странице 49 целиком остаётся под схемой.",
+            "Плотная схема классов на странице 63 сохраняет читаемые подписи, кратности и линии.",
+            "В абзацах с длинными идентификаторами местами заметны увеличенные межсловные интервалы из-за выравнивания по ширине; строки остаются в пределах полей."
+          ],
+          "pixel_comparison": {
+            "method": "Дополнительно через PIL ImageChops в памяти сравнены верхние 93% высоты каждого окончательного PNG с соответствующей прежней страницей N+1. Изображения не изменялись.",
+            "all_identical": true,
+            "pairs": [
+              {
+                "final_page": 41,
+                "previous_page": 42,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 42,
+                "previous_page": 43,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 43,
+                "previous_page": 44,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 44,
+                "previous_page": 45,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 45,
+                "previous_page": 46,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 46,
+                "previous_page": 47,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 47,
+                "previous_page": 48,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 48,
+                "previous_page": 49,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 49,
+                "previous_page": 50,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 50,
+                "previous_page": 51,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 51,
+                "previous_page": 52,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 52,
+                "previous_page": 53,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 53,
+                "previous_page": 54,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 54,
+                "previous_page": 55,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 55,
+                "previous_page": 56,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 56,
+                "previous_page": 57,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 57,
+                "previous_page": 58,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 58,
+                "previous_page": 59,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 59,
+                "previous_page": 60,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 60,
+                "previous_page": 61,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 61,
+                "previous_page": 62,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 62,
+                "previous_page": 63,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 63,
+                "previous_page": 64,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 64,
+                "previous_page": 65,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 65,
+                "previous_page": 66,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 66,
+                "previous_page": 67,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 67,
+                "previous_page": 68,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 68,
+                "previous_page": 69,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 69,
+                "previous_page": 70,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 70,
+                "previous_page": 71,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 71,
+                "previous_page": 72,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 72,
+                "previous_page": 73,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 73,
+                "previous_page": 74,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 74,
+                "previous_page": 75,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 75,
+                "previous_page": 76,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 76,
+                "previous_page": 77,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 77,
+                "previous_page": 78,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 78,
+                "previous_page": 79,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 79,
+                "previous_page": 80,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 80,
+                "previous_page": 81,
+                "top_93_percent_identical": true
+              },
+              {
+                "final_page": 81,
+                "previous_page": 82,
+                "top_93_percent_identical": true
+              }
+            ]
+          },
+          "limits": [
+            "Отчёт подтверждает визуальный осмотр PNG 41–81; остальные страницы, смысловая, финансовая и автоматическая структурная проверка не входят в это поручение.",
+            "Файлы диплома и репозитория не изменялись. Рендер, LibreOffice и приложение не запускались."
+          ],
+          "artifacts": [
+            {
+              "page": 41,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-41.png",
+              "size_px": [1414, 2000],
+              "sha256": "c3859c7040da3eed0a82c8187cdd23e6c859a4d56bde2fdbb1670f58c371ab65",
+              "footer_visually_confirmed": 41
+            },
+            {
+              "page": 42,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-42.png",
+              "size_px": [1414, 2000],
+              "sha256": "572c71a2cad451c7c1c602995442ae7e3724b928c9604b13c739f199fcb21335",
+              "footer_visually_confirmed": 42
+            },
+            {
+              "page": 43,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-43.png",
+              "size_px": [1414, 2000],
+              "sha256": "5cf8f75c86a02166092bd577458fba1df0ad4586056995f61fe253c0cb8b77da",
+              "footer_visually_confirmed": 43
+            },
+            {
+              "page": 44,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-44.png",
+              "size_px": [1414, 2000],
+              "sha256": "acd6af2de3976ec7cbcea501b2eb291d2c04347178e3a3f22aad9347a6471877",
+              "footer_visually_confirmed": 44
+            },
+            {
+              "page": 45,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-45.png",
+              "size_px": [1414, 2000],
+              "sha256": "320a32cff2826df2032adaf8d7959820e5f8ced8fb87ab9858e24f4f4c8d0c75",
+              "footer_visually_confirmed": 45
+            },
+            {
+              "page": 46,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-46.png",
+              "size_px": [1414, 2000],
+              "sha256": "11dc293e8a3ef0796c84aa5102854c1998d92afdbcd50f4aa820a344022b7f71",
+              "footer_visually_confirmed": 46
+            },
+            {
+              "page": 47,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-47.png",
+              "size_px": [1414, 2000],
+              "sha256": "261c0a846915affea3212c1310ba49768b0c7e36de9a3fbafe4aa49c47be7a21",
+              "footer_visually_confirmed": 47
+            },
+            {
+              "page": 48,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-48.png",
+              "size_px": [1414, 2000],
+              "sha256": "13f8b4d80c6a716e957ba0c3540e4ad9f3574092cf04ef478b12696ba2d5b6d7",
+              "footer_visually_confirmed": 48
+            },
+            {
+              "page": 49,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-49.png",
+              "size_px": [1414, 2000],
+              "sha256": "a19edbd96c199a10f5b14e8657ece27c2130e703ce18e48045509ab30878b648",
+              "footer_visually_confirmed": 49
+            },
+            {
+              "page": 50,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-50.png",
+              "size_px": [1414, 2000],
+              "sha256": "c1b34bc9256e216484c83e03f8b2ecef2b1ca3187287d404c8c8c2ce8e2c1f83",
+              "footer_visually_confirmed": 50
+            },
+            {
+              "page": 51,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-51.png",
+              "size_px": [1414, 2000],
+              "sha256": "b2fa1b97a630f2d8a235365c9f5cc9e34a5944a4461a59b6fc1a20cd360e47c7",
+              "footer_visually_confirmed": 51
+            },
+            {
+              "page": 52,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-52.png",
+              "size_px": [1414, 2000],
+              "sha256": "6dae7cae21a3474602ae05ce542aee89f6db47fdd51bf1898611e9b02fc6a72a",
+              "footer_visually_confirmed": 52
+            },
+            {
+              "page": 53,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-53.png",
+              "size_px": [1414, 2000],
+              "sha256": "127feb04ef4d1da007c7c15c6b2a633b90408e524dd4c4ab31edb3dd6d5e1ffa",
+              "footer_visually_confirmed": 53
+            },
+            {
+              "page": 54,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-54.png",
+              "size_px": [1414, 2000],
+              "sha256": "f1ba503784fcb5cc110216ee22824bfb1f9a68863ff91654b9b448befae8bf24",
+              "footer_visually_confirmed": 54
+            },
+            {
+              "page": 55,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-55.png",
+              "size_px": [1414, 2000],
+              "sha256": "fc76e8e2cebbf316097cd393efed8e843e3d7c770fed838db6386ea06f40ae90",
+              "footer_visually_confirmed": 55
+            },
+            {
+              "page": 56,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-56.png",
+              "size_px": [1414, 2000],
+              "sha256": "b57edc25bd50bb4937fc9992308530f14241f21de20cab9fa0b5a734818a863e",
+              "footer_visually_confirmed": 56
+            },
+            {
+              "page": 57,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-57.png",
+              "size_px": [1414, 2000],
+              "sha256": "4391d848cf34b6b64aa4f83171385106d8b4837b2394aa9ad2878c77fa88a004",
+              "footer_visually_confirmed": 57
+            },
+            {
+              "page": 58,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-58.png",
+              "size_px": [1414, 2000],
+              "sha256": "5a44fd6d939331d3271577281cb1788982b1181e65649cf3ae6d2ea40731cfd3",
+              "footer_visually_confirmed": 58
+            },
+            {
+              "page": 59,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-59.png",
+              "size_px": [1414, 2000],
+              "sha256": "991b3b365ce955b8055a09e2b9deaf9c855edc8cc87c67f9310d2e51306b9445",
+              "footer_visually_confirmed": 59
+            },
+            {
+              "page": 60,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-60.png",
+              "size_px": [1414, 2000],
+              "sha256": "61d5c8f219108f2bb36f83749050ed1c70bb8009223d69a83699e98e9057fe7a",
+              "footer_visually_confirmed": 60
+            },
+            {
+              "page": 61,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-61.png",
+              "size_px": [1414, 2000],
+              "sha256": "f8d93d57ba384af8700b7911a1bfc023ede74233f17588bdc37ffa485c0a256a",
+              "footer_visually_confirmed": 61
+            },
+            {
+              "page": 62,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-62.png",
+              "size_px": [1414, 2000],
+              "sha256": "24d5fa20692d9f0b3b97eed9f8a2b589b51d0179afacf9dc402692dea5ec9066",
+              "footer_visually_confirmed": 62
+            },
+            {
+              "page": 63,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-63.png",
+              "size_px": [1414, 2000],
+              "sha256": "ac9249e9217815a60297464166ecc4e990b1a372aa76d1f9238ad78bea4272ff",
+              "footer_visually_confirmed": 63
+            },
+            {
+              "page": 64,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-64.png",
+              "size_px": [1414, 2000],
+              "sha256": "49600996153b61f314ee8bb0c27a327be1a6bf86ac9cec9686cac1a4539e1247",
+              "footer_visually_confirmed": 64
+            },
+            {
+              "page": 65,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-65.png",
+              "size_px": [1414, 2000],
+              "sha256": "7155dc9751e0f94c2187c9b0f873b9dfd045e810276e6b21d273e0ecdd21460a",
+              "footer_visually_confirmed": 65
+            },
+            {
+              "page": 66,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-66.png",
+              "size_px": [1414, 2000],
+              "sha256": "3709347cc7a65cdb69c43314c7b17c3a9dfebd3b58976d067870dae583a50775",
+              "footer_visually_confirmed": 66
+            },
+            {
+              "page": 67,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-67.png",
+              "size_px": [1414, 2000],
+              "sha256": "8ea09e508f77e7bfc7ce90fc591f5056ec36bb1c103c5b0442024698a324a59d",
+              "footer_visually_confirmed": 67
+            },
+            {
+              "page": 68,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-68.png",
+              "size_px": [1414, 2000],
+              "sha256": "2957356292efc79bce9b6cbf70cc8bc9114e61c3ece0888ee889b7bcecaaed97",
+              "footer_visually_confirmed": 68
+            },
+            {
+              "page": 69,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-69.png",
+              "size_px": [1414, 2000],
+              "sha256": "c6f9436e670b410424a410752088512bbb88d6b744248f7ba49db898a150a6d8",
+              "footer_visually_confirmed": 69
+            },
+            {
+              "page": 70,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-70.png",
+              "size_px": [1414, 2000],
+              "sha256": "cbabcd764a4f5996e171e223da3f9d5d52242e788c087c3bc2f9ea4812909bf5",
+              "footer_visually_confirmed": 70
+            },
+            {
+              "page": 71,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-71.png",
+              "size_px": [1414, 2000],
+              "sha256": "36fc0b452f324c5fdf28b07fc0d5fed1e87a098a44f0c482c03c1c0e96816f36",
+              "footer_visually_confirmed": 71
+            },
+            {
+              "page": 72,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-72.png",
+              "size_px": [1414, 2000],
+              "sha256": "681f3c80d1749e2605cb14ca7fa54a3d8b2e32a5a554bf54c74a4f8c1efd0ffb",
+              "footer_visually_confirmed": 72
+            },
+            {
+              "page": 73,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-73.png",
+              "size_px": [1414, 2000],
+              "sha256": "6af2e680fd2cb3900ffafc527986537287f4668746aa8587fd075f8e2b861723",
+              "footer_visually_confirmed": 73
+            },
+            {
+              "page": 74,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-74.png",
+              "size_px": [1414, 2000],
+              "sha256": "6686fd5d4c00f2adb0c812df8e8224216b6971d82326468134d36f4c4d788c68",
+              "footer_visually_confirmed": 74
+            },
+            {
+              "page": 75,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-75.png",
+              "size_px": [1414, 2000],
+              "sha256": "d48465f6d20a2deac8f64eb0ce8af91b232964f951e855c449c6c342ec9e923e",
+              "footer_visually_confirmed": 75
+            },
+            {
+              "page": 76,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-76.png",
+              "size_px": [1414, 2000],
+              "sha256": "f03a032dd25c96f2a573bb2fbb04b347bacdf6232df490f73ee025fee8e87fb6",
+              "footer_visually_confirmed": 76
+            },
+            {
+              "page": 77,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-77.png",
+              "size_px": [1414, 2000],
+              "sha256": "231daf0ca329d48fb1f69a8b3ae7341f3e97f543b3834927a78ab2d34e96e80e",
+              "footer_visually_confirmed": 77
+            },
+            {
+              "page": 78,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-78.png",
+              "size_px": [1414, 2000],
+              "sha256": "34a5cc97742c08e2b02d7dc51405db5f50bb740723915ef8294461c5f6d6e98c",
+              "footer_visually_confirmed": 78
+            },
+            {
+              "page": 79,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-79.png",
+              "size_px": [1414, 2000],
+              "sha256": "7aacff0455ec50be1d77f57c2813803dd22162b72641f2800249ba69b60e9fe6",
+              "footer_visually_confirmed": 79
+            },
+            {
+              "page": 80,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-80.png",
+              "size_px": [1414, 2000],
+              "sha256": "3149309cac746818ef855e979a01a6096ab81999cc5f238532242b7a993c231b",
+              "footer_visually_confirmed": 80
+            },
+            {
+              "page": 81,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-81.png",
+              "size_px": [1414, 2000],
+              "sha256": "a5bdbdcfdbe284a46d1ff4443531abc6515901da9b3dfaf2842561f72ab9c208",
+              "footer_visually_confirmed": 81
+            }
+          ]
+        },
+        {
+          "scope": "Повторная визуальная проверка всех финальных страниц 82–122 включительно версии диплома на 122 страницы",
+          "date": "2026-11-07",
+          "reviewer": "/root/edit_chapter1",
+          "source_pdf": "/tmp/lad-pruning-applied-20261107/render-final/thesis/thesis.pdf",
+          "source_pdf_sha256": "b9ec9946e26503add45b8024a7d9072c34aa5f6a7ece0f65ca837f9f8541f48b",
+          "total_document_pages": 122,
+          "reviewed_pages": [
+            82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98,
+            99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+            113, 114, 115, 116, 117, 118, 119, 120, 121, 122
+          ],
+          "reviewed_count": 41,
+          "method": "Все 41 финальных PNG заново отдельно открыты через view_image с detail=original; изображения передавались группами по 3–4, без замены контактными листами. Проверены содержимое и новый номер футера каждой страницы.",
+          "status": "pass_with_nonblocking_whitespace_notes",
+          "blockers": [],
+          "summary": {
+            "clipping_detected": false,
+            "overlap_detected": false,
+            "caption_separation_problem_detected": false,
+            "unexpected_blank_pages_detected": false,
+            "formulas_checked": ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"],
+            "figures_checked": [
+              "21",
+              "22",
+              "23",
+              "24",
+              "25",
+              "26",
+              "1.1",
+              "1.2"
+            ],
+            "tables_checked": ["6"],
+            "manual_pages_checked": [
+              109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121
+            ],
+            "footer_numbers_verified": [
+              82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+              98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+              111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122
+            ]
+          },
+          "large_whitespace_pages": [98, 101, 121, 122],
+          "large_whitespace_assessment": "Это окончания разделов и короткое отдельное приложение. Пустота заметна, однако не свидетельствует о потере текста или ошибке рендера. Исправление переносами не предлагается в рамках этого чтения.",
+          "secondary_whitespace_pages": [82, 94, 95, 106],
+          "additional_check": "Повторная проверка финального PDF через pdfplumber: на с. 96 между ScenarioComparison и словом «дважды» есть промежуток 13.69 pt; наложения нет.",
+          "limitations": [
+            "Проверена вёрстка готового финального рендера; сборка DOCX и повторный рендер не запускались.",
+            "Текст и файлы репозитория не изменялись. Записан только этот временный отчёт; прежний отчёт сохранён.",
+            "Данный отчёт покрывает только страницы 82–122; остальные страницы проверяют другие участники."
+          ],
+          "pages": [
+            {
+              "page": 82,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-82.png",
+              "sha256": "6b215289226ac40aa4b315d5ec0efc3a19695a0e2ef518600c0e47f20df095b9",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Формула (3.6), её номер и пояснения читаются. Нижняя часть свободна перед крупной схемой следующей страницы.",
+              "whitespace": {
+                "level": "moderate",
+                "reason": "Следующий заголовок связан с крупной алгоритмической схемой.",
+                "blocker": false
+              },
+              "footer_number_verified": 82
+            },
+            {
+              "page": 83,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-83.png",
+              "sha256": "9fcaba38015a40d26d33f889e5e8b0706b092537c9dceee090eaaddfea0535f9",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Рисунок 21 целиком на странице вместе с подписью; линии, развилки и начало описания не перекрываются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 83
+            },
+            {
+              "page": 84,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-84.png",
+              "sha256": "843b76ead272d91acc50158275d68384ef8dd21e584aca319b5e8fc7c04838ce",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Продолжение алгоритма, структуры и пример UC-06 читаются; заголовки связаны с последующим текстом.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 84
+            },
+            {
+              "page": 85,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-85.png",
+              "sha256": "1e71da48ff4be43cb63b7ffc81c306c1383614f308da43eb92e7a1aef9498c98",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Формулы (3.7) и (3.8), индексы и номера читаются; пояснение второй формулы продолжается на следующей странице.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 85
+            },
+            {
+              "page": 86,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-86.png",
+              "sha256": "ec9c02575aa654adc8749011060d7f6bac4e08a85fa1f2007ae7bb7d2e01f52b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Продолжение пояснений и алгоритм прогноза; обычный перенос абзаца на следующую страницу.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 86
+            },
+            {
+              "page": 87,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-87.png",
+              "sha256": "58569deee680a26441818bce431ed636d14a1bd86f35a91eca4fae221c6e215e",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Рисунок 22 полностью помещается, подпись отделена от схемы и номера страницы.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 87
+            },
+            {
+              "page": 88,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-88.png",
+              "sha256": "d212fb0dc8e03e40462cc37d3b15de069906eadc006d954ff0caa4e7ddb18f8e",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Таблица 6 целиком помещается на странице; подпись, заголовок и все строки читаются, продолжение таблицы не требуется.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 88
+            },
+            {
+              "page": 89,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-89.png",
+              "sha256": "3cb89ccc4fd26c8e1dbe8b7f54a3543cfda38708b78772ae89df8f09243f29b9",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "График рисунка 23, оси, даты, легенда и подпись читаются; формулы в примере не выходят за поля.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 89
+            },
+            {
+              "page": 90,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-90.png",
+              "sha256": "24a96cb10588632c001c93a037b6ed2992e5743b602e4dddd0608d9ec198f95a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Рисунок 24 и подпись помещаются. Растровый снимок менее резок, чем схемы, но суммы и предупреждение читаются; обрезания вставки нет.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 90
+            },
+            {
+              "page": 91,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-91.png",
+              "sha256": "0ab2ec4510983abae5856529ca7cde1f2258a3fad7e8cf5dd62df182b35e95b0",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Формулы (3.9) и (3.10), номера и пояснения читаются; продолжение последнего абзаца не является обрезанием.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 91
+            },
+            {
+              "page": 92,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-92.png",
+              "sha256": "28990934a6a43d410b436240d91307227553115851f29ef493c29bfdc86bab36",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Рисунок 25 и подпись целиком на странице; номер страницы не перекрывается.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 92
+            },
+            {
+              "page": 93,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-93.png",
+              "sha256": "9bad1c527086f14ff359d90b1779cb83aaf1f76edafe772f39592634280f5b6b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Описание расчёта и структуры покупки; длинные идентификаторы переносятся без выхода за поля.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 93
+            },
+            {
+              "page": 94,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-94.png",
+              "sha256": "aaac9ec78647220ffc5531650f4160dd04c0dec38d23a8baaa40f16fcd6ccd62",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Пример UC-08 и начало UC-09. Внизу есть свободное место перед математической постановкой; заголовок UC-09 не оторван от вводного абзаца.",
+              "whitespace": {
+                "level": "moderate",
+                "reason": "Математическая постановка следующего пункта начинается на следующей странице.",
+                "blocker": false
+              },
+              "footer_number_verified": 94
+            },
+            {
+              "page": 95,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-95.png",
+              "sha256": "a80c010c3bde836aaff33008103616c63e1b35635f0e2812dd946d021647f150",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Формула (3.11), пояснение и начало алгоритма читаются. Свободное место внизу перед крупной схемой следующей страницы.",
+              "whitespace": {
+                "level": "moderate",
+                "reason": "Крупный рисунок 26 перенесён целиком на следующую страницу.",
+                "blocker": false
+              },
+              "footer_number_verified": 95
+            },
+            {
+              "page": 96,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-96.png",
+              "sha256": "91f3dbb44acdf65ca353d9cb6c562b74c5141e865e18bd6b602301e1be9a203e",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Рисунок 26 целиком, подпись и начало описания разнесены. Дополнительно проверено по финальному PDF: между ScenarioComparison и словом «дважды» есть промежуток 13.69 pt, наложения нет.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 96
+            },
+            {
+              "page": 97,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-97.png",
+              "sha256": "11bac8853dec80ed5ddfa541ae5210f58811271706deac7b74d4416bc7844245",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Структуры сценария и начало примера; заголовок примера сопровождается несколькими строками текста.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 97
+            },
+            {
+              "page": 98,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-98.png",
+              "sha256": "fc593a19416b3037c5e620d1a75f394043735f79ce6830acb576f9c0bb22a15d",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Конец примера UC-09 и главы 3; более половины области текста ниже окончания главы пустует перед отдельной страницей заключения.",
+              "whitespace": {
+                "level": "large",
+                "reason": "Окончание главы 3; заключение начинается с новой страницы.",
+                "blocker": false
+              },
+              "footer_number_verified": 98
+            },
+            {
+              "page": 99,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-99.png",
+              "sha256": "48e2369838a7866adf5ad74521c3bf1d825a861f9b7f2694c67e569a77738672",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Начало заключения; текст и заголовок читаются, края не обрезаны.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 99
+            },
+            {
+              "page": 100,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-100.png",
+              "sha256": "da77997f7c8de2b1d6f36edb47ca49ba95c12bfc3359822c9e2087663577ef5a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Продолжение заключения; нижний абзац переносится на следующую страницу без потери строк.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 100
+            },
+            {
+              "page": 101,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-101.png",
+              "sha256": "6d5245a8f1d76264c2da56ad62eaea60e1f05a8bfbda968ddcd6cfbf03bafd0b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Семь строк окончания заключения вверху; большая часть страницы пуста перед новым разделом источников.",
+              "whitespace": {
+                "level": "large",
+                "reason": "Окончание неизменённого заключения; список источников начинается с новой страницы.",
+                "blocker": false
+              },
+              "footer_number_verified": 101
+            },
+            {
+              "page": 102,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-102.png",
+              "sha256": "2b1da92589912e1cccf420cec68715f0fe90177f520866e1fa088ec43e165a3a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Источники 1–9; длинные URL переносятся в пределах текстовой области.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 102
+            },
+            {
+              "page": 103,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-103.png",
+              "sha256": "ab7e94ffbc6e5cc63949b0d7db54a75929f92e8ce5d61f2ce9c70ae573dc076a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Источники 10–18; переносы названий и URL читаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 103
+            },
+            {
+              "page": 104,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-104.png",
+              "sha256": "d767f69f24cfe2ee37e2ee5ba4e9ad9cbae115fa1619f59ec5c9123b59da30d3",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Источники 19–26; текст, DOI и URL без обрезания.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 104
+            },
+            {
+              "page": 105,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-105.png",
+              "sha256": "e506ce75a64387e917a142e89a8a1cc31496bbe713b02c01bdc1831cf62de669",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Источники 27–34; переносы длинных названий и URL без наложений.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 105
+            },
+            {
+              "page": 106,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-106.png",
+              "sha256": "2a5c4e83164635944286d92637593c5fee7b30c11b12ec14414217bf6e31cc0b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Источники 35–40, окончание списка. Нижняя часть свободна перед приложением 1.",
+              "whitespace": {
+                "level": "moderate",
+                "reason": "Окончание списка источников перед приложением с новой страницы.",
+                "blocker": false
+              },
+              "footer_number_verified": 106
+            },
+            {
+              "page": 107,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-107.png",
+              "sha256": "36773af6f0b84b4b7581a84b0104ca044675f111d52c842a891f62ed955057b6",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Верхний фрагмент ER-диаграммы, заголовок приложения и подпись рисунка 1.1 помещаются; текст блоков и номера соединителей читаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 107
+            },
+            {
+              "page": 108,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-108.png",
+              "sha256": "a731f4419cbb7524faaa126d4c702bf479b8280869f21943010351132bf404be",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Нижний фрагмент ER-диаграммы и подпись рисунка 1.2 помещаются; номера соединителей и крайние блоки не обрезаны.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 108
+            },
+            {
+              "page": 109,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-109.png",
+              "sha256": "051301d2158ac444851fb5a99eb1cc151cdd269e690090ee971e8432eb0fc5b7",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Начало руководства, назначение и условия применения; заголовки и текст читаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 109
+            },
+            {
+              "page": 110,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-110.png",
+              "sha256": "013bc92470c69519363146c680acb46b607fbd54304b0c89dd58be2749ab394a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Подготовка, все шаги Android и первые два шага iOS. Заголовок iOS сопровождается содержанием, нет висячего заголовка.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 110
+            },
+            {
+              "page": 111,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-111.png",
+              "sha256": "1965163648a0acf48956f7a0af8306663102b354f42843a5446255aaaa8a6e4b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Завершение iOS и первоначальная настройка 1–5; нумерация и перенос вводного абзаца навигации читаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 111
+            },
+            {
+              "page": 112,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-112.png",
+              "sha256": "65a9241edae9f0694044069c43e7cd8578814701177b35c545e556a85e6699a0",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Операции: счета и запись дохода/расхода. Нумерация шагов и названия кнопок читаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 112
+            },
+            {
+              "page": 113,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-113.png",
+              "sha256": "1f9af894cb87945559a0f0b9431b77c61bc347d6c43a1d8b5297eb1836ccceb6",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Перевод, поиск/исправление и сверка/корректировка; процедуры читаются целиком, номера не теряются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 113
+            },
+            {
+              "page": 114,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-114.png",
+              "sha256": "7c66a44a49e6a34a9b7651b49199dc6b6a923dd54642be3d00bf6877ddfd9cc8",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Бюджеты, планирование дохода и платежи; заголовки связаны с шагами, текст в полях.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 114
+            },
+            {
+              "page": 115,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-115.png",
+              "sha256": "45de6d8ba60711314814321bb04ec6575608ebf3ddb3d7aec7aa00dcc0e2db78",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Цель, пополнение, вывод и начало настройки прогноза; перенос процедуры между страницами последователен.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 115
+            },
+            {
+              "page": 116,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-116.png",
+              "sha256": "1c2e5fa7a2267b69f44d6ade7f443a5cc101f1b22f6ea581fe7b6dbad556b71b",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Завершение прогноза, покупка и начало сценариев; заголовки не оторваны от первых шагов.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 116
+            },
+            {
+              "page": 117,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-117.png",
+              "sha256": "592467c10e326e8ce4c8c6d8c4127682fd285836938e01f9b7489efa3ebf741c",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Продолжение сценариев, аналитика и блокировка; нумерация последовательна, строки не обрезаны.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 117
+            },
+            {
+              "page": 118,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-118.png",
+              "sha256": "4f946cccccb96437ef028356ffe07b8b8cb2f3e7cb616dc740d440abe32dbec0",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Ограничения блокировки, резервная копия и начало восстановления. Включён путь «Профиль → Профили»; длинные названия кнопок помещаются.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 118
+            },
+            {
+              "page": 119,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-119.png",
+              "sha256": "eaa71f6f4116060e99d1053261c14547d6e8e9199d274e129ea2cdcd2e8d0817",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Завершение восстановления и импорт CSV; шаги и длинные названия действий читаются, последний поясняющий абзац продолжается далее.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 119
+            },
+            {
+              "page": 120,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-120.png",
+              "sha256": "7d73312b999c44e6b25a728ff2b9f54e35488f7670db3206fed5d7f23a2e4c3a",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Завершение экспорта и аварийные ситуации. Жирные вводные части абзацев не перекрывают основной текст; последний абзац продолжается далее.",
+              "whitespace": {
+                "level": "normal"
+              },
+              "footer_number_verified": 120
+            },
+            {
+              "page": 121,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-121.png",
+              "sha256": "7fe3ce5cd85e9c2e6b5600e4adb767b7345c2f554b90d28f1edf7e797a08e944",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Окончание аварийных ситуаций и руководства. Более половины страницы ниже последнего абзаца пустует перед приложением 3.",
+              "whitespace": {
+                "level": "large",
+                "reason": "Окончание руководства; приложение 3 начинается с новой страницы.",
+                "blocker": false
+              },
+              "footer_number_verified": 121
+            },
+            {
+              "page": 122,
+              "file": "/tmp/lad-pruning-applied-20261107/render-final/thesis/page-122.png",
+              "sha256": "5a023ccc2e916d10bec2bba840803f172b0d891ec0fdd739dc9d059d514c503f",
+              "dimensions_px": [1414, 2000],
+              "viewed_full_size": true,
+              "view_image_detail": "original",
+              "clipping": false,
+              "overlap": false,
+              "out_of_page_content": false,
+              "detached_caption": false,
+              "notes": "Отдельное приложение 3 со ссылкой на исходный код занимает верхнюю часть; большая часть страницы пуста, URL и дата читаются.",
+              "whitespace": {
+                "level": "large",
+                "reason": "Короткое отдельное приложение со ссылкой на исходный код.",
+                "blocker": false
+              },
+              "footer_number_verified": 122
+            }
+          ],
+          "previous_report": "/tmp/lad-pruning-applied-20261107/visual-83-123.json",
+          "pixel_comparison": {
+            "method": "Pillow ImageChops.difference для верхних 93% высоты всех 41 пары PNG; файлы не изменялись. Футер проверен визуально отдельно.",
+            "pairs_checked": 41,
+            "all_content_identical": true,
+            "pages": [
+              {
+                "final_page": 82,
+                "previous_page": 83,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 83,
+                "previous_page": 84,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 84,
+                "previous_page": 85,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 85,
+                "previous_page": 86,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 86,
+                "previous_page": 87,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 87,
+                "previous_page": 88,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 88,
+                "previous_page": 89,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 89,
+                "previous_page": 90,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 90,
+                "previous_page": 91,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 91,
+                "previous_page": 92,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 92,
+                "previous_page": 93,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 93,
+                "previous_page": 94,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 94,
+                "previous_page": 95,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 95,
+                "previous_page": 96,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 96,
+                "previous_page": 97,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 97,
+                "previous_page": 98,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 98,
+                "previous_page": 99,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 99,
+                "previous_page": 100,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 100,
+                "previous_page": 101,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 101,
+                "previous_page": 102,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 102,
+                "previous_page": 103,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 103,
+                "previous_page": 104,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 104,
+                "previous_page": 105,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 105,
+                "previous_page": 106,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 106,
+                "previous_page": 107,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 107,
+                "previous_page": 108,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 108,
+                "previous_page": 109,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 109,
+                "previous_page": 110,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 110,
+                "previous_page": 111,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 111,
+                "previous_page": 112,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 112,
+                "previous_page": 113,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 113,
+                "previous_page": 114,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 114,
+                "previous_page": 115,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 115,
+                "previous_page": 116,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 116,
+                "previous_page": 117,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 117,
+                "previous_page": 118,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 118,
+                "previous_page": 119,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 119,
+                "previous_page": 120,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 120,
+                "previous_page": 121,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 121,
+                "previous_page": 122,
+                "content_top_93_percent_identical": true
+              },
+              {
+                "final_page": 122,
+                "previous_page": 123,
+                "content_top_93_percent_identical": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "notes": [
+      "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+      "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+      "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы."
+    ]
+  },
+  "methodology_review": {
+    "source": "/Users/gamkrelidzetimur/Documents/ВКР_2024_v2 (2).doc",
+    "result": "Независимая проверка применённого поднабора не выявила содержательных блокеров. Сохранены обязательные части, описания моделей, алгоритмов, примеры и основные пользовательские пути.",
+    "reviewed_by": "/root/edit_chapter1",
+    "limitations": [
+      "Сокращённое руководство намеренно не охватывает все вспомогательные функции.",
+      "Руководство занимает 13 страниц при ориентире методички 3–10.",
+      "Экспорт в Word и Pages отдельно не выполнялся; пагинация относится к bundled LibreOffice."
+    ]
+  },
+  "manual_numbering_consecutive": true,
+  "application_code_changed": false,
+  "application_tests_run": false,
+  "qa_directory": "/tmp/lad-pruning-applied-20261107",
+  "baseline_hashes": {
+    "output/thesis/thesis.md": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+    "output/thesis/thesis.docx": "65a0d0ccd9cd022ae66776d4e10e5971975d5a7b0008cce3891266023e4fea01",
+    "output/thesis/build-docx.py": "3c2fdc4c8e2fda4814cb423999795a0ee5051eed4333f1e568e3820bad765a11",
+    "output/thesis/research/check-editorial.py": "57d310b3c0e74b31a3b85ba00a698daeb38e39806a7633677021eb1de0fcf137"
+  }
+}

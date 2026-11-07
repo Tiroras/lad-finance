@@ -168,9 +168,10 @@ def table(rows, continuation=False):
    p=cell.paragraphs[0];p.paragraph_format.first_line_indent=Mm(0);p.paragraph_format.line_spacing=1.5
    numbered_header=all(value.isdigit() for value in rowdata)
    p.paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER if numbered_header else WD_ALIGN_PARAGRAPH.LEFT
-   # Table 1 spans three parts: attach only its headings to the first data row.
-   # Linking every data row makes an entire part an indivisible page block.
-   p.paragraph_format.keep_with_next=(i==0 or numbered_header) if table_no==1 else (i<len(rows)-1)
+   # Keep the first comparison part intact so it can follow shorter prose.
+   # Continuations already start after explicit page breaks.
+   first_comparison_part=table_no==1 and not all(value.isdigit() for value in rows[0])
+   p.paragraph_format.keep_with_next=(i<len(rows)-1) if table_no!=1 or first_comparison_part else (i==0 or numbered_header)
    p.paragraph_format.keep_together=True
    inline(p,txt)
    is_text_header=i==0 and not numbered_header
@@ -271,9 +272,6 @@ while i<len(lines):
  if line.startswith('Таблица '):
   p=DOC.add_paragraph();p.paragraph_format.first_line_indent=Mm(0);p.alignment=WD_ALIGN_PARAGRAPH.LEFT
   p.paragraph_format.keep_with_next=True;p.paragraph_format.keep_together=True
-  # The comparison has three explicitly paginated parts; start its first part
-  # on a fresh page so shorter preceding prose cannot create a fourth fragment.
-  if line.startswith('Таблица 1 '):p.paragraph_format.page_break_before=True
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.space_after=Pt(4)
   inline(p,line);i+=1;continue
  parts=[line];i+=1
