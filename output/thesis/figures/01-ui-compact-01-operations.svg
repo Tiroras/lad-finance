@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="170mm" height="136.28mm" viewBox="0 0 1200 962" data-min-text-size="25" data-insert-width-mm="170">
+<title>Обзор · Операции · Новая операция</title>
+<desc>Структурные схемы расположения элементов; области прокрутки показаны условно. Порядок полей и горизонтальная навигация сохранены. Длинные подписи внутри ячеек перенесены для читаемости. Денежные значения и персональные сведения не заполнены. Форма операции показывает новый проведённый расход без разделения на части.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:25px;fill:#000}.bold{font-weight:700}.title{font-size:30px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:1.6;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="962" style="fill:#fff;stroke:none"/>
+<rect x="808.0" y="12" width="380.0" height="938" rx="10"/>
+<rect x="410.0" y="12" width="380.0" height="938" rx="10"/>
+<rect x="12.0" y="12" width="380.0" height="938" rx="10"/>
+<g data-panel="overview">
+<text x="24.0" y="49.0" class="title" text-anchor="start">Обзор</text>
+<circle cx="367.0" cy="31" r="7"/>
+<path d="M 355.0 53 Q 367.0 34 379.0 53"/>
+<line x1="20.0" y1="63.0" x2="384.0" y2="63.0" stroke-width="1.6"/>
+<rect x="24.0" y="74.0" width="356.0" height="43.0" rx="5" stroke-dasharray="6 5"/>
+<text x="34.0" y="101.0" class="normal" text-anchor="start">Приветствие</text>
+<rect x="24.0" y="124.0" width="356.0" height="105.0" rx="5"/>
+<text x="34.0" y="151.0" class="bold" text-anchor="start">Можно потратить</text>
+<text x="34.0" y="182.0" class="normal" text-anchor="start">Доступная сумма и</text>
+<text x="34.0" y="213.0" class="normal" text-anchor="start">ориентир на день</text>
+<rect x="24.0" y="236.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Расход">
+<text x="202.0" y="262.0" class="normal" text-anchor="middle">Расход</text>
+</g>
+<rect x="24.0" y="288.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Перевод">
+<text x="202.0" y="314.0" class="normal" text-anchor="middle">Перевод</text>
+</g>
+<rect x="24.0" y="340.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Проверить покупку">
+<text x="202.0" y="366.0" class="normal" text-anchor="middle">Проверить покупку</text>
+</g>
+<rect x="24.0" y="392.0" width="356.0" height="105.0" rx="5"/>
+<text x="34.0" y="419.0" class="bold" text-anchor="start">Этот месяц</text>
+<text x="34.0" y="450.0" class="normal" text-anchor="start">Доходы / расходы ·</text>
+<text x="34.0" y="481.0" class="normal" text-anchor="start">Подробнее</text>
+<rect x="24.0" y="504.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="531.0" class="bold" text-anchor="start">Счета</text>
+<rect x="24.0" y="554.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="581.0" class="bold" text-anchor="start">Будущая покупка</text>
+<rect x="24.0" y="604.0" width="356.0" height="43.0" rx="5"/>
+<text x="202.0" y="631.0" class="bold" text-anchor="middle">Прогноз по дням</text>
+<rect x="24.0" y="654.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="681.0" class="bold" text-anchor="start">Расходы по категориям</text>
+<rect x="24.0" y="704.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="731.0" class="bold" text-anchor="start">Цели</text>
+<rect x="24.0" y="754.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="781.0" class="bold" text-anchor="start">Последние операции</text>
+<rect x="24.0" y="804.0" width="356.0" height="43.0" rx="5"/>
+<text x="34.0" y="831.0" class="bold" text-anchor="start">Ближайший платёж</text>
+</g>
+<g data-panel="operations">
+<text x="422.0" y="49.0" class="title" text-anchor="start">Операции</text>
+<circle cx="765.0" cy="31" r="7"/>
+<path d="M 753.0 53 Q 765.0 34 777.0 53"/>
+<line x1="418.0" y1="63.0" x2="782.0" y2="63.0" stroke-width="1.6"/>
+<rect x="422.0" y="74.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Месяц">
+<text x="511.0" y="100.0" class="bold" text-anchor="middle">Месяц</text>
+</g>
+<line x1="428.0" y1="114.0" x2="594.0" y2="114.0" stroke-width="2.2"/>
+<line x1="600.0" y1="74.0" x2="600.0" y2="119.0" stroke-width="1.6"/>
+<g data-label="Вся история">
+<text x="689.0" y="100.0" class="normal" text-anchor="middle">Вся история</text>
+</g>
+<rect x="422.0" y="126.0" width="356.0" height="43.0" rx="5"/>
+<text x="600.0" y="153.0" class="bold" text-anchor="middle">Добавить операцию</text>
+<rect x="422.0" y="176.0" width="356.0" height="43.0" rx="5"/>
+<text x="432.0" y="203.0" class="normal" text-anchor="start">Выбор месяца</text>
+<text x="768.0" y="208.0" class="normal" text-anchor="end">—</text>
+<rect x="422.0" y="226.0" width="356.0" height="43.0" rx="5"/>
+<text x="432.0" y="253.0" class="normal" text-anchor="start">Поиск</text>
+<text x="768.0" y="258.0" class="normal" text-anchor="end">—</text>
+<rect x="422.0" y="276.0" width="356.0" height="105.0" rx="5"/>
+<text x="432.0" y="303.0" class="bold" text-anchor="start">Фильтры</text>
+<text x="432.0" y="334.0" class="normal" text-anchor="start">Тип / статус / счёт /</text>
+<text x="432.0" y="365.0" class="normal" text-anchor="start">категория</text>
+<rect x="422.0" y="388.0" width="356.0" height="74.0" rx="5"/>
+<text x="432.0" y="415.0" class="bold" text-anchor="start">Итоги</text>
+<text x="432.0" y="446.0" class="normal" text-anchor="start">Доходы / расходы</text>
+<rect x="422.0" y="469.0" width="356.0" height="105.0" rx="5"/>
+<text x="432.0" y="496.0" class="bold" text-anchor="start">Операции по датам</text>
+<text x="432.0" y="527.0" class="normal" text-anchor="start">Дата · название · категория</text>
+<text x="432.0" y="558.0" class="normal" text-anchor="start">Счёт · сумма · статус</text>
+<rect x="422.0" y="581.0" width="356.0" height="43.0" rx="5"/>
+<text x="600.0" y="608.0" class="bold" text-anchor="middle">Показать ещё</text>
+<rect x="422.0" y="631.0" width="356.0" height="43.0" rx="5"/>
+<text x="600.0" y="658.0" class="bold" text-anchor="middle">Экспортировать операции</text>
+</g>
+<g data-panel="transaction">
+<text x="820.0" y="49.0" class="title" text-anchor="start">Новая операция</text>
+<line x1="1155.0" y1="28.0" x2="1171.0" y2="44.0" stroke-width="1.6"/>
+<line x1="1171.0" y1="28.0" x2="1155.0" y2="44.0" stroke-width="1.6"/>
+<line x1="816.0" y1="63.0" x2="1180.0" y2="63.0" stroke-width="1.6"/>
+<rect x="820.0" y="74.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Проведена">
+<text x="909.0" y="100.0" class="bold" text-anchor="middle">Проведена</text>
+</g>
+<line x1="826.0" y1="114.0" x2="992.0" y2="114.0" stroke-width="2.2"/>
+<line x1="998.0" y1="74.0" x2="998.0" y2="119.0" stroke-width="1.6"/>
+<g data-label="Ожидается">
+<text x="1087.0" y="100.0" class="normal" text-anchor="middle">Ожидается</text>
+</g>
+<rect x="820.0" y="126.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Расход">
+<text x="879.3" y="152.0" class="bold" text-anchor="middle">Расход</text>
+</g>
+<line x1="826.0" y1="166.0" x2="932.7" y2="166.0" stroke-width="2.2"/>
+<line x1="938.7" y1="126.0" x2="938.7" y2="171.0" stroke-width="1.6"/>
+<g data-label="Доход">
+<text x="998.0" y="152.0" class="normal" text-anchor="middle">Доход</text>
+</g>
+<line x1="1057.3" y1="126.0" x2="1057.3" y2="171.0" stroke-width="1.6"/>
+<g data-label="Перевод">
+<text x="1116.7" y="152.0" class="normal" text-anchor="middle">Перевод</text>
+</g>
+<rect x="820.0" y="178.0" width="356.0" height="45.0" rx="3"/>
+<g data-label="Быстрый ввод">
+<text x="909.0" y="204.0" class="normal" text-anchor="middle">Быстрый ввод</text>
+</g>
+<line x1="998.0" y1="178.0" x2="998.0" y2="223.0" stroke-width="1.6"/>
+<g data-label="Шаблоны">
+<text x="1087.0" y="204.0" class="normal" text-anchor="middle">Шаблоны</text>
+</g>
+<rect x="820.0" y="230.0" width="356.0" height="43.0" rx="5"/>
+<text x="830.0" y="257.0" class="normal" text-anchor="start">Сумма и валюта</text>
+<text x="1166.0" y="262.0" class="normal" text-anchor="end">—</text>
+<rect x="820.0" y="280.0" width="356.0" height="43.0" rx="5"/>
+<text x="830.0" y="307.0" class="normal" text-anchor="start">На что или откуда?</text>
+<text x="1166.0" y="312.0" class="normal" text-anchor="end">—</text>
+<rect x="820.0" y="330.0" width="356.0" height="43.0" rx="5"/>
+<text x="830.0" y="357.0" class="normal" text-anchor="start">Категория</text>
+<text x="1166.0" y="362.0" class="normal" text-anchor="end">—</text>
+<rect x="820.0" y="380.0" width="356.0" height="43.0" rx="5"/>
+<text x="830.0" y="407.0" class="normal" text-anchor="start">Счёт</text>
+<text x="1166.0" y="412.0" class="normal" text-anchor="end">—</text>
+<rect x="820.0" y="430.0" width="356.0" height="43.0" rx="5"/>
+<text x="830.0" y="457.0" class="normal" text-anchor="start">Дата</text>
+<text x="1166.0" y="462.0" class="normal" text-anchor="end">—</text>
+<rect x="820.0" y="480.0" width="356.0" height="43.0" rx="5"/>
+<text x="998.0" y="507.0" class="bold" text-anchor="middle">Добавить операцию</text>
+<rect x="820.0" y="530.0" width="356.0" height="74.0" rx="5"/>
+<text x="830.0" y="557.0" class="bold" text-anchor="start">Заметка и части покупки</text>
+<text x="830.0" y="588.0" class="normal" text-anchor="start">Раскрываемые поля</text>
+</g>
+<rect x="18.0" y="866.0" width="368.0" height="76.0" rx="3"/>
+<g data-label="Обзор">
+<text x="64.0" y="907.5" class="bold" text-anchor="middle">Обзор</text>
+</g>
+<line x1="24.0" y1="937.0" x2="104.0" y2="937.0" stroke-width="2.2"/>
+<line x1="110.0" y1="866.0" x2="110.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="Операции">
+<text x="156.0" y="892.0" class="normal" text-anchor="middle">Опера-</text>
+<text x="156.0" y="923.0" class="normal" text-anchor="middle">ции</text>
+</g>
+<line x1="202.0" y1="866.0" x2="202.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="План">
+<text x="248.0" y="907.5" class="normal" text-anchor="middle">План</text>
+</g>
+<line x1="294.0" y1="866.0" x2="294.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="Аналитика">
+<text x="340.0" y="892.0" class="normal" text-anchor="middle">Ана-</text>
+<text x="340.0" y="923.0" class="normal" text-anchor="middle">литика</text>
+</g>
+<rect x="416.0" y="866.0" width="368.0" height="76.0" rx="3"/>
+<g data-label="Обзор">
+<text x="462.0" y="907.5" class="normal" text-anchor="middle">Обзор</text>
+</g>
+<line x1="508.0" y1="866.0" x2="508.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="Операции">
+<text x="554.0" y="892.0" class="bold" text-anchor="middle">Опера-</text>
+<text x="554.0" y="923.0" class="bold" text-anchor="middle">ции</text>
+</g>
+<line x1="514.0" y1="937.0" x2="594.0" y2="937.0" stroke-width="2.2"/>
+<line x1="600.0" y1="866.0" x2="600.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="План">
+<text x="646.0" y="907.5" class="normal" text-anchor="middle">План</text>
+</g>
+<line x1="692.0" y1="866.0" x2="692.0" y2="942.0" stroke-width="1.6"/>
+<g data-label="Аналитика">
+<text x="738.0" y="892.0" class="normal" text-anchor="middle">Ана-</text>
+<text x="738.0" y="923.0" class="normal" text-anchor="middle">литика</text>
+</g>
+</svg>

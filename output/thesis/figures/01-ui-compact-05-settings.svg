@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="170mm" height="82.88mm" viewBox="0 0 1200 585" data-min-text-size="25" data-insert-width-mm="170">
+<title>Профиль и настройки · Данные и копии</title>
+<desc>Структурные схемы расположения элементов; области прокрутки показаны условно. Порядок полей и горизонтальная навигация сохранены. Длинные подписи внутри ячеек перенесены для читаемости. Денежные значения и персональные сведения не заполнены.</desc>
+<style>text{font-family:Arial,sans-serif;font-size:25px;fill:#000}.bold{font-weight:700}.title{font-size:30px;font-weight:700}rect,line,path,circle{stroke:#000;stroke-width:1.6;fill:#fff}line,path{fill:none}</style>
+<rect width="1200" height="585" style="fill:#fff;stroke:none"/>
+<rect x="609.0" y="12" width="579.0" height="561" rx="10"/>
+<rect x="12.0" y="12" width="579.0" height="561" rx="10"/>
+<g data-panel="settings">
+<text x="24.0" y="49.0" class="title" text-anchor="start">Профиль и настройки</text>
+<line x1="558.0" y1="28.0" x2="574.0" y2="44.0" stroke-width="1.6"/>
+<line x1="574.0" y1="28.0" x2="558.0" y2="44.0" stroke-width="1.6"/>
+<line x1="20.0" y1="63.0" x2="583.0" y2="63.0" stroke-width="1.6"/>
+<rect x="24.0" y="74.0" width="555.0" height="74.0" rx="5"/>
+<text x="34.0" y="101.0" class="bold" text-anchor="start">Профиль</text>
+<text x="34.0" y="132.0" class="normal" text-anchor="start">Имя пользователя</text>
+<rect x="24.0" y="155.0" width="555.0" height="167.0" rx="5"/>
+<text x="34.0" y="182.0" class="bold" text-anchor="start">Финансы</text>
+<text x="34.0" y="213.0" class="normal" text-anchor="start">Профиль и планирование</text>
+<text x="34.0" y="244.0" class="normal" text-anchor="start">Валюты и курсы</text>
+<text x="34.0" y="275.0" class="normal" text-anchor="start">Категории и подкатегории</text>
+<text x="34.0" y="306.0" class="normal" text-anchor="start">Правила и шаблоны операций</text>
+<rect x="24.0" y="329.0" width="555.0" height="229.0" rx="5"/>
+<text x="34.0" y="356.0" class="bold" text-anchor="start">Приложение</text>
+<text x="34.0" y="387.0" class="normal" text-anchor="start">Профили</text>
+<text x="34.0" y="418.0" class="normal" text-anchor="start">Напоминания</text>
+<text x="34.0" y="449.0" class="normal" text-anchor="start">Защита данных</text>
+<text x="34.0" y="480.0" class="normal" text-anchor="start">Данные и копии</text>
+<text x="34.0" y="511.0" class="normal" text-anchor="start">Обучение</text>
+<text x="34.0" y="542.0" class="normal" text-anchor="start">О приложении</text>
+</g>
+<g data-panel="data">
+<text x="621.0" y="49.0" class="title" text-anchor="start">Данные и копии</text>
+<line x1="1155.0" y1="28.0" x2="1171.0" y2="44.0" stroke-width="1.6"/>
+<line x1="1171.0" y1="28.0" x2="1155.0" y2="44.0" stroke-width="1.6"/>
+<line x1="617.0" y1="63.0" x2="1180.0" y2="63.0" stroke-width="1.6"/>
+<text x="621.0" y="98.0" class="normal" text-anchor="start">‹ Назад</text>
+<rect x="621.0" y="111.0" width="555.0" height="136.0" rx="5"/>
+<text x="631.0" y="138.0" class="bold" text-anchor="start">Импорт и экспорт</text>
+<text x="631.0" y="169.0" class="normal" text-anchor="start">Импортировать банковский CSV</text>
+<text x="631.0" y="200.0" class="normal" text-anchor="start">Экспортировать операции в CSV</text>
+<text x="631.0" y="231.0" class="normal" text-anchor="start">Результаты импорта</text>
+<rect x="621.0" y="254.0" width="555.0" height="136.0" rx="5"/>
+<text x="631.0" y="281.0" class="bold" text-anchor="start">Резервные копии</text>
+<text x="631.0" y="312.0" class="normal" text-anchor="start">Создать копию с паролем</text>
+<text x="631.0" y="343.0" class="normal" text-anchor="start">Экспортировать резервную копию</text>
+<text x="631.0" y="374.0" class="normal" text-anchor="start">Восстановить из файла</text>
+<rect x="621.0" y="397.0" width="555.0" height="43.0" rx="5"/>
+<text x="898.5" y="424.0" class="bold" text-anchor="middle">Очистить учёт</text>
+<rect x="621.0" y="447.0" width="555.0" height="74.0" rx="5"/>
+<text x="631.0" y="474.0" class="bold" text-anchor="start">Удаление данных</text>
+<text x="631.0" y="505.0" class="normal" text-anchor="start">Удалить все профили и данные</text>
+</g>
+</svg>

@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import re
+import runpy
 import subprocess
 import xml.etree.ElementTree as ET
 from datetime import date
@@ -42,8 +43,11 @@ FORBIDDEN = [
 ]
 # Formulas, figures and logical tables. Physical continuation parts are separate.
 COUNTS = {
-    'thesis': (11, 33, 6),
+    'thesis': (11, 28, 6),
 }
+UI_BASENAMES = [f'01-ui-compact-{index:02}-{name}' for index, name in enumerate(
+    ['operations', 'goals', 'forecast', 'analysis', 'settings'], 1)]
+UI_WIDTH_MM = 170
 
 
 def norm(value):
@@ -97,6 +101,77 @@ def body_hash(path, body_bottom, page_height):
     with Image.open(path) as image:
         crop = image.convert('RGB').crop((0, 0, image.width, round(image.height * body_bottom / page_height)))
         return sha(str(crop.size).encode() + b'\0' + crop.tobytes())
+
+
+def compact_ui_checks(md, shapes, root=ROOT):
+    """Validate publication assets against the generator's active panel model."""
+    checks = dict.fromkeys([
+        'compact_ui_model_has_fourteen_distinct_panels',
+        'compact_ui_resources_in_section_1_4',
+        'compact_ui_svg_panels_match_model',
+        'compact_ui_asset_and_document_dimensions',
+        'compact_ui_text_at_least_ten_points',
+    ], False)
+    details = {'errors': []}
+    try:
+        # The generator is import-safe: only its main entry point writes files.
+        model = runpy.run_path(str(root / 'figures/01-ui.py'))
+        compositions = model['COMPOSITIONS']
+        names = [item['basename'] for item in compositions]
+        groups = [list(item['panels']) for item in compositions]
+        panels = [panel for group in groups for panel in group]
+        checks['compact_ui_model_has_fourteen_distinct_panels'] = (
+            names == UI_BASENAMES and [len(group) for group in groups] == [3, 3, 3, 3, 2]
+            and len(set(panels)) == 14 and set(panels) == set(model['PANELS']))
+        details['compositions'] = [{'basename': name, 'panels': group}
+                                   for name, group in zip(names, groups)]
+    except Exception as error:
+        details['errors'].append(f'UI model: {type(error).__name__}: {error}')
+        return checks, details
+
+    section = re.search(r'^## 1\.4 [^\n]+\n(.*?)(?=^#{1,2} |\Z)', md, re.M | re.S)
+    figures = re.findall(r'^!\[Рисунок (\d+) [^\n]+\]\(([^\n]+)\)$',
+                         section[1] if section else '', re.M)
+    checks['compact_ui_resources_in_section_1_4'] = figures == [
+        (str(index), f'figures/{name}.png') for index, name in enumerate(UI_BASENAMES, 1)]
+    panel_matches, dimensions, text_sizes = [], [], []
+    for index, (name, group) in enumerate(zip(names, groups)):
+        try:
+            svg_text = (root / f'figures/{name}.svg').read_text()
+            svg = ET.fromstring(svg_text)
+            panel_matches.append([node.get('data-panel') for node in svg.iter()
+                                  if node.get('data-panel')] == group)
+            x, y, width, height = map(float, svg.get('viewBox', '').split())
+            with Image.open(root / f'figures/{name}.png') as image:
+                png_width, png_height = image.size
+                image.verify()
+            shape = shapes[index]
+            dimensions.append(
+                x == y == 0 and width > 0 and height > 0
+                and svg.get('width', '').endswith('mm') and svg.get('height', '').endswith('mm')
+                and float(svg.get('data-insert-width-mm', '0')) == UI_WIDTH_MM
+                and abs(float(svg.get('width', '').removesuffix('mm')) - UI_WIDTH_MM) < 0.06
+                and abs(float(svg.get('height', '').removesuffix('mm')) - height / width * UI_WIDTH_MM) < 0.06
+                and abs(png_width * height - png_height * width) <= max(width, height)
+                and abs(shape.width.mm - UI_WIDTH_MM) < 0.06
+                and abs(shape.height.mm - height / width * UI_WIDTH_MM) < 0.15)
+            styles = '\n'.join([node.text or '' for node in svg.findall('{http://www.w3.org/2000/svg}style')]
+                               + [node.get('style', '') for node in svg.iter()])
+            declarations = [re.fullmatch(r'([\d.]+)px', value.strip())
+                            for value in re.findall(r'font-size\s*:\s*([^;}]+)', styles)]
+            declarations.extend(re.fullmatch(r'([\d.]+)(?:px)?', node.get('font-size').strip())
+                                for node in svg.iter() if node.get('font-size') is not None)
+            sizes = [float(match[1]) for match in declarations if match]
+            text_sizes.append(bool(svg.findall('.//{http://www.w3.org/2000/svg}text')) and bool(sizes)
+                              and all(declarations)
+                              and float(svg.get('data-min-text-size', '0')) == min(sizes)
+                              and min(sizes) * shape.width.mm / width * 72 / 25.4 >= 10)
+        except Exception as error:
+            details['errors'].append(f'{name}: {type(error).__name__}: {error}')
+    checks['compact_ui_svg_panels_match_model'] = len(panel_matches) == 5 and all(panel_matches)
+    checks['compact_ui_asset_and_document_dimensions'] = len(dimensions) == 5 and all(dimensions)
+    checks['compact_ui_text_at_least_ten_points'] = len(text_sizes) == 5 and all(text_sizes)
+    return checks, details
 
 
 def main():
@@ -296,8 +371,11 @@ def main():
               == [flat_math(expr) for expr, _ in source_formulas])
         paths = re.findall(r'^!\[[^\n]+\]\(([^\n]+)\)$', md, re.M)
         check(prefix + 'figure_count', len(doc.inline_shapes) == len(paths) == images)
+        ui_checks, ui_details = compact_ui_checks(md, doc.inline_shapes)
+        for name, value in ui_checks.items():
+            check(prefix + name, value)
         figure_numbers = re.findall(r'^!\[Рисунок (\d+\.\d+|[А-Я]\.\d+|\d+)', md, re.M)
-        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, 32)] + [f'1.{i}' for i in range(1, 3)]
+        check(prefix + 'figure_numbers_and_references', figure_numbers == [str(i) for i in range(1, 27)] + [f'1.{i}' for i in range(1, 3)]
               and all(number in figure_numbers for number in re.findall(r'рисун(?:ок|ке|ка) (\d+\.\d+|[А-Я]\.\d+|\d+)', md, re.I)))
         check(prefix + 'embedded_images_match', all((ROOT / path).exists()
               and doc.part.rels[shape._inline.graphic.graphicData.pic.blipFill.blip.get(qn('r:embed'))].target_part.blob == (ROOT / path).read_bytes()
@@ -327,6 +405,7 @@ def main():
             check(prefix + 'pdf_and_png_page_counts', count > 0 and pngs == list(range(1, count + 1)))
             seen_sections, page_hashes, bad_bounds, fonts = {}, [], [], set()
             image_pages, caption_pages, nonempty, footers = [], {}, [], []
+            ui_image_bounds = []
             continuation_pages = []
             for i, (page, text) in enumerate(zip(pdf.pages, texts), 1):
                 key = section_key(text)
@@ -338,6 +417,14 @@ def main():
                 image_pages.extend([i] * len(page.images))
                 for number in re.findall(r'Рисунок\s+(\d+\.\d+|[А-Я]\.\d+|\d+)\s*[–-]', text):
                     caption_pages.setdefault(number, []).append(i)
+                    if number in {'1', '2', '3', '4', '5'}:
+                        for image in page.images:
+                            ui_image_bounds.append({'figure': number, 'page': i,
+                                'bounds_pt': [image['x0'], image['top'], image['x1'], image['bottom']],
+                                'within_margins': image['x0'] >= doc.sections[0].left_margin.pt - 1
+                                    and image['x1'] <= page.width - doc.sections[0].right_margin.pt + 1
+                                    and image['top'] >= doc.sections[0].top_margin.pt - 1
+                                    and image['bottom'] <= bottom + 1})
                 for number in re.findall(r'Продолжение\s+таблицы\s+(\d+)', text):
                     tables_on_page = [table.extract() for table in page.find_tables()]
                     numbered_table = any(len(rows) >= 2 and rows[0] == [str(n) for n in range(1, len(rows[0]) + 1)]
@@ -360,6 +447,9 @@ def main():
                 check(prefix + 'table_continuations_on_same_page', len(continuation_pages) == continuations
                       and all(item['numbered_table_present'] for item in continuation_pages))
             check(prefix + 'text_within_page_bounds', not bad_bounds)
+            check(prefix + 'compact_ui_rendered_within_margins', len(ui_image_bounds) == 5
+                  and all(item['within_margins'] for item in ui_image_bounds))
+            ui_details['rendered_image_bounds'] = ui_image_bounds
             check(prefix + 'prose_fonts', all(name.startswith(('TimesNewRoman', 'CourierNew')) for name in fonts))
             expected_captions = re.findall(r'^!\[Рисунок (\d+\.\d+|[А-Я]\.\d+|\d+)', md, re.M)
             check(prefix + 'figures_and_captions_same_page', sorted(image_pages) == sorted(p for pages in caption_pages.values() for p in pages)
@@ -383,6 +473,7 @@ def main():
                 'markdown_sha256': sha(md.encode()), 'sources': len(source_numbers), 'figures': len(paths), 'logical_tables': len(numbers), 'table_parts': len(doc.tables),
                 'equations': len(equations), 'sections': sections, 'prose_fonts': sorted(fonts),
                 'caption_pages': caption_pages, 'table_continuation_pages': continuation_pages,
+                'compact_ui': ui_details,
                 'editorial_hits': hits + pdf_hits, 'bounds_violations': bad_bounds}
 
     previous = json.loads(args.output.read_text()) if args.output.exists() else {}

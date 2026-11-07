@@ -260,8 +260,11 @@ while i<len(lines):
   p.paragraph_format.space_before=Pt(6);p.paragraph_format.line_spacing=1
   if appendix_number=='1' and not caption.startswith('Рисунок 1.1 '):
    p.paragraph_format.page_break_before=True
-  width=72 if 'control-screen' in path else 160
+  width=72 if 'control-screen' in path else (170 if '01-ui-compact-' in path else 160)
   shape=p.add_run().add_picture(str(ROOT/path),width=Mm(width))
+  if '01-ui-compact-' in path:
+   # Explicit zero distances keep a full-width inline picture inside the margins.
+   for side in ('distT','distB','distL','distR'):shape._inline.set(side,'0')
   shape._inline.docPr.set('descr',caption)
   cap=DOC.add_paragraph(style='Caption');inline(cap,caption);cap.paragraph_format.space_after=Pt(8)
   i+=1;continue

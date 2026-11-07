@@ -1,0 +1,139 @@
+{
+  "status": "proposal_only",
+  "proposed_text_rendered": false,
+  "recommended_candidates": 63,
+  "recommended_words_removed": 3501,
+  "sum_candidate_words_removed": 3501,
+  "sections": [
+    {
+      "heading": "Введение",
+      "before": 413,
+      "after": 323,
+      "removed": 90
+    },
+    {
+      "heading": "1 Требования к мобильному приложению «Лад»",
+      "before": 6312,
+      "after": 5633,
+      "removed": 679
+    },
+    {
+      "heading": "2 Проектирование мобильного приложения «Лад»",
+      "before": 3907,
+      "after": 3617,
+      "removed": 290
+    },
+    {
+      "heading": "3 Реализация прецедентов мобильного приложения «Лад»",
+      "before": 6309,
+      "after": 4962,
+      "removed": 1347
+    },
+    {
+      "heading": "Заключение",
+      "before": 505,
+      "after": 224,
+      "removed": 281
+    },
+    {
+      "heading": "Список использованных источников",
+      "before": 987,
+      "after": 987,
+      "removed": 0
+    },
+    {
+      "heading": "Приложение 1",
+      "before": 0,
+      "after": 0,
+      "removed": 0
+    },
+    {
+      "heading": "Приложение 2",
+      "before": 3352,
+      "after": 2538,
+      "removed": 814
+    },
+    {
+      "heading": "Приложение 3",
+      "before": 17,
+      "after": 17,
+      "removed": 0
+    }
+  ],
+  "unchanged_structure_checks": {
+    "headings": {
+      "same": true,
+      "before_count": 102,
+      "after_count": 102
+    },
+    "figures": {
+      "same": true,
+      "before_count": 28,
+      "after_count": 28
+    },
+    "formulas": {
+      "same": true,
+      "before_count": 11,
+      "after_count": 11
+    },
+    "table_lines": {
+      "same": true,
+      "before_count": 60,
+      "after_count": 60
+    },
+    "citations": {
+      "same": true,
+      "before_count": 65,
+      "after_count": 65
+    },
+    "bibliography": {
+      "same": true,
+      "before_count": 40,
+      "after_count": 40
+    }
+  },
+  "recommended_spans_nonoverlapping": true,
+  "all_candidate_before_texts_unique": true,
+  "source_integrity": [
+    {
+      "path": "/Users/gamkrelidzetimur/Documents/ВКР_2024_v2 (2).doc",
+      "sha256_before": "f86ecf1f81071e40a78c4d0a1a47b9cc877349e524dc68f3ef06cea54e4052e8",
+      "sha256_after": "f86ecf1f81071e40a78c4d0a1a47b9cc877349e524dc68f3ef06cea54e4052e8",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/gamkrelidzetimur/Diplom/output/thesis/thesis.md",
+      "sha256_before": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+      "sha256_after": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/gamkrelidzetimur/Diplom/output/thesis/thesis.docx",
+      "sha256_before": "65a0d0ccd9cd022ae66776d4e10e5971975d5a7b0008cce3891266023e4fea01",
+      "sha256_after": "65a0d0ccd9cd022ae66776d4e10e5971975d5a7b0008cce3891266023e4fea01",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/gamkrelidzetimur/Diplom/output/thesis/build-docx.py",
+      "sha256_before": "3c2fdc4c8e2fda4814cb423999795a0ee5051eed4333f1e568e3820bad765a11",
+      "sha256_after": "3c2fdc4c8e2fda4814cb423999795a0ee5051eed4333f1e568e3820bad765a11",
+      "unchanged": true
+    }
+  ],
+  "manual_required_sections": [
+    "Назначение системы",
+    "Условия применения системы",
+    "Подготовка системы к работе",
+    "Описание операций",
+    "Аварийные ситуации"
+  ],
+  "manual_required_sections_present": true,
+  "semantic_review": {
+    "main_use_cases_and_implementation_sections": 9,
+    "control_examples_have_inputs_and_results": "reviewed",
+    "retained_diagram_descriptions": "reviewed",
+    "conclusion_required_aspects": "reviewed",
+    "manual_main_actions_and_critical_recovery": "independently reviewed",
+    "lost_detail_disclosed": true
+  }
+}

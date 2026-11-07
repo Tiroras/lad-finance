@@ -1,0 +1,439 @@
+{
+  "checked_on": "2026-11-07",
+  "project_commit": "845185db28c15acefdbe7222a454f6372f5eb7e6",
+  "documents": {
+    "thesis": {
+      "pages": 132,
+      "docx_sha256": "65a0d0ccd9cd022ae66776d4e10e5971975d5a7b0008cce3891266023e4fea01",
+      "pdf_sha256": "4a3429f46bffac53ac1da247a692f74a8566d87ef5922ff40a7f18cb98f6ea5e",
+      "markdown_sha256": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+      "sources": 40,
+      "figures": 28,
+      "logical_tables": 6,
+      "table_parts": 8,
+      "equations": 11,
+      "sections": {
+        "introduction": {
+          "pages": [1, 2],
+          "body_sha256": "8cb8717d7d698a2395311e097d34235b4563629ad03fe6d17028874149e4c13a"
+        },
+        "chapter_1": {
+          "pages": [3, 39],
+          "body_sha256": "ff7ee4ef1791e426c075b693f98c40ce51e158ef14253402d5bb580337fca6d3"
+        },
+        "chapter_2": {
+          "pages": [40, 66],
+          "body_sha256": "4371447cc2b953820c8ab519d2762d3347aec833ca3f1c55e95424006625f7cd"
+        },
+        "chapter_3": {
+          "pages": [67, 105],
+          "body_sha256": "8c18d8963ccbcbfc03a3f28818698f6ebe04f46bff520cab351ac0a8bf948371"
+        },
+        "conclusion": {
+          "pages": [106, 108],
+          "body_sha256": "f1cea613584f18d09311619cfab964bd98d31a084b9c134df4047476807225ca"
+        },
+        "bibliography": {
+          "pages": [109, 113],
+          "body_sha256": "38169ecd206fe2efe4359a701e56bc02a45da23a81cb1b372212fcd17e1c17b5"
+        },
+        "appendix_1": {
+          "pages": [114, 115],
+          "body_sha256": "c98f2ecc22e0ccd42732dbc7ee4320767e5fb9bf0b99f75dc6e6c9d6b5824ca7"
+        },
+        "appendix_2": {
+          "pages": [116, 131],
+          "body_sha256": "8196c5e57d2049081e1b06f362fd4376675ab22f44d36ab2980400649620dc45"
+        },
+        "appendix_3": {
+          "pages": [132, 132],
+          "body_sha256": "3648d4eb1c8e2325570957088cdadd90c25d26967a905004ab0f3b244788b20c"
+        }
+      },
+      "prose_fonts": [
+        "CourierNewPSMT",
+        "TimesNewRomanPS-BoldMT",
+        "TimesNewRomanPSMT"
+      ],
+      "caption_pages": {
+        "1": [29],
+        "2": [30],
+        "3": [31],
+        "4": [32],
+        "5": [33],
+        "6": [42],
+        "7": [44],
+        "8": [46],
+        "9": [48],
+        "10": [50],
+        "11": [52],
+        "12": [59],
+        "13": [62],
+        "14": [64],
+        "15": [66],
+        "16": [70],
+        "17": [74],
+        "18": [78],
+        "19": [82],
+        "20": [85],
+        "21": [88],
+        "22": [93],
+        "23": [96],
+        "24": [97],
+        "25": [99],
+        "26": [103],
+        "1.1": [114],
+        "1.2": [115]
+      },
+      "table_continuation_pages": [
+        {
+          "table": "1",
+          "page": 7,
+          "numbered_table_present": true
+        },
+        {
+          "table": "1",
+          "page": 8,
+          "numbered_table_present": true
+        }
+      ],
+      "compact_ui": {
+        "errors": [],
+        "compositions": [
+          {
+            "basename": "01-ui-compact-01-operations",
+            "panels": ["overview", "operations", "transaction"]
+          },
+          {
+            "basename": "01-ui-compact-02-goals",
+            "panels": ["budgets", "goals", "withdrawal"]
+          },
+          {
+            "basename": "01-ui-compact-03-forecast",
+            "panels": ["payments", "forecast", "purchase"]
+          },
+          {
+            "basename": "01-ui-compact-04-analysis",
+            "panels": ["analytics", "scenario", "full_list"]
+          },
+          {
+            "basename": "01-ui-compact-05-settings",
+            "panels": ["settings", "data"]
+          }
+        ],
+        "rendered_image_bounds": [
+          {
+            "figure": "1",
+            "page": 29,
+            "bounds_pt": [
+              85.05, 110.95076377952807, 566.9499999999999, 497.10076377952805
+            ],
+            "within_margins": true
+          },
+          {
+            "figure": "2",
+            "page": 30,
+            "bounds_pt": [
+              85.05, 110.95076377952807, 566.9499999999999, 406.85076377952805
+            ],
+            "within_margins": true
+          },
+          {
+            "figure": "3",
+            "page": 31,
+            "bounds_pt": [
+              85.05, 110.95076377952796, 566.9499999999999, 481.00076377952803
+            ],
+            "within_margins": true
+          },
+          {
+            "figure": "4",
+            "page": 32,
+            "bounds_pt": [
+              85.05, 86.8007637795281, 566.9499999999999, 429.25076377952803
+            ],
+            "within_margins": true
+          },
+          {
+            "figure": "5",
+            "page": 33,
+            "bounds_pt": [
+              85.05, 110.95076377952807, 566.9499999999999, 345.90076377952806
+            ],
+            "within_margins": true
+          }
+        ]
+      },
+      "editorial_hits": [],
+      "bounds_violations": []
+    }
+  },
+  "structural_checks": {
+    "thesis:artifacts_present": true,
+    "thesis:paragraphs_match_markdown": true,
+    "thesis:nine_use_cases_in_requirements_and_implementation": true,
+    "thesis:use_case_references_resolve": true,
+    "thesis:bibliography_count_and_first_citation_order": true,
+    "thesis:bibliography_matches_researched_catalog": true,
+    "thesis:bibliography_follows_methodology_examples": true,
+    "thesis:docx_citations_match_markdown_in_reading_order": true,
+    "thesis:appendices_follow_first_reference_order": true,
+    "thesis:appendix_headings_centered_on_new_pages": true,
+    "thesis:bibliography_urls_visible_clickable_and_exact": true,
+    "thesis:repository_url_visible_and_clickable": true,
+    "thesis:transaction_flow_has_one_shared_end": true,
+    "thesis:primary_use_cases_match_requirements": true,
+    "thesis:seventeen_named_helpers_are_distinct_from_primary_cases": true,
+    "thesis:six_detailed_use_case_views_in_section_2_1": true,
+    "thesis:all_view_relations_match_reviewed_contracts": true,
+    "thesis:every_use_case_connected_to_its_actor": true,
+    "thesis:extension_points_and_conditions_are_explicit": true,
+    "thesis:table_cells_match_markdown": true,
+    "thesis:logical_tables_and_parts": true,
+    "thesis:editable_equation_count_and_numbers": true,
+    "thesis:equation_content_matches": true,
+    "thesis:figure_count": true,
+    "thesis:compact_ui_model_has_fourteen_distinct_panels": true,
+    "thesis:compact_ui_resources_in_section_1_4": true,
+    "thesis:compact_ui_svg_panels_match_model": true,
+    "thesis:compact_ui_asset_and_document_dimensions": true,
+    "thesis:compact_ui_text_at_least_ten_points": true,
+    "thesis:figure_numbers_and_references": true,
+    "thesis:embedded_images_match": true,
+    "thesis:a4_margins": true,
+    "thesis:body_format": true,
+    "thesis:headings_kept": true,
+    "thesis:table_format": true,
+    "thesis:page_field_centered": true,
+    "thesis:editorial_claims_removed": true,
+    "thesis:pdf_and_png_page_counts": true,
+    "thesis:page_numbers": true,
+    "thesis:no_empty_pages": true,
+    "thesis:table_continuations_on_same_page": true,
+    "thesis:text_within_page_bounds": true,
+    "thesis:compact_ui_rendered_within_margins": true,
+    "thesis:prose_fonts": true,
+    "thesis:figures_and_captions_same_page": true,
+    "thesis:equations_rendered": true,
+    "thesis:rendered_editorial_claims_removed": true,
+    "thesis:section_starts": true,
+    "thesis:introduction_page_limit": true
+  },
+  "checks_passed": 49,
+  "checks_total": 49,
+  "visual_review": {
+    "required": true,
+    "completed": true,
+    "reviewed_pages": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+      58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+      76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+      94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
+      110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+      125, 126, 127, 128, 129, 130, 131, 132
+    ],
+    "method": "Все страницы открыты индивидуально как PNG. После исправления расстояний вставки страницы 29–33 повторно осмотрены; остальные 127 PNG побайтно совпали с ранее осмотренными.",
+    "original_review_ranges": {
+      "edit_chapter2": [1, 45],
+      "edit_chapter1": [46, 90],
+      "edit_conclusion_manual": [91, 132]
+    },
+    "root_final_review_pages": [29, 30, 31, 32, 33],
+    "layout_issues_remaining": [],
+    "render_comparison": {
+      "pages": 132,
+      "changed_pages": [29, 30, 31, 32, 33],
+      "identical_pages": [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23, 24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
+        44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+        62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+        80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+        98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+        113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+        127, 128, 129, 130, 131, 132
+      ],
+      "identical_count": 127,
+      "final_ui_bounds": [
+        {
+          "page": 29,
+          "x0": 85.05,
+          "x1": 566.9499999999999,
+          "width_mm": 170.00361111111107
+        },
+        {
+          "page": 30,
+          "x0": 85.05,
+          "x1": 566.9499999999999,
+          "width_mm": 170.00361111111107
+        },
+        {
+          "page": 31,
+          "x0": 85.05,
+          "x1": 566.9499999999999,
+          "width_mm": 170.00361111111107
+        },
+        {
+          "page": 32,
+          "x0": 85.05,
+          "x1": 566.9499999999999,
+          "width_mm": 170.00361111111107
+        },
+        {
+          "page": 33,
+          "x0": 85.05,
+          "x1": 566.9499999999999,
+          "width_mm": 170.00361111111107
+        }
+      ]
+    },
+    "evidence_reports": [
+      {
+        "path": "/tmp/lad-ui-compaction-20261107/qa-1-45.md",
+        "sha256": "8890e977bdd8acf598e97fcc75879bd1c6f231024c7beaa9bd0724772a271ffd"
+      },
+      {
+        "path": "/tmp/lad-ui-compaction-20261107/qa-46-90.md",
+        "sha256": "a1f4a77c2c1957a8175e37e4e8dd5d7c86573ea92ca769d007cf03e5e6bca41f"
+      },
+      {
+        "path": "/tmp/lad-ui-compaction-20261107/qa-91-132.md",
+        "sha256": "1e5a937517daf312994c6a02399cf738b12082cfdf46d14985d99941a77655dc"
+      },
+      {
+        "path": "/tmp/lad-ui-compaction-20261107/generator-review.md",
+        "sha256": "805cbc8b0de15243efb886b92492e5998cd03823b04dba5255e6298cc4867984"
+      },
+      {
+        "path": "/tmp/lad-ui-compaction-20261107/checker-review.md",
+        "sha256": "61d1ed08d4d49032e60ad0642cbad47417508b1744f298c965102fa2995bfb71"
+      }
+    ]
+  },
+  "notes": [
+    "Общий предел количества страниц не применяется. Введение ограничено 2 страницами по указанию пользователя. Смещения разделов определены по текстовым началам, а не заданным номерам страниц.",
+    "Пиксельные хеши включают полосу страницы до нижнего поля и исключают футер. Визуальное ревью выполняется отдельно.",
+    "Автоматический редакторский фильтр намеренно узок и не заменяет смысловое чтение; описания алгоритмической валидации допустимы."
+  ],
+  "scope": "Удаление прежних UI-рисунков 5, 7 и 8; компоновка 14 оставшихся макетов в группы 3+3+3+3+2.",
+  "revision_comparison": {
+    "checks": {
+      "only_ui_section_and_figure_references_changed": true,
+      "headings_unchanged": true,
+      "all_table_lines_unchanged": true,
+      "table_titles_unchanged": true,
+      "formulas_unchanged": true,
+      "citations_unchanged": true,
+      "non_ui_image_paths_unchanged": true,
+      "image_count_28": true,
+      "main_and_appendix_caption_numbers": true,
+      "five_ui_compositions": true,
+      "no_excluded_legacy_ui_paths": true,
+      "deleted_forms_still_described": true
+    },
+    "passed": 12,
+    "total": 12,
+    "before_markdown_sha256": "27eaee4c1bb2872c22a10130ef4a8580a904c6da5f86d84cc8715e6a3488c936",
+    "after_markdown_sha256": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+    "later_figure_numbers_offset": -5
+  },
+  "graphics_preservation": {
+    "checks": {
+      "all_twenty_legacy_panel_definitions_unchanged": true,
+      "all_twenty_legacy_files_unchanged": true,
+      "all_ten_final_files_match_reviewed_drafts": true,
+      "fourteen_retained_panels_from_original_figures_1_2_3_4_6_9_10": true,
+      "geometry_and_text_overlap_assertions_passed": true,
+      "markdown_matches_reviewed_revision": true
+    },
+    "passed": 6,
+    "total": 6,
+    "compositions": [
+      {
+        "basename": "01-ui-compact-01-operations",
+        "panels": ["overview", "operations", "transaction"],
+        "width": 1200,
+        "height": 962,
+        "insert_width_mm": 170,
+        "insert_height_mm": 136.28,
+        "minimum_font_pt": 10.04,
+        "text_elements": 69
+      },
+      {
+        "basename": "01-ui-compact-02-goals",
+        "panels": ["budgets", "goals", "withdrawal"],
+        "width": 1200,
+        "height": 737,
+        "insert_width_mm": 170,
+        "insert_height_mm": 104.41,
+        "minimum_font_pt": 10.04,
+        "text_elements": 68
+      },
+      {
+        "basename": "01-ui-compact-03-forecast",
+        "panels": ["payments", "forecast", "purchase"],
+        "width": 1200,
+        "height": 922,
+        "insert_width_mm": 170,
+        "insert_height_mm": 130.62,
+        "minimum_font_pt": 10.04,
+        "text_elements": 76
+      },
+      {
+        "basename": "01-ui-compact-04-analysis",
+        "panels": ["analytics", "scenario", "full_list"],
+        "width": 1200,
+        "height": 853,
+        "insert_width_mm": 170,
+        "insert_height_mm": 120.84,
+        "minimum_font_pt": 10.04,
+        "text_elements": 57
+      },
+      {
+        "basename": "01-ui-compact-05-settings",
+        "panels": ["settings", "data"],
+        "width": 1200,
+        "height": 585,
+        "insert_width_mm": 170,
+        "insert_height_mm": 82.88,
+        "minimum_font_pt": 10.04,
+        "text_elements": 28
+      }
+    ],
+    "text_elements": 298
+  },
+  "layout_savings": {
+    "before_pages": 138,
+    "after_pages": 132,
+    "saved_pages": 6,
+    "before_docx_sha256": "bd4ffe635870e6816ceff394c639fbe6c025314f0b96b26ece914fe7094a5b78",
+    "before_markdown_sha256": "27eaee4c1bb2872c22a10130ef4a8580a904c6da5f86d84cc8715e6a3488c936",
+    "before_pdf_sha256": "c5ca94f880240d5394a911f8086bad358ae8bbd14097cd33fe7ae881f9944dcd"
+  },
+  "artifact_sha256": {
+    "thesis.md": "10260377e50fe6c7306e0c7316e581f6c2b19ae4eca0363353e59d22b34629e8",
+    "thesis.docx": "65a0d0ccd9cd022ae66776d4e10e5971975d5a7b0008cce3891266023e4fea01",
+    "build-docx.py": "3c2fdc4c8e2fda4814cb423999795a0ee5051eed4333f1e568e3820bad765a11",
+    "figures/01-ui.py": "17b1d46897f86a3a29ed47698b69f94a6c561bcefabf8756fa392fb2620ce10f",
+    "research/check-editorial.py": "57d310b3c0e74b31a3b85ba00a698daeb38e39806a7633677021eb1de0fcf137",
+    "figures/01-ui-compact-01-operations.png": "735a25eccde49c115c28bda16ac38d1f5c3f8995571cd176bdaa9d2b12a9d54a",
+    "figures/01-ui-compact-01-operations.svg": "ac4e5a512bea8d6330e20bd23503c722c47e947489b026f721c33f7c4fa7eb1c",
+    "figures/01-ui-compact-02-goals.png": "07757e334d4400b9e62bdce24f5f9a8fbd0a8e14450450a783f2ad5a6c218c34",
+    "figures/01-ui-compact-02-goals.svg": "dc96979522cb147a15c223c9cba99f2df4ef6769c2728eaaa3045f60df8e1bd5",
+    "figures/01-ui-compact-03-forecast.png": "bd3af18a3b0c7ae12b0f1a2ab5f8793b1065673fb39d7440622710da71ed6299",
+    "figures/01-ui-compact-03-forecast.svg": "34e9f47045079be739776b09c5bd46e02c3a5bc3d49e602bc87ef3c2c52e2eed",
+    "figures/01-ui-compact-04-analysis.png": "c7e25c08543374bca9122fe2c940e81fc3fe8b4ce8948e198b11830f6349d44b",
+    "figures/01-ui-compact-04-analysis.svg": "7293ff509e1d46f8ca47c39ccf7ad92b1bb2dc208b027ee644ebdb8f95c0802b",
+    "figures/01-ui-compact-05-settings.png": "a5f3da6603cd7d679add0548f2034203eaeaf990cc301e4a31fcecd4673470ce",
+    "figures/01-ui-compact-05-settings.svg": "e1f7a54f6a5da6157dfa5725182a12b39c650cd1e02a563ca2ae393c93cb4092"
+  },
+  "verification_environment": {
+    "render_directory": "/tmp/lad-ui-compaction-20261107/render-final/thesis",
+    "fontconfig_file": "/tmp/lad-methodology-audit-20261107/fonts.conf",
+    "runtime": "codex-primary-runtime bundled Python, Node/Sharp, headless LibreOffice",
+    "other_word_processors_checked": false,
+    "application_changed_or_tested": false
+  }
+}
