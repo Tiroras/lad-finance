@@ -131,8 +131,11 @@ for (const width of [320, 390, 1440]) {
     const initial = fixture();
     await page.setViewportSize({ width, height: 900 });
     await startApp(page, TODAY, initial);
-    await button(page, "Добавить операцию").tap();
-    await page.getByRole("tab", { name: "Доход", exact: true }).tap();
+    // Chromium on Linux can suppress tap's click after a CDP swipe, even on
+    // a plain HTML button. Keep real touch for dragging and use browser clicks
+    // for buttons and tabs, without gesture timing or tap retries.
+    await button(page, "Добавить операцию").click();
+    await page.getByRole("tab", { name: "Доход", exact: true }).click();
     await expect(
       page.getByRole("tab", { name: "Проведена", exact: true }),
     ).toHaveAttribute("aria-selected", "true");
@@ -157,7 +160,7 @@ for (const width of [320, 390, 1440]) {
           path: testInfo.outputPath("income-confirmation.png"),
           animations: "disabled",
         });
-      await button(page, "Продолжить ввод").tap();
+      await button(page, "Продолжить ввод").click();
       await expect(confirmation).toHaveCount(0);
       await expect(title).toHaveValue("Доход для проверки свайпа");
       await expect(amount).toHaveValue("1 234");
@@ -171,15 +174,15 @@ for (const width of [320, 390, 1440]) {
       y: 180,
     });
     await release();
-    await button(page, "Сбросить и закрыть").tap();
+    await button(page, "Сбросить и закрыть").click();
     await expect(confirmation).toHaveCount(0);
     await expect(page.getByRole("dialog")).toHaveCount(0);
     expect(await readState(page)).toEqual(initial);
-    await button(page, "Добавить операцию").tap();
+    await button(page, "Добавить операцию").click();
     await expect(title).toHaveValue("");
     await expect(amount).toHaveValue("");
     await expect(button(page, "Восстановить черновик операции")).toHaveCount(0);
-    await button(page, "Закрыть").tap();
+    await button(page, "Закрыть").click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 
